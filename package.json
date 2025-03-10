@@ -56,9 +56,10 @@
     "@types/multer": "^1.4.12",
     "jest": "^29.6.2",
     "ts-jest": "^29.1.1",
-    "typescript-generic-types": "1.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "5.7.2",
-    "typescript-cp": "^0.1.6"
+    "typescript-cp": "^0.1.6",
+    "typescript-generic-types": "1.0.1"
   },
   "bin": {
     "buildCoreBackend": "bin/buildCoreBackend.ts",
