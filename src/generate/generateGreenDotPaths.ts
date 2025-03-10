@@ -1,0 +1,7 @@
+/**
+ * TODO 
+ */
+
+export function generateGreenDotPaths() {
+
+}

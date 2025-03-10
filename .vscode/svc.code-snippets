@@ -1,0 +1,69 @@
+{
+    //----------------------------------------
+    // SVC
+    //----------------------------------------
+    "svc:apiWithObjParams": {
+        "prefix": [
+            "svc:api",
+        ],
+        "body": [
+            "export const ${1:service} = $.svc({",
+            "    doc: {",
+            "        description: `$5`,",
+            "        errors: [],",
+            "    },",
+            "${2:    ${3|for,notFor|}: '$4',}",
+            "    input: {",
+            "        $6",
+            "    },",
+            "    output: _$10,",
+            "    async main(ctx, {$11}) {",
+            "        $13",
+            "    },",
+            "})",
+        ]
+    },
+    "svc:eventGeneric": {
+        "prefix": [
+            "svc:eventGeneric"
+        ],
+        "body": [
+            "export const ${1:service} = {",
+            "    on: ['${6|server.start,ctx.creation|}'],",
+            "    async main(ctx) {",
+            "        $13",
+            "    },",
+            "} satisfies t.BaseService",
+        ]
+    },
+    "svc:modelEvent": {
+        "prefix": [
+            "svc:modelEvent"
+        ],
+        "body": [
+            "export const ${1:service} = {",
+            "    on: '$5.${6|getAll,getOne,create,update,delete|}.${7|before,after|}',",
+            "    async main(ctx) {",
+            "        const $5 = ctx.${6/(getAll)|(getOne)|(create)|(update)|(delete)/${1:+data}${2:+data}${3:+inputFields}${4:+inputFields}${5:+DELETEME}/}",
+            "        $14",
+            "    },",
+            "} satisfies t.DaoEventService<t.Models.AllModels, '${5:modelName}', '$6', '$7'>",
+        ]
+    },
+    "svc:schedule": {
+        "prefix": [
+            "svc:schedule",
+        ],
+        "body": [
+            "export const ${1:service} = {",
+            "    schedule: {",
+            "        frequency: ${2|'0 * * * *'\\, // every hour,'0 */12 * * *'\\, // 2 times a day,frequency: '0 5 * * *'\\, // once a day at 05:00,'0 5 1 * *'\\, // At 05:00 on day-of-month 1|}",
+            "${3:        frequencyDevEnv: ${4|'* * * * *','never','server.start'|},}",
+            "    },",
+            "    async main(ctx) {",
+            "        $14",
+            "    },",
+            "} satisfies t.ScheduleService",
+        ]
+    },
+}

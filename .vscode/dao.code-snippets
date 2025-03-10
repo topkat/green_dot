@@ -1,0 +1,36 @@
+{
+    //----------------------------------------
+    // DAO
+    //----------------------------------------
+    "dao:mask": {
+        "prefix": "dao:mask",
+        "body": [
+            "{",
+            "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
+            "${4:    ${5|on,notOn|}: ${6|'ALL','read','write','getAll','getOne','create','update'|},}",
+            "    ${7|select,mask|}: ctx => ({$9}),",
+            "},",
+        ]
+    },
+    "dao:filter": {
+        "prefix": "dao:filter",
+        "body": [
+            "{",
+            "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
+            "${4:    ${5|on,notOn|}: ${6|'ALL','read','write','getAll','getOne','create','update'|},}",
+            "    filter: (ctx, filter) => {",
+            "    filter.$9",
+            "    }",
+            "},",
+        ]
+    },
+    "dao.expose": {
+        "prefix": "dao:expose",
+        "body": [
+            "{",
+            "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
+            "    expose: ${6|'ALL','read','write','getAll','getOne','create','update'|},",
+            "},",
+        ]
+    },
+}

@@ -1,0 +1,28 @@
+{
+  "React export Function Component": {
+    "prefix": "efc",
+    "body": [
+      "import * as React from 'react'",
+      "import { css } from '@bangk/pandacss/css'",
+      "import { HStack, VStack } from '@bangk/pandacss/jsx'",
+      "import { H1 } from '@bangk/design-system'",
+      "",
+      "type ${1:ComponentName}Props = {",
+      "  children?: React.ReactNode",
+      "}",
+      "",
+      "export function ${1:ComponentName}({ children }: ${1:ComponentName}Props): React.ReactElement {",
+      "",
+      "  return (",
+      "    <VStack className={css({p:'2'})} >",
+      "     <HStack className={css({color:'p.5'})}>",
+      "      <H1>${1:ComponentName}</H1>",
+      "     </HStack>",
+      "      {children}",
+      "    </VStack>",
+      "  )",
+      "}",
+    ],
+    "description": "Crée un composant fonctionnel React "
+  }
+}

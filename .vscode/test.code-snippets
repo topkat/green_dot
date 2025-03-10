@@ -1,0 +1,109 @@
+{
+    //----------------------------------------
+    // TEST
+    //----------------------------------------
+    "assert": {
+        "scope": "javascript,typescript",
+        "prefix": [
+            "assert",
+            "newAssertion"
+        ],
+        "body": [
+            "assert($1, `$1`, $2)"
+        ]
+    },
+    "test:route": {
+        "scope": "javascript,typescript",
+        "prefix": [
+            "new:test-route",
+            "test:route"
+        ],
+        "body": [
+            "{",
+            "    doc: `$4`,",
+            "    route: env => env.routes$1,",
+            "${6:    params: [$8],}",
+            "    after(env, ${10:data}) {",
+            "        $12",
+            "    },",
+            "},"
+        ],
+    },
+    "test:route-error": {
+        "scope": "javascript,typescript",
+        "prefix": [
+            "new:test-route-error",
+            "test:route-error"
+        ],
+        "body": [
+            "{",
+            "    doc: `$4`,",
+            "    route: env => env.routes$1,",
+            "    status: ${2|422,403,401,404,500|},",
+            "    errorMessage: `$5`,",
+            "${6:    params: [$8],}",
+            "    after(env, ${10:data}) {",
+            "        $12",
+            "    },",
+            "},"
+        ],
+    },
+    "test:svc": {
+        "scope": "javascript,typescript",
+        "prefix": [
+            "new:test-svc",
+            "test:svc"
+        ],
+        "body": [
+            "{",
+            "    d: [ '${2|icoUserA,icoUserB,icoUserC,icoUserD,appUserA,appUserB,appUserC,appUserD,public,system|}', '$4' ],",
+            "    svc: () => $$1(),",
+            "    after(env, ${10:data}: Awaited<ReturnType<typeof $$1>>) {",
+            "        $12",
+            "    },",
+            "},"
+        ],
+    },
+    "test:systemServerAction": {
+        "scope": "javascript,typescript",
+        "prefix": [
+            "new:test-svc-system-server-action",
+            "test:svc-system-serverAction"
+        ],
+        "body": [
+            "{",
+            "    d: ['system', '$1'],",
+            "    svc: () => serverActionTypedForTests('$2', $3, [$4]),",
+            "    after: (env, data) {",
+            "        $6",
+            "    }",
+            "},",
+        ],
+    },
+    "test:new": {
+        "scope": "javascript,typescript",
+        "prefix": [
+            "new:test-svc-error",
+            "test:svc-error"
+        ],
+        "body": [
+            "{",
+            "    d: [ ${2|422,403,401,404,429,409,500|}, '${2|a,b,c,d,public,system|}', '$4' ],",
+            "    errorMessage: `$5`,",
+            "    svc: () => $$1(),",
+            "    after(env, ${10:data}: Awaited<ReturnType<typeof $$1>>) {",
+            "        $12",
+            "    },",
+            "},"
+        ],
+    },
+    "stopTheTrain": {
+        "scope": "javascript,typescript",
+        "prefix": [
+            "stopTheTrain"
+        ],
+        "body": [
+            "assert( false,'STOP THE TRAIN',  true)"
+        ],
+    }
+}

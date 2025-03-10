@@ -1,0 +1,81 @@
+{
+    //----------------------------------------
+    // GENERAL
+    //----------------------------------------
+    "Commentaire": {
+        "scope": "javascript,typescript,md,markdown,typescriptreact",
+        "prefix": "com",
+        "body": [
+            "//----------------------------------------",
+            "// $1",
+            "//----------------------------------------"
+        ],
+        "description": "Commentaire"
+    },
+    "Commentaire2": {
+        "scope": "javascriptreact,typescriptreact",
+        "prefix": "tcom",
+        "body": [
+            "{/*-------------------------------------*/}",
+            "{/* $1 */}",
+            "{/*-------------------------------------*/}"
+        ],
+        "description": "Commentaire"
+    },
+    "import": {
+        "scope": "javascript,typescript",
+        "prefix": "import",
+        "body": [
+            "import $1 from '${2:$1}'$3"
+        ]
+    },
+    "importutils": {
+        "scope": "javascript,typescript",
+        "prefix": "importutils",
+        "body": [
+            "import {$1} from 'topkat-utils'$2"
+        ]
+    },
+    "importTrans": {
+        "scope": "javascript,typescript,typescriptreact",
+        "prefix": "importTrans",
+        "body": [
+            "import { useTranslation } from 'localization'"
+        ]
+    },
+    "useTrans": {
+        "scope": "javascript,typescript,typescriptreact",
+        "prefix": "useTrans",
+        "body": [
+            "const { t } = useTranslation()"
+        ]
+    },
+    "trans": {
+        "scope": "javascript,typescript,typescriptreact",
+        "prefix": "trans",
+        "body": [
+            "{t(`$1`)}"
+        ]
+    },
+    "mobscreen": {
+        "scope": "typescript,typescriptreact",
+        "prefix": "mobscreen",
+        "body": [
+            "import React from 'react'",
+            "import { useTranslation } from 'localization'",
+            "import { YStack } from 'tamagui'",
+            "",
+            "type $1Props = {",
+            "}",
+            "",
+            "export function $1({ }: $1Props) {",
+            "  const { t } = useTranslation()",
+            "",
+            "  return (",
+            "    <YStack>",
+            "    </YStack>",
+            "  )",
+            "}"
+        ]
+    },
+}
