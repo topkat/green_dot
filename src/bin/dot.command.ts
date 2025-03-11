@@ -59,8 +59,12 @@ commands[_command].execute(rest)
 
 async function build(props) {
 
+  const paths = await getGreenDotPaths()
 
-  console.log('await getGreenDotPaths()', JSON.stringify(await getGreenDotPaths(), null, 2))
+  // GENERATE DB TYPES
+  paths.dbConfigs
+
+  console.log('await getGreenDotPaths()', JSON.stringify(paths, null, 2))
 
 
   C.success('BUILD')

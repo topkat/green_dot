@@ -20,8 +20,6 @@ export type MongoDbConfig = NoExtraProperties<{
   mongooseModels: { [modelNames: string]: mongoose.Model<any> }
   /** DaoConfig == hooks like filter, mask...etc, parsed means that all values are present, no `ALL` is to be found and `notFor` and `notOn` as been transformed to `on` and `for` */
   daoConfigsParsed: { [modelNames: string]: MongoDaoParsed<any>; }
-  /** content of the file './2_generated/model-types.generated.ts' */
-  modelTypeFile: string
 }>
 
 export type MongoDbConfigModels = {

@@ -22,6 +22,7 @@ app(buildCoreDatabase)
 
 async function run() {
     try {
+        // TODO DELETEME this is now used in another file
         const generatedFilePathServer = path.resolve(process.cwd(), `./src/2_generated`)
 
         //----------------------------------------

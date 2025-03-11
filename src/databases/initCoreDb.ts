@@ -1,14 +1,14 @@
 
-import Path from 'path'
-import { Definition } from 'good-cop/backend'
+import { GenericDef } from 'good-cop/backend'
 
-import { mongoInitDb, InitDbReturnTypeMongo } from './mongo/initMongoDb'
-import { MongoDao, MongoConnexionConfigs, MongoDaoParsed } from './mongo/types/mongoDbTypes'
+import { mongoInitDb } from './mongo/initMongoDb'
+import { MongoDao, MongoDaoParsed } from './mongo/types/mongoDbTypes'
 import { registerModel } from './models'
-import { serverConfig } from '../cache/green_dot.app.config.cache'
 
 import { timeout } from 'topkat-utils'
 import { getDaoParsed } from './getDaoParsed'
+import { DbConfigs } from '../types/greenDotDbConfig.types'
+import { Definition } from 'good-cop'
 
 type DbTypes = 'mongo'
 
@@ -31,25 +31,15 @@ export function getDbCore<AllModels extends Record<string, any>, DbNames extends
 //   ║  ║╚╗║  ║    ║     ║  ║ ╠═╩╗   ║    ║  ║ ╠═╦╝ ╠═
 //  ═╩═ ╩ ╚╩ ═╩═   ╩     ╚══╝ ╚══╝   ╚══╝ ╚══╝ ╩ ╚  ╚══╝
 export async function initDbCore<
-    AllModels extends Record<string, any>,
-    DbNames extends string,
-    DbType extends DbTypes,
-    MainName extends string,
-    ReturnType extends InitDbReturnType<AllModels, DbNames, MainName> = InitDbReturnType<AllModels, DbNames, MainName>
+    DbNames extends string
 >(
-    dbType: DbType,
-    dbName: MainName,
-    connexionConfigs: MongoConnexionConfigs<DbNames>,
-    modelsGenerated: { [modelName: string]: Definition },
+    dbType: DbTypes,
+    dbName: string,
+    connexionConfigs: DbConfigs<DbNames>,
+    modelsGenerated: { [modelName: string]: Definition<any, any, "def", "def", false> },
     daoConfigsGeneratedRaw: Record<string, MongoDaoParsed<any> | MongoDao<any>>,
-    dirName: string,
-    forceRefreshCache = false,
-    allRoles: readonly string[] = [],
-    allPermissions: readonly string[] = []
-): Promise<ReturnType> {
-
-    serverConfig.allRoles = allRoles
-    serverConfig.allPermissions = allPermissions
+    forceRefreshCache = false
+) {
 
     //----------------------------------------
     // CACHE HANDLING
@@ -61,10 +51,10 @@ export async function initDbCore<
     //----------------------------------------
     if (!cacheInitializedState[dbName]) cacheInitializedState[dbName] = 'notInitialized'
     else if (cacheInitializedState[dbName] === 'initialized' && forceRefreshCache === false) {
-        return cache[dbName] as ReturnType
+        return cache[dbName]
     } else if (cacheInitializedState[dbName] === 'inProgress') {
         await timeout(2000)
-        return cache[dbName] as ReturnType
+        return cache[dbName]
     }
 
     cacheInitializedState[dbName] = 'inProgress'
@@ -76,7 +66,7 @@ export async function initDbCore<
         dbName,
         dbConfigs: {},
         dbs: {},
-    } as ReturnType
+    }
 
 
     const daoConfigsParsed = getDaoParsed(daoConfigsGeneratedRaw)
@@ -93,7 +83,7 @@ export async function initDbCore<
         // the above are typed as any because of this =>
         // https://stackoverflow.com/questions/76775051/why-generic-type-t-extends-a-b-is-not-resolved-correctly-when-in-a-condi/76775364#76775364
         if (dbType === 'mongo') {
-            await mongoInitDb<AllModels, DbNames, MainName>(
+            await mongoInitDb<DbNames>(
                 dbName,
                 databaseId,
                 modelConfig as any,
@@ -104,7 +94,6 @@ export async function initDbCore<
         } else throw new Error(`Unknown dbType ${dbType}`)
 
         if (typeof modelConfig.dbConfigs[databaseId] === 'undefined') modelConfig.dbConfigs[databaseId] = {}
-        modelConfig.dbConfigs[databaseId].modelTypeFile = Path.resolve(dirName, './2_generated/model-types.generated.ts')
     }
 
     cache[dbName] = modelConfig as any
@@ -123,4 +112,4 @@ export async function initDbCore<
 // TYPES
 //----------------------------------------
 
-type InitDbReturnType<AllModels extends Record<any, any>, DbNames extends string, MainName extends string> = InitDbReturnTypeMongo<AllModels, DbNames, MainName>
+// type InitDbReturnType<AllModels extends Record<any, any>, DbNames extends string, MainName extends string> = InitDbReturnTypeMongo<AllModels, DbNames, MainName>

@@ -1,13 +1,14 @@
 {
-  "name": "core-backend",
-  "version": "1.0.7",
+  "name": "green_dot",
+  "version": "0.0.0",
   "main": ".",
   "types": "src/index.ts",
   "description": "",
   "license": "ISC",
-  "author": "topkat",
+  "author": "https://github.com/top-kat",
   "exports": {
     ".": "./index.js",
+    "./db": "./db.js",
     "./types": "./src/core-types.ts",
     "./src/*": "./dist/*.js"
   },
@@ -15,13 +16,7 @@
     "clean": "rm -rf ./dist || true",
     "build": "tscp && tsc",
     "tsc": "tsc",
-    "build:allPackagesPhase1": "tscp && tsc",
-    "build:core-backend": "tscp && tsc",
     "build:watch": "tscp & tsc -w --preserveWatchOutput",
-    "build:backendWatch": "yarn build:watch",
-    "start:bangk-backend-test": "yarn build:watch",
-    "start:roulette-dev": "npm run build:watch",
-    "start:bangk-bi": "npm run build:watch",
     "test": "jest --watchAll"
   },
   "dependencies": {

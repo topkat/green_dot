@@ -6,21 +6,28 @@ import fs from 'fs-extra'
 import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
+export type GDpathConfig = { path: string, folderPath: string }
+type PathConfObj = { [appNames: string]: GDpathConfig }
+
 let greenDotPathsCache: {
-  /** Root of the project */
-  repoRoot: string
   /** Path of green_dot.config.ts */
-  mainConfig: string
+  mainConfig: GDpathConfig
   /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
-  appConfigs: { [appNames: string]: string }
+  appConfigs: PathConfObj
   /** Paths to all green_dot.db.config.ts that can be found in the project alongside their DB names (folder name) */
-  dbConfigs: { [dbNames: string]: string }
+  dbConfigs: PathConfObj
 }
+
+
+
 
 export async function getGreenDotPaths() {
   if (!greenDotPathsCache) await generateGreenDotPaths()
   return greenDotPathsCache
 }
+
+
+
 
 async function generateGreenDotPaths() {
 
@@ -37,13 +44,23 @@ async function generateGreenDotPaths() {
 
   // FIND ALL GREEN DOT CONFIGS
 
-
-
   const allFiles = await glob.async('**/green_dot.*.config.*', {
     cwd: rootPath,         // Set the root path for searching
     ignore: ['node_modules/**', '**/.*/**'],  // Exclude node_modules and hidden folders
     onlyFiles: true,       // Ensure we only get files, not directories
   })
+
+
+
+  const dbConfigPaths = allFiles
+    .filter(fileName => fileName.includes('green_dot.db.config'))
+    .reduce(configFilePathReducer, {} as PathConfObj)
+
+  const appConfigPaths = allFiles
+    .filter(fileName => fileName.includes('green_dot.app.config'))
+    .reduce(configFilePathReducer, {} as PathConfObj)
+
+  // GENERATE INDEXES FOR FILES
 
   console.log('allFiles', JSON.stringify(allFiles, null, 2))
   // .forEach(filePath => {
@@ -59,11 +76,24 @@ async function generateGreenDotPaths() {
   console.log('aa ', JSON.stringify(aa, null, 2))
 
   greenDotPathsCache = {
-    repoRoot: rootPath,
-    mainConfig: mainConfigPath,
-    appConfigs: {},
-    dbConfigs: {},
+    mainConfig: { path: mainConfigPath, folderPath: rootPath },
+    appConfigs: appConfigPaths,
+    dbConfigs: dbConfigPaths,
   }
 
 }
 
+
+
+//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
+
+function configFilePathReducer(o: PathConfObj, path: string) {
+  return {
+    ...o, [path.replace(/\/([^\/]+)\/green_dot.*?config/, '$1')]: {
+      path: path,
+      folderPath: path.replace(/\/green_dot.[^\/]*?config[^\/]*?$/, ''),
+    }
+  }
+}

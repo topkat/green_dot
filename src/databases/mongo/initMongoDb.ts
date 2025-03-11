@@ -8,13 +8,14 @@ import { MongoDbConfigModels, MongoDbConfig, Definition, ModelReadWrite } from '
 import { MongoConnexionConfigs, MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
 
 import { C, ENV } from 'topkat-utils'
+import { GenericDef } from 'good-cop'
 
 const { NODE_ENV } = ENV()
 const env: Env = NODE_ENV
 
 type ErrParams = Parameters<typeof error.serverError>
 
-type ModelAdditionalFields = {
+export type ModelAdditionalFields = {
     /** Will init a mongoose session and start a mongo transaction, the session is then stored in the ctx
     so all next DB calls are automatically using the transaction. So you'll have nothing to do except ending
     the transaction, which will trigger an admin alert if not closed for 30 seconds
@@ -32,29 +33,29 @@ type ModelAdditionalFields = {
     mongooseConnection: mongoose.Connection
 }
 
-export type InitDbReturnTypeMongo<
-    AllModels extends Record<any, ModelReadWrite>,
-    DbNames extends string,
-    MainName extends string
-> = {
-    dbName: MainName
-    dbs: {
-        [dbName in DbNames]: {
-            [ModelName in keyof AllModels]: DaoMethodsMongo<AllModels[ModelName]>
-        } & ModelAdditionalFields
-    }
-    dbConfigs: { [dbName in DbNames]: MongoDbConfig }
-}
+// export type InitDbReturnTypeMongo<
+//     AllModels extends Record<any, ModelReadWrite>,
+//     DbNames extends string,
+//     MainName extends string
+// > = {
+//     dbName: MainName
+//     dbs: {
+//         [dbName in DbNames]: {
+//             [ModelName in keyof AllModels]: DaoMethodsMongo<AllModels[ModelName]>
+//         } & ModelAdditionalFields
+//     }
+//     dbConfigs: { [dbName in DbNames]: MongoDbConfig }
+// }
 
 
 
-export async function mongoInitDb<AllModels extends Record<string, any>, DbNames extends string, MainName extends string>(
-    dbName: MainName,
+export async function mongoInitDb<DbNames extends string>(
+    dbName,
     dbId: string,
-    modelConfig: InitDbReturnTypeMongo<AllModels, DbNames, MainName>,
+    modelConfig,
     connectionConfig: MongoConnexionConfigs<DbNames>[any],
     daoConfigsParsed: { [k in DbNames]: MongoDaoParsed<any> },
-    modelsGenerated: { [modelName: string]: Definition }
+    modelsGenerated: { [modelName: string]: Definition<any, any, "def", "def", false> }
 ) {
     const modelNames = Object.keys(modelsGenerated) as DbNames[]
     const { databaseURL, mongoOptions = {} } = connectionConfig as { firstLevelDb: boolean } & MongoConnexionConfigs<DbNames>[any]

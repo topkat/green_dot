@@ -22,6 +22,7 @@ export async function generateModelFolderInSdk(monorepoRoot: string, platform: s
     const dbNameUpper = capitalize1st(dbName)
 
     const dbBaseFolder = Path.join(dbRoot, dbFolder, 'src/2_generated/')
+    // TODO this should use internal generated files
     const inputModelFilePath = Path.join(dbBaseFolder, 'model-types.generated.ts')
     const outputModelFilePath = `modelTypes/${dbName}ModelTypes.generated.ts`
 

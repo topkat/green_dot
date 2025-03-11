@@ -58,14 +58,15 @@ export type MongoDaoParsed<ModelTypes extends ModelReadWrite> = DaoSharedParsed 
 
 export type MongoHooks = { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> } }
 
-export type MongoConnexionConfigs<DbNames extends string> = {
-    [dbName in DbNames]: {
-        /** Useful if there is one DB in the project
-         * * ALLOW ctx.db.dbTypeName.collectionNameGetAll()
-         * * INSTEAD OF ctx.db.dbTypeName.dbName.collectionNameGetAll() */
-        databaseURL: string
-        mongoOptions?: mongoose.ConnectOptions
-    }
-}
+// DELETEME TODO
+// export type MongoConnexionConfigs<DbNames extends string> = {
+//     [dbName in DbNames]: {
+//         /** Useful if there is one DB in the project
+//          * * ALLOW ctx.db.dbTypeName.collectionNameGetAll()
+//          * * INSTEAD OF ctx.db.dbTypeName.dbName.collectionNameGetAll() */
+//         databaseURL: string
+//         mongoOptions?: mongoose.ConnectOptions
+//     }
+// }
 
 export type MongooseConnexion = mongoose.Connection
