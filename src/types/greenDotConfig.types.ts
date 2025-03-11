@@ -22,13 +22,14 @@ export type GreenDotConfig<
   database: {
     /** This is useful to provide a default database that will be exposed without databaseName prefix on SDK and $.db and to provide the database where green_dot will record models for technical purpose TODO add more details */
     defaultDatabaseName: string
-    dbConfigs(): Promise<{
-      /** Eg: bangk, roulette */
-      [dbName: string]: {
-        /** Eg: pizza-time...etc */
-        [dbId: string]: MongoDbConfig
-      }
-    }>
+    // TODO dbConfigs should not be required since dbConfig is accessible via green_dot.db.config
+    // dbConfigs(): Promise<{
+    //   /** Eg: bangk, roulette */
+    //   [dbName: string]: {
+    //     /** Eg: pizza-time...etc */
+    //     [dbId: string]: MongoDbConfig
+    //   }
+    // }>
   }
   //  ╔══╗ ╔══╗ ╦╗ ╔ ╦╗ ╔ ╔══╗ ═╗╔═ ═╦═ ╔══╗ ╦╗ ╔
   //  ║    ║  ║ ║╚╗║ ║╚╗║ ╠═    ╠╣   ║  ║  ║ ║╚╗║
@@ -45,7 +46,7 @@ export type GreenDotConfig<
     defaultPermForRole?: Record<RolesAll, Partial<Record<AllPermissions, boolean>>>
 
     /** Giving a ctx, this function is meant to retrieve the user in the database. It just usually returns something like `await myDb.dbName.user.getById(ctx.GM, ctx._id, { triggerErrorIfNotSet: true })` and is used internally to provide ctx.getUser() shortcut (that will use cache if requested twice) */
-    getUserFromCtx: (ctx: Ctx) => CtxUser
+    getUserFromCtx?: (ctx: Ctx) => CtxUser
 
     customWarningAndBanFunctions?: {
       /** Provide a way to ban a user, for example when rate limiter in case you don't want it the default way...TODO TODO */
@@ -63,7 +64,7 @@ export type GreenDotConfig<
     //  ╔══╗ ╦    ╔══╗ ╔══╗ ══╦══ ╔═══
     //  ╠══╣ ║    ╠═   ╠═╦╝   ║   ╚══╗
     //  ╩  ╩ ╚══╝ ╚══╝ ╩ ╚    ╩   ═══╝
-    alerts: {
+    alerts?: {
       /** If this is set, errors will be sent on telegram chanel */
       telegram?: {
         botId: string,

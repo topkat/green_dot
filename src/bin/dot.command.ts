@@ -4,6 +4,7 @@ import Path from 'path'
 import fs from 'fs-extra'
 import { app, Command } from 'command-line-application'
 import { C, objEntries, randomItemInArray } from 'topkat-utils'
+import { getGreenDotPaths } from '../generate/generateGreenDotPaths'
 
 //  ╦  ╦ ╔══╗ ╔══╗ ╔═══ ═╦═ ╔══╗ ╦╗ ╔
 //  ╚╗ ║ ╠═   ╠═╦╝ ╚══╗  ║  ║  ║ ║╚╗║
@@ -58,11 +59,8 @@ commands[_command].execute(rest)
 
 async function build(props) {
 
-  console.log(`process.cwd()`, process.cwd())
 
-  const aa = await import(Path.join(process.cwd(), 'green_dot.config.ts'))
-
-  console.log('aa ', JSON.stringify(aa, null, 2))
+  console.log('await getGreenDotPaths()', JSON.stringify(await getGreenDotPaths(), null, 2))
 
 
   C.success('BUILD')
