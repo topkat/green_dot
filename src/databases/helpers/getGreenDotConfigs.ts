@@ -1,5 +1,5 @@
 import { C, objEntries } from "topkat-utils";
-import { GDpathConfig, getGreenDotPaths } from "../../generate/generateGreenDotPaths";
+import { GDpathConfig, getProjectPaths } from "./getProjectPaths";
 import { GreenDotDbConfig, GreenDotConfig, GreenDotAppConfig } from "../../types/core.types";
 
 //  ╦╗╔╦ ╔══╗ ═╦═ ╦╗ ╔   ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
@@ -11,7 +11,7 @@ export async function getGreenDotConfig(resetCache = false) {
   try {
 
     if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
-      const { mainConfig } = await getGreenDotPaths()
+      const { mainConfig } = await getProjectPaths()
       const conf = await import(mainConfig.path) as GreenDotConfig
       greenDotConfigsCache = { ...conf, ...mainConfig }
     }
@@ -34,7 +34,7 @@ export async function getGreenDotDbConfigs(resetCache = false) {
   try {
 
     if (greenDotDbConfigsCache.length === 0 || resetCache === true) { // we don't want this process to happen each time we call that function
-      const { dbConfigs: dbConfigPaths } = await getGreenDotPaths()
+      const { dbConfigs: dbConfigPaths } = await getProjectPaths()
 
       for (const [name, dbPath] of objEntries(dbConfigPaths)) {
         pathNameErrExtraInfos = dbPath.path
@@ -64,7 +64,7 @@ export async function getGreenDotAppConfigs(resetCache = false) {
   try {
 
     if (greenDotAppConfigsCache.length === 0 || resetCache === true) { // we don't want this process to happen each time we call that function
-      const { appConfigs: appConfigPaths } = await getGreenDotPaths()
+      const { appConfigs: appConfigPaths } = await getProjectPaths()
 
       for (const [name, appConfigPath] of objEntries(appConfigPaths)) {
         pathNameErrExtraInfos = appConfigPath.path

@@ -3,8 +3,10 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import { app, Command } from 'command-line-application'
-import { C, objEntries, randomItemInArray } from 'topkat-utils'
-import { getGreenDotPaths } from '../generate/generateGreenDotPaths'
+import { C, objEntries, randomItemInArray, perfTimer } from 'topkat-utils'
+import { getProjectPaths } from '../databases/helpers/getProjectPaths'
+import { generateIndexForProjectDb } from '../generate/generateIndexForDb'
+import { generateDbCachedFiles, generateDbIndexFile } from '../generate/generateCachedFiles/generateDbCachedFiles'
 
 //  ╦  ╦ ╔══╗ ╔══╗ ╔═══ ═╦═ ╔══╗ ╦╗ ╔
 //  ╚╗ ║ ╠═   ╠═╦╝ ╚══╗  ║  ║  ║ ║╚╗║
@@ -57,23 +59,43 @@ const { _command, ...rest } = app({
 commands[_command].execute(rest)
 
 
+
+
+//  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
+//  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
+//  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
+
+
 async function build(props) {
 
-  const paths = await getGreenDotPaths()
+  const time = perfTimer()
 
-  // GENERATE DB TYPES
-  paths.dbConfigs
+  await generateIndexForProjectDb()
 
-  console.log('await getGreenDotPaths()', JSON.stringify(paths, null, 2))
+  await generateDbCachedFiles()
 
+  C.success(`Successfully built green_dot project in ${time.end()}`)
 
-  C.success('BUILD')
 }
 
-function clean(props) {
+
+
+
+
+async function clean(props) {
+
+  await generateDbIndexFile()
+
   C.success('CLEAN')
 }
+
+
+
+
 
 function generate(props) {
   C.success('GENERATE')
 }
+
+
+

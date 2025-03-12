@@ -19,7 +19,7 @@ export async function generateModelTypes(modelFiles: ModelNames, generatedFilePa
     const modelNames = Object.values(modelFiles).map((v: any) => v.fileNameCamelCase)
 
     //----------------------------------------
-    // GENERATE BASE VALID TYPESCRIPT GENERATED MODEL
+    // GENERATE DEFAULT VALID TYPESCRIPT FILE
     // This is in case generated file is imported in a model file
     //----------------------------------------
     const fileTemplate = `

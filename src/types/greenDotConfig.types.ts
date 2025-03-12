@@ -19,18 +19,8 @@ export type GreenDotConfig<
   //  ╔═╗  ╔══╗ ══╦══ ╔══╗ ╔═╗  ╔══╗ ╔═══ ╔══╗
   //  ║  ║ ╠══╣   ║   ╠══╣ ╠═╩╗ ╠══╣ ╚══╗ ╠═  
   //  ╚══╝ ╩  ╩   ╩   ╩  ╩ ╚══╝ ╩  ╩ ═══╝ ╚══╝
-  database: {
-    /** This is useful to provide a default database that will be exposed without databaseName prefix on SDK and $.db and to provide the database where green_dot will record models for technical purpose TODO add more details */
-    defaultDatabaseName: string
-    // TODO dbConfigs should not be required since dbConfig is accessible via green_dot.db.config
-    // dbConfigs(): Promise<{
-    //   /** Eg: bangk, roulette */
-    //   [dbName: string]: {
-    //     /** Eg: pizza-time...etc */
-    //     [dbId: string]: MongoDbConfig
-    //   }
-    // }>
-  }
+  /** The default database contains User model as well as different technical fields for security. It will also be exposed more concisely compared to other databases when possible */
+  defaultDatabaseName: string
   //  ╔══╗ ╔══╗ ╦╗ ╔ ╦╗ ╔ ╔══╗ ═╗╔═ ═╦═ ╔══╗ ╦╗ ╔
   //  ║    ║  ║ ║╚╗║ ║╚╗║ ╠═    ╠╣   ║  ║  ║ ║╚╗║
   //  ╚══╝ ╚══╝ ╩ ╚╩ ╩ ╚╩ ╚══╝ ═╝╚═ ═╩═ ╚══╝ ╩ ╚╩

@@ -45,15 +45,9 @@ export async function generateIndexesForFiles() {
 
       } else throw 'Path do not exist in autoIndexes.ts config: '
     }
-
-    C.success('Indexes files generated for ' + CONFIGS.map(c => '\n    * ' + c.path.replace(/^\.\//, '')))
-
-    C.success(`Finished in ${round2((Date.now() - start) / 1000)}s`)
   } catch (e) { C.error(e) }
   process.exit()
 }
-
-run()
 
 
 

@@ -1,0 +1,62 @@
+
+
+import fs from 'fs-extra'
+import { getProjectPaths } from '../databases/helpers/getProjectPaths'
+import glob from 'fast-glob'
+import { C, capitalize1st, objEntries } from 'topkat-utils'
+
+
+
+const modelOrDaoRegexp = /\/([^\/]+)\.(model|dao)\.ts$/
+
+
+export async function generateIndexForProjectDb() {
+  const { dbConfigs } = await getProjectPaths()
+
+  for (const [dbName, { generatedIndexPath, folderPath }] of objEntries(dbConfigs)) {
+    try {
+
+      const allFiles = await glob.async('**/*.@(model|dao).ts', {
+        cwd: folderPath,
+        onlyFiles: true,
+      })
+
+      let imports = ''
+      let types = ''
+      let modelsVar = ''
+      let daoVar = ''
+
+      for (const file of allFiles) {
+        const match = file.match(modelOrDaoRegexp) as [any, string, 'dao' | 'model']
+        if (match) {
+
+          const [, moduleName, moduleType] = match
+          const moduleNameCapital = capitalize1st(moduleName)
+          const moduleTypeCapital = capitalize1st(moduleType)
+
+          imports += `import ${moduleName}${moduleTypeCapital} from './models/${moduleName}.${moduleType}'\n`
+
+          if (moduleType === 'model') {
+            types += `export type ${moduleNameCapital} = typeof ${moduleName}Model.tsTypeRead\n` +
+              `export type ${moduleNameCapital}Read = typeof ${moduleName}Model.tsTypeRead\n` +
+              `export type ${moduleNameCapital}Write = typeof ${moduleName}Model.tsTypeWrite\n`
+
+            modelsVar += `  ${moduleName}Model,\n`
+          } else {
+            daoVar += `  ${moduleName}Dao,\n`
+          }
+        }
+      }
+
+      const fileContent = `${imports}\n\n${types}\n\nconst models = {\n${modelsVar}}\n\nconst daos = {\n${daoVar}}\n\nexport { models, daos }`
+
+      await fs.outputFile(generatedIndexPath, fileContent, 'utf-8')
+
+      C.success(`index.generated.ts successfully generated for ${dbName}`)
+
+    } catch (err) {
+      C.error(err)
+      throw C.error(false, 'ERROR CREATING INDEX FOR DATABASE ' + dbName)
+    }
+  }
+}

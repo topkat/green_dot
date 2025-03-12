@@ -1,6 +1,7 @@
 
 import Path from 'path'
 import fs from 'fs'
+import { generateModelTypes } from '../generate/generateModelTypes'
 
 // TODO DELETEME
 export async function generateDbTypes() {

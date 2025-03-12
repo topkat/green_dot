@@ -1,15 +1,15 @@
 
-import Path from 'path'
+
 import { AllModels, DbIds } from './cache/dbs/index.generated'
 import { error } from './core.error'
 import { getGreenDotDbConfigs } from './databases/helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
-import { Definition, ModelReadWrite } from 'good-cop'
-import { MongoDao, MongoDaoParsed } from './databases/mongo/types/mongoDbTypes'
+import { ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
 import { getDaoParsed } from './databases/getDaoParsed'
 import { registerModel } from './databases/models'
+import { getGeneratedIndexForDatabase } from './databases/helpers/getProjectGeneratedIndexes'
 
 
 //  ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
@@ -42,12 +42,9 @@ export async function initDbs(resetCache: boolean = false) {
 
   const dbConfigs = await getGreenDotDbConfigs(resetCache)
 
-  for (const { dbs: connexionConfigs, name, type, folderPath } of dbConfigs) {
+  for (const { dbs: connexionConfigs, name, type } of dbConfigs) {
 
-    const { models, daos } = await import(Path.join(folderPath)) as {
-      models: { [modelName in AllDbIds]: Definition }
-      daos: Record<string, MongoDaoParsed<any> | MongoDao<any>>
-    }
+    const { models, daos } = await getGeneratedIndexForDatabase(name)
 
     if (type === 'mongo') {
 
