@@ -4,8 +4,8 @@ import { error } from '../../core.error'
 import { models } from '../models'
 import { mongoCreateDao } from './mongoCreateDao'
 
-import { MongoDbConfigModels, MongoDbConfig, Definition, ModelReadWrite } from '../../types/core.types'
-import { MongoConnexionConfigs, MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
+import { MongoDbConfigModels, MongoDbConfig, Definition, ModelReadWrite, DbConfigs, DbConfigsObj } from '../../types/core.types'
+import { MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
 
 import { C, ENV } from 'topkat-utils'
 import { GenericDef } from 'good-cop'
@@ -47,38 +47,47 @@ export type ModelAdditionalFields = {
 //     dbConfigs: { [dbName in DbNames]: MongoDbConfig }
 // }
 
+export type ModelsConfigCache<AllModels extends Record<string, any> = any> = {
+    [dbId: string]: {
+        db: {
+            [ModelName in keyof AllModels]: DaoMethodsMongo<AllModels[ModelName]>
+        } & ModelAdditionalFields
+        dbConfigs: MongoDbConfig
+    }
+}
 
 
-export async function mongoInitDb<DbNames extends string>(
+
+export async function mongoInitDb<DbIds extends string>(
     dbName,
     dbId: string,
-    modelConfig,
-    connectionConfig: MongoConnexionConfigs<DbNames>[any],
-    daoConfigsParsed: { [k in DbNames]: MongoDaoParsed<any> },
+    modelsConfigCache: ModelsConfigCache,
+    connectionConfig: DbConfigsObj<DbIds>[any],
+    daoConfigsParsed: { [k: string]: MongoDaoParsed<any> },
     modelsGenerated: { [modelName: string]: Definition<any, any, "def", "def", false> }
 ) {
-    const modelNames = Object.keys(modelsGenerated) as DbNames[]
-    const { databaseURL, mongoOptions = {} } = connectionConfig as { firstLevelDb: boolean } & MongoConnexionConfigs<DbNames>[any]
-    const isLocalDb = databaseURL.includes('127.0.0.1') || databaseURL.includes('localhost')
-    const hasNoReplicaSet = isLocalDb && !databaseURL.includes('replicaSet')
+    const modelNames = Object.keys(modelsGenerated) as DbIds[]
+    const { connexionString, mongooseOptions } = connectionConfig as { firstLevelDb: boolean } & DbConfigsObj<DbIds>[any]
+    const isLocalDb = connexionString.includes('127.0.0.1') || connexionString.includes('localhost')
+    const hasNoReplicaSet = isLocalDb && !connexionString.includes('replicaSet')
 
     //----------------------------------------
     // MONGO SETUP AND CONNEXION
     //----------------------------------------
 
-    mongoOptions.connectTimeoutMS ??= env !== 'production' && env !== 'preprod' ? env === 'build' ? 2147483647 : 30000 : 1000 * 60 * 7 // avoid error when setting a breakpoint
-    const mongooseConnection = mongoose.createConnection(databaseURL, mongoOptions)
+    mongooseOptions.connectTimeoutMS ??= env !== 'production' && env !== 'preprod' ? env === 'build' ? 2147483647 : 30000 : 1000 * 60 * 7 // avoid error when setting a breakpoint
+    const mongooseConnection = mongoose.createConnection(connexionString, mongooseOptions)
 
     mongooseConnection.on('error', err => {
         if (env !== 'build') error.serverError(null, `mongoDatabaseConnexionError`, { err, dbId, dbName })
     })
     mongooseConnection.on('connected', () => {
-        C.log(C.primary(`✓ DB connected: ${dbName} > ${databaseURL.includes('127.0.0') ? 'localhost' : databaseURL?.split('@')?.[1]}${databaseURL.replace(/^.*(\/[^/]+)$/, '$1').replace(/\?[^?]+$/, '')}`))
+        C.log(C.primary(`✓ DB connected: ${dbId} > ${connexionString.includes('127.0.0') ? 'localhost' : connexionString?.split('@')?.[1]}${connexionString.replace(/^.*(\/[^/]+)$/, '$1').replace(/\?[^?]+$/, '')}`))
     })
 
-    const schemas = {} as { [k in DbNames]: mongoose.Schema }
-    const mongooseModels = {} as { [k in DbNames]: mongoose.Model<any> }
-    const typedDatabase = {} as { [k in DbNames]: Awaited<ReturnType<typeof mongoCreateDao>> }
+    const schemas = {} as { [k in DbIds]: mongoose.Schema }
+    const mongooseModels = {} as { [k in DbIds]: mongoose.Model<any> }
+    const typedDatabase = {} as { [k in DbIds]: Awaited<ReturnType<typeof mongoCreateDao>> }
     const dbConfs: MongoDbConfigModels = {}
 
     for (const modelName of modelNames) {
@@ -106,8 +115,8 @@ export async function mongoInitDb<DbNames extends string>(
     }
 
 
-
-    modelConfig.dbConfigs[dbId] = {
+    modelsConfigCache[dbId] ??= {} as ModelsConfigCache[string]
+    modelsConfigCache[dbId].dbConfigs = {
         dbType: 'mongo',
         models: dbConfs,
         mongooseConnection,
@@ -156,7 +165,7 @@ export async function mongoInitDb<DbNames extends string>(
         mongooseConnection,
     }
 
-    modelConfig.dbs[dbId] = {
+    modelsConfigCache[dbId].db = {
         ...typedDatabase,
         ...modelAdditionalFields,
     }

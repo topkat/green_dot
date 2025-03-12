@@ -5,10 +5,10 @@ export type GreenDotDbConfig = {
   type: 'mongo',
   // name: string // No need, we will take the name of the folder
   /** Here you can instantiate one or multiple versions of the same database with the same models */
-  dbs: DbConfigs<any>
+  dbs: DbConfigsObj<any>
 }
 
-export type DbConfigs<DbIds extends string> = {
+export type DbConfigsObj<DbIds extends string> = {
   [dbId in DbIds]: MongoConnexionConfig2
 }
 
