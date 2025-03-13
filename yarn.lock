@@ -5672,10 +5672,10 @@ topkat-utils@1.2.102:
   resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.2.102.tgz#aa0536685dd5b2f69c70b3de3e428f85566eedd6"
   integrity sha512-INflebEH58QctAxCElePe0BcXyyTx2tompG3I75xHq81xWHSkEQyk8avVcZchooxwRpuTj6T1/8yTi2tqCyLQw==
 
-topkat-utils@1.2.115:
-  version "1.2.115"
-  resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.2.115.tgz#dd904e2e8b5a274aea9e854c2dd049a29ec42a68"
-  integrity sha512-PExWf9XspATcPgf+05EpW9GAyrOcRBr+uAqAShsymHeP6PFox+0s8PNAGe9ofwM+RZtVqvx0ow6FD7e8m5TLVA==
+topkat-utils@1.2.117:
+  version "1.2.117"
+  resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.2.117.tgz#0c14b440b40a5e0282b2068413a3ea74da309f29"
+  integrity sha512-DLvwQ6ppVvyQkR/vdfHZszs5zI9NgwSuShMiFNRw+qnqeZ+SWeY+sN2frNQsTB2zf/4duCQAX7A5y/JVpP76zg==
 
 topkat-utils@1.2.96:
   version "1.2.96"
@@ -5891,17 +5891,22 @@ typescript-cp@^0.1.6:
     rimraf "^5.0.0"
     tar "^6.1.13"
 
-typescript-generic-types@1.0.2, typescript-generic-types@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.2.tgz#ebf9c85677afc1ed5ebb52a3f1df8f99e6f981c3"
-  integrity sha512-ItIf7zzZGQVmtKgtvlXyJ/Zkre7U9LF8NcJQKywfYejk5eKYQ3uYumw9C1n5MQs3Vf+qOQMBTOqlC9u3kaNr3Q==
-  dependencies:
-    bump-simple "^1.0.24"
+typescript-generic-types@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.5.tgz#be423e6c286a54140a2b00bf4b85287273a87537"
+  integrity sha512-ELLe/0JlaA8iqKCN/RwxKkTK6TPcqUdoE5jV8+63P/vRBm4Wp63sW94nkcjTS4rWMsQsQMTCKt+4sXHdBUvz2g==
 
 typescript-generic-types@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.1.tgz#cc3f245e1c509bcfd40a613d673712b92d42f7cd"
   integrity sha512-Evsf9WqHYe2syiOQCw+4evHTYeY0f+pgwlYK9xLJcq9l2Hfcf1LjhgCIzxLxeCAyo1+ypWi8rGNP+70BpaHIZQ==
+  dependencies:
+    bump-simple "^1.0.24"
+
+typescript-generic-types@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.2.tgz#ebf9c85677afc1ed5ebb52a3f1df8f99e6f981c3"
+  integrity sha512-ItIf7zzZGQVmtKgtvlXyJ/Zkre7U9LF8NcJQKywfYejk5eKYQ3uYumw9C1n5MQs3Vf+qOQMBTOqlC9u3kaNr3Q==
   dependencies:
     bump-simple "^1.0.24"
 

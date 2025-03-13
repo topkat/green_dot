@@ -4,6 +4,7 @@ import path from 'path'
 import { Definition } from '../types/core.types'
 
 import { capitalize1st } from 'topkat-utils'
+import { safeImport } from '../helpers/safeImports'
 
 type ModelNames = {
     fileNameDashCase: string;
@@ -45,7 +46,7 @@ export type ModelNames = keyof AllModels
     // GENERATED REAL TYPESCRIPT FILE
     //----------------------------------------
 
-    const { models } = await import(path.join(generatedFilePathServer, 'models.generated'))
+    const { models } = await safeImport(path.join(generatedFilePathServer, 'models.generated'))
 
     for (const [modelName, model] of Object.entries(models) as [string, Definition][]) {
 

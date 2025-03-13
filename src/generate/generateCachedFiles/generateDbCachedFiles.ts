@@ -10,7 +10,7 @@ import { Definition } from 'good-cop'
 const greenDotCacheModuleFolder = Path.resolve(__dirname, '../../cache/dbs')
 if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, 'ERROR: green_dot local cache folder for DB is not existing')
 
-
+/** This will generate a string representation of all db types in local green_dot module cache folder to be accessed in the project app with ```import { ModelTypes } from 'green_dot/db'``` */
 export async function generateDbCachedFiles(resetCache = false) {
 
   const indexFile = getNewIndexFileStructure()

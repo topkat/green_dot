@@ -1,12 +1,13 @@
 
 
-import { serverConfig } from './cache/green_dot.app.config.cache'
+import { getGreenDotConfigSync, getGreenDotConfig } from './helpers/getGreenDotConfigs'
 import { ApiOutputTypes } from './types/core.types'
 import mongoose from 'mongoose'
 import { Request, Response } from 'express'
 
 import { C, getId } from 'topkat-utils'
 
+const confSync = getGreenDotConfigSync()
 
 //----------------------------------------
 // CTX CLASS
@@ -19,7 +20,7 @@ export class CtxClass {
     /** TODO not actually working Number; 1 or 2 => verbosity */
     debugMode = false
     /** dev, prod, preprod... */
-    env = serverConfig.env
+    env = confSync ? confSync.env || process.env.NODE_ENV : process.env.NODE_ENV
     /** used to cimple check if it's a ctx for sure and not another object */
     isCtx = true as const
     /** Public Ctx means user is not logged */
@@ -116,6 +117,7 @@ export class CtxClass {
         return this.fromUser(role, permissionsOrUser, modifyActualCtx)
     }
     async addWarning() {
+        const serverConfig = await getGreenDotConfig()
         if (serverConfig.addUserWarning && serverConfig.banUser) {
             const { nbWarningLeftBeforeBan, nbWarnings } = await serverConfig.addUserWarning(this as any, { discriminator: this._id })
             if (nbWarnings >= nbWarningLeftBeforeBan) {

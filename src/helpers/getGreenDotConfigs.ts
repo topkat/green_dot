@@ -1,26 +1,37 @@
-import { C, objEntries } from 'topkat-utils'
+import { C, objEntries, mergeDeepOverrideArrays } from 'topkat-utils'
 import { GDpathConfig, getProjectPaths } from './getProjectPaths'
-import { GreenDotDbConfig, GreenDotConfig, GreenDotAppConfig } from '../types/core.types'
+import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types'
+import { safeImport } from './safeImports'
+import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/greenDotConfig.types'
 
 //  ╦╗╔╦ ╔══╗ ═╦═ ╦╗ ╔   ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
 //  ║╚╝║ ╠══╣  ║  ║╚╗║   ║    ║  ║ ║╚╗║ ╠═    ║  ║ ═╦
 //  ╩  ╩ ╩  ╩ ═╩═ ╩ ╚╩   ╚══╝ ╚══╝ ╩ ╚╩ ╩    ═╩═ ╚══╝
-let greenDotConfigsCache: GreenDotConfig & GDpathConfig
+let greenDotConfigsCache: GreenDotConfigWithDefaults & GDpathConfig
 
 export async function getGreenDotConfig(resetCache = false) {
   try {
-
-    if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
-      const { mainConfig } = await getProjectPaths()
-      const conf = (await import(mainConfig.path))?.default as GreenDotConfig
-      greenDotConfigsCache = { ...conf, ...mainConfig }
-    }
-
+    await initGDconfigCache(resetCache)
     return greenDotConfigsCache
-
   } catch (err) {
     C.error(err)
     throw 'ERROR: There is probably a type error on your green_dot.config.ts file. Please check everything works as expected and read carrefully above log'
+  }
+}
+
+/** /!\ use carrefully since it may not be instanciated */
+export function getGreenDotConfigSync(resetCache = false): (typeof greenDotConfigsCache) | void {
+  initGDconfigCache(resetCache)
+  return greenDotConfigsCache
+}
+
+
+async function initGDconfigCache(resetCache) {
+  if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
+    const { mainConfig: mainConfigPaths } = await getProjectPaths()
+    const conf = (await safeImport(mainConfigPaths.path))?.default as GreenDotConfig
+    const confWithDefaults = mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf)
+    greenDotConfigsCache = { ...confWithDefaults, ...mainConfigPaths }
   }
 }
 
@@ -38,7 +49,7 @@ export async function getGreenDotDbConfigs(resetCache = false) {
 
       for (const [name, dbPath] of objEntries(dbConfigPaths)) {
         pathNameErrExtraInfos = dbPath.path
-        const conf = (await import(dbPath.path))?.default as GreenDotDbConfig
+        const conf = (await safeImport(dbPath.path))?.default as GreenDotDbConfig
         greenDotDbConfigsCache.push({ ...conf, name, ...dbPath })
       }
     }
@@ -68,7 +79,7 @@ export async function getGreenDotAppConfigs(resetCache = false) {
 
       for (const [name, appConfigPath] of objEntries(appConfigPaths)) {
         pathNameErrExtraInfos = appConfigPath.path
-        const conf = (await import(appConfigPath.path))?.default as GreenDotAppConfig
+        const conf = (await safeImport(appConfigPath.path))?.default as GreenDotAppConfig
         greenDotAppConfigsCache.push({ ...conf, name, ...appConfigPath })
       }
     }

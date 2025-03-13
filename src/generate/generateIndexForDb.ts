@@ -5,11 +5,10 @@ import { getProjectPaths } from '../helpers/getProjectPaths'
 import glob from 'fast-glob'
 import { C, capitalize1st, objEntries } from 'topkat-utils'
 
-
-
+// match .model.ts or .dao.ts files with first capture group to model name
 const modelOrDaoRegexp = /[/\\]([^/\\]+)\.(model|dao)\.ts$/
 
-
+/** Generates index.generated.ts files in client database folder */
 export async function generateIndexForProjectDb() {
   const { dbConfigs } = await getProjectPaths()
 

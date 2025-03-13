@@ -66,13 +66,13 @@ commands[_command].execute(rest)
 
 async function build(props) {
 
-  const time = perfTimer()
+  const build = newBuild()
 
-  await generateIndexForProjectDb()
+  await build.step(`Generating indexes for database`, generateIndexForProjectDb)
 
-  await generateDbCachedFiles()
+  await build.step(`Generating types for database`, generateDbCachedFiles)
 
-  C.success(`Successfully built green_dot project in ${time.end()}`)
+  build.end(`Successfully built green_dot project`)
 
 }
 
@@ -96,4 +96,30 @@ function generate(props) {
 }
 
 
+//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
+
+function newBuild() {
+  const time = perfTimer()
+  return {
+    _stepNb: 1,
+    _startTime: Date.now(),
+    async step(title: string, callback: FunctionGeneric) {
+      const t2 = perfTimer()
+      C.line(`${this._stepNb}) ${title}`, 50)
+      try {
+        await callback()
+        C.log(C.dim(`\nStep 2 took ${t2.end()}`))
+        this._stepNb++
+      } catch (err) {
+        C.error(false, `Step ${this._stepNb} ERROR`)
+        throw err
+      }
+    },
+    end(text: string) {
+      C.success(`${text} in ${time.end()}`)
+    }
+  }
+}
