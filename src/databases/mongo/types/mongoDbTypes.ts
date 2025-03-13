@@ -1,4 +1,4 @@
-import { DaoHookShared, DaoHookSharedParsed, DaoShared, DaoSharedParsed, daoHookNamesShared, DaoGenericMethods, MaskHook, ModelReadWrite } from '../../../types/core.types'
+import { DaoHookShared, DaoHookSharedParsed, DaoShared, DaoSharedParsed, daoHookNamesShared, DaoGenericMethods, MaskHook } from '../../../types/core.types'
 import mongoose from 'mongoose'
 import { AsFilter, RequestConfigGetOne, RequestConfigRead, RequestConfigWrite, PopulateConfig, SortConfig } from './mongoDaoTypes'
 
@@ -25,7 +25,7 @@ export type LocalConfigParsed = {
 } & (RequestConfigGetOne<any> | RequestConfigRead<any> | RequestConfigWrite<any>)
 
 type MongoDaoShared<
-    ModelTypes extends ModelReadWrite,
+    ModelType extends Record<string, any>,
     DaoConf extends DaoHookShared | DaoHookSharedParsed
 > = NoExtraProperties<{
     /** configs for mongoose models */
@@ -37,24 +37,24 @@ type MongoDaoShared<
     /** Allow a path to match a certain pattern, please return string in format '* /* /blah...' (without white spaces)
     * TODO allow also type string
     */
-    mask?: NoExtraProperties<DaoConf & MaskHook<ModelTypes['Read']>>[]
+    mask?: NoExtraProperties<DaoConf & MaskHook<ModelType>>[]
     /** Allow to filter allowed data when fields contains a certain value or on custom code
      * * Use a function to modify exisitng filter
      * * OR use a filter object that is going to be merged with actual filter with precedence
     */
     filter?: (DaoConf & {
-        filter: (ctx: Ctx & LocalConfigParsed, filter: AsFilter<ModelTypes['Read']>) => void | Promise<void> | ObjectGeneric | Promise<ObjectGeneric> |
-            AsFilter<ModelTypes['Read']>
+        filter: (ctx: Ctx & LocalConfigParsed, filter: AsFilter<ModelType>) => void | Promise<void> | ObjectGeneric | Promise<ObjectGeneric> |
+            AsFilter<ModelType>
     })[]
     /** configure populate for all requests */
-    populate?: PopulateConfig<ModelTypes['Read']>[]
+    populate?: PopulateConfig<ModelType>[]
     /** configure sorting for all requests */
-    sort?: SortConfig<ModelTypes['Read']>
+    sort?: SortConfig<ModelType>
 }>
 
-export type MongoDao<ModelTypes extends ModelReadWrite> = DaoShared & Partial<MongoDaoShared<ModelTypes, DaoHookShared>> & { type: 'mongo' }
+export type MongoDao<ModelType extends Record<string, any>> = DaoShared & Partial<MongoDaoShared<ModelType, DaoHookShared>> & { type: 'mongo' }
 
-export type MongoDaoParsed<ModelTypes extends ModelReadWrite> = DaoSharedParsed & MongoDaoShared<ModelTypes, DaoHookSharedParsed> & { type: 'mongo' }
+export type MongoDaoParsed<ModelType extends Record<string, any>> = DaoSharedParsed & MongoDaoShared<ModelType, DaoHookSharedParsed> & { type: 'mongo' }
 
 export type MongoHooks = { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> } }
 

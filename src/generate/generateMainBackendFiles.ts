@@ -9,7 +9,7 @@ import { ServiceClean, RouteFromSevicesConfigForGenerateSdk } from '../types/cor
 import generateAllRouteFile from './generateAllRoutesFile'
 import { generateSDKconfigForServices } from './generateSDK/generateSDKconfigForServices'
 import { getDaoRouteDescriptionFromDaoConfigs } from './helpers/getDaoRouteDescriptionFromDaoConfigs'
-import { getAllTargetRolesForService } from '../databases/helpers/getAllTargetRolesForService'
+import { getAllTargetRolesForService } from './helpers/getAllTargetRolesForService'
 import { MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
 import { parseForClause } from '../security/helpers/parseForClause'
 import { generateSwaggerDoc } from './generateSDK/generateSwaggerDoc'

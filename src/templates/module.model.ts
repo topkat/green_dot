@@ -1,4 +1,4 @@
-import { _ } from '../definitions'
+import { _ } from 'green_dot'
 
 const myNewModule = _.mongoModel([], {
 

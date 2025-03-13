@@ -1,10 +1,8 @@
 #!/usr/bin/env ts-node
 
-import Path from 'path'
-import fs from 'fs-extra'
+
 import { app, Command } from 'command-line-application'
 import { C, objEntries, randomItemInArray, perfTimer } from 'topkat-utils'
-import { getProjectPaths } from '../databases/helpers/getProjectPaths'
 import { generateIndexForProjectDb } from '../generate/generateIndexForDb'
 import { generateDbCachedFiles, generateDbIndexFile } from '../generate/generateCachedFiles/generateDbCachedFiles'
 

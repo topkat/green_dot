@@ -2,14 +2,14 @@
 
 import { AllModels, DbIds } from './cache/dbs/index.generated'
 import { error } from './core.error'
-import { getGreenDotDbConfigs } from './databases/helpers/getGreenDotConfigs'
+import { getGreenDotDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
 import { ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
 import { getDaoParsed } from './databases/getDaoParsed'
 import { registerModel } from './databases/models'
-import { getGeneratedIndexForDatabase } from './databases/helpers/getProjectGeneratedIndexes'
+import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectDatabase'
 
 
 //  ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
@@ -44,7 +44,8 @@ export async function initDbs(resetCache: boolean = false) {
 
   for (const { dbs: connexionConfigs, name, type } of dbConfigs) {
 
-    const { models, daos } = await getGeneratedIndexForDatabase(name)
+    const models = await getProjectDatabaseModelsForDbName(name, resetCache)
+    const daos = await getProjectDatabaseDaosForDbName(name, resetCache)
 
     if (type === 'mongo') {
 
@@ -81,7 +82,7 @@ export async function initDbs(resetCache: boolean = false) {
 }
 
 
-//  ╔═╗  ╔═╗ 
+//  ╔═╗  ╔═╗
 //  ║  ║ ╠═╩╗
 //  ╚══╝ ╚══╝
 
@@ -90,7 +91,7 @@ export async function initDbs(resetCache: boolean = false) {
  */
 export const db = new Proxy({} as DbType, {
   // proxy pattern here is a workaround to ensure user always get the latest db cache version
-  // on server start, we need to await initDb to ensure the cache always has a value and can 
+  // on server start, we need to await initDb to ensure the cache always has a value and can
   // be called anywhere in the app
   get(_, prop: string) {
     if (!cache[prop]) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
@@ -99,7 +100,7 @@ export const db = new Proxy({} as DbType, {
 })
 
 //  ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗
-//  ║    ╠══╣ ║    ╠══╣ ╠═  
+//  ║    ╠══╣ ║    ╠══╣ ╠═
 //  ╚══╝ ╩  ╩ ╚══╝ ╩  ╩ ╚══╝
 //
 //----------------------------------------

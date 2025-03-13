@@ -1,17 +1,13 @@
 
 import Path from 'path'
 import fs from 'fs-extra'
-import { getGreenDotDbConfigs, getGreenDotConfig } from "../../databases/helpers/getGreenDotConfigs"
-import { getGeneratedIndexForDatabase } from "../../databases/helpers/getProjectGeneratedIndexes"
+import { getGreenDotDbConfigs, getGreenDotConfig } from '../../helpers/getGreenDotConfigs'
+import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectDatabase'
 import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
 
 
-const greenDotCacheModuleFolder = Path.relative(__dirname, '../../cache/dbs')
-
-console.log(`greenDotCacheModuleFolder`, greenDotCacheModuleFolder)
-console.log(`__dirname`, __dirname)
-
+const greenDotCacheModuleFolder = Path.resolve(__dirname, '../../cache/dbs')
 if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, 'ERROR: green_dot local cache folder for DB is not existing')
 
 
@@ -23,7 +19,7 @@ export async function generateDbCachedFiles(resetCache = false) {
 
   for (const { name: dbName, dbs } of dbConfigs) {
 
-    const { models } = await getGeneratedIndexForDatabase(dbName)
+    const models = await getProjectDatabaseModelsForDbName(dbName, resetCache)
 
     let modelTypeFileContent = `\n\n`
     const modelNames = Object.keys(models)
@@ -58,9 +54,11 @@ export async function generateDbCachedFiles(resetCache = false) {
 
     await fs.outputFile(Path.join(greenDotCacheModuleFolder, dbName + '.modelTypes.generated.ts'), modelTypeFileContent)
 
+    C.success(`Successfully generated ${dbName + '.modelTypes.generated.ts'}`)
+
 
     //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═╗  ╔═╗    ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗   ═╦═ ╦╗ ╔ ╔═╗  ╔══╗ ═╗╔═
-    //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ║  ║ ╠═╩╗   ║    ╠══╣ ║    ╠══╣ ╠═      ║  ║╚╗║ ║  ║ ╠═    ╠╣ 
+    //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ║  ║ ╠═╩╗   ║    ╠══╣ ║    ╠══╣ ╠═      ║  ║╚╗║ ║  ║ ╠═    ╠╣
     //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ╚══╝ ╚══╝   ╚══╝ ╩  ╩ ╚══╝ ╩  ╩ ╚══╝   ═╩═ ╩ ╚╩ ╚══╝ ╚══╝ ═╝╚═
 
     indexFile.imports += `import { AllModels as ${dbNameCapital}AllModels } from './${dbName}.modelTypes.generated.ts'\n`
@@ -83,18 +81,20 @@ ${indexFile.imports}
 
 type AllModels = ${indexFile.allModels.length ? `{
     ${indexFile.allModels}
-}`: 'Record<string, any>'}
+}` : 'Record<string, any>'}
 
 type DbIds = ${indexFile.dbIds.length ? `{
     ${indexFile.dbIds}
-}`: 'Record<string, any>'}
+}` : 'Record<string, any>'}
 
 type MainDbName = ${mainConfig.defaultDatabaseName && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
 
 export { AllModels, DbIds, MainDbName }
 `
 
-  await fs.outputFile(Path.join(greenDotCacheModuleFolder, name + '.modelTypes.generated.ts'), indexFileContent)
+  await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'index.generated.ts'), indexFileContent)
+
+  C.success(`Successfully generated local cache/dbs/index.generated.ts`)
 }
 
 
@@ -106,6 +106,6 @@ function getNewIndexFileStructure() {
   return {
     imports: '',
     allModels: '',
-    dbIds: 'Record<string, any>',
+    dbIds: '',
   }
 }

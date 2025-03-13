@@ -1,13 +1,13 @@
 
 
-import { MongoDao } from 'shared/green_dot'
-import { AllModels } from 'bangk-db'
+import { MongoDao } from 'green_dot'
+import myNewModuleModel from './myNewModule.model'
 
 const dao = {
     type: 'mongo',
     expose: [],
     filter: [],
     mask: [],
-} satisfies MongoDao<AllModels['myNewModule']>
+} satisfies MongoDao<typeof myNewModuleModel.tsType>
 
 export default dao

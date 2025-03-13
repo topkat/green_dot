@@ -1,13 +1,13 @@
 
 
 import fs from 'fs-extra'
-import { getProjectPaths } from '../databases/helpers/getProjectPaths'
+import { getProjectPaths } from '../helpers/getProjectPaths'
 import glob from 'fast-glob'
 import { C, capitalize1st, objEntries } from 'topkat-utils'
 
 
 
-const modelOrDaoRegexp = /\/([^\/]+)\.(model|dao)\.ts$/
+const modelOrDaoRegexp = /[/\\]([^/\\]+)\.(model|dao)\.ts$/
 
 
 export async function generateIndexForProjectDb() {
@@ -19,6 +19,7 @@ export async function generateIndexForProjectDb() {
       const allFiles = await glob.async('**/*.@(model|dao).ts', {
         cwd: folderPath,
         onlyFiles: true,
+        absolute: true,
       })
 
       let imports = ''
@@ -28,7 +29,7 @@ export async function generateIndexForProjectDb() {
 
       for (const file of allFiles) {
         const match = file.match(modelOrDaoRegexp) as [any, string, 'dao' | 'model']
-        if (match) {
+        if (match && ! /[/\\]default\.dao\.ts/.test(file)) {
 
           const [, moduleName, moduleType] = match
           const moduleNameCapital = capitalize1st(moduleName)
@@ -52,7 +53,7 @@ export async function generateIndexForProjectDb() {
 
       await fs.outputFile(generatedIndexPath, fileContent, 'utf-8')
 
-      C.success(`index.generated.ts successfully generated for ${dbName}`)
+      C.success(`Successfully generated index for ${dbName} database`)
 
     } catch (err) {
       C.error(err)

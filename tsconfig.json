@@ -18,6 +18,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
       "*": [
         "./node_modules/*"

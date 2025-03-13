@@ -31,7 +31,7 @@ export async function getProjectPaths(resetCache = false) {
     exists = await fs.exists(mainConfigPath)
     if (!exists) throw C.error(false, 'green_dot.config.ts NOT FOUND. Please ensure you run the command from a valid green_dot project')
 
-    const rootPath = mainConfigPath.replace(/\/[^\/]*$/, '')
+    const rootPath = mainConfigPath.replace(/[/\\][^/\\]*$/, '')
 
     // FIND ALL GREEN DOT CONFIGS
 
@@ -39,9 +39,8 @@ export async function getProjectPaths(resetCache = false) {
       cwd: rootPath,
       ignore: ['node_modules/**', '**/.*/**'],
       onlyFiles: true,
+      absolute: true,
     })
-
-
 
     const dbConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.db.config'))
@@ -50,21 +49,6 @@ export async function getProjectPaths(resetCache = false) {
     const appConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.app.config'))
       .reduce(configFilePathReducer, {} as PathConfObj)
-
-    // GENERATE INDEXES FOR FILES
-
-    console.log('allFiles', JSON.stringify(allFiles, null, 2))
-    // .forEach(filePath => {
-    //     if (!ignore.some(ignorePattern => filePath.includes(ignorePattern))) allFiles.push(filePath)
-    //   })
-
-
-    console.log(`exists `, exists)
-    console.timeEnd('a')
-    console.time('b')
-    const aa = await import(Path.join(process.cwd(), 'green_dot.config.ts'))
-    console.timeEnd('b')
-    console.log('aa ', JSON.stringify(aa, null, 2))
 
     greenDotPathsCache = {
       mainConfig: { path: mainConfigPath, folderPath: rootPath },
@@ -83,10 +67,10 @@ export async function getProjectPaths(resetCache = false) {
 
 function configFilePathReducer(o: PathConfObj, path: string) {
   return {
-    ...o, [path.replace(/\/([^\/]+)\/green_dot.*?config/, '$1')]: {
+    ...o, [path.replace(/.*[/\\]([^/\\]+?)(?:Db|-db)?[/\\]green_dot.*?config\.ts$/, '$1')]: {
       path: path,
-      folderPath: path.replace(/\/green_dot.[^\/]*?config[^\/]*?$/, ''),
-      generatedIndexPath: path.replace(/\/green_dot.[^\/]*?config[^\/]*?$/, '/index.generated.ts')
+      folderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, ''),
+      generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts')
     }
   }
 }
