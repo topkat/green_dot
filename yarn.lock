@@ -5891,10 +5891,10 @@ typescript-cp@^0.1.6:
     rimraf "^5.0.0"
     tar "^6.1.13"
 
-typescript-generic-types@1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.5.tgz#be423e6c286a54140a2b00bf4b85287273a87537"
-  integrity sha512-ELLe/0JlaA8iqKCN/RwxKkTK6TPcqUdoE5jV8+63P/vRBm4Wp63sW94nkcjTS4rWMsQsQMTCKt+4sXHdBUvz2g==
+typescript-generic-types@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.6.tgz#a3aa0f6d3dec7fc22273c7b4e61ee2079a6164e7"
+  integrity sha512-cF1T4/XMwU4MTGQld7nEqu3TeT/KHewedEalvBo1x4Vgt2rSBitT+INrZ+AUqhpqDSptQ7F47ChVuqoEqa6Jlw==
 
 typescript-generic-types@^1.0.0:
   version "1.0.1"

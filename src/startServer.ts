@@ -10,7 +10,6 @@ import multer from 'multer'
 import event from './event'
 import { newSystemCtx } from './ctx'
 import { GreenDotAppConfig } from './types/core.types'
-import clientAppConfig from './cache/green_dot.app.config.cache'
 import { registerModules } from './registerModules/registerModules'
 import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
 import { initTelegramBot } from './services/sendViaTelegram'
@@ -20,6 +19,7 @@ import { generateLoginMw } from './security/login.middleware'
 import { rateLimiterMiddleware, rateLimiter as rateLimiterSvc } from './security/serviceRouteRateLimiter'
 import { logRouteInfos } from './registerModules/apiMiddlewares/logRouteInfo.middleware'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
+import { getGreenDotConfig } from './helpers/getGreenDotConfigs'
 
 const { DISPLAY_NO_BUILD_WARNING } = ENV()
 
@@ -27,10 +27,8 @@ const { DISPLAY_NO_BUILD_WARNING } = ENV()
 const app = express()
 dotenv.config()
 
-const dbCache = {} as Awaited<ReturnType<typeof clientAppConfig.serverConfig.dbConfigs>>
 
 export async function startServer(
-    serverConfig: GreenDotAppConfig,
     allServices,
     allErrs,
     isMaster = true,
@@ -38,6 +36,11 @@ export async function startServer(
     loginHook: typeof clientAppConfig.serverConfig['onLogin']
 ) {
     try {
+
+        // TODO Make sure that all config files are cached here, maybe make a special function
+
+        const serverConfig = await getGreenDotConfig()
+
         Object.assign(clientAppConfig.serverConfig, serverConfig, { onLogin: loginHook }) // shall not remove reference of obj
 
         // INTRO
@@ -47,18 +50,6 @@ export async function startServer(
             C.log(C.primary(`Env: ${serverConfig.env} | Schedules: ${serverConfig.enableSchedules ? '✓' : '✖️'} | Seeds: ${serverConfig.enableSeed ? '✓' : '✖️'}\n`))
             if (DISPLAY_NO_BUILD_WARNING) C.error(false, `✓ LOCAL BUILD NOT RAN`)
             else C.log(C.primary(`✓ BUILD ${serverConfig.appName}`))
-        }
-
-        // ABOUT DB CACHE
-        // this is useful because initDB needs serverConfig when initializing but we don't want to initialize DB everytime we access it
-        // so that's a DX friendly way to do it
-        Object.assign(dbCache, await clientAppConfig.serverConfig.dbConfigs())
-        clientAppConfig.serverConfig.dbConfigs = serverConfig.dbConfigs = async () => dbCache
-
-        for (const [dbName, obj] of Object.entries(dbCache)) {
-            for (const dbId in obj) {
-                dbIdsToDbNames[dbId] = dbName
-            }
         }
 
         clientAppConfig.errors = allErrs

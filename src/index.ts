@@ -1,15 +1,13 @@
 
 import 'typescript-generic-types'
+import './types/global.types'
 import events from './event'
 import sendEmail from './services/sendEmail'
-import { error } from './core.error'
 import { newSystemCtx, newPublicCtx } from './ctx'
 import coreTestFlow from './tests/core.test-flows'
 import { unPopulate } from './databases/mongo/services/populateService'
 import { service } from './service'
 
-
-export const allCoreErrors = error
 export const coreTestFlows = coreTestFlow
 
 export const core$ = {
@@ -25,6 +23,7 @@ export const core$ = {
     svc: service,
 }
 
+export { throwError, type RegisterErrorType } from './core.error'
 export { unPopulate } from './databases/mongo/services/populateService'
 export * from './startServer'
 export * from './generate/generateMainBackendFiles'

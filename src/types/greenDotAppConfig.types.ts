@@ -2,6 +2,7 @@
 
 import { TopkatUtilConfig } from 'topkat-utils/src/config'
 import { ServiceClean } from './services.types'
+import { Request, Response } from 'express'
 
 //----------------------------------------
 // GENERAL CONFIG
@@ -22,6 +23,9 @@ export type GreenDotAppConfig<
       token: string
       role?: RolesAll
       permissions?: Partial<Record<AllPermissions, any>>
+      // TODO
+      /** Add IPs to whitelist, all other IPs will be non-authorized to authenticate with apiKey */
+      ipWhitelist?: MaybeArray<string>
     } // /!\ Used in rest-test package
   }
   smtp: {
@@ -42,6 +46,8 @@ export type GreenDotAppConfig<
   enableSeed: boolean
   defaultPaginationLimit?: number
   additionalServices?: Record<string, ServiceClean<any>>
+  /** This is where you put the logic when you want a custom authentication logic: */
+  customLoginFn?(req: Request, res: Response): CtxUser
   /** This will be executed periodically to get blacklist IPs from the application */
   beforeApiRequest?(ctx: Ctx, extraInfos: { discriminator: string, route: string }): any
   awsConfig?: {

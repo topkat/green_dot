@@ -93,7 +93,6 @@ export type GreenDotConfig<
 type RequiredFields = {
   env: true
   'connexion.customWarningAndBanUserConfig': true
-  'connexion.getUserFromCtx': true
   'connexion.customWarningAndBanUserConfig.nbWarningsBeforeBan': true
   'connexion.customWarningAndBanUserConfig.blackListCheckInterval': true
   'connexion.customWarningAndBanUserConfig.blackListBanMinutes': true
@@ -111,13 +110,10 @@ export type GreenDotConfigWithDefaults = AddRequiredFieldsToObject<GreenDotConfi
 export const greenDotConfigDefaults = {
   env: process.env.NODE_ENV as Env,
   connexion: {
-    getUserFromCtx() { },
     customWarningAndBanUserConfig: {
       blackListBanMinutes: [15, 120, 12 * 60],
       blackListCheckInterval: process.env.NODE_ENV === 'test' ? 1000 : 3 * 60 * 1000,
       nbWarningsBeforeBan: 3,
-      addUserWarning() { },
-      banUser() { },
     }
   }
 

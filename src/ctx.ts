@@ -6,6 +6,7 @@ import mongoose from 'mongoose'
 import { Request, Response } from 'express'
 
 import { C, getId } from 'topkat-utils'
+import { throwError } from './core.error'
 
 const confSync = getGreenDotConfigSync()
 
@@ -104,6 +105,25 @@ export class CtxClass {
 
         return withGodMode(this)
     }
+    /** Cleanly throw an error, associating all ctx infos to it (user._id, aplication, service name, route...) */
+    throw = new Proxy({} as { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }, {
+        /** This will inject Ctx (this) as first param of error */
+        get(_, p) {
+
+            const errorFn = throwError[p] as GenericFunction
+            if (errorFn instanceof Function) {
+                return function (...args) {
+                    return errorFn.apply(throwError, [
+                        this,
+                        ...args
+                    ])
+                }
+            }
+            return throwError[p]
+
+
+        },
+    })
     //----------------------------------------
     // METHODS
     //----------------------------------------
@@ -189,6 +209,8 @@ export class CtxClass {
     }
 
 }
+
+
 
 //----------------------------------------
 // TYPE GLOBAL
