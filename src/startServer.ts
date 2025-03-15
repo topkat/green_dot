@@ -17,7 +17,7 @@ import { swaggerDocInit } from './documentation/swaggerDoc.init'
 import { generateLoginMw } from './security/login.middleware'
 import { rateLimiterMiddleware, rateLimiter as rateLimiterSvc } from './security/serviceRouteRateLimiter'
 import { logRouteInfos } from './registerModules/apiMiddlewares/logRouteInfo.middleware'
-import { getMainConfig, getActiveAppConfig, initGreenDotConfigs } from './helpers/getGreenDotConfigs'
+import { getMainConfig, getActiveAppConfig } from './helpers/getGreenDotConfigs'
 
 dotenv.config()
 
@@ -29,8 +29,6 @@ export async function startServer(
     isMaster = true,
 ) {
     try {
-        await initGreenDotConfigs({ appName })
-
         const mainConfig = await getMainConfig()
         const appConfig = await getActiveAppConfig()
 
@@ -147,7 +145,7 @@ export async function startServer(
             if (!mainConfig.isProdEnv) {
                 await generateMainBackendFiles()
                 try {
-                    const swaggerDoc = await import('./cache/swaggerDoc.generated.json')
+                    const swaggerDoc = await import(`./cache/${appName}.swaggerDoc.generated.json`)
                     swaggerDocInit(app, swaggerDoc, appConfig.serverLiveUrl)
                 } catch (err) {
                     C.error(false, `Swagger doc could not be generated and initiated`)

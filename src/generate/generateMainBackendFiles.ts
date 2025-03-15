@@ -3,28 +3,30 @@
 import 'typescript-generic-types' // imported here because this file is required independently in a build context
 import path from 'path'
 import fs from 'fs-extra'
-import { C, urlPathJoin, kebabCase, camelCaseToWords, objEntries } from 'topkat-utils'
+import { C, urlPathJoin, kebabCase, camelCaseToWords, perfTimer } from 'topkat-utils'
 
 import { ServiceClean, RouteFromSevicesConfigForGenerateSdk } from '../types/core.types'
 import generateAllRouteFile from './generateAllRoutesFile'
 import { generateSDKconfigForServices } from './generateSDK/generateSDKconfigForServices'
 import { getDaoRouteDescriptionFromDaoConfigs } from './helpers/getDaoRouteDescriptionFromDaoConfigs'
 import { getAllTargetRolesForService } from './helpers/getAllTargetRolesForService'
-import { MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
 import { parseForClause } from '../security/helpers/parseForClause'
-import { generateSwaggerDoc } from './generateSDK/generateSwaggerDoc'
+import { generateSwaggerDoc } from './generateSwaggerDoc'
+import { getActiveAppConfig, getMainConfig } from '../helpers/getGreenDotConfigs'
 import { createDaoRouteConfigPerPlatformForSdk, createServiceRouteConfigPerPlatformForSdk } from './generateSDK/generateSDKgetRouteConfigs'
-import { registerModels } from '../registerModules/registerModels'
 
 export async function generateMainBackendFiles() {
+
+    const time = perfTimer()
 
     const allRoutes: string[] = []
     const serviceRouteConfig = {} as RouteFromSevicesConfigForGenerateSdk
 
-    await registerModels()
-
     const { allDaoRoutes } = await getDaoRouteDescriptionFromDaoConfigs()
     allRoutes.push(...Object.values(allDaoRoutes).flat())
+
+    const mainConfig = await getMainConfig()
+    const appConfig = await getActiveAppConfig()
 
     //----------------------------------------
     // SERVICES API
@@ -41,11 +43,11 @@ export async function generateMainBackendFiles() {
 
     const { default: servicesGenerated } = await import(generatedServicePath)
 
-    for (const svc of Object.values(serverConfig.additionalServices)) {
+    for (const svc of Object.values(appConfig.additionalServices)) {
         svc._isSharedService = true
     }
 
-    const allServices = { ...servicesGenerated, ...(serverConfig.additionalServices || {}) }
+    const allServices = { ...servicesGenerated, ...(appConfig.additionalServices || {}) }
 
     for (const services of Object.values(allServices)) {
         if (services && typeof services === 'object' && Object.keys(services)) {
@@ -54,9 +56,9 @@ export async function generateMainBackendFiles() {
                     const realRoute = service?.route ? Array.isArray(service?.route) ? service?.route[1] : service?.route : kebabCase(camelCaseToWords(serviceName))
                     const rte = '/' + urlPathJoin(realRoute)
                     if (service.maskInSdk !== true) allRoutes.push(rte)
-                    const allRoles = getAllTargetRolesForService(serverConfig.allRoles, service.for)
+                    const allRoles = getAllTargetRolesForService(mainConfig.allRoles, service.for)
                     for (const role of allRoles) {
-                        const platform = serverConfig.sdkNameForRole[role]
+                        const platform = mainConfig.generateSdkConfig.sdkNameForRole[role] || 'main'
                         serviceRouteConfig[platform] ??= {}
                         const forParsed = parseForClause(service.for || [])
                         serviceRouteConfig[platform][realRoute] = {
@@ -94,4 +96,6 @@ export async function generateMainBackendFiles() {
     //----------------------------------------
     await generateSwaggerDoc(daoRoutesObject, serviceRouteObject)
     C.log(C.primary(`✓ Swagger doc generated`))
+
+    C.log(C.dim('-> Generated in: ' + time.end()))
 }

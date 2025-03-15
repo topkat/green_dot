@@ -3065,10 +3065,10 @@ good-cop@1.2.10:
     "@types/mongoose" "^5.11.97"
     topkat-utils "^1.2.61"
 
-good-cop@1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/good-cop/-/good-cop-1.3.4.tgz#7c3bf6bf3b0514bee1070b6f7da4c7b1c91f8e16"
-  integrity sha512-iNGROYeWkqSGox+UlT5BhYq9S5dcziL+V1Dq678nv5Oj56YT73707RMTPTn0K9nMQl+AWMheKOlTJ2IQdauU0w==
+good-cop@1.3.5:
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/good-cop/-/good-cop-1.3.5.tgz#5388e10f0a9245aa753304e9990bd61b95d4c830"
+  integrity sha512-+BZCQI5X4DOPY7YQTy0vAYd7ouh25X6n4D3AuloEuXzTwBUpc36bzLtGAln3m38JGUiVrj5X3XAmel7nTtlORQ==
   dependencies:
     "@types/mongoose" "^5.11.97"
     topkat-utils "^1.2.105"

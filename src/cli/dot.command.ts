@@ -6,6 +6,7 @@ import { C, objEntries, randomItemInArray } from 'topkat-utils'
 
 import { buildCommand } from './build.command'
 import { generateIndexForDbCachedFiles } from './build/generateIndexForDbCachedFiles'
+import { initGreenDotConfigs } from '../helpers/getGreenDotConfigs'
 
 
 //  ╦  ╦ ╔══╗ ╔══╗ ╔═══ ═╦═ ╔══╗ ╦╗ ╔
@@ -30,6 +31,10 @@ const commands = {
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
     execute: generate,
+  },
+  start: {
+    description: '',
+    execute: start,
   },
   // dev: {
   //   description: 'Start a project in dev mode with hot reload',
@@ -73,5 +78,11 @@ async function clean(props) {
 }
 
 function generate(props) {
+  C.success('GENERATE' + props)
+}
+
+async function start(props) {
+  const appName = 'TODO'
+  await initGreenDotConfigs({ appName })
   C.success('GENERATE' + props)
 }

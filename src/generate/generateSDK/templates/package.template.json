@@ -1,11 +1,11 @@
 {
-    "name": "@bangk/%%app-name%%-sdk",
+    "name": "%%packageNamePrefix%%%%app-name%%-sdk",
     "version": "%%packageVersion%%",
     "license": "ISC",
     "main": "api.service.cjs",
     "types": "api.service.d.ts",
     "publishConfig": {
-        "access": "public",
+        "access": "%%packageNameAccess%%",
         "registry": "https://registry.npmjs.org/"
     },
     "exports": {

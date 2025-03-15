@@ -5,9 +5,9 @@ import { mongoDaoREADMethodsFull } from '../../databases/mongo/types/mongoDaoTyp
 import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator'
 import { SDKprefetchGenerator } from './generators/SDKprefetch.generator'
 import { SDKdeferGenerator } from './generators/SDKdefer.generator'
-import { env, generateSdkConfigDefault, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
+import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
 import { RouteConfigPerPlatforms } from './generateSDKgetRouteConfigs'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 
 
@@ -15,15 +15,10 @@ export async function generateSDKconfigForDaos(routeConfig: RouteConfigPerPlatfo
 
     if (env === 'production' || env === 'preprod') return
 
-    const { platformForPermission } = serverConfig
-    const generateSdkConfig = { ...generateSdkConfigDefault, ...(serverConfig.generateSdkConfig || {}) }
-
-
-    const platforms = Object.values(platformForPermission || {})
+    const mainConfig = await getMainConfig()
+    const { generateSdkConfig, platforms } = mainConfig
 
     const sdkParams = {} as GenerateSDKparamsForDao
-
-
 
     for (const platform of platforms) {
 

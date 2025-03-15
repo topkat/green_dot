@@ -4,7 +4,7 @@ import { C, mergeDeepOverrideArrays } from 'topkat-utils'
 import { GDpathConfig, GDpathConfigWithIndex, getProjectPaths } from './getProjectPaths'
 import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types'
 import { safeImport } from './safeImports'
-import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/greenDotConfig.types'
+import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
 import { throwError } from '../core.error'
 import { getActiveAppName, getActiveDbName, initActiveAppName, initActiveDbName } from './getAndInitActiveAppAndDatabaseName'
 
@@ -40,7 +40,7 @@ async function initMainConfigCache(resetCache = false) {
     const { mainConfig: mainConfigPaths } = await getProjectPaths()
     const conf = (await safeImport(mainConfigPaths.path))?.default as GreenDotConfig
     const confWithDefaults = mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf)
-    greenDotConfigsCache = { ...confWithDefaults, ...mainConfigPaths }
+    greenDotConfigsCache = { ...confWithDefaults, ...mainConfigPaths, platforms: Object.values(confWithDefaults.generateSdkConfig.sdkNameForRole || 'default') }
   }
 }
 

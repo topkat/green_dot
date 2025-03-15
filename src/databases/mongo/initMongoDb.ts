@@ -53,7 +53,7 @@ export async function mongoInitDb<DbIds extends string>(
     daoConfigsParsed: { [k: string]: MongoDaoParsed<any> },
     modelsGenerated: { [modelName: string]: Definition<any, 'def', 'def', false> }
 ) {
-    const modelNames = Object.keys(modelsGenerated) as DbIds[]
+
     const { connexionString, mongooseOptions } = connectionConfig as { firstLevelDb: boolean } & DbConfigsObj<DbIds>[any]
     const isLocalDb = connexionString.includes('127.0.0.1') || connexionString.includes('localhost')
     const hasNoReplicaSet = isLocalDb && !connexionString.includes('replicaSet')

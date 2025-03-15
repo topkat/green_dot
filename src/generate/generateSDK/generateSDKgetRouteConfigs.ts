@@ -1,16 +1,16 @@
 
 import fs from 'fs-extra'
-import path from 'path'
+import Path from 'path'
 import { MainTypes, Definition } from 'good-cop'
 import { capitalize1st, includes } from 'topkat-utils'
 
 import { daoValidators } from '../../databases/mongo/types/mongoDaoTypes'
-import { error } from '../../core.error'
+import { throwError } from '../../core.error'
 import { RouteFromSevicesConfigForGenerateSdk, AllPossibleDaoMethods, DbType, ApiMethod, ServiceDocObject } from '../../types/core.types'
-import { _ } from '../../definitions'
+import { _ } from '../../validator'
 import { getDaoRouteDescriptionFromDaoConfigs } from '../helpers/getDaoRouteDescriptionFromDaoConfigs'
 import { generateSdkConfigDefault } from './generateSDKconfigShared'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 export type RouteConfig = {
     queryName: string,
@@ -37,18 +37,21 @@ export type RouteConfigPerPlatforms = {
 //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗
 //  ╚══╗ ╠═   ╠═╦╝ ╚╗ ║  ║  ║    ╠═
 //  ═══╝ ╚══╝ ╩ ╚   ╚═╝ ═╩═ ╚══╝ ╚══╝
-export function createServiceRouteConfigPerPlatformForSdk(
-    sdkConfig: RouteFromSevicesConfigForGenerateSdk,
+export async function createServiceRouteConfigPerPlatformForSdk(
+    sdkRouteConfig: RouteFromSevicesConfigForGenerateSdk,
 ) {
+
+    const mainConfig = await getMainConfig()
+
     const routeDescriptionSorted: RouteConfigPerPlatforms = {}
 
-    const generateSdkConfig = { ...generateSdkConfigDefault, ...(serverConfig.generateSdkConfig || {}) }
+    const generateSdkConfig = { ...generateSdkConfigDefault, ...(mainConfig.generateSdkConfig || {}) }
 
-    for (const platform in sdkConfig) {
+    for (const platform in sdkRouteConfig) {
 
         routeDescriptionSorted[platform] ??= []
 
-        for (const [route, routeConfig] of Object.entries(sdkConfig[platform])) {
+        for (const [route, routeConfig] of Object.entries(sdkRouteConfig[platform])) {
             if (!generateSdkConfig.shallExposeRoute(route)) continue
 
             if (routeConfig.maskInSdk === true) continue
@@ -134,7 +137,7 @@ export async function createDaoRouteConfigPerPlatformForSdk() {
                     route,
                     queryName,
                     inputValidator: paramsValidator as any as Definition,
-                    outputValidator: typeof output === 'function' ? output(_.model(dbId, modelName, isWrite ? 'Write' : 'Read')) : (output || _.void() as any as Definition),
+                    outputValidator: typeof output === 'function' ? output(_.model(dbId as any, modelName, isWrite ? 'Write' : 'Read')) : (output || _.void() as any as Definition),
                     doc,
                     isShared: false,
                     tsType,
@@ -162,7 +165,7 @@ async function getTsTypingsFromDaoTypeTemplate(dbType: DbType, fnName: AllPossib
     if (!tsForMethod[dbType]) tsForMethod[dbType] = {}
     if (Object.keys(tsForMethod[dbType]).length === 0) {
 
-        const typeFileUrl = path.resolve(__dirname, `../../databases/mongo/types/mongoDaoTypes.ts`).replace('dist', 'src')
+        const typeFileUrl = Path.resolve(__dirname, `../../databases/mongo/types/mongoDaoTypes.ts`).replace('dist', 'src')
         const daoTypingsString = await fs.readFile(typeFileUrl, 'utf-8')
         const typeChunk1 = daoTypingsString.split('$$$!!')[1]
 
@@ -185,7 +188,7 @@ async function getTsTypingsFromDaoTypeTemplate(dbType: DbType, fnName: AllPossib
         }
     }
     const ts = tsForMethod[dbType][fnName]
-    if (typeof ts === 'undefined') error.serverError(null, `oneTypeIsNotDefinedInDaoTypeFile`, { method: fnName, availableMethods: Object.keys(tsForMethod[dbType]) })
+    if (typeof ts === 'undefined') throwError.serverError(null, `oneTypeIsNotDefinedInDaoTypeFile`, { method: fnName, availableMethods: Object.keys(tsForMethod[dbType]) })
     return ts
 }
 

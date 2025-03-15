@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import Path from 'path'
 import { templater } from 'simple-file-templater'
 import { C, objEntries } from 'topkat-utils'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 
 
@@ -20,9 +20,10 @@ export async function generateSdkFolderFromTemplates(
   queriesToInvalidate: { [query: string]: string[] } = {},
 ) {
 
-  const allMethodsString = JSON.stringify(allMethodsObjectForSdk)
+  const mainConfig = await getMainConfig()
+  const { platforms, generateSdkConfig } = mainConfig
 
-  const allPlatforms = Object.values(serverConfig.platformForPermission)
+  const allMethodsString = JSON.stringify(allMethodsObjectForSdk)
 
   const isDefaultSdk = tsApiTypes === ''
 
@@ -52,13 +53,17 @@ export async function generateSdkFolderFromTemplates(
     return strs.length ? `$.addQueriesToInvalidate.${q}(['${strs.join(`', '`)}'])` : ''
   }).join('\n')
 
+  const packageNamePrefix = generateSdkConfig?.npmPublishPromptConfig?.packageNamePrefix ? generateSdkConfig.npmPublishPromptConfig.packageNamePrefix.replace(/\/$/, '') + '/' : ''
+
   const replaceInFiles: [string: string | RegExp, replacement: string][] = [
     ['%%packageVersion%%', packageVersion],
     [`%%appName%%`, platform],
     [`%%app-name%%`, platform.replace(/([A-Z])/g, '-$1').toLocaleLowerCase()],
+    [`%%packageNamePrefix%%`, packageNamePrefix],
+    [`%%packageNameAccess%%`, generateSdkConfig?.npmPublishPromptConfig?.access || 'public'],
     [`'%%AllReadMethodsAndService%%'`, allMethodsString],
     [`'%%tsApiTypes%%'`, tsApiTypes],
-    [`'%%allAppNamesTypeString%%'`, arrOrAny(allPlatforms)],
+    [`'%%allAppNamesTypeString%%'`, arrOrAny(platforms)],
     [`'%%AllMethodNameTypeString%%'`, arrOrAny(allMethodNames)],
     [`'%%allBackendFoldersForSdk%%'`, arrOrAny(backendProjectForSdk)],
     [`'%%queriesToInvalidate%%'`, queriesToInvalidateString],

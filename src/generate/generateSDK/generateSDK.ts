@@ -1,24 +1,18 @@
-#!/usr/bin/env ts-node
-(process.env as any).NODE_ENV = 'build'
-
 import Path from 'path'
 import fs from 'fs-extra'
 import { app } from 'command-line-application'
 import { cliPrompt } from 'simple-cli-prompt'
 import { round2, C, objEntries, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
-import { generateDefaultsForConfig } from '@bangk/app-config-shared'
 import { execWaitForOutput } from 'topkat-utils/backend'
 import axios from 'axios'
 
-import { generateSdkFiles } from '../src/generate/generateSDK/generateSdkFiles'
-import { generateSdkFolderFromTemplates } from '../src/generate/generateSDK/generateSdkFolderFromTemplates'
-import { GenerateSDKparamsForService } from '../src/types/generateSdk.types'
-import { clientAppConfig } from '../src/clientAppConfigCache'
-import { GreenDotConfig, makeApiCall } from '../src'
-import { generateSDKconfigForDaos } from '../src/generate/generateSDK/generateSDKconfigForDao'
-import { generateModelFolderInSdk } from '../src/generate/generateSDK/generateModelFolderInSdk'
-import { createDaoRouteConfigPerPlatformForSdk } from '../src/generate/generateSDK/generateSDKgetRouteConfigs'
-import { registerModels } from '../src/registerModules/registerModels'
+import { generateSdkFiles } from './generateSdkFiles'
+import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
+import { GenerateSDKparamsForService } from '../../types/generateSdk.types'
+import { getMainConfig, makeApiCall } from '../..'
+import { generateSDKconfigForDaos } from './generateSDKconfigForDao'
+import { generateModelFolderInSdk } from './generateModelFolderInSdk'
+import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs'
 
 
 const start = Date.now()
@@ -37,29 +31,21 @@ const { prod = false, onlyDefaults = false } = app({
 }) as { prod: boolean, onlyDefaults: boolean }
 
 export async function run() {
-    const cwd = process.cwd()
 
-    console.log(`TODO ADD process.cwd() TO A CACHE`, process.cwd())
+    const mainConfig = await getMainConfig()
+    const { generateSdkConfig, platforms } = mainConfig
+
+    if (!generateSdkConfig?.enable) return
 
     try {
 
-        const monorepoRoot = await fs.exists(Path.resolve(cwd, './SDKs')) ? cwd : Path.resolve(cwd, '../../../')
+        const monorepoRoot = mainConfig.folderPath
         const sdkRoot = Path.resolve(monorepoRoot, './SDKs')
         const appFolderRoot = Path.resolve(monorepoRoot, './apps')
         const allAppFolders = await fs.readdir(appFolderRoot)
 
-        // init server with default config (default perms...etc)
-        // TODO TODO TODO TODO TODO TODO TODO
-        // CHANGE THAT TO GREENDOT CONFIG
-        const greenDotConfig: GreenDotConfig = generateDefaultsForConfig('0.0.0', 'coucou') // TODO remove bangk references
-        Object.assign(clientAppConfig.serverConfig, greenDotConfig)
-
-        await registerModels()
-
-        const allPlatforms = Object.values(greenDotConfig.sdkNameForRole)
-
         // REBUILD DEFAULT FOLDER
-        for (const platform of allPlatforms) {
+        for (const platform of platforms) {
             const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
             await generateSdkFolderFromTemplates(platform, sdkRootPath)
             await generateModelFolderInSdk(monorepoRoot, platform)
@@ -99,7 +85,7 @@ export async function run() {
             //  ║╚╝║ ╠═   ╠═╦╝ ║ ═╦ ╠═     ║  ║ ╠══╣   ║   ╠══╣
             //  ╩  ╩ ╚══╝ ╩ ╚  ╚══╝ ╚══╝   ╚══╝ ╩  ╩   ╩   ╩  ╩
 
-            for (const platform of allPlatforms) {
+            for (const platform of platforms) {
 
                 const objectTsMerged = {} as { [method: string]: string }
                 const servicesMethodsMerged = {} as { [method: string]: [serverKey: string, serviceName: string] }
@@ -153,7 +139,9 @@ export async function run() {
             }
         }
 
-        if (!prod) {
+        const { npmPublishPromptConfig, notifyOnTelegramPrompt } = generateSdkConfig
+
+        if (!prod && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
 
             //  ╔═╗  ╦  ╦ ╦╗╔╦ ╔══╗   ╔═══ ╔═╗  ╦ ╔  ╔═══
             //  ╠═╩╗ ║  ║ ║╚╝║ ╠══╝   ╚══╗ ║  ║ ╠═╩╗ ╚══╗
@@ -161,7 +149,7 @@ export async function run() {
 
             const sizeAfter = {} as Record<string, SizePerFolders>
 
-            for (const platform of allPlatforms) {
+            for (const platform of platforms) {
                 const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
                 sizeAfter[platform] = await folderJsFileSizes(sdkRootPath)
             }
@@ -173,7 +161,7 @@ export async function run() {
             let yesToAll = false
             let commitWarning = false
 
-            for (const platform of allPlatforms) {
+            for (const platform of platforms) {
 
                 const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
                 const packageJsonPath = Path.join(sdkRootPath, 'package.json')
@@ -242,15 +230,11 @@ export async function run() {
                                 commitWarning = true
                             }
 
-                            const sdkPathRelative = Path.relative(cwd, sdkRootPath)
+                            const sdkPathRelative = Path.relative(monorepoRoot, sdkRootPath)
 
                             await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
 
-                            const a = 'teBRiPfh'
-                            const b = '3dYXHFohP4G'
-                            const c = 'W0XuWmlyjLf3TcBra'
-
-                            const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=npm_${a + b + c}" && npm config set registry "https://registry.npmjs.org"`
+                            const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishPromptConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
 
                             await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish`, {
                                 nbSecondsBeforeKillingProcess: 300,
@@ -277,22 +261,25 @@ export async function run() {
 
                 await execWaitForOutput(`git add -A`)
 
-                await execWaitForOutput(`cd ${Path.relative(cwd, monorepoRoot) || '.'} && git commit -m "New SDKs versions: ${changedSdkMessage}"`, {
+                await execWaitForOutput(`cd ${monorepoRoot || '.'} && git commit -m "New SDKs versions: ${changedSdkMessage}"`, {
                     nbSecondsBeforeKillingProcess: 300,
                     stringOrRegexpToSearchForConsideringDone: 'file changed',
                 })
 
                 await timeout(2000) // avoid log mess
 
-                const resp = await cliPrompt({
-                    message: `Would you like to notify the team about the new packages published ?`,
-                    choices: ['Yes', 'No'],
-                })
+                if (notifyOnTelegramPrompt) {
 
-                if (resp === 'Yes') {
-                    await makeApiCall(null, 'https://api.telegram.org/bot7334406089:AAGCEBGafKfh6LdBikzcqV9hbMR-MBMdktQ/sendMessage', {
-                        body: { chat_id: -4525765992, text: `Hi! Some packages have been updated to new version: ${changedSdkMessage}` }
+                    const resp = await cliPrompt({
+                        message: `Would you like to notify the team about the new packages published ?`,
+                        choices: ['Yes', 'No'],
                     })
+
+                    if (resp === 'Yes') {
+                        await makeApiCall(null, `https://api.telegram.org/${notifyOnTelegramPrompt.botId}/sendMessage`, {
+                            body: { chat_id: notifyOnTelegramPrompt.chatId, text: `Hi! Some packages have been updated to new version: ${changedSdkMessage}` }
+                        })
+                    }
                 }
 
                 C.info(changedSdkMessage)

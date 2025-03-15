@@ -6,7 +6,7 @@ import { generateJsDoc } from './generateJsDocForSdk'
 
 export const env = process.env.NODE_ENV as Env
 
-export const generateSdkConfigDefault: GenerateSdkConfig = {
+export const generateSdkConfigDefault: Partial<GenerateSdkConfig> = {
     isEs6Import: false,
     processAddrInSdk(addrRaw) {
         // TODO make more generic ?? actually dao should not come there

@@ -6,8 +6,8 @@ import { RouteConfigPerPlatforms } from './generateSDKgetRouteConfigs'
 import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator'
 import { SDKprefetchGenerator } from './generators/SDKprefetch.generator'
 import { SDKdeferGenerator } from './generators/SDKdefer.generator'
-import { env, generateSdkConfigDefault, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
+import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 
 //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗ ╔═══
@@ -15,13 +15,13 @@ import { serverConfig } from '../../cache/green_dot.app.config.cache'
 //  ═══╝ ╚══╝ ╩ ╚   ╚═╝ ═╩═ ╚══╝ ╚══╝ ═══╝
 /** This will generate files with route description for the SDK to generate routes */
 export async function generateSDKconfigForServices(
-    sdkConfig: RouteConfigPerPlatforms
+    routeConfig: RouteConfigPerPlatforms
 ) {
 
     if (env === 'production' || env === 'preprod') return
 
-    const generateSdkConfig = { ...generateSdkConfigDefault, ...(serverConfig.generateSdkConfig || {}) }
-    const platforms = Object.values(serverConfig.platformForPermission || { coucou: serverConfig.appName })
+    const mainConfig = await getMainConfig()
+    const { generateSdkConfig, platforms } = mainConfig
 
     const sdkParams = {} as GenerateSDKparamsForService
 
@@ -43,7 +43,7 @@ export async function generateSDKconfigForServices(
         // GENERATE API SERVICE FILES AND TYPES
         //----------------------------------------
 
-        for (const [originalApiAddr, { tsType, doc, isShared, outputValidator, queriesToInvalidate }] of sdkConfig[platform]) {
+        for (const [originalApiAddr, { tsType, doc, isShared, outputValidator, queriesToInvalidate }] of routeConfig[platform]) {
 
             const queryName = generateSdkConfig.processAddrInSdk(originalApiAddr)
 

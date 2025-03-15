@@ -18,6 +18,13 @@ export type GreenDotAppConfig<
   port: number
   serverLiveUrl: string
   emailFromAddress: string
+  swaggerDoc: {
+    enable: boolean
+    descriptionText?: string
+    serversUrl?: string[]
+    /** If you want to have generated json doc version somewhere on your repo */
+    copyDocJsonToFolder?: string
+  }
   apiKeys: {
     [apiKey in (RolesAll | (string & {}))]?: {
       _id?: string

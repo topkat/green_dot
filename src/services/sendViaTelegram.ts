@@ -3,7 +3,7 @@
 process.env.NTBA_FIX_319 = 1 as any // prevent telegram lib promise error log shall be before the lib import
 
 import TelegramBot from 'node-telegram-bot-api'
-import { GreenDotAppConfig } from '../types/greenDotAppConfig.types'
+import { GreenDotAppConfig } from '../types/appConfig.types'
 import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
 import { capitalize1st } from 'topkat-utils'
 

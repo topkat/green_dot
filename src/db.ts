@@ -7,7 +7,6 @@ import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
 import { _, Definition, ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
-import { registerModel } from './databases/models'
 import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectDatabase'
 
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
@@ -80,10 +79,6 @@ export async function initDbs(resetCache: boolean = false) {
     }
 
     if (type === 'mongo') {
-
-      for (const modelName in models) {
-        registerModel(type, name, modelName, models[modelName] as any, daos[modelName])
-      }
 
       //----------------------------------------
       // DATABASES INITIALISATION

@@ -1,6 +1,7 @@
 
 import 'typescript-generic-types'
 import { GenerateSdkConfig } from './generateSdk.types'
+import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
 
 
 //----------------------------------------
@@ -28,8 +29,6 @@ export type GreenDotConfig<
   //  ║    ║  ║ ║╚╗║ ║╚╗║ ╠═    ╠╣   ║  ║  ║ ║╚╗║
   //  ╚══╝ ╚══╝ ╩ ╚╩ ╩ ╚╩ ╚══╝ ═╝╚═ ═╩═ ╚══╝ ╩ ╚╩
   allRoles: readonly RolesAll[]
-  /** In green_dot, every role represents a different UI (platform). So let's say you have a webapp and an admin dashboard, the object will be formatted as follow: `{ admin: 'adminSdk', user: 'appSdk' }`. */
-  sdkNameForRole: { [role in RolesAll]: Ctx['platform'] }
   /** List all permissions that will be used in the app. Usually like `['hasPremiumMembership', 'hasVerifiedIdentity'...']`. Put here all permissions that may differentiate users on what they have access to  */
   allPermissions: readonly AllPermissions[]
   /** */
@@ -86,7 +85,7 @@ export type GreenDotConfig<
     }>
   }
   /** Configure how the SDK are generated */
-  sdkConfig?: GenerateSdkConfig
+  generateSdkConfig: GenerateSdkConfig<RolesAll>
 }
 
 
@@ -104,7 +103,7 @@ type RequiredFields = {
 
 
 
-export type GreenDotConfigWithDefaults = AddRequiredFieldsToObject<GreenDotConfig, RequiredFields>
+export type GreenDotConfigWithDefaults = AddRequiredFieldsToObject<GreenDotConfig, RequiredFields> & { platforms: string[] }
 
 
 
@@ -114,4 +113,5 @@ export const greenDotConfigDefaults = {
   blackListBanMinutes: [15, 120, 12 * 60],
   blackListCheckInterval: process.env.NODE_ENV === 'test' ? 1000 : 3 * 60 * 1000,
   nbWarningsBeforeBan: 3,
+  generateSdkConfig: generateSdkConfigDefault
 } satisfies AddRequiredFieldsToObject<RecursivePartial<GreenDotConfig>, RequiredFields>
