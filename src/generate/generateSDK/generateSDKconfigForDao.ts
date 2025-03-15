@@ -15,7 +15,7 @@ export async function generateSDKconfigForDaos(routeConfig: RouteConfigPerPlatfo
 
     if (env === 'production' || env === 'preprod') return
 
-    const mainConfig = await getMainConfig()
+    const mainConfig = getMainConfig()
     const { generateSdkConfig, platforms } = mainConfig
 
     const sdkParams = {} as GenerateSDKparamsForDao

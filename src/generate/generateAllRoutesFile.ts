@@ -30,7 +30,7 @@ export default async function generateAllRouteFile(allRoutes: string[]) {
     all routes will not throw a type error */
     const hasNoRouteType = Object.keys(routeObjForTestEnv).length === 0 ? ' as any' : ''
 
-    await fs.outputFile(path.join(path.resolve(process.cwd(), `./src/2_generated`), 'all-routes-for-tests.generated.ts'), `
+    await fs.outputFile(path.join(appConfig.generatedFolderPath, 'all-routes-for-tests.generated.ts'), `
 export const allRoutes = ${JSON.stringify(routeObjForTestEnv, null, 2)}${hasNoRouteType}
 
 export type RoutesEnum = keyof typeof allRoutes`)

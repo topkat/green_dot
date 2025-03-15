@@ -2,7 +2,9 @@
 import 'typescript-generic-types'
 import { GenerateSdkConfig } from './generateSdk.types'
 import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
+import { RateLimiterConfig } from '../security/serviceRouteRateLimiter'
 
+export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: string }
 
 //----------------------------------------
 // GENERAL CONFIG
@@ -64,9 +66,13 @@ export type GreenDotConfig<
   the configured nbWarningBeforeBan, the user will be banned for a
   short amount of time, and if it is banned again, this time will be
   greater. The limit will reset with a certain amount of time.
+  * You can configure rateLimiter per routes in a service (this fine tuning is very useful)
   * * **NOTE**: if you work with KUBERNETES or distributed environement, you have to make sure IP adress are always assigned to the same pods, if not the rateLimiter will not work as expected.
   */
   enableRateLimiter: boolean
+
+  /** Default is '30/30s' => 30 apiCall for a 30 sec time window */
+  defaultRateLimit?: RateLimiterConfig
 
   /** Warnings are set manually via ctx.addWarning() or by the system
   (rateLimiter...). After the configured nbWarningBeforeBan, the user will
@@ -93,10 +99,10 @@ export type GreenDotConfig<
   /** Use this to override ban user and addUserWarning behavior. Warning and ban will happen when rate limiter is triggered or whan you call it manually with ctx.addUserWarning() or ctx.banUser(), so you have full control over it */
   customWarningAndBanUserFunctions?: {
     /** Provide a way to ban a user, for example when rate limiter in case you don't want it the default way...TODO TODO */
-    banUser(ctx: Ctx, extraInfos: { route?: string, discriminator: string }): MaybePromise<Record<string, any>>
+    banUser(ctx: Ctx, extraInfos: GreenDotConfigRateLimiterInfos): MaybePromise<Record<string, any>>
 
     /** Use that if you want to blacklist IP in your database or lock the user for example, should return extraInfos to be sent alongside the error */
-    addUserWarning(ctx: Ctx, extraInfos: { route?: string, discriminator: string }): MaybePromise<{
+    addUserWarning(ctx: Ctx, extraInfos: GreenDotConfigRateLimiterInfos): MaybePromise<{
       nbWarnings: number
       nbWarningLeftBeforeBan: number
     }>

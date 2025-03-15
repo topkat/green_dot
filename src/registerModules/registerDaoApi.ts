@@ -1,7 +1,6 @@
 
 import { Application } from 'express'
 import { generateLoginMw } from '../security/login.middleware'
-import { throwError } from '../core.error'
 import { daoValidators } from '../databases/mongo/types/mongoDaoTypes'
 import { hookInterpreterExpose } from '../databases/0_hooks/hookInterpreterExpose'
 import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware'
@@ -33,7 +32,7 @@ export async function registerDaoApi(
         async (req, res, next) => {
             if (typeof req.body === 'string' && req.body.startsWith('{')) req.body = JSON.parse(req.body)
 
-            const { allRoles } = await getMainConfig()
+            const { allRoles } = getMainConfig()
             const models = await getProjectDatabaseModels()
             const daos = await getProjectDatabaseDaos()
 
@@ -46,7 +45,7 @@ export async function registerDaoApi(
 
                 ctx.isFromGeneratedDbApi = true
 
-                if (typeof dbId === 'undefined') throwError.serverError(ctx, 'aCompanyMustBeProvidedInOrderToConnectWithDaoApi', { ctxUser: ctx.getUserMinimal(), dbIdUndefined: true })
+                if (typeof dbId === 'undefined') ctx.throw.serverError('aCompanyMustBeProvidedInOrderToConnectWithDaoApi', { ctxUser: ctx.getUserMinimal(), dbIdUndefined: true })
 
 
                 const errExtraInfos = { ...req.params, fn: `registerDaoApi` }
@@ -55,12 +54,12 @@ export async function registerDaoApi(
                 const model = models[dbId]?.[modelName]
                 const dao = daos[dbId]?.[modelName]
 
-                if (typeof model === 'undefined') throwError.modelDoNotExist(ctx, errExtraInfos)
+                if (typeof model === 'undefined') ctx.throw.modelDoNotExist(errExtraInfos)
 
                 const dbName = dbIdsToDbNames[dbId]
-                if (!dbName) throwError.serverError(ctx, 'dbIdsToDbNames should be instanciated with all db names')
+                if (!dbName) ctx.throw.serverError('dbIdsToDbNames should be instanciated with all db names')
 
-                if (!isset(daoValidators[daoFunction as any])) throwError.functionDoNotExistInModel(ctx, { ...errExtraInfos, daoFunction })
+                if (!isset(daoValidators[daoFunction as any])) ctx.throw.functionDoNotExistInModel({ ...errExtraInfos, daoFunction })
 
                 const { paramsValidator, method } = daoValidators[daoFunction as any] as { method: DaoGenericMethods, paramsValidator: Definition, pathParamNb?: number }
 
@@ -69,7 +68,7 @@ export async function registerDaoApi(
                 //----------------------------------------
                 const { authorizedApiEndpoint } = getApiEndpointsPerRolesFromDao(dao.expose, allRoles)
                 const isApiAuthorized = authorizedApiEndpoint.includes(daoFunction) || false
-                if (!isApiAuthorized) throwError[404](ctx, { fn: 'registerDaoApi.daoConfig.isApiExposedGeneric' })
+                if (!isApiAuthorized) ctx.throw[404]({ fn: 'registerDaoApi.daoConfig.isApiExposedGeneric' })
 
                 //----------------------------------------
                 // IS EXPOSED TO PERM

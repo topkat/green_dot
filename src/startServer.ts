@@ -9,7 +9,6 @@ import multer from 'multer'
 
 import event from './event'
 import { newSystemCtx } from './ctx'
-import { registerModules } from './registerModules/registerModules'
 import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
 import { initTelegramBot } from './services/sendViaTelegram'
 import { generateMainBackendFiles } from './generate/generateMainBackendFiles'
@@ -18,6 +17,9 @@ import { generateLoginMw } from './security/login.middleware'
 import { rateLimiterMiddleware, rateLimiter as rateLimiterSvc } from './security/serviceRouteRateLimiter'
 import { logRouteInfos } from './registerModules/apiMiddlewares/logRouteInfo.middleware'
 import { getMainConfig, getActiveAppConfig } from './helpers/getGreenDotConfigs'
+import { registerDaoApi } from './registerModules/registerDaoApi'
+import { registerServiceApi } from './registerModules/registerServicesApi'
+import { registerServices } from './registerModules/registerServices'
 
 dotenv.config()
 
@@ -29,7 +31,7 @@ export async function startServer(
     isMaster = true,
 ) {
     try {
-        const mainConfig = await getMainConfig()
+        const mainConfig = getMainConfig()
         const appConfig = await getActiveAppConfig()
 
         // INTRO
@@ -106,7 +108,14 @@ export async function startServer(
         app.set('trust proxy', true) // https://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
 
 
-        await registerModules(app, isMaster)
+        // REGISTER DAO API
+        await registerDaoApi(app)
+
+        // REGISTER SERVICES
+        const allRoutesFromServices = await registerServices(isMaster)
+
+        // REGISTER SERVICE API
+        await registerServiceApi(app, allRoutesFromServices)
 
 
         await new Promise(resolve => app.listen(appConfig.port, () => resolve(1)))

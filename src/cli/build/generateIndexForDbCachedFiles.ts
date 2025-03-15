@@ -12,7 +12,7 @@ import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 /** If this function is called alone, it will generate a default index file that is typescript valid and safe */
 export async function generateIndexForDbCachedFiles(indexFile: ReturnType<typeof getNewIndexForDbCacheFileStructure> = getNewIndexForDbCacheFileStructure()) {
 
-  const mainConfig = await getMainConfig()
+  const mainConfig = getMainConfig()
   const dbConfigs = await getDbConfigs()
 
   const indexFileContent = `

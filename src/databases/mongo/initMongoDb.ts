@@ -26,7 +26,7 @@ export type ModelAdditionalFields = {
     * * Make sure you await it
     */
     endTransaction(ctx: Ctx, status: 'success'): Promise<void>,
-    endTransaction(ctx: Ctx, status: 'error', errMsg: ErrParams[1], errOptions: ErrParams[2]): Promise<void>,
+    endTransaction(ctx: Ctx, status: 'error', errMsg: ErrParams[0], errOptions: ErrParams[1]): Promise<void>,
     endTransaction(ctx: Ctx, status: 'error', errMsg: false): Promise<void>,
     mongooseConnection: mongoose.Connection
     mongooseModels: { [modelNames: string]: mongoose.Model<any> }
@@ -66,7 +66,7 @@ export async function mongoInitDb<DbIds extends string>(
     const mongooseConnection = mongoose.createConnection(connexionString, mongooseOptions)
 
     mongooseConnection.on('error', err => {
-        if (env !== 'build') throwError.serverError(null, `mongoDatabaseConnexionError`, { err, dbId, dbName })
+        if (env !== 'build') throwError.serverError(`mongoDatabaseConnexionError`, { err, dbId, dbName })
     })
     mongooseConnection.on('connected', () => {
         C.log(C.primary(`✓ DB connected: ${dbId} > ${connexionString.includes('127.0.0') ? 'localhost' : connexionString?.split('@')?.[1]}${connexionString.replace(/^.*(\/[^/]+)$/, '$1').replace(/\?[^?]+$/, '')}`))
@@ -115,25 +115,25 @@ export async function mongoInitDb<DbIds extends string>(
         startTransaction: async ctx => {
             if (hasNoReplicaSet) {
                 if (ctx.env !== 'development') {
-                    throwError.serverError(ctx, 'cannotRunAtransactionWithNoReplicaSetInDatabase')
+                    ctx.throw.serverError('cannotRunAtransactionWithNoReplicaSetInDatabase')
                 } else {
                     return C.warning('!!WARNING!! ReplicaSet not activated. Please use `run-rs -v 4.0.0 --shell -h 127.0.0.1` to start the database in local')
                 }
             }
-            if (ctx.transactionSession) throwError.serverError(ctx, 'mongooseTransactionAlreadyInProgressWithSameCtx')
+            if (ctx.transactionSession) ctx.throw.serverError('mongooseTransactionAlreadyInProgressWithSameCtx')
             const session = await mongooseConnection.startSession()
             ctx.transactionSession = session
             setTimeout(() => {
                 // if a transaction is taking too much time to process, we alert the administrators
                 // we don't throw since it's probably a sensitive operation in progress and we don't
                 // want to mess it up
-                if (ctx.transactionSession) throwError.serverError(ctx, 'mongooseTransactionTimeout', { doNotThrow: true })
+                if (ctx.transactionSession) ctx.throw.serverError('mongooseTransactionTimeout', { doNotThrow: true })
             }, 30 * 1000)
             await session.startTransaction()
         },
         endTransaction: async (ctx, status = 'success', ...params) => {
             if (!ctx.transactionSession) {
-                throwError.serverError(ctx, 'mongooseTransactionNotStarted', { additionalInfos: `This can be because you ended transaction twice (if you are in a try catch check that you don't have ended in the body and in the catch clause` })
+                ctx.throw.serverError('mongooseTransactionNotStarted', { additionalInfos: `This can be because you ended transaction twice (if you are in a try catch check that you don't have ended in the body and in the catch clause` })
             }
             const session = ctx.transactionSession
             delete ctx.transactionSession
@@ -141,8 +141,8 @@ export async function mongoInitDb<DbIds extends string>(
             if (status === 'error') {
                 await session.abortTransaction()
                 await session.endSession()
-                const [errMsg, errOptions = {}] = params as [ErrParams[1], ErrParams[2]]
-                throwError.serverError(ctx, errMsg, errOptions)
+                const [errMsg, errOptions = {}] = params as ErrParams
+                ctx.throw.serverError(errMsg, errOptions)
             } else {
                 await session.commitTransaction()
                 await session.endSession()

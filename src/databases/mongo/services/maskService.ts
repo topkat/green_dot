@@ -2,7 +2,6 @@
 
 import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
 import { forEachPopulateFieldRecursive } from './populateService'
-import { throwError } from '../../../core.error'
 import { PopulateConfig, PopulateConfigWithoutStringSyntax } from '../types/mongoDbTypes'
 import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types/core.types'
 import { getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
@@ -177,8 +176,8 @@ export async function applyMaskToPopulateConfig(
         const fieldName = populateConfObj.path
         const modelNameForField = modelFlat?.[fieldName]?._refValue
 
-        if (populateConfObj.select && typeof populateConfObj.select !== 'string') throwError.wrongValueForParam(ctx, { msg: `onlyStringTypeIsAllowedInPopulateSelect`, fieldName, popConf })
-        if (!modelNameForField) throwError.wrongValueForParam(ctx, { msg: `modelDoNotExistForFieldNameInPopulate`, fieldName, popConf, fnName: 'applyMaskToPopulateConfig' })
+        if (populateConfObj.select && typeof populateConfObj.select !== 'string') ctx.throw.wrongValueForParam({ msg: `onlyStringTypeIsAllowedInPopulateSelect`, fieldName, popConf })
+        if (!modelNameForField) ctx.throw.wrongValueForParam({ msg: `modelDoNotExistForFieldNameInPopulate`, fieldName, popConf, fnName: 'applyMaskToPopulateConfig' })
 
         if ('populate' in populateConfObj) {
             populateConfObj.populate = await applyMaskToPopulateConfig(ctx, populateConfObj.populate, dbName, modelNameForField, method)

@@ -8,7 +8,7 @@ export function initActiveAppName(appName) {
 }
 
 export function getActiveAppName() {
-  if (!activeAppName) throwError.serverError(null, 'getActiveAppName() is called but initActiveAppName() has not been called')
+  if (!activeAppName) throwError.serverError('getActiveAppName() is called but initActiveAppName() has not been called')
   return activeAppName
 }
 
@@ -21,6 +21,6 @@ export function initActiveDbName(dbName) {
 }
 
 export function getActiveDbName() {
-  if (!activeDbName) throwError.serverError(null, 'getActiveDbName() is called but initActiveDbName() has not been called')
+  if (!activeDbName) throwError.serverError('getActiveDbName() is called but initActiveDbName() has not been called')
   return activeDbName
 }

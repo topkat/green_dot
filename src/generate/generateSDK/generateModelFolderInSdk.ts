@@ -3,27 +3,26 @@
 import fs from 'fs-extra'
 import Path from 'path'
 import { capitalize1st, camelCase } from 'topkat-utils'
+import { getDbConfigs } from '../../helpers/getGreenDotConfigs'
 
 
 
 export async function generateModelFolderInSdk(monorepoRoot: string, platform: string) {
 
-  const dbRoot = Path.resolve(monorepoRoot, `db`)
+  const dbConfigs = getDbConfigs()
   const sdkRoot = Path.resolve(monorepoRoot, `SDKs/${platform}Sdk`)
-  const allDbFolders = await fs.readdir(dbRoot)
 
   let modelIndexFile = ''
   const exportLine = [] as string[]
   const allModels = [] as string[]
 
-  for (const dbFolder of allDbFolders) {
+  for (const { generatedFolderPath, name } of dbConfigs) {
 
-    const dbName = camelCase(dbFolder.split('-'))
+    const dbName = camelCase(name)
     const dbNameUpper = capitalize1st(dbName)
 
-    const dbBaseFolder = Path.join(dbRoot, dbFolder, 'src/2_generated/')
     // TODO this should use internal generated files
-    const inputModelFilePath = Path.join(dbBaseFolder, 'model-types.generated.ts')
+    const inputModelFilePath = Path.join(generatedFolderPath, 'model-types.generated.ts')
     const outputModelFilePath = `modelTypes/${dbName}ModelTypes.generated.ts`
 
     if (await fs.exists(inputModelFilePath)) {

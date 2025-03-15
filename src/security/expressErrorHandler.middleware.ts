@@ -1,7 +1,7 @@
 
 
 import { isset, DescriptiveError, objEntries, isObject } from 'topkat-utils'
-import { serverConfig } from '../cache/green_dot.app.config.cache'
+import { env } from '../helpers/getEnv'
 
 export function getExpressErrHandlerMW() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,7 +35,7 @@ export function getExpressErrHandlerMW() {
 
         let description = err.errorDescription
 
-        if (serverConfig.env === 'production' || serverConfig.env === 'preprod') {
+        if (env.isProd) {
             // MASK SENSITIVE INFORMATIONS IN PRODUCTION IN RESPONSE BUT NOT IN LOGS
             description = {} as any
             for (const [k, o] of objEntries(err.errorDescription)) {

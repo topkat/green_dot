@@ -13,6 +13,7 @@ import { getMainConfig, makeApiCall } from '../..'
 import { generateSDKconfigForDaos } from './generateSDKconfigForDao'
 import { generateModelFolderInSdk } from './generateModelFolderInSdk'
 import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs'
+import { getAppConfigs } from '../../helpers/getGreenDotConfigs'
 
 
 const start = Date.now()
@@ -32,7 +33,7 @@ const { prod = false, onlyDefaults = false } = app({
 
 export async function run() {
 
-    const mainConfig = await getMainConfig()
+    const mainConfig = getMainConfig()
     const { generateSdkConfig, platforms } = mainConfig
 
     if (!generateSdkConfig?.enable) return
@@ -41,8 +42,7 @@ export async function run() {
 
         const monorepoRoot = mainConfig.folderPath
         const sdkRoot = Path.resolve(monorepoRoot, './SDKs')
-        const appFolderRoot = Path.resolve(monorepoRoot, './apps')
-        const allAppFolders = await fs.readdir(appFolderRoot)
+        const appConfigs = getAppConfigs()
 
         // REBUILD DEFAULT FOLDER
         for (const platform of platforms) {
@@ -63,14 +63,14 @@ export async function run() {
 
             const allSdkConfigs = [] as { folder: string, sdkConfig: GenerateSDKparamsForService }[]
 
-            for (const folderName of allAppFolders) {
+            for (const { folderPath, generatedFolderPath } of appConfigs) {
 
-                const sdkConfigFilePath = Path.join(appFolderRoot, folderName, `src/2_generated/sdkConfig.generated.json`)
+                const sdkConfigFilePath = Path.join(generatedFolderPath, `sdkConfig.generated.json`)
                 const sdkConfigFileFound = fs.existsSync(sdkConfigFilePath)
 
                 if (sdkConfigFileFound) {
                     const sdkConfig = JSON.parse(await fs.readFile(sdkConfigFilePath, 'utf-8')) as GenerateSDKparamsForService
-                    allSdkConfigs.push({ folder: folderName, sdkConfig })
+                    allSdkConfigs.push({ folder: folderPath, sdkConfig })
                 }
             }
 

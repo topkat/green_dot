@@ -39,9 +39,9 @@
   "exclude": [
     "./src/templates/**/*",
     "./src/generate/generateSDK/templates/**/*",
+    "./src/generate/dbFolderGeneratedDefaults/**/*",
+    "./src/generate/backendGeneratedDefaults/**/*",
     "./dist/**/*",
-    "node_modules",
-    "node_modules/**/commonjs/**/*",
-    "**/commonjs/**/*"
+    "node_modules"
   ]
 }

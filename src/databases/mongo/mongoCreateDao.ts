@@ -2,7 +2,6 @@
 
 
 import mongoose from 'mongoose'
-import { throwError } from '../../core.error'
 import { mongoBeforeRequest } from './mongoBeforeRequest'
 import { mongoAfterRequest, catchMongoDbDuplicateError } from './mongoAfterRequest'
 
@@ -37,7 +36,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             await mongoBeforeRequest(ctx, daoConf, localConfig)
             const promise = MongooseModel.findOne(localConfig.filter, null, { session: ctx.transactionSession })
             const result = await mongoAfterRequest<ModelRead, 'getOne', typeof localConfig>(ctx, daoConf, promise, localConfig)
-            if (config?.triggerErrorIfNotSet === true && !result) throwError.ressourceDoesNotExists(ctx, {
+            if (config?.triggerErrorIfNotSet === true && !result) ctx.throw.ressourceDoesNotExists({
                 triggerErrorIfNotSetOption: true,
                 filter,
                 additionalMsg: 'RESSOURCE DO NOT EXIST',
@@ -111,12 +110,12 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
         async updateMany(ctx, fieldsArr, config) {
             const results = [] as ModelRead[]
             for (const fields of fieldsArr) {
-                if (!isset(getId(fields))) throwError.serverError(ctx, '_id field must be set when updating field', { fieldsOrArr: fieldsArr })
+                if (!isset(getId(fields))) ctx.throw.serverError('_id field must be set when updating field', { fieldsOrArr: fieldsArr })
                 const originalId = getId(fields)
                 const localConfig = getLocalConfigForWrite('update', 'getAll', config, { _id: originalId }, fields)
                 delete fields._id
                 await mongoBeforeRequest(ctx, daoConf, localConfig)
-                if (localConfig.filter?._id !== originalId) error[403](ctx, { originalId, allowedId: localConfig.filter?._id })
+                if (localConfig.filter?._id !== originalId) ctx.throw[403]({ originalId, allowedId: localConfig.filter?._id })
                 if (!ctx.simulateRequest) {
                     const promise = MongooseModel.updateOne(localConfig.filter, localConfig.inputFields, { session: ctx.transactionSession })
                     await mongoAfterRequest<ModelRead, 'update'>(ctx, daoConf, promise, localConfig)
@@ -142,7 +141,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             const localConfig = getLocalConfigForWrite('update', 'getAll', config, filter, fields)
             await mongoBeforeRequest(ctx, daoConf, localConfig)
             if (!ctx.isSystem && localConfig?.filter?._id) { // forcing _id filter since updateWithFilter is too powerful
-                error[403](ctx, { msg: 'updateWithFilterNotAllowed', allowedId: localConfig.filter?._id })
+                ctx.throw[403]({ msg: 'updateWithFilterNotAllowed', allowedId: localConfig.filter?._id })
             }
             if (!ctx.simulateRequest) {
                 const returnVal = await MongooseModel.updateMany(filter, localConfig.inputFields, { session: ctx.transactionSession })
@@ -159,8 +158,8 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
         },
 
         async deleteWithFilter(ctx, filter) {
-            if (!ctx.isSystem && !filter._id) error[403](ctx, { errorCode: '29667' })
-            if (Object.keys(filter).length === 0) throwError.wrongValueForParam(ctx, { msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
+            if (!ctx.isSystem && !filter._id) ctx.throw[403]({ errorCode: '29667' })
+            if (Object.keys(filter).length === 0) ctx.throw.wrongValueForParam({ msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
             const localConfig = getLocalConfigForWrite('delete', 'getAll', undefined, filter)
 
             // if (daoConf.modelConfig?.hardDelete === false) {

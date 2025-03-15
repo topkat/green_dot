@@ -17,10 +17,13 @@ export const throwError = new Proxy({}, {
         if (p in target) return target[p]
         else {
             C.error(false, 'Unknown error ' + (p as string) + '. Error has not been correctly registered.')
-            return getThrowErrorFn({ msg: p })
+            return (...params) => {
+                // INJECT CTX since we probably are in a context where ctx is not available. If not ctx.throw is preferred
+                return getThrowErrorFn({ msg: p })(null, ...params)
+            }
         }
     },
-}) as GreenDotErrors
+}) as { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }
 
 /** This is to register new errors and custom errors and make them available in the project */
 export function registerErrors<T extends Record<string, ErrorOptions>>(errObj: T, withCustomMsgParam = false) {

@@ -18,7 +18,7 @@ export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>
     allRoles?: readonly RolesPlusTechnicals[],
 ): Promise<MongoDaoParsed<any>[HookName]> {
 
-    const mainConfig = await getMainConfig()
+    const mainConfig = getMainConfig()
 
     allRoles ??= mainConfig.allRoles
 
@@ -36,7 +36,7 @@ export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>
                 priority: 50,
             }
 
-            if (!isset(hookInterpreter)) throwError.serverError(null, `PLEASE PROVIDE A VALIDATOR FOR ${hookName} HOOK`)
+            if (!isset(hookInterpreter)) throwError.serverError(`PLEASE PROVIDE A VALIDATOR FOR ${hookName} HOOK`)
 
             // convert all possible as array syntax
             for (const fnName of ['for', 'notFor', 'on', 'notOn', 'expose']) {
@@ -86,9 +86,9 @@ export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>
         // validate hook
         if (!hookInterpreter.validate(hook)) {
             throwError.serverError(
-                null,
                 hookInterpreter.errMsg || `${modelName}.hooks.${hookName}[${hookIndex}] format not valid for hook`,
-                { daoName: modelName, hookType: hookName, hookIndex, hook: JSON.stringify(hook, null, 2) })
+                { daoName: modelName, hookType: hookName, hookIndex, hook: JSON.stringify(hook, null, 2) }
+            )
         }
 
         return hook as MongoDaoParsed<any>[HookName]

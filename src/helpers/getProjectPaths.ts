@@ -5,7 +5,7 @@ import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
 export type GDpathConfig = { path: string, folderPath: string }
-export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string }
+export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string, generatedFolderPath: string }
 type PathConfArr = GDpathConfigWithIndex[]
 
 export const greenDotCacheModuleFolder = Path.resolve(__dirname, '../cache/dbs')
@@ -75,6 +75,7 @@ function configFilePathMapper(path: string) {
   return {
     path: path,
     folderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, ''),
-    generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts')
+    generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
+    generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '2_generated')
   }
 }

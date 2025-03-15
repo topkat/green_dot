@@ -32,7 +32,7 @@ export async function registerServices(isPrimaryCluster = true) {
         if (typeof service.main !== 'function') continue
 
         if (registeredServiceNames.includes(serviceName)) {
-            throwError.serverError(null, 'duplicateServiceName', { svcName: serviceName })
+            throwError.serverError('duplicateServiceName', { svcName: serviceName })
         }
 
         registeredServiceNames.push(serviceName)
@@ -112,11 +112,11 @@ export async function registerServices(isPrimaryCluster = true) {
                     const svc = service as ServiceClean
                     if (svc.authorizedAuthentications.length) {
                         const isValid = svc.authorizedAuthentications.some(authMethod => ctx.authenticationMethod.includes(authMethod))
-                        if (!isValid) throwError.secureAuthenticationRequired(ctx, { ...errExtraInfos, fn: 'registerService.additionalAuthenticationRequired', requiredAuthentication: svc.authorizedAuthentications })
+                        if (!isValid) ctx.throw.secureAuthenticationRequired({ ...errExtraInfos, fn: 'registerService.additionalAuthenticationRequired', requiredAuthentication: svc.authorizedAuthentications })
                     }
                 }
 
-                if (!doPermApply) throwError.userDoNotHaveThePermission(ctx, { ...errExtraInfos, forPerm: hasPerms ? service.for : undefined, userPermissions: ctx.permissions, fn: 'registerService.doPermApplyToCtxService' })
+                if (!doPermApply) ctx.throw.userDoNotHaveThePermission({ ...errExtraInfos, forPerm: hasPerms ? service.for : undefined, userPermissions: ctx.permissions, fn: 'registerService.doPermApplyToCtxService' })
 
                 let newParams = [{}]
                 // TODO those checks should not be made if it doesn't pass by api route
@@ -143,7 +143,7 @@ export async function registerServices(isPrimaryCluster = true) {
             if (isForEnv && isApi) {
                 const definedRouteName = hasRoute ? service.route : kebabCase(camelCaseToWords(serviceName))
                 if (isset(allRoutesFromServices[definedRouteName])) {
-                    throwError.serverError(null, 'Two services have the same API endpoint', { endPoint: definedRouteName, serviceNames: [serviceName, allRoutesFromServices[definedRouteName].serviceName] })
+                    throwError.serverError('Two services have the same API endpoint', { endPoint: definedRouteName, serviceNames: [serviceName, allRoutesFromServices[definedRouteName].serviceName] })
                 }
                 allRoutesFromServices[definedRouteName] = {
                     ...service,
@@ -167,7 +167,7 @@ export async function registerServices(isPrimaryCluster = true) {
 
                 if (appConfig.enableSchedules) {
                     const scheduleObj: Schedule = typeof schedule === 'string' ? { frequency: schedule } : schedule
-                    if (!isValid({ name: 'scheduleFileFreq', value: scheduleObj.frequency })) throwError.serverError(null, `module.schedule.frequency should be set. Please, check service: ${serviceName}`)
+                    if (!isValid({ name: 'scheduleFileFreq', value: scheduleObj.frequency })) throwError.serverError(`module.schedule.frequency should be set. Please, check service: ${serviceName}`)
 
                     const { frequency, frequencyTestEnv, frequencyDevEnv = frequency } = scheduleObj
                     const frequencyForEnv = env.isTest && isset(frequencyTestEnv) ? frequencyTestEnv : !env.isProd ? frequencyDevEnv : frequency
@@ -175,14 +175,14 @@ export async function registerServices(isPrimaryCluster = true) {
                     scheduleLogMessages.push(`  ${serviceName.padEnd(27, ' ')} actual:${frequencyForEnv} prod:${frequency}`)
 
                     if (env.isProd && scheduleObj.frequency === '* * * * *') {
-                        throwError.serverError(null, 'SCHEDULER EVERY MINUTES !', { schedule, serviceName })
+                        throwError.serverError('SCHEDULER EVERY MINUTES !', { schedule, serviceName })
                     }
                     const callbackWrapper = async () => {
                         try {
                             C.info('Starting cronjob ' + serviceName)
                             await svcWrapperFn(newSystemCtx())
                             C.success('Ending cronjob ' + serviceName)
-                        } catch (err) { throwError.scheduleError(null, { err }) }
+                        } catch (err) { throwError.scheduleError({ err }) }
                     }
                     // Start schedules only when
                     event.on('server.start', () => {
@@ -192,7 +192,7 @@ export async function registerServices(isPrimaryCluster = true) {
                 } else C.warning(false, 'SCHEDULE DISABLED ON THIS SERVER')
             }
         } catch (err) {
-            throwError.serverError(null, 'Error while registering service', { serviceName, err })
+            throwError.serverError('Error while registering service', { serviceName, err })
         }
     }
 
@@ -206,7 +206,7 @@ function returnErrIfWrongEnv(forEnv?: Env) {
         const isWrongEnvStr = typeof forEnv === 'string' && env.env !== forEnv
         const isWrongEnvArr = Array.isArray(forEnv) && !forEnv.includes(env)
         if (isWrongEnvStr || isWrongEnvArr) {
-            throwError.serverError(null, 'wrongEnv', { actualEnv: env, authorizedEnv: forEnv })
+            throwError.serverError('wrongEnv', { actualEnv: env, authorizedEnv: forEnv })
         }
     }
 }

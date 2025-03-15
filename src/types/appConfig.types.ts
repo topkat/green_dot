@@ -45,6 +45,10 @@ export type GreenDotAppConfig<
       pass?: string
     }
   }
+  /** This is where you connect and give role and permissions to enter your app. This is usually where you read apiKeys or JWT Tokens to ensure users have the right to connect. Note: you can add props to Ctx (Eg: ctx.companyId...) and augment type to reflect your new field. See Ctx augmentation doc (TODO)
+  * @example
+  */
+  connexionFn(defaultCtx: CtxUser, req: Request, res: Response): MaybePromise<CtxUser>
   publicFolder?: string
   corsOrigin: (RegExp | string)[] | ((origin: string) => boolean)
 
@@ -54,8 +58,6 @@ export type GreenDotAppConfig<
   enableSeed: boolean
   defaultPaginationLimit?: number
   additionalServices?: Record<string, ServiceClean<any>>
-  /** This is where you put the logic when you want a custom authentication logic: */
-  customLoginFn?(req: Request, res: Response): CtxUser
   /** This will be executed periodically to get blacklist IPs from the application */
   beforeApiRequest?(ctx: Ctx, extraInfos: { discriminator: string, route: string }): any
   /** This will remove routes in autocomplete for tests */

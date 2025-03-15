@@ -41,7 +41,7 @@ export async function createServiceRouteConfigPerPlatformForSdk(
     sdkRouteConfig: RouteFromSevicesConfigForGenerateSdk,
 ) {
 
-    const mainConfig = await getMainConfig()
+    const mainConfig = getMainConfig()
 
     const routeDescriptionSorted: RouteConfigPerPlatforms = {}
 
@@ -188,7 +188,7 @@ async function getTsTypingsFromDaoTypeTemplate(dbType: DbType, fnName: AllPossib
         }
     }
     const ts = tsForMethod[dbType][fnName]
-    if (typeof ts === 'undefined') throwError.serverError(null, `oneTypeIsNotDefinedInDaoTypeFile`, { method: fnName, availableMethods: Object.keys(tsForMethod[dbType]) })
+    if (typeof ts === 'undefined') throwError.serverError(`oneTypeIsNotDefinedInDaoTypeFile`, { method: fnName, availableMethods: Object.keys(tsForMethod[dbType]) })
     return ts
 }
 

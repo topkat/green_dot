@@ -12,7 +12,7 @@ export async function parseForClause<T extends ForClauseParsedWithAll | ForClaus
   forClause: T
 ): Promise<ForClauseParsed[]> {
 
-  const { allRoles } = await getMainConfig()
+  const { allRoles } = getMainConfig()
 
   const forClauseArr = asArray(forClause) as T extends any[] ? T : T[]
 
@@ -41,7 +41,7 @@ export async function parseForClause<T extends ForClauseParsedWithAll | ForClaus
 
 
 async function getDefaultPerms(role: string, toMerge = {}) {
-  const mainConfig = await getMainConfig()
+  const mainConfig = getMainConfig()
   return {
     ...(mainConfig.defaultPermRestrictionForAll || {}),
     ...(mainConfig.defaultPermRestrictionForRole?.[role] || {}),

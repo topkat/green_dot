@@ -1,6 +1,4 @@
 import nodemailer from 'nodemailer'
-import { throwError } from '../core.error'
-
 import { asArray, miniTemplater, C } from 'topkat-utils'
 import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
 
@@ -99,6 +97,6 @@ export default async function sendEmail(ctx, subject, content, recipients: strin
         if (useTestAccount) C.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`)
         return info
     } catch (err) {
-        throwError.sendEmailError(ctx, { recipients, err, fromAddress, varsUsed: vars, attachmentsLength: attachments?.length || 0 })
+        ctx.throw.sendEmailError({ recipients, err, fromAddress, varsUsed: vars, attachmentsLength: attachments?.length || 0 })
     }
 }

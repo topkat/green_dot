@@ -7,7 +7,7 @@ import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator'
 import { SDKprefetchGenerator } from './generators/SDKprefetch.generator'
 import { SDKdeferGenerator } from './generators/SDKdefer.generator'
 import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 
 //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗ ╔═══
@@ -20,7 +20,9 @@ export async function generateSDKconfigForServices(
 
     if (env === 'production' || env === 'preprod') return
 
-    const mainConfig = await getMainConfig()
+    const mainConfig = getMainConfig()
+    const appConfig = getActiveAppConfig()
+
     const { generateSdkConfig, platforms } = mainConfig
 
     const sdkParams = {} as GenerateSDKparamsForService
@@ -76,7 +78,7 @@ export async function generateSDKconfigForServices(
     } // </for (const platform of platforms)>
 
     const fileContent = JSON.stringify(sdkParams)
-    const path = Path.join(Path.resolve(process.cwd(), `./src/2_generated`), 'sdkConfig.generated.json')
+    const path = Path.join(appConfig.generatedFolderPath, 'sdkConfig.generated.json')
 
     await fs.writeFile(path, fileContent)
 

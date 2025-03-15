@@ -103,10 +103,10 @@ export async function initDbs(resetCache: boolean = false) {
 
         if (typeof cache[databaseId]?.dbConfigs === 'undefined') C.error(false, 'WHY THAT ?!?' + `modelConfig.dbConfigs[${databaseId}] not set TODO DELETEME if no error is triggered`)
       }
-    } else throwError.serverError(null, `Database type not implemented: ${type}`, { dbName: dbName, dbType: type })
+    } else throwError.serverError(`Database type not implemented: ${type}`, { dbName: dbName, dbType: type })
   }
 
-  if (!hasDefaultDatabase) throw throwError.serverError(null, `No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
+  if (!hasDefaultDatabase) throw throwError.serverError(`No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
 
   isRunning = false
 }

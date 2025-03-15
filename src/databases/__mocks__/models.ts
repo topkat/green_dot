@@ -2,8 +2,7 @@ import { Mask } from '../mongo/services/maskService'
 
 import { MongoDaoParsed } from '../mongo/types/mongoDbTypes'
 import { UserModels, OrgModels, Organization, User } from '../../tests/jestHelpers'
-import { Models } from '../models'
-import { _ } from 'good-cop'
+import { _, Definition } from 'good-cop'
 
 const validationAddr = () => ({
     user: _.object({
@@ -33,6 +32,13 @@ const createDaoParsed = <T = any>(o: Partial<Mask<T>>) => {
         on: ['getAll', 'getOne', 'create', 'update', 'delete'],
         ...o
     } as any as Mask
+}
+
+type Models = {
+    mongo: { [dbId: string]: { [modelName: string]: Record<string, any> } }, // do not refactor type here because less readable on intellisense
+    daos: { [dbId: string]: { [modelName: string]: MongoDaoParsed<any> } },
+    populateAddrFlatWithModelName: { [dbId: string]: { [modelName: string]: { [populatedFieldNameFlat: string]: string } } },
+    validation: { [dbId: string]: { [modelName: string]: Definition } },
 }
 
 export const models: Models = {

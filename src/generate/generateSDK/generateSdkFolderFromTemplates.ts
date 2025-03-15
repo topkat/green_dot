@@ -20,7 +20,7 @@ export async function generateSdkFolderFromTemplates(
   queriesToInvalidate: { [query: string]: string[] } = {},
 ) {
 
-  const mainConfig = await getMainConfig()
+  const mainConfig = getMainConfig()
   const { platforms, generateSdkConfig } = mainConfig
 
   const allMethodsString = JSON.stringify(allMethodsObjectForSdk)

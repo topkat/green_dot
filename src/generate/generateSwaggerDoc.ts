@@ -15,7 +15,7 @@ export async function generateSwaggerDoc(
   serviceConfig: RouteConfigPerPlatforms
 ) {
 
-  const { generateSdkConfig } = await getMainConfig()
+  const { generateSdkConfig } = getMainConfig()
 
   if (!generateSdkConfig) return C.error(false, 'No SDK config found')
 

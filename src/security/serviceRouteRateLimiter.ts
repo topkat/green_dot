@@ -1,11 +1,12 @@
 
-import { throwError } from '../core.error'
+import { env } from '../helpers/getEnv'
 import { publicUserId } from '../ctx'
 import { Request } from 'express'
-import { serverConfig } from '../cache/green_dot.app.config.cache'
 import { sendRateLimiterTeamsMessage } from '../services/sendViaTeams'
 
 import { C } from 'topkat-utils'
+import { getMainConfig } from '../helpers/getGreenDotConfigs'
+import { checkUserBlacklistCache, addUserWarning, banUser } from './userAndConnexion/banAndAddUserWarning'
 
 const rateLimiterCache = {} as {
     [ip: string]: {
@@ -16,7 +17,7 @@ const rateLimiterCache = {} as {
     }
 }
 
-type NbAttempts = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '10' | '15' | '20' | '30' | '60' | '100' | '150' | '200'
+type NbAttempts = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '10' | '15' | '20' | '30' | '50' | '60' | '100' | '150' | '200'
 type TimeRange = 'min' | '30s' | '5s'
 
 type RateLimiterStr = `${NbAttempts}/${TimeRange}` | 'disable' // '5/min' | '10/min' | '20/min' | '5/30s'
@@ -33,22 +34,20 @@ export type RateLimiterConfig = RateLimiterObj | RateLimiterStr | ({ [k in Env]?
 export const rateLimiter = {
     async recordAttemptAndThrowIfNeeded(ctx: Ctx, route: string, rateLimiterConfig?: RateLimiterConfig) {
 
-        const env = ctx.env === 'ci' ? 'test' : ctx.env
+        const configObj = await getRateLimiterConfigFromStr(env.env, rateLimiterConfig)
 
-        const configObj = getRateLimiterConfigFromStr(env, rateLimiterConfig)
-
-        const maxNbAttemptsInGivenTimeWindow = typeof configObj.maxNbAttemptsInGivenTimeWindow === 'number' ? configObj.maxNbAttemptsInGivenTimeWindow : (configObj.maxNbAttemptsInGivenTimeWindow[env] || configObj.maxNbAttemptsInGivenTimeWindow.main)
+        const maxNbAttemptsInGivenTimeWindow = typeof configObj.maxNbAttemptsInGivenTimeWindow === 'number' ? configObj.maxNbAttemptsInGivenTimeWindow : (configObj.maxNbAttemptsInGivenTimeWindow[env.env] || configObj.maxNbAttemptsInGivenTimeWindow.main)
 
         const userId = ctx._id
-        const ip = env === 'test' && ctx.api.req?.headers?.simulateip ? ctx.api.req?.headers?.simulateip as string : ctx.api.ipAdress
+        const ip = env.isTest && ctx.api.req?.headers?.simulateip ? ctx.api.req?.headers?.simulateip as string : ctx.api.ipAdress
         // SYSTEM SHOULD NEVER PASS THERE
         const discriminator = userId && userId !== publicUserId ? userId : ip
 
         if (!discriminator) return C.warning(false, `This request has no IP, rate limiter failed`)
 
-        await serverConfig?.beforeApiRequest(ctx, { discriminator, route })
+        await checkUserBlacklistCache(ctx, { discriminator })
 
-        cleanRouteCache(discriminator, route, configObj)
+        await cleanRouteCache(discriminator, route, configObj)
 
         rateLimiterCache[discriminator] ??= {}
         rateLimiterCache[discriminator][route] ??= { config: configObj, nbAttempts: [] }
@@ -57,17 +56,17 @@ export const rateLimiter = {
         const nbAttempts = rateLimiterCache[discriminator][route].nbAttempts.length
 
         if (nbAttempts > maxNbAttemptsInGivenTimeWindow) {
-            const extraInfos = await serverConfig.addUserWarning(ctx, { route, discriminator })
+            const extraInfos = await addUserWarning(ctx, { discriminator, route })
 
             rateLimiterCache[discriminator][route].nbAttempts = []
 
             if (extraInfos.nbWarnings >= extraInfos.nbWarningLeftBeforeBan) {
-                await serverConfig.banUser(ctx, { discriminator, route })
+                await banUser(ctx, { discriminator, route })
                 // SEND ASYNC
                 sendRateLimiterTeamsMessage(ctx, { route, discriminator, nbAttempts, ip, userId, extraInfos })
             }
 
-            throwError.tooManyRequests(ctx, env !== 'production' ? {
+            ctx.throw.tooManyRequests(!env.isProd ? {
                 route,
                 nbAttempts: rateLimiterCache[discriminator][route].nbAttempts.length,
                 maxAttempts: maxNbAttemptsInGivenTimeWindow,
@@ -94,23 +93,23 @@ export const rateLimiter = {
             })
         }
     },
-    cleanup() {
+    async cleanup() {
         for (const discriminator in rateLimiterCache) {
             for (const [route, { config }] of Object.entries(rateLimiterCache[discriminator])) {
-                cleanRouteCache(discriminator, route, config)
+                await cleanRouteCache(discriminator, route, config)
             }
         }
     }
 }
 
-function cleanRouteCache(discriminator: string, route: string, rateLimiterConfig?: RateLimiterConfig) {
+async function cleanRouteCache(discriminator: string, route: string, rateLimiterConfig?: RateLimiterConfig) {
 
     if (!rateLimiterCache?.[discriminator]?.[route]) return
 
     const env: Env = process.env.NODE_ENV === 'ci' ? 'test' : (process.env.NODE_ENV as Env || 'development')
     const now = Date.now()
 
-    const config = getRateLimiterConfigFromStr(env, rateLimiterConfig)
+    const config = await getRateLimiterConfigFromStr(env, rateLimiterConfig)
 
     const timeWindowInSecondsForNbAttempts = typeof config.timeWindowInSecondsForNbAttempts === 'number' ? config.timeWindowInSecondsForNbAttempts : (config.timeWindowInSecondsForNbAttempts[env] || config.timeWindowInSecondsForNbAttempts.main)
 
@@ -149,14 +148,13 @@ export function rateLimiterMiddleware(ipWhitelist?: string[], config?: RateLimit
 
 setInterval(() => rateLimiter.cleanup(), 60 * 60 * 1000) // once each hour
 
-const defaultConfig: (env: Env) => RateLimiterObj = (env) => ({
-    maxNbAttemptsInGivenTimeWindow: 30,
-    timeWindowInSecondsForNbAttempts: env === 'test' ? 5 : 120,
-})
+const defaultRateLimit: RateLimiterConfig = '50/30s'
 
-function getRateLimiterConfigFromStr(env: Env, conf?: RateLimiterConfig) {
+async function getRateLimiterConfigFromStr(env: Env, conf?: RateLimiterConfig) {
 
-    if (!conf) return defaultConfig(env)
+    const mainConfig = getMainConfig()
+
+    if (!conf) conf = mainConfig.defaultRateLimit || defaultRateLimit
 
     if (typeof conf !== 'string') {
         if (conf[env]) conf = conf[env]

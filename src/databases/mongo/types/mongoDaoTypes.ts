@@ -25,7 +25,7 @@
 import { ModelReadWrite, ServiceDocObject } from '../../../types/core.types'
 import { requestConfigReadEXPOSED, requestConfigGetOne, requestConfigWrite } from './mongoDbTypes'
 import type { Definition, GenericDef } from 'good-cop'
-import { _ } from '../../../definitions'
+import { _ } from '../../../validator'
 
 import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongoDbBaseTypes'
 import { objEntries } from 'topkat-utils'

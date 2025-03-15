@@ -171,7 +171,7 @@ export class CtxClass {
         errorIfNotSet = true
     } = {}): Promise<ModelTypes['user']> {
 
-        const { defaultDatabaseName } = await getMainConfig()
+        const { defaultDatabaseName } = getMainConfig()
 
         if (refreshCache === false && this._user) {
             return this._user
@@ -193,6 +193,7 @@ export class CtxClass {
         const newCtx = new CtxClass({ ...this, ...override } as any as Ctx)
         return newCtx as Ctx & T
     }
+    /** Build and return or modify Ctx from user fields and role */
     fromUser(role: Ctx['role'], user: Partial<ModelTypes['user']>, modifyActualCtx = true) {
 
         const { allPermissions } = getMainConfig()
@@ -290,3 +291,4 @@ export function newPublicCtx() {
 }
 
 
+export const ctx = newPublicCtx() as Ctx

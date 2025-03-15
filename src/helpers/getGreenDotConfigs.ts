@@ -30,7 +30,7 @@ export async function initGreenDotConfigs(props: {
 let greenDotConfigsCache: GreenDotConfigWithDefaults & GDpathConfig
 
 export function getMainConfig(): typeof greenDotConfigsCache {
-  if (!greenDotConfigsCache) throw throwError.serverError(null, 'Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotConfigsCache) throw throwError.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotConfigsCache
 }
 
@@ -53,7 +53,7 @@ async function initMainConfigCache(resetCache = false) {
 let greenDotDbConfigsCache: Array<GreenDotDbConfig & GDpathConfigWithIndex>
 
 export function getDbConfigs() {
-  if (!greenDotConfigsCache) throw throwError.serverError(null, 'Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotConfigsCache) throw throwError.serverError('Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotDbConfigsCache
 }
 
@@ -90,14 +90,14 @@ async function initDbConfigCache(resetCache = false) {
 let greenDotAppConfigsCache: Array<GreenDotAppConfig & GDpathConfigWithIndex>
 
 export function getAppConfigs() {
-  if (!greenDotConfigsCache) throw throwError.serverError(null, 'Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotConfigsCache) throw throwError.serverError('Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotAppConfigsCache
 
 }
 
 export function getActiveAppConfig() {
   const appName = getActiveAppName()
-  return greenDotAppConfigsCache.find(c => c.name === appName)
+  return greenDotAppConfigsCache.find(c => c.name === appName) as GreenDotAppConfig & GDpathConfigWithIndex
 }
 
 async function initAppConfigCache(resetCache = false) {

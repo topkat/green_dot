@@ -1,6 +1,5 @@
 
 import mongoose from 'mongoose'
-import { throwError } from '../../core.error'
 import event from '../../event'
 import { applyMaskToPopulateConfig, getMongoMaskForUser } from './services/maskService'
 import { MongoDaoParsed } from './types/mongoDbTypes'
@@ -88,14 +87,14 @@ export async function mongoAfterRequest<
                 newCtx = ctx.clone({ ...localConfig, method, inputFields, createdId: ressourceId }) satisfies CreateEventAfterCtx<any>
             } else if (method === 'update') {
                 if (!localConfig.ressourceId && event.registeredEvents[eventName] && event.registeredEvents[eventName].length) {
-                    throwError.serverError(ctx, `An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
+                    ctx.throw.serverError(`An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
                 }
                 newCtx = ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields }) satisfies UpdateEventCtx<any>
             } else if (method === 'getOne' || method === 'getAll') {
                 newCtx = ctx.clone({ ...localConfig, method, data: result }) satisfies GetOneEventAfterCtx<any> | GetAllEventAfterCtx<any>
             } else if (method === 'delete') {
                 newCtx = ctx.clone({ ...localConfig, method, deletedId: localConfig.filter._id }) satisfies DeleteEventCtx
-            } else throwError.serverError(ctx, 'notExistingMethod', { method })
+            } else ctx.throw.serverError('notExistingMethod', { method })
 
             await event.emit(eventName, newCtx.GM)
         }
@@ -111,9 +110,9 @@ export async function mongoAfterRequest<
         if (code === 11000) {
             catchMongoDbDuplicateError(ctx, errmsg, err, extraInfs)
         } else if (name === 'CastError') {
-            throwError.applicationError(ctx, 'databaseWrongCast', { code: 422, err, ...extraInfs })
+            ctx.throw.applicationError('databaseWrongCast', { code: 422, err, ...extraInfs })
         } else {
-            throwError.serverError(ctx, 'databaseError', { err, stack: err.stack, ...extraInfs })
+            ctx.throw.serverError('databaseError', { err, stack: err.stack, ...extraInfs })
         }
     }
 }
@@ -122,5 +121,5 @@ export async function mongoAfterRequest<
 export function catchMongoDbDuplicateError(ctx, errmsg, err, extraInf) {
     const value = firstMatch(errmsg, /: "(.*?)"? }/)
     const duplicateKey = firstMatch(errmsg, /index: (.*?)_?\d? dup key/)
-    throwError.duplicateRessource(ctx, { duplicateKey, value, err, ...extraInf })
+    ctx.throw.duplicateRessource({ duplicateKey, value, err, ...extraInf })
 }

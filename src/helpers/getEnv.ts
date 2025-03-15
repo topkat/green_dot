@@ -11,6 +11,6 @@ export const env = new Proxy({} as ReturnType<typeof getEnv>, {
 function getEnv() {
   const { env, isProdEnv, isTestEnv } = getMainConfig()
   return {
-    env, isProd: isProdEnv, isTest: isTestEnv
+    env: env as Env, isProd: isProdEnv, isTest: isTestEnv
   }
 }

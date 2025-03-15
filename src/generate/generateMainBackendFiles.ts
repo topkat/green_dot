@@ -25,20 +25,17 @@ export async function generateMainBackendFiles() {
     const { allDaoRoutes } = await getDaoRouteDescriptionFromDaoConfigs()
     allRoutes.push(...Object.values(allDaoRoutes).flat())
 
-    const mainConfig = await getMainConfig()
+    const mainConfig = getMainConfig()
     const appConfig = await getActiveAppConfig()
 
     //----------------------------------------
     // SERVICES API
     //----------------------------------------
 
-    let generatedServicePath = path.join(path.resolve(process.cwd(), `./src/2_generated`), 'services.generated')
+    const generatedServicePath = path.join(appConfig.generatedFolderPath, 'services.generated')
     if (!await fs.exists(generatedServicePath + '.ts')) {
-        generatedServicePath = path.join(path.resolve(process.cwd(), 'apps/backend/dist', `./2_generated`), 'services.generated')
-        if (!await fs.exists(generatedServicePath + '.ts')) {
-            // We probably are in a server where we don't care about generating files
-            return C.warning(false, `Generating files for SDK and tests will not run because path doesn't exist: ${generatedServicePath}`)
-        }
+        // We probably are in a server where we don't care about generating files
+        return C.warning(false, `Generating files for SDK and tests will not run because path doesn't exist: ${generatedServicePath}`)
     }
 
     const { default: servicesGenerated } = await import(generatedServicePath)

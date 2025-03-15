@@ -17,7 +17,7 @@ export async function getDaoRouteDescriptionFromDaoConfigs() {
   const allDaoRoutes: string[] = []
   const daoRoutesConfig = {} as RouteFromDaoConfigForGenerateSdk
 
-  const mainConfig = await getMainConfig()
+  const mainConfig = getMainConfig()
   const { allRoles, generateSdkConfig } = mainConfig
   const { sdkNameForRole } = generateSdkConfig
 
