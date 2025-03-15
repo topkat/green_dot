@@ -3065,10 +3065,10 @@ good-cop@1.2.10:
     "@types/mongoose" "^5.11.97"
     topkat-utils "^1.2.61"
 
-good-cop@1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/good-cop/-/good-cop-1.3.3.tgz#790bbe02c519dc7f43b9238f4bd14b24fc483faa"
-  integrity sha512-+yU2iQx/emmTtmIy6WnAdRVvz5pSgvg2JOiTy9vVvg15F/z1/KVLL3x/ts/pm3XMrM2syKD7CXRiJecc43NEcg==
+good-cop@1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/good-cop/-/good-cop-1.3.4.tgz#7c3bf6bf3b0514bee1070b6f7da4c7b1c91f8e16"
+  integrity sha512-iNGROYeWkqSGox+UlT5BhYq9S5dcziL+V1Dq678nv5Oj56YT73707RMTPTn0K9nMQl+AWMheKOlTJ2IQdauU0w==
   dependencies:
     "@types/mongoose" "^5.11.97"
     topkat-utils "^1.2.105"
@@ -5891,10 +5891,10 @@ typescript-cp@^0.1.6:
     rimraf "^5.0.0"
     tar "^6.1.13"
 
-typescript-generic-types@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.6.tgz#a3aa0f6d3dec7fc22273c7b4e61ee2079a6164e7"
-  integrity sha512-cF1T4/XMwU4MTGQld7nEqu3TeT/KHewedEalvBo1x4Vgt2rSBitT+INrZ+AUqhpqDSptQ7F47ChVuqoEqa6Jlw==
+typescript-generic-types@1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.8.tgz#0ffa26bf73deaf34660328d781fd9dbc5438ff92"
+  integrity sha512-QgW96A4J8TBILsGjVdZU/r4VVTIeZQqStoEWwM1ZRlJ0nOIr3rVJVF+ES+RYbIvorXvmP4lOURo8JokopKvf0Q==
 
 typescript-generic-types@^1.0.0:
   version "1.0.1"

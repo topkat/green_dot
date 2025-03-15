@@ -12,6 +12,7 @@ export type GreenDotAppConfig<
   RolesAll extends string = any,
   AllPermissions extends string = any
 > = {
+  name: string,
   /** Default process.env.NODE_ENV */
   env?: Env
   port: number
@@ -50,11 +51,6 @@ export type GreenDotAppConfig<
   customLoginFn?(req: Request, res: Response): CtxUser
   /** This will be executed periodically to get blacklist IPs from the application */
   beforeApiRequest?(ctx: Ctx, extraInfos: { discriminator: string, route: string }): any
-  awsConfig?: {
-    accessKeyId: string
-    secretAccessKey: string
-    region: 'eu-west-1'
-  }
   /** This will remove routes in autocomplete for tests */
   filterRoutesForTest?: (route: string) => boolean
 
@@ -63,6 +59,31 @@ export type GreenDotAppConfig<
   jwtExpirationMs?: number
   jwtRefreshExpirationMsWeb?: number | 'never'
   jwtRefreshExpirationMsMobile?: number | 'never'
+
+
+  //  ╔══╗ ╦    ╔══╗ ╔══╗ ══╦══ ╔═══
+  //  ╠══╣ ║    ╠═   ╠═╦╝   ║   ╚══╗
+  //  ╩  ╩ ╚══╝ ╚══╝ ╩ ╚    ╩   ═══╝
+  alerts?: {
+    /** If this is set, errors will be sent to the configured telegram chanel by botId */
+    telegram?: {
+      enable: boolean
+      /** todo explain how to do here */
+      botId: string
+      /** Same here todo */
+      chatId: number
+      /** By default it only sends error on code 500 (server error) */
+      sendOnErrorCode?(errCode: 200 | 422 | 403 | 401 | 404 | 500): boolean
+    },
+    /** If defined, this will notify on teams chanel
+      * * For Webhook Url, go to teams channel => open sidePanel => Manage chanel => connector => webhook => create
+    */
+    teams?: {
+      enable: boolean
+      /** TODO see */
+      teamsWebhookUrl: string
+    }
+  }
 }
 
 

@@ -2,7 +2,7 @@
 
 import { DaoMethodsMongo, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
 import mongoose from 'mongoose'
-import { Definition } from 'good-cop/backend'
+import { Definition } from 'good-cop'
 
 
 

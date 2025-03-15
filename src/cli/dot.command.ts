@@ -2,9 +2,11 @@
 
 
 import { app, Command } from 'command-line-application'
-import { C, objEntries, randomItemInArray, perfTimer } from 'topkat-utils'
-import { generateIndexForProjectDb } from '../generate/generateIndexForDb'
-import { generateDbCachedFiles, generateDbIndexFile } from '../generate/generateCachedFiles/generateDbCachedFiles'
+import { C, objEntries, randomItemInArray } from 'topkat-utils'
+
+import { buildCommand } from './build.command'
+import { generateIndexForDbCachedFiles } from './build/generateIndexForDbCachedFiles'
+
 
 //  ╦  ╦ ╔══╗ ╔══╗ ╔═══ ═╦═ ╔══╗ ╦╗ ╔
 //  ╚╗ ║ ╠═   ╠═╦╝ ╚══╗  ║  ║  ║ ║╚╗║
@@ -19,7 +21,7 @@ const cliVersion = '1.0.0'
 const commands = {
   build: {
     description: 'Build SDKs and project',
-    execute: build,
+    execute: buildCommand,
   },
   clean: {
     description: 'Clean files. Use this if you have problem with build',
@@ -63,63 +65,13 @@ commands[_command].execute(rest)
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
 
-
-async function build(props) {
-
-  const build = newBuild()
-
-  await build.step(`Generating indexes for database`, generateIndexForProjectDb)
-
-  await build.step(`Generating types for database`, generateDbCachedFiles)
-
-  build.end(`Successfully built green_dot project`)
-
-}
-
-
-
-
-
 async function clean(props) {
 
-  await generateDbIndexFile()
+  await generateIndexForDbCachedFiles()
 
-  C.success('CLEAN')
+  C.success('CLEAN' + props)
 }
-
-
-
-
 
 function generate(props) {
-  C.success('GENERATE')
-}
-
-
-//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
-//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
-//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
-
-
-function newBuild() {
-  const time = perfTimer()
-  return {
-    _stepNb: 1,
-    _startTime: Date.now(),
-    async step(title: string, callback: FunctionGeneric) {
-      const t2 = perfTimer()
-      C.line(`${this._stepNb}) ${title}`, 50)
-      try {
-        await callback()
-        C.log(C.dim(`\nStep 2 took ${t2.end()}`))
-        this._stepNb++
-      } catch (err) {
-        C.error(false, `Step ${this._stepNb} ERROR`)
-        throw err
-      }
-    },
-    end(text: string) {
-      C.success(`${text} in ${time.end()}`)
-    }
-  }
+  C.success('GENERATE' + props)
 }

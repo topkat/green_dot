@@ -35,3 +35,7 @@ Thumbs.db
 #visual studio history
 /.history
 /.nyc_output
+
+
+!build
+!/src/build/**/*

@@ -1,12 +1,14 @@
 
-import { models } from '../../models'
+
 import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
 import { forEachPopulateFieldRecursive } from './populateService'
-import { error } from '../../../core.error'
+import { throwError } from '../../../core.error'
 import { PopulateConfig, PopulateConfigWithoutStringSyntax } from '../types/mongoDbTypes'
 import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types/core.types'
+import { getProjectDatabaseModels } from '../../../helpers/getProjectDatabase'
 
 import { getId, objForceWrite, escapeRegexp, flattenObject, unflattenObject } from 'topkat-utils'
+import { getProjectDatabaseDaos } from '../../../helpers/getProjectDatabase'
 
 export type Mask<T = any> = DaoHookSharedParsed & MaskHook<T>
 export type MaskObjFlat = Record<string, boolean>
@@ -42,11 +44,12 @@ export async function applyMaskOnObjectForUser<T extends Record<string, any>>(
     method: DaoGenericMethods,
     obj: T
 ): Promise<T> {
-    const maskHooksForModel = models.daos[dbName][modelName].mask || []
+    const daos = await getProjectDatabaseDaos()
+    const maskHooksForModel = daos[dbName][modelName].mask || []
     const maskFromCache = retrieveMaskFromCacheOrDelete(ctx, modelName, method)
     if (maskFromCache) return applyMaskFlatToModel(maskFromCache.mask, obj)
     const maskHooksForUser = await appliableHooksForUser(ctx, maskHooksForModel, method, 'alwaysReturnFalse', hook => hook.select ? 'alwaysReturnFalse' : 'alwaysReturnTrue')
-    const { mask } = combineMaskHooksAndReturnMaskOrSelectAddrArray(ctx, dbName, modelName, maskHooksForUser, method)
+    const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(ctx, dbName, modelName, maskHooksForUser, method)
     return mask.length ? applyMaskFlatToModel(mask, obj) : obj
 }
 
@@ -55,13 +58,13 @@ export async function applyMaskOnObjectForUser<T extends Record<string, any>>(
  * Note that _id field is never present in neither mask nor select
  * NOTE 2 /!\ IF THERE IS A SELECT, THE SELECT WINS OVER THE MASK
  */
-export function combineMaskHooksAndReturnMaskOrSelectAddrArray(
+export async function combineMaskHooksAndReturnMaskOrSelectAddrArray(
     ctx: Ctx,
     dbName: string,
     modelName: string,
     maskHooks: Mask[],
     method: DaoGenericMethods
-): { mask: string[] } {
+): Promise<{ mask: string[] }> {
 
     if (!maskHooks?.length) return { mask: [] }
 
@@ -71,7 +74,9 @@ export function combineMaskHooksAndReturnMaskOrSelectAddrArray(
     const allAdresses: string[] = []
     let maskedAdresses: string[] = []
 
-    const modelFlat = models.validation[dbName][modelName]._getDefinitionObjFlat()
+    const models = await getProjectDatabaseModels()
+
+    const modelFlat = models[dbName][modelName]._getDefinitionObjFlat()
 
     Object.entries(modelFlat).forEach(([addr, def]) => {
         if (!def.getDefinitionValue('isParent') && addr !== '_id') {
@@ -162,7 +167,9 @@ export async function applyMaskToPopulateConfig(
     method: DaoGenericMethods
 ) {
     const newPopArr = [] as PopulateConfigWithoutStringSyntax<any>[]
-    const modelFlat = models.validation[dbName][baseModelName]._getDefinitionObjFlat(true)
+    const models = await getProjectDatabaseModels()
+    const modelFlat = models[dbName][baseModelName]._getDefinitionObjFlat(true)
+
     for (const popConf of conf) {
 
         const populateConfObj = (typeof popConf === 'string' ? { path: popConf } : popConf) as PopulateConfigWithoutStringSyntax<any>
@@ -170,8 +177,8 @@ export async function applyMaskToPopulateConfig(
         const fieldName = populateConfObj.path
         const modelNameForField = modelFlat?.[fieldName]?._refValue
 
-        if (populateConfObj.select && typeof populateConfObj.select !== 'string') error.wrongValueForParam(ctx, { msg: `onlyStringTypeIsAllowedInPopulateSelect`, fieldName, popConf })
-        if (!modelNameForField) error.wrongValueForParam(ctx, { msg: `modelDoNotExistForFieldNameInPopulate`, fieldName, popConf, fnName: 'applyMaskToPopulateConfig' })
+        if (populateConfObj.select && typeof populateConfObj.select !== 'string') throwError.wrongValueForParam(ctx, { msg: `onlyStringTypeIsAllowedInPopulateSelect`, fieldName, popConf })
+        if (!modelNameForField) throwError.wrongValueForParam(ctx, { msg: `modelDoNotExistForFieldNameInPopulate`, fieldName, popConf, fnName: 'applyMaskToPopulateConfig' })
 
         if ('populate' in populateConfObj) {
             populateConfObj.populate = await applyMaskToPopulateConfig(ctx, populateConfObj.populate, dbName, modelNameForField, method)
@@ -187,7 +194,7 @@ export async function applyMaskToPopulateConfig(
                 const selectOrMaskFromUser = populateConfObj.select.split(' ')
                 const isExclude = selectOrMaskFromUser[0].startsWith('-')
 
-                const maskFromUser = isExclude ? selectOrMaskFromUser.filter(f => f.startsWith('-')) : getMaskFromSelect(selectOrMaskFromUser, dbName, modelNameForField).map(v => '-' + v)
+                const maskFromUser = isExclude ? selectOrMaskFromUser.filter(f => f.startsWith('-')) : (await getMaskFromSelect(selectOrMaskFromUser, dbName, modelNameForField)).map(v => '-' + v)
 
                 for (const field of maskFromUser) {
                     if (!maskArrFromhook.includes(field)) maskArrFromhook.push(field)
@@ -204,8 +211,9 @@ export async function applyMaskToPopulateConfig(
 // HELPERS
 //----------------------------------------
 
-export function getMaskFromSelect(selectArr: string[], dbName: string, modelName: string) {
-    const fields = models.validation[dbName][modelName]._getDefinitionObjFlat(true)
+export async function getMaskFromSelect(selectArr: string[], dbName: string, modelName: string) {
+    const models = await getProjectDatabaseModels()
+    const fields = models[dbName][modelName]._getDefinitionObjFlat(true)
     let allFieldsAddr = Object.keys(fields)
     for (const fieldName of selectArr) {
         // const fieldName = fieldName.replace('-', '')
@@ -221,7 +229,8 @@ export async function getMongoMaskForUser(
     dbName: string,
     modelName: string
 ) {
-    const maskHooksForModel = models.daos[dbName][modelName].mask || []
+    const daos = await getProjectDatabaseDaos()
+    const maskHooksForModel = daos[dbName][modelName].mask || []
     const maskHooksForUser = await appliableHooksForUser(
         ctx,
         maskHooksForModel,
@@ -229,7 +238,7 @@ export async function getMongoMaskForUser(
         'alwaysReturnFalse',
         hook => hook.select ? 'alwaysReturnFalse' : 'alwaysReturnTrue',
     )
-    const { mask } = combineMaskHooksAndReturnMaskOrSelectAddrArray(ctx, dbName, modelName, maskHooksForUser, method)
+    const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(ctx, dbName, modelName, maskHooksForUser, method)
     return mask.map(e => '-' + e.replace(/\[\d+\]/g, '')) // replace array syntax user[0].name => user.name
 }
 

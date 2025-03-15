@@ -1,19 +1,17 @@
 
 import mongoose from 'mongoose'
-import { error } from '../../core.error'
-import { models } from '../models'
+import { throwError } from '../../core.error'
 import { mongoCreateDao } from './mongoCreateDao'
 
-import { MongoDbConfigModels, MongoDbConfig, Definition, ModelReadWrite, DbConfigs, DbConfigsObj } from '../../types/core.types'
+import { MongoDbConfigModels, MongoDbConfig, Definition, DbConfigsObj } from '../../types/core.types'
 import { MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
 
-import { C, ENV } from 'topkat-utils'
-import { GenericDef } from 'good-cop'
+import { C, ENV, objEntries } from 'topkat-utils'
 
 const { NODE_ENV } = ENV()
 const env: Env = NODE_ENV
 
-type ErrParams = Parameters<typeof error.serverError>
+type ErrParams = Parameters<typeof throwError.serverError>
 
 export type ModelAdditionalFields = {
     /** Will init a mongoose session and start a mongo transaction, the session is then stored in the ctx
@@ -31,21 +29,10 @@ export type ModelAdditionalFields = {
     endTransaction(ctx: Ctx, status: 'error', errMsg: ErrParams[1], errOptions: ErrParams[2]): Promise<void>,
     endTransaction(ctx: Ctx, status: 'error', errMsg: false): Promise<void>,
     mongooseConnection: mongoose.Connection
+    mongooseModels: { [modelNames: string]: mongoose.Model<any> }
 }
 
-// export type InitDbReturnTypeMongo<
-//     AllModels extends Record<any, ModelReadWrite>,
-//     DbNames extends string,
-//     MainName extends string
-// > = {
-//     dbName: MainName
-//     dbs: {
-//         [dbName in DbNames]: {
-//             [ModelName in keyof AllModels]: DaoMethodsMongo<AllModels[ModelName]>
-//         } & ModelAdditionalFields
-//     }
-//     dbConfigs: { [dbName in DbNames]: MongoDbConfig }
-// }
+
 
 export type ModelsConfigCache<AllModels extends Record<string, any> = any> = {
     [dbId: string]: {
@@ -64,7 +51,7 @@ export async function mongoInitDb<DbIds extends string>(
     modelsConfigCache: ModelsConfigCache,
     connectionConfig: DbConfigsObj<DbIds>[any],
     daoConfigsParsed: { [k: string]: MongoDaoParsed<any> },
-    modelsGenerated: { [modelName: string]: Definition<any, any, "def", "def", false> }
+    modelsGenerated: { [modelName: string]: Definition<any, 'def', 'def', false> }
 ) {
     const modelNames = Object.keys(modelsGenerated) as DbIds[]
     const { connexionString, mongooseOptions } = connectionConfig as { firstLevelDb: boolean } & DbConfigsObj<DbIds>[any]
@@ -79,7 +66,7 @@ export async function mongoInitDb<DbIds extends string>(
     const mongooseConnection = mongoose.createConnection(connexionString, mongooseOptions)
 
     mongooseConnection.on('error', err => {
-        if (env !== 'build') error.serverError(null, `mongoDatabaseConnexionError`, { err, dbId, dbName })
+        if (env !== 'build') throwError.serverError(null, `mongoDatabaseConnexionError`, { err, dbId, dbName })
     })
     mongooseConnection.on('connected', () => {
         C.log(C.primary(`✓ DB connected: ${dbId} > ${connexionString.includes('127.0.0') ? 'localhost' : connexionString?.split('@')?.[1]}${connexionString.replace(/^.*(\/[^/]+)$/, '$1').replace(/\?[^?]+$/, '')}`))
@@ -90,12 +77,11 @@ export async function mongoInitDb<DbIds extends string>(
     const typedDatabase = {} as { [k in DbIds]: Awaited<ReturnType<typeof mongoCreateDao>> }
     const dbConfs: MongoDbConfigModels = {}
 
-    for (const modelName of modelNames) {
+    for (const [modelName, models] of objEntries(modelsGenerated)) {
         //----------------------------------------
         // SETUP SCHEMAS
         //----------------------------------------
-        delete models.mongo[dbName][modelName]._id // _id field shall not be explicitely set in Schema
-        schemas[modelName] = new mongoose.Schema(models.mongo[dbName][modelName])
+        schemas[modelName] = new mongoose.Schema(models._getMongoType())
         if (process.env.NODE_ENV !== 'build') mongooseModels[modelName] = mongooseConnection.model(modelName, schemas[modelName]) as any
 
         //----------------------------------------
@@ -129,25 +115,25 @@ export async function mongoInitDb<DbIds extends string>(
         startTransaction: async ctx => {
             if (hasNoReplicaSet) {
                 if (ctx.env !== 'development') {
-                    error.serverError(ctx, 'cannotRunAtransactionWithNoReplicaSetInDatabase')
+                    throwError.serverError(ctx, 'cannotRunAtransactionWithNoReplicaSetInDatabase')
                 } else {
                     return C.warning('!!WARNING!! ReplicaSet not activated. Please use `run-rs -v 4.0.0 --shell -h 127.0.0.1` to start the database in local')
                 }
             }
-            if (ctx.transactionSession) error.serverError(ctx, 'mongooseTransactionAlreadyInProgressWithSameCtx')
+            if (ctx.transactionSession) throwError.serverError(ctx, 'mongooseTransactionAlreadyInProgressWithSameCtx')
             const session = await mongooseConnection.startSession()
             ctx.transactionSession = session
             setTimeout(() => {
                 // if a transaction is taking too much time to process, we alert the administrators
                 // we don't throw since it's probably a sensitive operation in progress and we don't
                 // want to mess it up
-                if (ctx.transactionSession) error.serverError(ctx, 'mongooseTransactionTimeout', { doNotThrow: true })
+                if (ctx.transactionSession) throwError.serverError(ctx, 'mongooseTransactionTimeout', { doNotThrow: true })
             }, 30 * 1000)
             await session.startTransaction()
         },
         endTransaction: async (ctx, status = 'success', ...params) => {
             if (!ctx.transactionSession) {
-                error.serverError(ctx, 'mongooseTransactionNotStarted', { additionalInfos: `This can be because you ended transaction twice (if you are in a try catch check that you don't have ended in the body and in the catch clause` })
+                throwError.serverError(ctx, 'mongooseTransactionNotStarted', { additionalInfos: `This can be because you ended transaction twice (if you are in a try catch check that you don't have ended in the body and in the catch clause` })
             }
             const session = ctx.transactionSession
             delete ctx.transactionSession
@@ -156,13 +142,14 @@ export async function mongoInitDb<DbIds extends string>(
                 await session.abortTransaction()
                 await session.endSession()
                 const [errMsg, errOptions = {}] = params as [ErrParams[1], ErrParams[2]]
-                error.serverError(ctx, errMsg, errOptions)
+                throwError.serverError(ctx, errMsg, errOptions)
             } else {
                 await session.commitTransaction()
                 await session.endSession()
             }
         },
         mongooseConnection,
+        mongooseModels,
     }
 
     modelsConfigCache[dbId].db = {

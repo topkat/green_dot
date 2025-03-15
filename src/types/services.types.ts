@@ -1,7 +1,7 @@
 
 
 import { LocalConfigParsed } from '../databases/mongo/types/mongoDbTypes'
-import { Definition, GenericDef, InferTypeRead } from 'good-cop/backend'
+import { Definition, GenericDef, InferTypeRead } from 'good-cop'
 import { RateLimiterConfig } from '../security/serviceRouteRateLimiter'
 import { DaoGenericMethods } from './daoGeneric.types'
 import { ForClauseParsed, ForClauseWithAll } from './coreGeneric.types'
@@ -190,8 +190,9 @@ type InputTypeInferred<InputType> = InferTypeRead<
   : { [K in keyof InputType]: InputType[K] extends GenericDef ? InputType[K] : never }
 >
 
-type InputToDefinition<T = []> = T extends [] ? []
+type InputToDefinition<T = []> =
   // ARRAY TYPES
+  T extends [] ? []
   : T extends [GenericDef]
   ? [T[0]['tsTypeRead']]
   : T extends [GenericDef, GenericDef]

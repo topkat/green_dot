@@ -3,8 +3,7 @@ import { LocalConfigParsed, MongoDaoParsed } from './types/mongoDbTypes'
 import { hookInterpreterExpose } from '../0_hooks/hookInterpreterExpose'
 import { mongoFilterHookInterpreter } from './hooks/mongoFilterHookInterpreter'
 import { mongoSanitizeFilter } from './services/mongoSanitizeFilter'
-import { models } from '../models'
-import { error } from '../../core.error'
+import { throwError } from '../../core.error'
 import { CreateEventBeforeCtx, UpdateEventCtx, DeleteEventCtx, GetAllEventBeforeCtx, GetOneEventBeforeCtx } from '../../types/core.types'
 
 import { unPopulate } from './services/populateService'
@@ -12,6 +11,7 @@ import { applyMaskIncludingOnPopulatedFieldsRecursive } from './services/maskSer
 import event from '../../event'
 
 import { getId } from 'topkat-utils'
+import { getProjectDatabaseModels } from '../../helpers/getProjectDatabase'
 
 export async function mongoBeforeRequest(
     ctx: Ctx,
@@ -48,7 +48,7 @@ export async function mongoBeforeRequest(
             newCtx = ctx.clone({ ...localConfig, method, inputFields: localConfig.inputFields, createdId: localConfig.inputFields._id }) satisfies CreateEventBeforeCtx<any>
         } else if (method === 'update') {
             if (!localConfig.ressourceId && event.registeredEvents[eventName] && event.registeredEvents[eventName].length) {
-                error.serverError(ctx, `An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
+                throwError.serverError(ctx, `An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
             }
             newCtx = ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields: localConfig.inputFields }) satisfies UpdateEventCtx<any>
         } else if (method === 'getOne') {
@@ -57,7 +57,7 @@ export async function mongoBeforeRequest(
             newCtx = ctx.clone({ ...localConfig, method }) satisfies GetAllEventBeforeCtx
         } else if (method === 'delete') {
             newCtx = ctx.clone({ ...localConfig, method, deletedId: ressourceId }) satisfies DeleteEventCtx
-        } else error.serverError(ctx, 'notExistingMethod', { method })
+        } else throwError.serverError(ctx, 'notExistingMethod', { method })
 
         await event.emit(eventName, newCtx.GM)
     }
@@ -70,7 +70,8 @@ export async function mongoBeforeRequest(
         localConfig.inputFields = await applyMaskIncludingOnPopulatedFieldsRecursive(ctx, method, dbName, modelName, localConfig.inputFields, false)
 
         // CHECK TYPES AND FORMAT DATA
-        const validator = models.validation[dbName][modelName]
+        const dbs = await getProjectDatabaseModels()
+        const validator = dbs[dbName][modelName]
         localConfig.inputFields = await validator.formatAndValidate(localConfig.inputFields, {
             user: ctx.getUserMinimal(),
             method,

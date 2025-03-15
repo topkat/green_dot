@@ -7,7 +7,7 @@ import { capitalize1st } from 'topkat-utils'
 const defVal = () => _.boolean().default(false)
 
 /** This one helps to convert a list of roles into boolean values */
-export function convertPermsToModelFields<R extends readonly string[]>(
+export function convertRoleToPermsToModelFields<R extends readonly string[]>(
   roles: R
 ): Record<`is${Capitalize<R[number]>}`, ReturnType<typeof defVal>> {
 

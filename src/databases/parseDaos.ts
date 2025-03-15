@@ -10,18 +10,20 @@ import { asArray, JSONstringyParse, objKeys } from 'topkat-utils'
 
 
 
-export function getDaoParsed<
+export function parseDaos<
   DaoConfigsRaw extends Record<string, MongoDaoParsed<any> | MongoDao<any>>,
   DaoConfigsParsed extends Record<keyof DaoConfigsRaw, MongoDaoParsed<any>>
 >(
+  modelNames: string[],
   daoConfigsGeneratedRaw: DaoConfigsRaw,
+  defaultDaoConfig?: MongoDaoParsed<any> | MongoDao<any>,
 ): DaoConfigsParsed {
 
-  const { _default: defaultDaoConfig, ...daoConfigsGeneratedRw } = daoConfigsGeneratedRaw
 
-  const daoConfigsParsed = { ...daoConfigsGeneratedRw } as any as DaoConfigsParsed
 
-  for (const modelName of objKeys(daoConfigsGeneratedRw)) {
+  const daoConfigsParsed = daoConfigsGeneratedRaw as any as DaoConfigsParsed
+
+  for (const modelName of objKeys(daoConfigsGeneratedRaw)) {
     // DEFAULT VALUES FOR EACH DAO
     (daoConfigsParsed as any)[modelName] ??= {}
 

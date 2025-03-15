@@ -5,6 +5,63 @@ import { sendErrorOnTeams } from './services/sendViaTeams'
 
 import { isset, DescriptiveError, ErrorOptions, C } from 'topkat-utils'
 
+
+//  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╔══╗ ╦  ╦ ╦╗ ╔ ╔══╗ ══╦══ ═╦═ ╔══╗ ╦╗ ╔ ╔═══
+//  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝   ╠═   ║  ║ ║╚╗║ ║      ║    ║  ║  ║ ║╚╗║ ╚══╗
+//  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚    ╩    ╚══╝ ╩ ╚╩ ╚══╝   ╩   ═╩═ ╚══╝ ╩ ╚╩ ═══╝
+
+
+export const throwError = new Proxy({}, {
+    get(target, p) {
+        // This ensure that in all case an error is thrown, even the error is not registered
+        if (p in target) return target[p]
+        else {
+            C.error(false, 'Unknown error ' + (p as string) + '. Error has not been correctly registered.')
+            return getThrowErrorFn({ msg: p })
+        }
+    },
+}) as GreenDotErrors
+
+/** This is to register new errors and custom errors and make them available in the project */
+export function registerErrors<T extends Record<string, ErrorOptions>>(errObj: T, withCustomMsgParam = false) {
+    for (const [errName, errOptions] of Object.entries(errObj)) {
+        if (withCustomMsgParam) {
+            // Error with a a CUSTOM MESSAGE. Eg: throw.myError(ctx, msg, options)
+            throwError[errName] = (ctx: Ctx | null, msg: string, options: ErrorOptions = {}) => {
+                return sharedErrorEndpoint(ctx, msg, { ...errOptions, ...options })
+            }
+        } else {
+            // Classic error. Eg: throw.myError(ctx, options)
+            throwError[errName] = getThrowErrorFn(errOptions)
+        }
+    }
+    return errObj
+}
+
+function getThrowErrorFn(errOptionsToMerge: ErrorOptions) {
+    return (ctx: Ctx | null, options: ErrorOptions = {}) => {
+        return sharedErrorEndpoint(ctx, options?.errMsgId || errOptionsToMerge?.msg || errOptionsToMerge?.message, { ...errOptionsToMerge, ...options })
+    }
+}
+
+
+function sharedErrorEndpoint(ctx: Ctx | null, msg: string, options: ErrorOptions = {}) {
+    const infosFromCtx = ctx && ctx._id ? { userId: ctx._id } : {}
+    const extraInfos = { ...infosFromCtx, ...options }
+    const error = new DescriptiveError(msg, extraInfos)
+    if (!isset(options.code)) options.code = 422 // default
+    setTimeout(() => { // ASYNC
+        // wait for the error to be catched, at this time options.doNotLog can be changed
+        if (!error.doNotLog && (options.notifyAdmins === true || (options.notifyAdmins === undefined && options.code === 500))) {
+            // NOTIFY ADMINS
+            sendErrorOnTeams(ctx, options.code || 500, msg, error, error?.stack?.toString())
+            sendErrorViaTelegram(options.code, msg, error?.toString())
+        }
+    })
+    if (options.doNotThrow !== true) throw error
+    else return error
+}
+
 //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╦    ═╦═ ╔═══ ══╦══
 //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝   ║     ║  ╚══╗   ║
 //  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚    ╚══╝ ═╩═ ═══╝   ╩
@@ -64,60 +121,4 @@ type CoreErrorWithCustomMessage = Record<keyof typeof serverErrors, (ctx: Ctx | 
 declare global {
     interface GreenDotErrors extends CoreErrors { }
     interface GreenDotErrors extends CoreErrorWithCustomMessage { }
-}
-
-//  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╔══╗ ╦  ╦ ╦╗ ╔ ╔══╗ ══╦══ ═╦═ ╔══╗ ╦╗ ╔ ╔═══
-//  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝   ╠═   ║  ║ ║╚╗║ ║      ║    ║  ║  ║ ║╚╗║ ╚══╗
-//  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚    ╩    ╚══╝ ╩ ╚╩ ╚══╝   ╩   ═╩═ ╚══╝ ╩ ╚╩ ═══╝
-
-
-export const throwError = new Proxy({}, {
-    get(target, p) {
-        // This ensure that in all case an error is thrown, even the error is not registered
-        if (p in target) return target[p]
-        else {
-            C.error(false, 'Unknown error ' + (p as string) + '. Error has not been correctly registered.')
-            return getThrowErrorFn({ msg: p })
-        }
-    },
-}) as GreenDotErrors
-
-/** This is to register new errors and custom errors and make them available in the project */
-export function registerErrors<T extends Record<string, ErrorOptions>>(errObj: T, withCustomMsgParam = false) {
-    for (const [errName, errOptions] of Object.entries(errObj)) {
-        if (withCustomMsgParam) {
-            // Error with a a CUSTOM MESSAGE. Eg: throw.myError(ctx, msg, options)
-            throwError[errName] = (ctx: Ctx | null, msg: string, options: ErrorOptions = {}) => {
-                return sharedErrorEndpoint(ctx, msg, { ...errOptions, ...options })
-            }
-        } else {
-            // Classic error. Eg: throw.myError(ctx, options)
-            throwError[errName] = getThrowErrorFn(errOptions)
-        }
-    }
-    return errObj
-}
-
-function getThrowErrorFn(errOptionsToMerge: ErrorOptions) {
-    return (ctx: Ctx | null, options: ErrorOptions = {}) => {
-        return sharedErrorEndpoint(ctx, options?.errMsgId || errOptionsToMerge?.msg || errOptionsToMerge?.message, { ...errOptionsToMerge, ...options })
-    }
-}
-
-
-function sharedErrorEndpoint(ctx: Ctx | null, msg: string, options: ErrorOptions = {}) {
-    const infosFromCtx = ctx && ctx._id ? { userId: ctx._id } : {}
-    const extraInfos = { ...infosFromCtx, ...options }
-    const error = new DescriptiveError(msg, extraInfos)
-    if (!isset(options.code)) options.code = 422 // default
-    setTimeout(() => { // ASYNC
-        // wait for the error to be catched, at this time options.doNotLog can be changed
-        if (!error.doNotLog && (options.notifyAdmins === true || (options.notifyAdmins === undefined && options.code === 500))) {
-            // NOTIFY ADMINS
-            sendErrorOnTeams(ctx, options.code || 500, msg, error, error?.stack?.toString())
-            sendErrorViaTelegram(options.code, msg, error?.toString())
-        }
-    })
-    if (options.doNotThrow !== true) throw error
-    else return error
 }

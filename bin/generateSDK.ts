@@ -49,14 +49,14 @@ export async function run() {
         const allAppFolders = await fs.readdir(appFolderRoot)
 
         // init server with default config (default perms...etc)
-        // TODO TODO TODO TODO TODO TODO TODO 
+        // TODO TODO TODO TODO TODO TODO TODO
         // CHANGE THAT TO GREENDOT CONFIG
         const greenDotConfig: GreenDotConfig = generateDefaultsForConfig('0.0.0', 'coucou') // TODO remove bangk references
         Object.assign(clientAppConfig.serverConfig, greenDotConfig)
 
         await registerModels()
 
-        const allPlatforms = Object.values(greenDotConfig.connexion.sdkNameForRole)
+        const allPlatforms = Object.values(greenDotConfig.sdkNameForRole)
 
         // REBUILD DEFAULT FOLDER
         for (const platform of allPlatforms) {

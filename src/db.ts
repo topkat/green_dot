@@ -1,15 +1,17 @@
 
 
-import { AllModels, DbIds } from './cache/dbs/index.generated'
-import { error } from './core.error'
-import { getGreenDotDbConfigs } from './helpers/getGreenDotConfigs'
+import { AllModels, DbIds, MainDbName } from './cache/dbs/index.generated'
+import { throwError } from './core.error'
+import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
-import { ModelReadWrite } from 'good-cop'
+import { _, Definition, ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
-import { getDaoParsed } from './databases/getDaoParsed'
 import { registerModel } from './databases/models'
 import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectDatabase'
+
+import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
+import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
 
 
 //  ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
@@ -22,6 +24,11 @@ type DbType = {
   [K in keyof AllModels]: {
     [L in keyof AllModels[K]]: AllModels[K][L] extends ModelReadWrite ? DaoMethodsMongo<AllModels[K][L]> : never
   } & ModelAdditionalFields
+} & {
+  [k in MainDbName]: {
+    // we also inject models created by green_dot
+    GD_serverBlacklistModel: DaoMethodsMongo<{ Read: typeof GD_serverBlacklistModel.tsTypeRead, Write: typeof GD_serverBlacklistModel.tsTypeWrite }>
+  }
 }
 
 type AllDbIds = DbIds[keyof DbIds]
@@ -40,19 +47,42 @@ export async function initDbs(resetCache: boolean = false) {
     return C.warning(false, 'initDbCore() is called twice while in progress of being initiated')
   } else isRunning = true
 
-  const dbConfigs = await getGreenDotDbConfigs(resetCache)
+  const dbConfigs = getDbConfigs()
+  const mainConfigs = getMainConfig()
+  let hasDefaultDatabase = false
 
   for (const { dbs: connexionConfigs, name, type } of dbConfigs) {
 
     const models = await getProjectDatabaseModelsForDbName(name, resetCache)
     const daos = await getProjectDatabaseDaosForDbName(name, resetCache)
 
+    if (mainConfigs.defaultDatabaseName === name) {
+      // DEFAULT DATABASE
+      hasDefaultDatabase = true
+
+      // inject permissions fields in user
+      const permissionsFields = {
+        ...mainConfigs.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
+        ...convertRoleToPermsToModelFields(mainConfigs.allRoles)
+      }
+
+      if (!models.user) {
+        // we inject a user model
+        models.user = _.mongoModel(['creationDate', 'lastUpdateDate'], permissionsFields) as any as Definition
+      } else {
+        const objDef = (models.user as Definition)._definitions.find(def => def.name === 'object')
+        if (typeof objDef !== 'function') Object.assign(objDef.objectCache, permissionsFields)
+      }
+
+      // we inject greenDotModels
+      models.GD_serverBlackList = GD_serverBlacklistModel as any as Definition
+
+    }
+
     if (type === 'mongo') {
 
-      const daoConfigsParsed = getDaoParsed(daos)
-
       for (const modelName in models) {
-        registerModel(type, name, modelName, models[modelName] as any, daoConfigsParsed[modelName])
+        registerModel(type, name, modelName, models[modelName] as any, daos[modelName])
       }
 
       //----------------------------------------
@@ -68,15 +98,17 @@ export async function initDbs(resetCache: boolean = false) {
             databaseId,
             cache,
             connectionConfig,
-            daoConfigsParsed,
+            daos,
             models as any
           )
         } else throw new Error(`Unknown dbType ${type}`)
 
         if (typeof cache[databaseId]?.dbConfigs === 'undefined') C.error(false, 'WHY THAT ?!?' + `modelConfig.dbConfigs[${databaseId}] not set TODO DELETEME if no error is triggered`)
       }
-    } else error.serverError(null, `Database type not implemented: ${type}`, { dbName: name, dbType: type })
+    } else throwError.serverError(null, `Database type not implemented: ${type}`, { dbName: name, dbType: type })
   }
+
+  if (!hasDefaultDatabase) throw throwError.serverError(null, `No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
 
   isRunning = false
 }
@@ -89,13 +121,23 @@ export async function initDbs(resetCache: boolean = false) {
 /** Use that in your backend app has the main DB entry point of any database operations.
  * @example ```db.myDbName.myModelName.count(ctx, { status: 'success' })```
  */
-export const db = new Proxy({} as DbType, {
+export const dbs = new Proxy({} as DbType, {
   // proxy pattern here is a workaround to ensure user always get the latest db cache version
   // on server start, we need to await initDb to ensure the cache always has a value and can
   // be called anywhere in the app
   get(_, prop: string) {
     if (!cache[prop]) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
     return cache[prop]
+  },
+})
+
+export const db = new Proxy({} as DbType[MainDbName], {
+  // we also use proxy here for we can use getGreenDotConfigSync() without instanciating it
+  // once in the file and thus wait until db and cache are operational
+  // In short we make sync out of async (more DX friendly at usage)
+  get(_, prop: string) {
+    const { defaultDatabaseName } = getMainConfig()
+    return cache[defaultDatabaseName][prop]
   },
 })
 
@@ -112,4 +154,3 @@ export const db = new Proxy({} as DbType, {
 // server start
 //----------------------------------------
 const cache = {} as ModelsConfigCache
-

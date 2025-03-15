@@ -10,15 +10,17 @@ import { nbOccurenceInString, C } from 'topkat-utils'
 jest.mock('../../models')
 
 describe('getMaskFromSelect', () => {
-    const mask = getMaskFromSelect(['adminField1', 'adminField2'], 'main', 'organization')
-    it('mask', () => expect(mask).toEqual([
-        'name',
-        'anotherFieldUserHaveNoAccess',
-        'teams',
-        'teams.users',
-        'teams.name',
-        'teams.adminAuth',
-    ]))
+    it('COUCOU it je ne sais pas quoi mettre ici c est deja describe la haut j aime pas les test unitaires', async () => {
+        const mask = await getMaskFromSelect(['adminField1', 'adminField2'], 'main', 'organization')
+        it('mask', () => expect(mask).toEqual([
+            'name',
+            'anotherFieldUserHaveNoAccess',
+            'teams',
+            'teams.users',
+            'teams.name',
+            'teams.adminAuth',
+        ]))
+    })
 })
 
 describe('combineAndParseMaskHooks', () => {
@@ -29,14 +31,14 @@ describe('combineAndParseMaskHooks', () => {
     //----------------------------------------
     it(`Single hooks, PUBLIC`, async () => {
         const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne')
 
         expect(mask).toEqual(userFields.filter(e => e !== 'name'))
         // it('select', () => expect(select).toEqual(['name']))
     })
     it(`Check CACHING works`, async () => {
         const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { validUntil } = combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne') as any
+        const { validUntil } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne') as any
 
         C.info('validUntil should be set so coming from CACHE')
         expect(validUntil).toBeDefined()
@@ -46,14 +48,14 @@ describe('combineAndParseMaskHooks', () => {
     //----------------------------------------
     it(`single hooks, ADMIN, method:CREATE No hooks apply`, async () => {
         const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.main.user.mask, 'create', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'main', 'user', hooks, 'create')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'main', 'user', hooks, 'create')
 
         expect(mask).toEqual([])
         // it('select', () => expect(select).toEqual(userFields))// can create with a password
     })
     it(`single hooks, ADMIN, method:GETALL One hook apply`, async () => {
         const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.main.user.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'main', 'user', hooks, 'getAll')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'main', 'user', hooks, 'getAll')
 
         expect(mask).toEqual(['password'])
         // it('select', () => expect(select).toEqual(userFields.filter(f => f !== 'password')))
@@ -63,7 +65,7 @@ describe('combineAndParseMaskHooks', () => {
     //----------------------------------------
     it(`multiple hook, user`, async () => {
         const hooks = await appliableHooksForUser(getCtx('user'), models.daos.main.organization.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('user'), 'main', 'organization', hooks, 'getAll')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('user'), 'main', 'organization', hooks, 'getAll')
 
         expect(mask).toEqual([
             'adminField1', // admin has been catched by * wildcard

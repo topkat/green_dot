@@ -1,21 +1,21 @@
 
 
-import { getProjectPaths } from './getProjectPaths'
+import { getDbConfigs } from './getGreenDotConfigs'
 import { Definition } from 'good-cop'
 import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
-import { C, objEntries } from 'topkat-utils'
+import { C } from 'topkat-utils'
 import { safeImport } from './safeImports'
+import { parseDaos } from '../databases/parseDaos'
 
 
 const modelsCache = {} as { [dbName: string]: { [modelName: string]: Definition } }
-const daosCache = {} as { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> | MongoDao<any> } }
-
-
+const daosCache = {} as { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> } }
 
 
 type DatabaseIndexFileContent = {
   models: { [modelName: string]: Definition }
   daos: { [modelName: string]: MongoDaoParsed<any> | MongoDao<any> }
+  defaultDao?: MongoDaoParsed<any> | MongoDao<any>
 }
 
 let cacheInitialized = false
@@ -23,11 +23,13 @@ let cacheInitialized = false
 async function initCache(resetCache = false) {
   if (cacheInitialized && resetCache === false) return
   cacheInitialized = true
-  const { dbConfigs } = await getProjectPaths()
-  for (const [dbName, { generatedIndexPath }] of objEntries(dbConfigs)) {
+  const dbConfigs = getDbConfigs()
+  for (const { generatedIndexPath, name: dbName } of dbConfigs) {
     const fileContent = await safeImport(generatedIndexPath) as DatabaseIndexFileContent
+
     modelsCache[dbName] = fileContent.models
-    daosCache[dbName] = fileContent.daos
+
+    daosCache[dbName] = parseDaos(Object.keys(fileContent.models), fileContent.daos, fileContent.defaultDao)
   }
 }
 

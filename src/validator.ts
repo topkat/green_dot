@@ -1,4 +1,6 @@
-import { Definition } from 'good-cop/backend'
+
+
+import { Definition } from 'good-cop/src/index-backend'
 import { AllModels, MainDbName } from './cache/dbs/index.generated'
 import { getProjectDatabaseModelsSync } from './helpers/getProjectDatabase'
 

@@ -16,27 +16,12 @@ import { generateSwaggerDoc } from './generateSDK/generateSwaggerDoc'
 import { createDaoRouteConfigPerPlatformForSdk, createServiceRouteConfigPerPlatformForSdk } from './generateSDK/generateSDKgetRouteConfigs'
 import { registerModels } from '../registerModules/registerModels'
 
-export { greenDotConfig, updateGreenDotConfig } from '../cache/green_dot.app.config.cache' // this file may be used on its own
-
 export async function generateMainBackendFiles() {
-
-    const dbConfigs = await serverConfig.dbConfigs()
 
     const allRoutes: string[] = []
     const serviceRouteConfig = {} as RouteFromSevicesConfigForGenerateSdk
 
     await registerModels()
-
-    //----------------------------------------
-    // DAO API
-    //----------------------------------------
-
-    const daoConf = {} as Record<string, Record<string, MongoDaoParsed<any>>>
-    for (const dbConf of Object.values(dbConfigs)) { // TODO not compatible with multiple DB adresses actually, should say if default
-        for (const [dbId, dbConf2] of objEntries(dbConf)) {
-            daoConf[dbId] = dbConf2.daoConfigsParsed
-        }
-    }
 
     const { allDaoRoutes } = await getDaoRouteDescriptionFromDaoConfigs()
     allRoutes.push(...Object.values(allDaoRoutes).flat())
@@ -69,9 +54,9 @@ export async function generateMainBackendFiles() {
                     const realRoute = service?.route ? Array.isArray(service?.route) ? service?.route[1] : service?.route : kebabCase(camelCaseToWords(serviceName))
                     const rte = '/' + urlPathJoin(realRoute)
                     if (service.maskInSdk !== true) allRoutes.push(rte)
-                    const allRoles = getAllTargetRolesForService(serverConfig.connexion.allRoles, service.for)
+                    const allRoles = getAllTargetRolesForService(serverConfig.allRoles, service.for)
                     for (const role of allRoles) {
-                        const platform = serverConfig.connexion.sdkNameForRole[role]
+                        const platform = serverConfig.sdkNameForRole[role]
                         serviceRouteConfig[platform] ??= {}
                         const forParsed = parseForClause(service.for || [])
                         serviceRouteConfig[platform][realRoute] = {

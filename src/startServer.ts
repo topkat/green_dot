@@ -9,7 +9,6 @@ import multer from 'multer'
 
 import event from './event'
 import { newSystemCtx } from './ctx'
-import { GreenDotAppConfig } from './types/core.types'
 import { registerModules } from './registerModules/registerModules'
 import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
 import { initTelegramBot } from './services/sendViaTelegram'
@@ -18,148 +17,142 @@ import { swaggerDocInit } from './documentation/swaggerDoc.init'
 import { generateLoginMw } from './security/login.middleware'
 import { rateLimiterMiddleware, rateLimiter as rateLimiterSvc } from './security/serviceRouteRateLimiter'
 import { logRouteInfos } from './registerModules/apiMiddlewares/logRouteInfo.middleware'
-import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
-import { getGreenDotConfig } from './helpers/getGreenDotConfigs'
+import { getMainConfig, getActiveAppConfig, initGreenDotConfigs } from './helpers/getGreenDotConfigs'
+
+dotenv.config()
 
 const { DISPLAY_NO_BUILD_WARNING } = ENV()
 
 
-const app = express()
-dotenv.config()
-
-
 export async function startServer(
-    allServices,
-    allErrs,
+    appName: string,
     isMaster = true,
-    isReloadModules = false, // allow to "soft restart" the server via api for example // TODO remove behavior
-    loginHook: typeof clientAppConfig.serverConfig['onLogin']
 ) {
     try {
+        await initGreenDotConfigs({ appName })
 
-        // TODO Make sure that all config files are cached here, maybe make a special function
-
-        const serverConfig = await getGreenDotConfig()
-
-        Object.assign(clientAppConfig.serverConfig, serverConfig, { onLogin: loginHook }) // shall not remove reference of obj
+        const mainConfig = await getMainConfig()
+        const appConfig = await getActiveAppConfig()
 
         // INTRO
         if (isMaster) {
-            if (isReloadModules) C.gradientize(`${'='.repeat(45)}\n|| SERVER SOFT RESTART${' '.repeat(45 - 24)}||\n${'='.repeat(45)}`)
-            else C.gradientize(serverConfig.serverCliIntro) // CLI intro
-            C.log(C.primary(`Env: ${serverConfig.env} | Schedules: ${serverConfig.enableSchedules ? '✓' : '✖️'} | Seeds: ${serverConfig.enableSeed ? '✓' : '✖️'}\n`))
+            // if (isReloadModules) C.gradientize(`${'='.repeat(45)}\n|| SERVER SOFT RESTART${' '.repeat(45 - 24)}||\n${'='.repeat(45)}`) else
+            C.gradientize(appConfig.serverCliIntro) // CLI intro
+            C.log(C.primary(`Env: ${mainConfig.env} | Schedules: ${appConfig.enableSchedules ? '✓' : '✖️'} | Seeds: ${appConfig.enableSeed ? '✓' : '✖️'}\n`))
             if (DISPLAY_NO_BUILD_WARNING) C.error(false, `✓ LOCAL BUILD NOT RAN`)
-            else C.log(C.primary(`✓ BUILD ${serverConfig.appName}`))
+            else C.log(C.primary(`✓ BUILD ${appConfig.name}`))
         }
 
-        clientAppConfig.errors = allErrs
-        clientAppConfig.services = allServices
+        registerConfig(appConfig.dataValidationConfig)
 
-        registerConfig(serverConfig.dataValidationConfig)
+        const app = express()
 
-        if (!isReloadModules && serverConfig.env !== 'build') {
+        // initAws(serverConfig.awsConfig)
+        initTelegramBot()
 
-            // initAws(serverConfig.awsConfig)
-            initTelegramBot(serverConfig)
+        app.disable('x-powered-by')
 
-            app.disable('x-powered-by')
-
-            app.use((_, res, next) => {
-                res.set({
-                    'Content-Security-Policy':
-                        `default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests`,
-                    'Cross-Origin-Opener-Policy': 'same-origin',
-                    'Cross-Origin-Resource-Policy': 'same-origin',
-                    // 'Origin-Agent-Cluster': '?1',
-                    'Referrer-Policy': 'no-referrer',
-                    'Strict-Transport-Security': 'max-age=15552000; includeSubDomains',
-                    'X-Content-Type-Options': 'nosniff',
-                    'X-DNS-Prefetch-Control': 'off',
-                    'X-Download-Options': 'noopen',
-                    'X-Frame-Options': 'SAMEORIGIN',
-                    'X-Permitted-Cross-Domain-Policies': 'none',
-                    'X-XSS-Protection': '0',
-                })
-                next()
+        app.use((_, res, next) => {
+            res.set({
+                'Content-Security-Policy': `default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests`,
+                'Cross-Origin-Opener-Policy': 'same-origin',
+                'Cross-Origin-Resource-Policy': 'same-origin',
+                // 'Origin-Agent-Cluster': '?1',
+                'Referrer-Policy': 'no-referrer',
+                'Strict-Transport-Security': 'max-age=15552000; includeSubDomains',
+                'X-Content-Type-Options': 'nosniff',
+                'X-DNS-Prefetch-Control': 'off',
+                'X-Download-Options': 'noopen',
+                'X-Frame-Options': 'SAMEORIGIN',
+                'X-Permitted-Cross-Domain-Policies': 'none',
+                'X-XSS-Protection': '0',
             })
+            next()
+        })
 
-            app.use(cookieParser())
-            app.use(cors({
-                credentials: true,
-                origin: function (origin, callback) {
-                    const err = () => {
-                        callback(new DescriptiveError('Not allowed by CORS: ' + origin, { origin, env: serverConfig.env, code: 500, doNotThrow: true }))
-                    }
-                    const success = () => callback(null, true)
-                    if (!origin) success()
-                    else if (typeof serverConfig?.corsOrigin === 'function') {
-                        if (serverConfig?.corsOrigin(origin)) success()
-                        else err()
-                    } else if (!serverConfig?.corsOrigin || serverConfig?.corsOrigin.includes(origin)) success()
-                    else err()
-                },
-            }))
-            app.use((req, res, next) => {
-                const initialBody = { ...req.body }
-
-                if (req.headers['content-type']?.startsWith('multipart/form-data')) {
-                    multer({ storage: multer.memoryStorage() }).any()(req, res, (err) => {
-                        if (err) {
-                            return res.status(400).send({ error: 'Error processing multipart/form-data' })
-                        }
-                        req.body = { ...initialBody, ...req.body }
-                        next()
-                    })
-                } else {
-                    next()
+        app.use(cookieParser())
+        app.use(cors({
+            credentials: true,
+            origin: function (origin, callback) {
+                const err = () => {
+                    callback(new DescriptiveError('Not allowed by CORS: ' + origin, { origin, env: mainConfig.env, code: 500, doNotThrow: true }))
                 }
-            })
-            app.use(bodyParser.urlencoded({ extended: false }))
-            app.use(xmlparser())
-            app.use(express.text())
-            app.use(bodyParser.json({ limit: '1mb' }))
-            app.set('trust proxy', true) // https://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
-        }
+                const success = () => callback(null, true)
+                if (!origin) success()
+                else if (typeof appConfig?.corsOrigin === 'function') {
+                    if (appConfig.corsOrigin(origin)) success()
+                    else err()
+                } else if (!appConfig?.corsOrigin || appConfig?.corsOrigin.includes(origin)) success()
+                else err()
+            },
+        }))
+        app.use((req, res, next) => {
+            const initialBody = { ...req.body }
+
+            if (req.headers['content-type']?.startsWith('multipart/form-data')) {
+                multer({ storage: multer.memoryStorage() }).any()(req as any, res as any, (err) => { // TODO fix type ??
+                    if (err) {
+                        return res.status(400).send({ error: 'Error processing multipart/form-data' })
+                    }
+                    req.body = { ...initialBody, ...req.body }
+                    next()
+                })
+            } else {
+                next()
+            }
+        })
+        app.use(bodyParser.urlencoded({ extended: false }))
+        app.use(xmlparser())
+        app.use(express.text())
+        app.use(bodyParser.json({ limit: '1mb' }))
+        app.set('trust proxy', true) // https://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
+
 
         await registerModules(app, isMaster)
 
-        if (!isReloadModules) {
 
-            await new Promise(resolve => app.listen(serverConfig.port, () => resolve(1)))
+        await new Promise(resolve => app.listen(appConfig.port, () => resolve(1)))
 
-            if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${serverConfig.serverLiveUrl}`))
+        if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
 
-            // seed and server.start events shall be triggerred before exposing routes. This avoid
-            // accidentally hitting a route without seeded content
-            await event.emit('server.start', newSystemCtx(), isMaster, app)
-        }
+        // seed and server.start events shall be triggerred before exposing routes. This avoid
+        // accidentally hitting a route without seeded content
+        await event.emit('server.start', newSystemCtx(), isMaster, app)
 
-        //  ╔══╗ ╔═══ ╦   ╦ ╦╗ ╔ ╔══╗   ╔══╗ ╔══╗ ╦  ╦ ══╦══ ╔══╗ ╔═══
-        //  ╠══╣ ╚══╗ ╚═╦═╝ ║╚╗║ ║      ╠═╦╝ ║  ║ ║  ║   ║   ╠═   ╚══╗
-        //  ╩  ╩ ═══╝   ╩   ╩ ╚╩ ╚══╝   ╩ ╚  ╚══╝ ╚══╝   ╩   ╚══╝ ═══╝
-        setTimeout(() => {
-            if (serverConfig?.swaggerDocObject && serverConfig.env !== 'production' && serverConfig.env !== 'preprod') swaggerDocInit(app, serverConfig.swaggerDocObject, serverConfig.serverLiveUrl)
+        // ALIVE ROUTE
+        app.get('/alive', generateLoginMw(), rateLimiterMiddleware(), (_, res) => res.json(true))
 
-            // ALIVE ROUTE
-            app.get('/alive*',
-                generateLoginMw(),
-                rateLimiterMiddleware(),
-                (_, res) => res.json(true)
-            )
+        // ASYNC this is async to gain in server loading time
+        setTimeout(async () => {
 
-            // TEST KILL PROCESS
-            if (serverConfig.env === 'test') app.get(`/killProcess`, logRouteInfos('Killing Process', '💀'), () => process.exit(0))
+            // Expose a route for killing the server process (allow to emulate servers down)
+            if (mainConfig.isTestEnv) app.get(`/killProcess`, logRouteInfos('Killing Process', '💀'), () => process.exit(0))
 
-
-            // 404 CATCH ALL ROUTE
+            // 404 catch all routes, make sure they are declared after everything (even custom user declared routes)
             app.use(
                 generateLoginMw(),
-                middlewareForNotFoundRoutes
+                async (req, res, next) => {
+                    try {
+                        C.error(false, `Route not found: ${req.method} ${req.originalUrl}`)
+                        await rateLimiterSvc.recordAttemptAndThrowIfNeeded((req as any)?.ctx, '404')
+                        return res.status(404).end()
+                    } catch (err) {
+                        next(err)
+                    }
+                }
             )
 
             app.use(getExpressErrHandlerMW())
 
-            generateMainBackendFiles() // should be async for perf
+            if (!mainConfig.isProdEnv) {
+                await generateMainBackendFiles()
+                try {
+                    const swaggerDoc = await import('./cache/swaggerDoc.generated.json')
+                    swaggerDocInit(app, swaggerDoc, appConfig.serverLiveUrl)
+                } catch (err) {
+                    C.error(false, `Swagger doc could not be generated and initiated`)
+                }
+            }
 
         }, 2000)
 
@@ -171,13 +164,3 @@ export async function startServer(
 
 
 
-
-async function middlewareForNotFoundRoutes(req, res, next) {
-    try {
-        C.error(`Route not found: ${req.method} ${req.originalUrl}`)
-        await rateLimiterSvc.recordAttemptAndThrowIfNeeded(req?.ctx, '404')
-        return res.status(404).end()
-    } catch (err) {
-        next(err)
-    }
-}

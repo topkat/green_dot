@@ -3,7 +3,7 @@ import { Mask } from '../mongo/services/maskService'
 import { MongoDaoParsed } from '../mongo/types/mongoDbTypes'
 import { UserModels, OrgModels, Organization, User } from '../../tests/jestHelpers'
 import { Models } from '../models'
-import { _ } from 'good-cop/backend'
+import { _ } from 'good-cop'
 
 const validationAddr = () => ({
     user: _.object({

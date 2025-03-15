@@ -1,8 +1,8 @@
 
 
-import fs from 'fs-extra'
 import Path from 'path'
-import { getProjectPaths } from '../helpers/getProjectPaths'
+import fs from 'fs-extra'
+import { getProjectPaths } from '../../helpers/getProjectPaths'
 import glob from 'fast-glob'
 import { C, capitalize1st } from 'topkat-utils'
 
@@ -11,32 +11,37 @@ const modelOrDaoRegexp = /[/\\]([^/\\]+)\.(model|dao)\.ts$/
 
 /** Generates index.generated.ts files in client database folder */
 export async function generateIndexForProjectDb() {
+
   const { dbConfigs, mainConfig } = await getProjectPaths()
 
   for (const { generatedIndexPath, folderPath } of dbConfigs) {
     const dbPathRelative = Path.relative(mainConfig.folderPath, folderPath)
     try {
-
       const allFiles = await glob.async('**/*.@(model|dao).ts', {
         cwd: folderPath,
         onlyFiles: true,
         absolute: true,
       })
 
-      let imports = ''
+      let topOfFile = ''
       let types = ''
       let modelsVar = ''
       let daoVar = ''
 
       for (const file of allFiles) {
         const match = file.match(modelOrDaoRegexp) as [any, string, 'dao' | 'model']
-        if (match && ! /[/\\]default\.dao\.ts/.test(file)) {
+        const isDefault = /[/\\]default\.dao\.ts/.test(file)
+        const relativeToRoot = Path.relative(folderPath, file).replace('.ts', '')
+
+        if (isDefault) {
+          topOfFile += `export * as defaultDao from './${relativeToRoot}'\n`
+        } else if (match) {
 
           const [, moduleName, moduleType] = match
           const moduleNameCapital = capitalize1st(moduleName)
           const moduleTypeCapital = capitalize1st(moduleType)
 
-          imports += `import ${moduleName}${moduleTypeCapital} from './models/${moduleName}.${moduleType}'\n`
+          topOfFile += `import ${moduleName}${moduleTypeCapital} from './${relativeToRoot}'\n`
 
           if (moduleType === 'model') {
             types += `export type ${moduleNameCapital} = typeof ${moduleName}Model.tsTypeRead\n` +
@@ -50,11 +55,24 @@ export async function generateIndexForProjectDb() {
         }
       }
 
-      const fileContent = `${imports}\n\n${types}\n\nconst models = {\n${modelsVar}}\n\nconst daos = {\n${daoVar}}\n\nexport { models, daos }`
+      const fileContent = `
+${topOfFile}
+
+${types}
+
+const models = {
+${modelsVar}\
+}
+
+const daos = {
+${daoVar}\
+}
+
+export { models, daos }`
 
       await fs.outputFile(generatedIndexPath, fileContent, 'utf-8')
 
-      C.success(`Successfully generated index for /${dbPathRelative} database`)
+      C.success(`Generated index for /${dbPathRelative} DB`)
 
     } catch (err) {
       C.error(err)

@@ -1,25 +1,32 @@
 
 import Path from 'path'
 import fs from 'fs-extra'
-import { getGreenDotDbConfigs, getGreenDotConfig } from '../../helpers/getGreenDotConfigs'
+import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectDatabase'
 import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
+import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
+import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
+import { generateIndexForDbCachedFiles, getNewIndexForDbCacheFileStructure } from './generateIndexForDbCachedFiles'
 
 
-const greenDotCacheModuleFolder = Path.resolve(__dirname, '../../cache/dbs')
-if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, 'ERROR: green_dot local cache folder for DB is not existing')
+
 
 /** This will generate a string representation of all db types in local green_dot module cache folder to be accessed in the project app with ```import { ModelTypes } from 'green_dot/db'``` */
 export async function generateDbCachedFiles(resetCache = false) {
 
-  const indexFile = getNewIndexFileStructure()
+  const indexFile = getNewIndexForDbCacheFileStructure()
 
-  const dbConfigs = await getGreenDotDbConfigs(resetCache)
+  const mainConfig = getMainConfig()
+  const dbConfigs = getDbConfigs()
 
   for (const { name: dbName, dbs } of dbConfigs) {
 
     const models = await getProjectDatabaseModelsForDbName(dbName, resetCache)
+
+    if (mainConfig.defaultDatabaseName === dbName) {
+      models.GD_serverBlackList = GD_serverBlacklistModel
+    }
 
     let modelTypeFileContent = `\n\n`
     const modelNames = Object.keys(models)
@@ -31,7 +38,6 @@ export async function generateDbCachedFiles(resetCache = false) {
     //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═╗  ╔═╗    ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
     //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ║  ║ ╠═╩╗     ║   ╚═╦═╝ ╠══╝ ╠═   ╚══╗
     //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ╚══╝ ╚══╝     ╩     ╩   ╩    ╚══╝ ═══╝
-
 
     for (const [modelName, model] of Object.entries(models) as [string, Definition][]) {
 
@@ -62,50 +68,15 @@ export async function generateDbCachedFiles(resetCache = false) {
     //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ╚══╝ ╚══╝   ╚══╝ ╩  ╩ ╚══╝ ╩  ╩ ╚══╝   ═╩═ ╩ ╚╩ ╚══╝ ╚══╝ ═╝╚═
 
     indexFile.imports += `import { AllModels as ${dbNameCapital}AllModels } from './${dbName}.modelTypes.generated.ts'\n`
-    indexFile.allModels += `bangk: ${dbNameCapital}AllModels\n`
+    if (dbName === mainConfig.defaultDatabaseName) {
+      indexFile.allModels += `{ [K in keyof ${dbNameCapital}AllModels]: K extends 'user' ? ${dbNameCapital}AllModels[K] & { Read: UserAdditionalFields, Write: Partial<UserAdditionalFields> } : ${dbNameCapital}AllModels[K] }`
+    } else {
+      indexFile.allModels += `${dbName}: ${dbNameCapital}AllModels\n`
+    }
     indexFile.dbIds += `${dbName}: '${dbIds.join(`' | '`)}'\n`
 
-    await generateDbIndexFile(indexFile)
+    await generateIndexForDbCachedFiles(indexFile)
 
   }
 }
 
-/** If this function is called alone, it will generate a default index file that is typescript valid and safe */
-export async function generateDbIndexFile(indexFile: ReturnType<typeof getNewIndexFileStructure> = getNewIndexFileStructure()) {
-
-  const mainConfig = await getGreenDotConfig()
-  const dbConfigs = await getGreenDotDbConfigs()
-
-  const indexFileContent = `
-${indexFile.imports}
-
-type AllModels = ${indexFile.allModels.length ? `{
-    ${indexFile.allModels}
-}` : 'Record<string, any>'}
-
-type DbIds = ${indexFile.dbIds.length ? `{
-    ${indexFile.dbIds}
-}` : 'Record<string, any>'}
-
-type MainDbName = ${mainConfig.defaultDatabaseName && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
-
-export { AllModels, DbIds, MainDbName }
-`
-
-  await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'index.generated.ts'), indexFileContent)
-
-  C.success(`Successfully generated local cache/dbs/index.generated.ts`)
-}
-
-
-//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
-//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
-//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
-
-function getNewIndexFileStructure() {
-  return {
-    imports: '',
-    allModels: '',
-    dbIds: '',
-  }
-}

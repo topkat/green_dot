@@ -5,7 +5,7 @@ import { Definition } from '../types/core.types'
 
 import { capitalize1st } from 'topkat-utils'
 import { safeImport } from '../helpers/safeImports'
-
+// TODO DELETEME
 type ModelNames = {
     fileNameDashCase: string;
     fileNameCamelCase: string;

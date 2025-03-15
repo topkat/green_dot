@@ -5,15 +5,21 @@ import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
 export type GDpathConfig = { path: string, folderPath: string }
-type PathConfObj = { [appNames: string]: GDpathConfig & { generatedIndexPath: string } }
+export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string }
+type PathConfArr = GDpathConfigWithIndex[]
+
+export const greenDotCacheModuleFolder = Path.resolve(__dirname, '../cache/dbs')
+if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, 'ERROR: green_dot local cache folder for DB is not existing')
+
+
 
 let greenDotPathsCache: {
   /** Path of green_dot.config.ts */
   mainConfig: GDpathConfig
   /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
-  appConfigs: PathConfObj
+  appConfigs: PathConfArr
   /** Paths to all green_dot.db.config.ts that can be found in the project alongside their DB names (folder name) */
-  dbConfigs: PathConfObj
+  dbConfigs: PathConfArr
 }
 
 
@@ -44,11 +50,11 @@ export async function getProjectPaths(resetCache = false) {
 
     const dbConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.db.config'))
-      .reduce(configFilePathReducer, {} as PathConfObj)
+      .map(configFilePathMapper)
 
     const appConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.app.config'))
-      .reduce(configFilePathReducer, {} as PathConfObj)
+      .map(configFilePathMapper)
 
     greenDotPathsCache = {
       mainConfig: { path: mainConfigPath, folderPath: rootPath },
@@ -65,12 +71,10 @@ export async function getProjectPaths(resetCache = false) {
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-function configFilePathReducer(o: PathConfObj, path: string) {
+function configFilePathMapper(path: string) {
   return {
-    ...o, [path.replace(/.*[/\\]([^/\\]+?)(?:Db|-db)?[/\\]green_dot.*?config\.ts$/, '$1')]: {
-      path: path,
-      folderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, ''),
-      generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts')
-    }
+    path: path,
+    folderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, ''),
+    generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts')
   }
 }

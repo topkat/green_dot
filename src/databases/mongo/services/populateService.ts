@@ -1,6 +1,5 @@
 
-import { models } from '../../models'
-
+import { getProjectDatabaseModels } from '../../../helpers/getProjectDatabase'
 import { findByAddressAll, getId, isObject, asArray } from 'topkat-utils'
 
 /** Transform populated fields into their respective _ids. Will modify the passed object */
@@ -10,6 +9,8 @@ export async function unPopulate<ModelName extends string>(dbName: string, model
     })
 }
 
+const modelFlatObjCache = {} as { [dbId: string]: { [modelName: string]: { [populatedFieldNameFlat: string]: string } } }
+
 export async function forEachPopulateField<ModelName extends string>(
     dbName: string,
     modelName: ModelName,
@@ -17,8 +18,15 @@ export async function forEachPopulateField<ModelName extends string>(
     cb: (fieldValue: string | Record<string, any>, fieldAddrInParent: string | number, parent: MaybeArray<Record<string, any>>, modelName: string, addrFromRoot: string) => MaybePromise<any>,
     recursive = false
 ) {
-    const { populateAddrFlatWithModelName } = models
-    const populateAddresses = populateAddrFlatWithModelName[dbName][modelName]
+    const models = await getProjectDatabaseModels()
+    if (!modelFlatObjCache[dbName][modelName]) {
+        modelFlatObjCache[dbName] ??= {}
+        modelFlatObjCache[dbName][modelName] = models[dbName][modelName]._getDefinitionObjFlat(false, def => def._refValue)
+    }
+    const populateAddresses = modelFlatObjCache[dbName][modelName]
+
+    // const { populateAddrFlatWithModelName } = models
+    // const populateAddresses = populateAddrFlatWithModelName[dbName][modelName]
 
     for (const [addr, modelName] of Object.entries(populateAddresses)) {
         const actualPopulatedFieldFields = findByAddressAll(fields, addr.replace(/\[\d\]/g, '[*]'), true)

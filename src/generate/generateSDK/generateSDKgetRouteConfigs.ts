@@ -1,7 +1,7 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import { MainTypes, Definition } from 'good-cop/backend'
+import { MainTypes, Definition } from 'good-cop'
 import { capitalize1st, includes } from 'topkat-utils'
 
 import { daoValidators } from '../../databases/mongo/types/mongoDaoTypes'

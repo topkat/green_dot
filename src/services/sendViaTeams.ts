@@ -1,8 +1,8 @@
 
 import { sendTeamsMessage } from 'send-teams-message'
-import { serverConfig } from '../cache/green_dot.app.config.cache'
 
 import { removeCircularJSONstringify, C } from 'topkat-utils'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
 
 
 export async function sendErrorOnTeams(ctx, code: number, msg: string, extraInfos: Record<string, any>, stackTrace?: string) {
@@ -31,15 +31,15 @@ async function sendTeamsMsgGeneric(
     errExtraInfos,
 ) {
     try {
-        if (serverConfig.notifyOnErrorOnTeamsChannel) {
-            if (serverConfig.env !== 'test') {
-                await sendTeamsMessage(serverConfig.notifyOnErrorOnTeamsChannel, card)
-            }
+        const { alerts } = getActiveAppConfig()
+        if (alerts && alerts.teams?.enable) {
+            const { teamsWebhookUrl } = alerts.teams
+            await sendTeamsMessage(teamsWebhookUrl, card)
         }
     } catch (err) {
-        C.error('Error sending teams message')
         C.error(false, 'Message: ' + JSON.stringify(errExtraInfos, null, 2))
         C.error(err)
+        C.error(false, 'Error sending teams message')
     }
 }
 

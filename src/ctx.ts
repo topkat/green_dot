@@ -1,14 +1,16 @@
 
 
-import { getGreenDotConfigSync, getGreenDotConfig } from './helpers/getGreenDotConfigs'
+import { getMainConfig } from './helpers/getGreenDotConfigs'
 import { ApiOutputTypes } from './types/core.types'
 import mongoose from 'mongoose'
 import { Request, Response } from 'express'
 
-import { C, getId } from 'topkat-utils'
+import { getId } from 'topkat-utils'
 import { throwError } from './core.error'
+import { dbs } from './db'
+import { ModelTypes } from './cache/dbs/index.generated'
 
-const confSync = getGreenDotConfigSync()
+import { banUser, addUserWarning } from './security/userAndConnexion/banAndAddUserWarning'
 
 //----------------------------------------
 // CTX CLASS
@@ -21,7 +23,7 @@ export class CtxClass {
     /** TODO not actually working Number; 1 or 2 => verbosity */
     debugMode = false
     /** dev, prod, preprod... */
-    env = confSync ? confSync.env || process.env.NODE_ENV : process.env.NODE_ENV
+    env = process.env.NODE_ENV
     /** used to cimple check if it's a ctx for sure and not another object */
     isCtx = true as const
     /** Public Ctx means user is not logged */
@@ -41,7 +43,7 @@ export class CtxClass {
     /** Used to define through witch platform the ctx is connected, to be overrided by app */
     platform!: string
     /** user stored in the cache */
-    _user?: Record<string, any>
+    _user?: ModelTypes['user']
     /** The actual user permissions fields as given by the JWT token */
     permissions: Record<string, any>
     /** This is to store the type that will be used in all the for clauses in the app, since in a for you have to provide role. This is not the ideal place to put it, toDo */
@@ -73,6 +75,9 @@ export class CtxClass {
         res: Response = {} as Response,
         previousCtx?: Ctx,
     ) {
+
+        const { env } = getMainConfig()
+        if (this.env !== env) this.env = env
 
         if ('isCtx' in ctxUser) {
             Object.assign(this, ctxUser)
@@ -106,24 +111,22 @@ export class CtxClass {
         return withGodMode(this)
     }
     /** Cleanly throw an error, associating all ctx infos to it (user._id, aplication, service name, route...) */
-    throw = new Proxy({} as { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }, {
-        /** This will inject Ctx (this) as first param of error */
-        get(_, p) {
-
-            const errorFn = throwError[p] as GenericFunction
-            if (errorFn instanceof Function) {
-                return function (...args) {
-                    return errorFn.apply(throwError, [
-                        this,
-                        ...args
-                    ])
-                }
-            }
-            return throwError[p]
-
-
-        },
-    })
+    throw = new Proxy(
+        {} as { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void },
+        {
+            /** This will inject Ctx (this) as first param of error */
+            get: (_, p) => {
+                const errorFn = throwError[p]
+                if (typeof errorFn === 'function') {
+                    return (...args) => { // arrow function here are the trick for keeping this in that context
+                        return errorFn.apply(throwError, [
+                            this,
+                            ...args
+                        ])
+                    }
+                } else return throwError[p] // here all not existing errors are handled by throwError proxy
+            },
+        })
     //----------------------------------------
     // METHODS
     //----------------------------------------
@@ -137,18 +140,12 @@ export class CtxClass {
         return this.fromUser(role, permissionsOrUser, modifyActualCtx)
     }
     async addWarning() {
-        const serverConfig = await getGreenDotConfig()
-        if (serverConfig.addUserWarning && serverConfig.banUser) {
-            const { nbWarningLeftBeforeBan, nbWarnings } = await serverConfig.addUserWarning(this as any, { discriminator: this._id })
-            if (nbWarnings >= nbWarningLeftBeforeBan) {
-                await serverConfig.banUser(this as any, { discriminator: this._id })
-            }
-        } else C.error(false, 'A user received a warning but warning is not implemented')
+        const discriminator = this.isSystem || this.isPublic ? this.api.ipAdress : this._id
+        return await addUserWarning(this, { discriminator })
     }
     async banUser() {
-        if (serverConfig.banUser) {
-            await serverConfig.banUser(this as any, { discriminator: this._id })
-        } else C.error(false, 'A user received a warning but warning is not implemented')
+        const discriminator = this.isSystem || this.isPublic ? this.api.ipAdress : this._id
+        return await banUser(this, { discriminator })
     }
     system() {
         if (this.isSystem) return this
@@ -168,9 +165,19 @@ export class CtxClass {
     toString() {
         return JSON.stringify(this, null, 2)
     }
-    async getUser(refreshCache = false) {
-        const userFromCache = refreshCache === false && this._user
-        return (userFromCache || await serverConfig.getUserFromCtx(this as any) || this.getUserMinimal()) as Ctx['_user']
+    /** Returns the ctx user like it is in database with the permission 'system' (⚠️ with all fields including password and sensitive fields ⚠️) */
+    async getUser({
+        refreshCache = false,
+        errorIfNotSet = true
+    } = {}): Promise<ModelTypes['user']> {
+
+        const { defaultDatabaseName } = await getMainConfig()
+
+        if (refreshCache === false && this._user) {
+            return this._user
+        } else {
+            return await dbs[defaultDatabaseName].user.getById(this.system(), this._id, { triggerErrorIfNotSet: errorIfNotSet })
+        }
     }
     getUserMinimal() {
         return { _id: this._id, role: this.role, premissions: this.permissions }
@@ -186,7 +193,9 @@ export class CtxClass {
         const newCtx = new CtxClass({ ...this, ...override } as any as Ctx)
         return newCtx as Ctx & T
     }
-    fromUser(role: Ctx['role'], user: Record<string, any>, modifyActualCtx = true) {
+    fromUser(role: Ctx['role'], user: Partial<ModelTypes['user']>, modifyActualCtx = true) {
+
+        const { allPermissions } = getMainConfig()
 
         const newFields = {
             _id: getId(user),
@@ -196,7 +205,7 @@ export class CtxClass {
             permissions: {},
         } satisfies Partial<Ctx>
 
-        for (const perm of serverConfig.allPermissions) {
+        for (const perm of allPermissions) {
             if (user?.[perm]) newFields[perm] = user[perm]
         }
 
@@ -220,7 +229,7 @@ declare global {
     interface Ctx extends CtxClass { }
     interface CtxUser {
         _id: Ctx['_id']
-        role: Ctx['role'] | TechnicalRoles
+        role: Ctx['role'] | PublicRole
         permissions: Ctx['permissions']
         platform?: Ctx['platform']
         _user?: Ctx['_user']
@@ -236,6 +245,7 @@ declare global {
 
 export const systemRole = 'system'
 export const publicRole = 'public'
+export type PublicRole = typeof publicRole
 export const technicalRoles = [systemRole, publicRole] as const
 export type TechnicalRoles = typeof technicalRoles[number]
 export const systemUserId = '777fffffffffffffffffffff' // same are used in good-cop config

@@ -1,7 +1,7 @@
 
 // -------
-export { Definition } from 'good-cop/backend'
-export type { DefCtx, DefinitionPartial } from 'good-cop/backend'
+export { Definition } from 'good-cop'
+export type { DefCtx, DefinitionPartial } from 'good-cop'
 export type DbType = 'mongo'
 
 export * from './coreGeneric.types'
