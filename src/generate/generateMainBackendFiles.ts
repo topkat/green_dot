@@ -60,7 +60,7 @@ export async function generateMainBackendFiles() {
                     for (const role of allRoles) {
                         const platform = mainConfig.generateSdkConfig.sdkNameForRole[role] || 'main'
                         serviceRouteConfig[platform] ??= {}
-                        const forParsed = parseForClause(service.for || [])
+                        const forParsed = await parseForClause(service.for || [])
                         serviceRouteConfig[platform][realRoute] = {
                             ...service,
                             serviceName,

@@ -1,6 +1,6 @@
 import { GenericDef } from 'good-cop'
 import { ServiceDocObject } from '../../types/services.types'
-import { _ } from '../../definitions'
+import { _ } from '../../validator'
 
 
 

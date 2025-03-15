@@ -2,7 +2,7 @@
 
 
 import mongoose from 'mongoose'
-import { error } from '../../core.error'
+import { throwError } from '../../core.error'
 import { mongoBeforeRequest } from './mongoBeforeRequest'
 import { mongoAfterRequest, catchMongoDbDuplicateError } from './mongoAfterRequest'
 
@@ -37,7 +37,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             await mongoBeforeRequest(ctx, daoConf, localConfig)
             const promise = MongooseModel.findOne(localConfig.filter, null, { session: ctx.transactionSession })
             const result = await mongoAfterRequest<ModelRead, 'getOne', typeof localConfig>(ctx, daoConf, promise, localConfig)
-            if (config?.triggerErrorIfNotSet === true && !result) error.ressourceDoesNotExists(ctx, {
+            if (config?.triggerErrorIfNotSet === true && !result) throwError.ressourceDoesNotExists(ctx, {
                 triggerErrorIfNotSetOption: true,
                 filter,
                 additionalMsg: 'RESSOURCE DO NOT EXIST',
@@ -111,7 +111,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
         async updateMany(ctx, fieldsArr, config) {
             const results = [] as ModelRead[]
             for (const fields of fieldsArr) {
-                if (!isset(getId(fields))) error.serverError(ctx, '_id field must be set when updating field', { fieldsOrArr: fieldsArr })
+                if (!isset(getId(fields))) throwError.serverError(ctx, '_id field must be set when updating field', { fieldsOrArr: fieldsArr })
                 const originalId = getId(fields)
                 const localConfig = getLocalConfigForWrite('update', 'getAll', config, { _id: originalId }, fields)
                 delete fields._id
@@ -160,7 +160,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
         async deleteWithFilter(ctx, filter) {
             if (!ctx.isSystem && !filter._id) error[403](ctx, { errorCode: '29667' })
-            if (Object.keys(filter).length === 0) error.wrongValueForParam(ctx, { msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
+            if (Object.keys(filter).length === 0) throwError.wrongValueForParam(ctx, { msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
             const localConfig = getLocalConfigForWrite('delete', 'getAll', undefined, filter)
 
             // if (daoConf.modelConfig?.hardDelete === false) {

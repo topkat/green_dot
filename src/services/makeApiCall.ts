@@ -1,6 +1,6 @@
 
 import axios, { AxiosError } from 'axios'
-import { error } from '../core.error'
+import { throwError } from '../core.error'
 
 
 const apiCall = axios.create({ method: 'get' })
@@ -31,7 +31,7 @@ export async function makeApiCall(ctx, url: string, config?: ApiCallConfig) {
     const responseData = axiosErr.response?.data
     const respStatus = axiosErr.response?.status
 
-    error.applicationError(ctx, errMsg, {
+    throwError.applicationError(ctx, errMsg, {
       err,
       code: respStatus || 500,
       responseData,

@@ -2,7 +2,7 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectDatabase'
+import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectModelsAndDaos'
 import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
 import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
@@ -25,7 +25,7 @@ export async function generateDbCachedFiles(resetCache = false) {
     const models = await getProjectDatabaseModelsForDbName(dbName, resetCache)
 
     if (mainConfig.defaultDatabaseName === dbName) {
-      models.GD_serverBlackList = GD_serverBlacklistModel
+      models.GD_serverBlackList = GD_serverBlacklistModel as unknown as Definition
     }
 
     let modelTypeFileContent = `\n\n`

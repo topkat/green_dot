@@ -1,6 +1,6 @@
 
 import { applyMaskOnObjectForUser } from './maskService'
-import { error } from '../../../core.error'
+import { throwError } from '../../../core.error'
 import { LocalConfigParsed } from '../types/mongoDbTypes'
 
 /** Prevent user filtering on unauthorized fields. Eg: getAllUsers({ password: '1234' })
@@ -23,7 +23,7 @@ export async function mongoSanitizeFilter(ctx: Ctx, localConfig: LocalConfigPars
 
         if (/"\$[^"]+"/.test(filterStringified)) {
             await ctx.addWarning()
-            error.filterWithMongoOperatorsNotAllowed(ctx, { filter: localConfig.filter })
+            throwError.filterWithMongoOperatorsNotAllowed(ctx, { filter: localConfig.filter })
         }
 
         localConfig.filterSanitized = true // avoid to be triggered twice (for ex on update + read after updt)

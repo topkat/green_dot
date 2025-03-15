@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer'
-import { error } from '../core.error'
-import { serverConfig } from '../cache/green_dot.app.config.cache'
+import { throwError } from '../core.error'
 
 import { asArray, miniTemplater, C } from 'topkat-utils'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
 
 let testAccountCache
 
@@ -57,6 +57,8 @@ export default async function sendEmail(ctx, subject, content, recipients: strin
     try {
         let smtpAccount: typeof smtpConfig
 
+        const appConfig = await getActiveAppConfig()
+
         if (useTestAccount) {
             try {
                 const smtp = await new Promise<Awaited<ReturnType<typeof createTestSmtp>> | false>((resolve) => {
@@ -75,7 +77,7 @@ export default async function sendEmail(ctx, subject, content, recipients: strin
                 return C.error(false, 'Test SMTP server down, email sent has been bypassed')
             }
         } else if (useAwsSmtp) throw 'not implemented 789987' // smtpAccount = getAwsSmtpConfig() as typeof smtpConfig
-        else smtpAccount = (smtpConfig || serverConfig?.smtp)
+        else smtpAccount = (smtpConfig || appConfig?.smtp)
 
         if (smtpAccount.host.includes('live.smtp.mailtrap')) fromAddress = 'mailtrap@demomailtrap.com'
 
@@ -87,7 +89,7 @@ export default async function sendEmail(ctx, subject, content, recipients: strin
         }
 
         const info = await transporter.sendMail({
-            from: fromAddress || serverConfig?.emailFromAddress, // sender address
+            from: fromAddress || appConfig?.emailFromAddress, // sender address
             to: asArray(recipients).join(', '), // list of receivers
             subject, // Subject line
             html: content, // html body
@@ -97,6 +99,6 @@ export default async function sendEmail(ctx, subject, content, recipients: strin
         if (useTestAccount) C.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`)
         return info
     } catch (err) {
-        error.sendEmailError(ctx, { recipients, err, fromAddress, varsUsed: vars, attachmentsLength: attachments?.length || 0 })
+        throwError.sendEmailError(ctx, { recipients, err, fromAddress, varsUsed: vars, attachmentsLength: attachments?.length || 0 })
     }
 }

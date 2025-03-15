@@ -1,7 +1,6 @@
 
 import mongoose from 'mongoose'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
-import { error } from '../../core.error'
+import { throwError } from '../../core.error'
 import event from '../../event'
 import { applyMaskToPopulateConfig, getMongoMaskForUser } from './services/maskService'
 import { MongoDaoParsed } from './types/mongoDbTypes'
@@ -11,6 +10,7 @@ import { PaginationData, MaybePaginated } from './types/mongoDaoTypes'
 import { LocalConfigParsed } from './types/mongoDbTypes'
 
 import { firstMatch } from 'topkat-utils'
+import { getActiveAppConfig } from '../../helpers/getGreenDotConfigs'
 
 type MongooseReqRead = mongoose.Query<any[], any, {}, any, 'find'> | mongoose.Query<any, any, {}, any, 'findOne'>
 type MongooseReqDel = mongoose.Query<mongoose.mongo.DeleteResult, any, {}, any, 'deleteMany'>
@@ -27,6 +27,9 @@ export async function mongoAfterRequest<
     ...[model]: Method extends 'getAll' ? [mongoose.Model<any>] : [] // => if method === 'getAll' parameter is required. Unreadable but type safe https://stackoverflow.com/questions/52318011/optional-parameters-based-on-conditional-types
 ): Promise<Method extends 'create' ? void : Method extends 'getAll' ? MaybePaginated<ModelRead[], Config> : ModelRead> {
     try {
+
+        const appConfig = await getActiveAppConfig()
+
         const { method, modelName, dbName, populate = [], inputFields, ressourceId, populateAsAdmin = false } = localConfig
         const isRead = method === 'getAll' || method === 'getOne'
 
@@ -54,7 +57,7 @@ export async function mongoAfterRequest<
 
                 // PAGINATION and LIMIT
                 if ('page' in localConfig && typeof localConfig.page === 'number') {
-                    const limit = 'limit' in localConfig ? localConfig.limit : serverConfig.defaultPaginationLimit || 25
+                    const limit = 'limit' in localConfig ? localConfig.limit : appConfig.defaultPaginationLimit || 25
                     promise.skip(localConfig.page * limit).limit(limit)
                     paginationData = {
                         page: localConfig.page,
@@ -85,14 +88,14 @@ export async function mongoAfterRequest<
                 newCtx = ctx.clone({ ...localConfig, method, inputFields, createdId: ressourceId }) satisfies CreateEventAfterCtx<any>
             } else if (method === 'update') {
                 if (!localConfig.ressourceId && event.registeredEvents[eventName] && event.registeredEvents[eventName].length) {
-                    error.serverError(ctx, `An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
+                    throwError.serverError(ctx, `An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
                 }
                 newCtx = ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields }) satisfies UpdateEventCtx<any>
             } else if (method === 'getOne' || method === 'getAll') {
                 newCtx = ctx.clone({ ...localConfig, method, data: result }) satisfies GetOneEventAfterCtx<any> | GetAllEventAfterCtx<any>
             } else if (method === 'delete') {
                 newCtx = ctx.clone({ ...localConfig, method, deletedId: localConfig.filter._id }) satisfies DeleteEventCtx
-            } else error.serverError(ctx, 'notExistingMethod', { method })
+            } else throwError.serverError(ctx, 'notExistingMethod', { method })
 
             await event.emit(eventName, newCtx.GM)
         }
@@ -108,9 +111,9 @@ export async function mongoAfterRequest<
         if (code === 11000) {
             catchMongoDbDuplicateError(ctx, errmsg, err, extraInfs)
         } else if (name === 'CastError') {
-            error.applicationError(ctx, 'databaseWrongCast', { code: 422, err, ...extraInfs })
+            throwError.applicationError(ctx, 'databaseWrongCast', { code: 422, err, ...extraInfs })
         } else {
-            error.serverError(ctx, 'databaseError', { err, stack: err.stack, ...extraInfs })
+            throwError.serverError(ctx, 'databaseError', { err, stack: err.stack, ...extraInfs })
         }
     }
 }
@@ -119,5 +122,5 @@ export async function mongoAfterRequest<
 export function catchMongoDbDuplicateError(ctx, errmsg, err, extraInf) {
     const value = firstMatch(errmsg, /: "(.*?)"? }/)
     const duplicateKey = firstMatch(errmsg, /index: (.*?)_?\d? dup key/)
-    error.duplicateRessource(ctx, { duplicateKey, value, err, ...extraInf })
+    throwError.duplicateRessource(ctx, { duplicateKey, value, err, ...extraInf })
 }

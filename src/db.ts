@@ -7,10 +7,11 @@ import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
 import { _, Definition, ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
-import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectDatabase'
+import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos'
 
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
 import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
+import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
 
 
 //  ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
@@ -50,12 +51,12 @@ export async function initDbs(resetCache: boolean = false) {
   const mainConfigs = getMainConfig()
   let hasDefaultDatabase = false
 
-  for (const { dbs: connexionConfigs, name, type } of dbConfigs) {
+  for (const { dbs: connexionConfigs, name: dbName, type } of dbConfigs) {
 
-    const models = await getProjectDatabaseModelsForDbName(name, resetCache)
-    const daos = await getProjectDatabaseDaosForDbName(name, resetCache)
+    const models = await getProjectDatabaseModelsForDbName(dbName, resetCache)
+    const daos = await getProjectDatabaseDaosForDbName(dbName, resetCache)
 
-    if (mainConfigs.defaultDatabaseName === name) {
+    if (mainConfigs.defaultDatabaseName === dbName) {
       // DEFAULT DATABASE
       hasDefaultDatabase = true
 
@@ -85,11 +86,13 @@ export async function initDbs(resetCache: boolean = false) {
       //----------------------------------------
       for (const [databaseId, connectionConfig] of objEntries(connexionConfigs)) {
 
+        dbIdsToDbNames[databaseId] = dbName
+
         if (cache?.[databaseId].dbConfigs) continue // even when clearing cache, you don't want to reinit projects
 
         if (type === 'mongo') {
           await mongoInitDb<AllDbIds>(
-            name,
+            dbName,
             databaseId,
             cache,
             connectionConfig,
@@ -100,7 +103,7 @@ export async function initDbs(resetCache: boolean = false) {
 
         if (typeof cache[databaseId]?.dbConfigs === 'undefined') C.error(false, 'WHY THAT ?!?' + `modelConfig.dbConfigs[${databaseId}] not set TODO DELETEME if no error is triggered`)
       }
-    } else throwError.serverError(null, `Database type not implemented: ${type}`, { dbName: name, dbType: type })
+    } else throwError.serverError(null, `Database type not implemented: ${type}`, { dbName: dbName, dbType: type })
   }
 
   if (!hasDefaultDatabase) throw throwError.serverError(null, `No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)

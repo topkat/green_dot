@@ -1,5 +1,5 @@
 
-import { error } from '../core.error'
+import { throwError } from '../core.error'
 import { publicUserId } from '../ctx'
 import { Request } from 'express'
 import { serverConfig } from '../cache/green_dot.app.config.cache'
@@ -67,7 +67,7 @@ export const rateLimiter = {
                 sendRateLimiterTeamsMessage(ctx, { route, discriminator, nbAttempts, ip, userId, extraInfos })
             }
 
-            error.tooManyRequests(ctx, env !== 'production' ? {
+            throwError.tooManyRequests(ctx, env !== 'production' ? {
                 route,
                 nbAttempts: rateLimiterCache[discriminator][route].nbAttempts.length,
                 maxAttempts: maxNbAttemptsInGivenTimeWindow,

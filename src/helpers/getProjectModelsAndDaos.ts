@@ -7,16 +7,12 @@ import { C } from 'topkat-utils'
 import { safeImport } from './safeImports'
 import { parseDaos } from '../databases/parseDaos'
 
+//  ═╦═ ╦╗ ╔ ═╦═ ══╦══
+//   ║  ║╚╗║  ║    ║
+//  ═╩═ ╩ ╚╩ ═╩═   ╩
 
 const modelsCache = {} as { [dbName: string]: { [modelName: string]: Definition } }
 const daosCache = {} as { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> } }
-
-
-type DatabaseIndexFileContent = {
-  models: { [modelName: string]: Definition }
-  daos: { [modelName: string]: MongoDaoParsed<any> | MongoDao<any> }
-  defaultDao?: MongoDaoParsed<any> | MongoDao<any>
-}
 
 let cacheInitialized = false
 
@@ -29,12 +25,14 @@ async function initCache(resetCache = false) {
 
     modelsCache[dbName] = fileContent.models
 
-    daosCache[dbName] = parseDaos(Object.keys(fileContent.models), fileContent.daos, fileContent.defaultDao)
+    daosCache[dbName] = await parseDaos(Object.keys(fileContent.models), fileContent.daos, fileContent.defaultDao)
   }
 }
 
 
-// MODELS
+//  ╦╗╔╦ ╔══╗ ╔═╗  ╔══╗ ╦    ╔═══
+//  ║╚╝║ ║  ║ ║  ║ ╠═   ║    ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╚══╝ ╚══╝ ═══╝
 
 export async function getProjectDatabaseModels(resetCache = false) {
   await initCache(resetCache)
@@ -53,7 +51,9 @@ export async function getProjectDatabaseModelsForDbName(dbName: string, resetCac
   return models
 }
 
-// DAOS
+//  ╔═╗  ╔══╗ ╔══╗ ╔═══
+//  ║  ║ ╠══╣ ║  ║ ╚══╗
+//  ╚══╝ ╩  ╩ ╚══╝ ═══╝
 
 export async function getProjectDatabaseDaos(resetCache = false) {
   await initCache(resetCache)
@@ -65,4 +65,14 @@ export async function getProjectDatabaseDaosForDbName(dbName: string, resetCache
   const daos = daosCache[dbName]
   if (!daos) throw C.error(false, `No Dao model with name ${dbName} found in configs. Available names: ${Object.keys(daosCache)}`)
   return daos
+}
+
+//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
+
+type DatabaseIndexFileContent = {
+  models: { [modelName: string]: Definition }
+  daos: { [modelName: string]: MongoDaoParsed<any> | MongoDao<any> }
+  defaultDao?: MongoDaoParsed<any> | MongoDao<any>
 }

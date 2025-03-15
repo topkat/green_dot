@@ -1,6 +1,6 @@
 
 import { registerServiceApi } from './registerServicesApi'
-import { error } from '../core.error'
+import { throwError } from '../core.error'
 import { registerDaoApi } from './registerDaoApi'
 import { registerServices } from './registerServices'
 import { registerModels } from './registerModels'
@@ -23,6 +23,6 @@ export async function registerModules(
         await registerServiceApi(app, allRoutesFromServices)
 
     } catch (err) {
-        error.serverError(null, 'Error while registering modules', { err })
+        throwError.serverError(null, 'Error while registering modules', { err })
     }
 }

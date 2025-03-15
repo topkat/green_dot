@@ -41,5 +41,7 @@
     "./src/generate/generateSDK/templates/**/*",
     "./dist/**/*",
     "node_modules",
+    "node_modules/**/commonjs/**/*",
+    "**/commonjs/**/*"
   ]
 }

@@ -1,22 +1,26 @@
 
 
-import { error } from '../../core.error'
+import { throwError } from '../../core.error'
 import { DaoHookShared, daoGenericMethods, DaoGenericMethods, DaoHookSharedParsed, RolesPlusTechnicals } from '../../types/core.types'
 import { DaoHookNamesMongo, MongoDaoParsed } from '../mongo/types/mongoDbTypes'
 import { hookValidators, HookValidator } from './hookValidators'
 import { notForToFor, notOnToOn } from '../../security/notForToForAndNotOnToOn'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
 
 import { isset, noDuplicateFilter, isObject, asArray } from 'topkat-utils'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 /** Parse all 'for', 'on', 'notFor' and 'notOn' clauses + apply the custom hook interpreter */
-export function genericHookInterpreter<HookName extends DaoHookNamesMongo>(
+export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>(
     modelName: string,
     hookIndex: number,
     hookName: HookName,
     hook: DaoHookShared & { hasBeenValidated?: boolean },
-    allRoles: readonly RolesPlusTechnicals[] = serverConfig.allRoles,
-): MongoDaoParsed<any>[HookName] {
+    allRoles?: readonly RolesPlusTechnicals[],
+): Promise<MongoDaoParsed<any>[HookName]> {
+
+    const mainConfig = await getMainConfig()
+
+    allRoles ??= mainConfig.allRoles
 
     const hookInterpreter: HookValidator = hookValidators[hookName]
     const getAllRolesPerms = () => allRoles.map(r => ({ role: r }))
@@ -32,7 +36,7 @@ export function genericHookInterpreter<HookName extends DaoHookNamesMongo>(
                 priority: 50,
             }
 
-            if (!isset(hookInterpreter)) error.serverError(null, `PLEASE PROVIDE A VALIDATOR FOR ${hookName} HOOK`)
+            if (!isset(hookInterpreter)) throwError.serverError(null, `PLEASE PROVIDE A VALIDATOR FOR ${hookName} HOOK`)
 
             // convert all possible as array syntax
             for (const fnName of ['for', 'notFor', 'on', 'notOn', 'expose']) {
@@ -81,7 +85,7 @@ export function genericHookInterpreter<HookName extends DaoHookNamesMongo>(
 
         // validate hook
         if (!hookInterpreter.validate(hook)) {
-            error.serverError(
+            throwError.serverError(
                 null,
                 hookInterpreter.errMsg || `${modelName}.hooks.${hookName}[${hookIndex}] format not valid for hook`,
                 { daoName: modelName, hookType: hookName, hookIndex, hook: JSON.stringify(hook, null, 2) })

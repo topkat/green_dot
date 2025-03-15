@@ -1,10 +1,13 @@
 import * as fs from 'fs-extra'
 import path from 'path'
-import { serverConfig } from '../cache/green_dot.app.config.cache'
 
 import { capitalize1st } from 'topkat-utils'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
 
 export default async function generateAllRouteFile(allRoutes: string[]) {
+
+    const appConfig = await getActiveAppConfig()
+
     type RouteObj = Record<string, string>
     const routeObjForTestEnv: RouteObj = {}
 
@@ -19,7 +22,7 @@ export default async function generateAllRouteFile(allRoutes: string[]) {
                 .map((word, i) => i !== 0 ? capitalize1st(word) : word)
                 .join('')
 
-            if ('filterRoutesForTest' in serverConfig === false || serverConfig.filterRoutesForTest(route)) routeObjForTestEnv[routeClean] = route
+            if ('filterRoutesForTest' in appConfig === false || appConfig.filterRoutesForTest(route)) routeObjForTestEnv[routeClean] = route
         }
     }
 

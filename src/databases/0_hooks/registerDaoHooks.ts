@@ -7,16 +7,16 @@ import defaultDaoConfigMongo from '../mongo/defaultDaoConfigMongo'
 import { includes, objKeys } from 'topkat-utils'
 
 /** This function will return all dao hooks parsed with default values */
-export function registerDaoHooks(
+export async function registerDaoHooks(
     modelName: string,
     hooksObj: MongoDao<any> | MongoDaoParsed<any> = defaultDaoConfigMongo
-): MongoDaoParsed<any> {
+): Promise<MongoDaoParsed<any>> {
 
     for (const hookName of objKeys(hooksObj)) {
         if (includes(daoHookNamesMongo, hookName)) {
             const hookObjArr = hooksObj[hookName]!
             for (const [hookIndex, hookRaw] of Object.entries(hookObjArr)) {
-                const newHook = genericHookInterpreter(modelName, parseInt(hookIndex), hookName as DaoHookNamesMongo, hookRaw)
+                const newHook = await genericHookInterpreter(modelName, parseInt(hookIndex), hookName as DaoHookNamesMongo, hookRaw)
                 hooksObj[hookName]![hookIndex] = newHook
             }
             // sort by order

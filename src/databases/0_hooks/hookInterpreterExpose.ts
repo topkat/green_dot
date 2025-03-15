@@ -1,5 +1,5 @@
 
-import { error } from '../../core.error'
+import { throwError } from '../../core.error'
 import { appliableHooksForUser } from './appliableHookForUser'
 import { DaoGenericMethods } from '../../types/core.types'
 import { MongoDaoParsed } from '../mongo/types/mongoDbTypes'
@@ -18,7 +18,7 @@ export async function hookInterpreterExpose(
     const authorizedMethods = []
     for (const { expose: exposedMethods } of exposeHooks) authorizedMethods.push(...exposedMethods)
 
-    if (!authorizedMethods.includes(method)) error.userDoNotHaveThePermission(ctx, {
+    if (!authorizedMethods.includes(method)) throwError.userDoNotHaveThePermission(ctx, {
         addintionalInfos: 'Wrong Method',
         modelName,
         userRole: ctx.role,

@@ -1,40 +1,50 @@
 
 
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { ForClauseWithAll, ForClauseParsedWithAll, ForClauseParsed, ForClauseItem } from '../../types/core.types'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
 
 import { asArray } from 'topkat-utils'
 
 
 
 /** Merge default permissions and replace ALL by all permissions */
-export function parseForClause<T extends ForClauseParsedWithAll | ForClauseWithAll<string>>(
+export async function parseForClause<T extends ForClauseParsedWithAll | ForClauseWithAll<string>>(
   forClause: T
-): ForClauseParsed[] {
+): Promise<ForClauseParsed[]> {
+
+  const { allRoles } = await getMainConfig()
 
   const forClauseArr = asArray(forClause) as T extends any[] ? T : T[]
 
-  const output = forClauseArr.map(p => {
-    if (typeof p === 'string') p = { role: p }
-    if (p.role === 'public') return p as ForClauseParsed
-    const defaultPerms = getDefaultPerms(p.role, p)
+  const output = []
 
-    for (const k in defaultPerms) {
-      if (defaultPerms[k] === 'any') delete defaultPerms[k]
+  for (let p of forClauseArr) {
+
+    if (typeof p === 'string') p = { role: p }
+
+    if (p.role === 'public') {
+      output.push(p as ForClauseParsed)
+    } else {
+      const defaultPerms = await getDefaultPerms(p.role, p)
+
+      for (const k in defaultPerms) {
+        if (defaultPerms[k] === 'any') delete defaultPerms[k]
+      }
+      output.push(defaultPerms)
     }
-    return defaultPerms
-  })
+  }
 
   if (output.some(p => p.role === 'public')) return [{ role: 'public' }]
-  else if (output.some(p => (p.role as any) === 'ALL')) return serverConfig.allRoles.map(role => ({ role }))
+  else if (output.some(p => (p.role as any) === 'ALL')) return allRoles.map(role => ({ role }))
   else return output
 }
 
 
-function getDefaultPerms(role: string, toMerge = {}) {
+async function getDefaultPerms(role: string, toMerge = {}) {
+  const mainConfig = await getMainConfig()
   return {
-    ...(serverConfig.defaultPermForAll || {}),
-    ...(serverConfig.defaultPermForRole?.[role] || {}),
+    ...(mainConfig.defaultPermRestrictionForAll || {}),
+    ...(mainConfig.defaultPermRestrictionForRole?.[role] || {}),
     ...toMerge,
   } as ForClauseItem
 }

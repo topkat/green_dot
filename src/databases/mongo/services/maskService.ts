@@ -5,10 +5,10 @@ import { forEachPopulateFieldRecursive } from './populateService'
 import { throwError } from '../../../core.error'
 import { PopulateConfig, PopulateConfigWithoutStringSyntax } from '../types/mongoDbTypes'
 import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types/core.types'
-import { getProjectDatabaseModels } from '../../../helpers/getProjectDatabase'
+import { getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
 
 import { getId, objForceWrite, escapeRegexp, flattenObject, unflattenObject } from 'topkat-utils'
-import { getProjectDatabaseDaos } from '../../../helpers/getProjectDatabase'
+import { getProjectDatabaseDaos } from '../../../helpers/getProjectModelsAndDaos'
 
 export type Mask<T = any> = DaoHookSharedParsed & MaskHook<T>
 export type MaskObjFlat = Record<string, boolean>

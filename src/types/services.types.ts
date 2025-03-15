@@ -284,3 +284,7 @@ export type ServiceRegistered = Omit<ServiceClean, 'for'> & {
 
 
 export type AllServicesKeys = keyof DaoEventService<any, any, any, any, any> | keyof ServiceClean | keyof ScheduleService
+
+export type ServiceGeneric = DaoEventService<any, any, any, any> | ServiceClean | ScheduleService
+
+export type ServicesObj = { [serviceName: string]: ServiceGeneric }

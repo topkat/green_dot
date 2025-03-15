@@ -1,15 +1,17 @@
 
 import nodeSchedule from 'node-schedule'
 import { Definition } from 'good-cop'
-import { asArray, C, isset, isValid, camelCaseToWords, kebabCase } from 'topkat-utils'
+import { asArray, C, isset, isValid, camelCaseToWords, kebabCase, objEntries } from 'topkat-utils'
 
 import { doPermApplyToCtx } from '../security/doPermApplyToCtx'
-import { error } from '../core.error'
+import { throwError } from '../core.error'
 import { newSystemCtx } from '../ctx'
 import event from '../event'
 import { AllServicesKeys, Schedule, ServiceClean } from '../types/core.types'
-import clientAppConfig from '../cache/green_dot.app.config.cache'
 import { parseForClause } from '../security/helpers/parseForClause'
+import { getActiveAppServices } from '../helpers/getProjectServices'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
+import { env } from '../helpers/getEnv'
 
 
 export async function registerServices(isPrimaryCluster = true) {
@@ -19,20 +21,22 @@ export async function registerServices(isPrimaryCluster = true) {
     //----------------------------------------
     // REGISTER SERVICES
     //----------------------------------------
-    const allServicesToExpose = {} as typeof clientAppConfig.services[string]
+    const appConfig = await getActiveAppConfig()
+
+    const services = await getActiveAppServices()
     const scheduleLogMessages = []
+    const registeredServiceNames = [] as string[]
 
-    for (const [mainName, services] of Object.entries(clientAppConfig.services)) {
-        for (const [serviceName, service] of Object.entries(services)) {
-            if (typeof service.main === 'function') {
-                const routeName = mainName === serviceName ? mainName : serviceName
-                if (typeof allServicesToExpose[routeName] !== 'undefined') error.serverError(null, 'duplicateServiceName', { svcName: routeName })
-                allServicesToExpose[routeName] = service
-            }
+    for (const [serviceName, service] of objEntries(services)) {
+
+        if (typeof service.main !== 'function') continue
+
+        if (registeredServiceNames.includes(serviceName)) {
+            throwError.serverError(null, 'duplicateServiceName', { svcName: serviceName })
         }
-    }
 
-    for (const [serviceName, service] of Object.entries(allServicesToExpose)) {
+        registeredServiceNames.push(serviceName)
+
         try {
 
             const hasRoute = ('route' satisfies AllServicesKeys) in service
@@ -45,7 +49,7 @@ export async function registerServices(isPrimaryCluster = true) {
 
             const doNotValidate = ('doNotValidate' satisfies AllServicesKeys) in service ? service.doNotValidate : false
 
-            const forParsed = hasPerms ? parseForClause(service.for) : []
+            const forParsed = hasPerms ? await parseForClause(service.for) : []
 
             const { forEnv } = service
 
@@ -108,11 +112,11 @@ export async function registerServices(isPrimaryCluster = true) {
                     const svc = service as ServiceClean
                     if (svc.authorizedAuthentications.length) {
                         const isValid = svc.authorizedAuthentications.some(authMethod => ctx.authenticationMethod.includes(authMethod))
-                        if (!isValid) error.secureAuthenticationRequired(ctx, { ...errExtraInfos, fn: 'registerService.additionalAuthenticationRequired', requiredAuthentication: svc.authorizedAuthentications })
+                        if (!isValid) throwError.secureAuthenticationRequired(ctx, { ...errExtraInfos, fn: 'registerService.additionalAuthenticationRequired', requiredAuthentication: svc.authorizedAuthentications })
                     }
                 }
 
-                if (!doPermApply) error.userDoNotHaveThePermission(ctx, { ...errExtraInfos, forPerm: hasPerms ? service.for : undefined, userPermissions: ctx.permissions, fn: 'registerService.doPermApplyToCtxService' })
+                if (!doPermApply) throwError.userDoNotHaveThePermission(ctx, { ...errExtraInfos, forPerm: hasPerms ? service.for : undefined, userPermissions: ctx.permissions, fn: 'registerService.doPermApplyToCtxService' })
 
                 let newParams = [{}]
                 // TODO those checks should not be made if it doesn't pass by api route
@@ -139,7 +143,7 @@ export async function registerServices(isPrimaryCluster = true) {
             if (isForEnv && isApi) {
                 const definedRouteName = hasRoute ? service.route : kebabCase(camelCaseToWords(serviceName))
                 if (isset(allRoutesFromServices[definedRouteName])) {
-                    error.serverError(null, 'Two services have the same API endpoint', { endPoint: definedRouteName, serviceNames: [serviceName, allRoutesFromServices[definedRouteName].serviceName] })
+                    throwError.serverError(null, 'Two services have the same API endpoint', { endPoint: definedRouteName, serviceNames: [serviceName, allRoutesFromServices[definedRouteName].serviceName] })
                 }
                 allRoutesFromServices[definedRouteName] = {
                     ...service,
@@ -161,26 +165,24 @@ export async function registerServices(isPrimaryCluster = true) {
 
                 const { schedule } = service
 
-                if (clientAppConfig.serverConfig.enableSchedules) {
-                    const isProd = clientAppConfig.serverConfig.env === 'preprod' || clientAppConfig.serverConfig.env === 'production'
-
+                if (appConfig.enableSchedules) {
                     const scheduleObj: Schedule = typeof schedule === 'string' ? { frequency: schedule } : schedule
-                    if (!isValid({ name: 'scheduleFileFreq', value: scheduleObj.frequency })) error.serverError(null, `module.schedule.frequency should be set. Please, check service: ${serviceName}`)
+                    if (!isValid({ name: 'scheduleFileFreq', value: scheduleObj.frequency })) throwError.serverError(null, `module.schedule.frequency should be set. Please, check service: ${serviceName}`)
 
                     const { frequency, frequencyTestEnv, frequencyDevEnv = frequency } = scheduleObj
-                    const frequencyForEnv = clientAppConfig.serverConfig.env === 'test' && isset(frequencyTestEnv) ? frequencyTestEnv : !isProd ? frequencyDevEnv : frequency
+                    const frequencyForEnv = env.isTest && isset(frequencyTestEnv) ? frequencyTestEnv : !env.isProd ? frequencyDevEnv : frequency
 
                     scheduleLogMessages.push(`  ${serviceName.padEnd(27, ' ')} actual:${frequencyForEnv} prod:${frequency}`)
 
-                    if (isProd && scheduleObj.frequency === '* * * * *') {
-                        error.serverError(null, 'SCHEDULER EVERY MINUTES !', { schedule, serviceName })
+                    if (env.isProd && scheduleObj.frequency === '* * * * *') {
+                        throwError.serverError(null, 'SCHEDULER EVERY MINUTES !', { schedule, serviceName })
                     }
                     const callbackWrapper = async () => {
                         try {
                             C.info('Starting cronjob ' + serviceName)
                             await svcWrapperFn(newSystemCtx())
                             C.success('Ending cronjob ' + serviceName)
-                        } catch (err) { error.scheduleError(null, { err }) }
+                        } catch (err) { throwError.scheduleError(null, { err }) }
                     }
                     // Start schedules only when
                     event.on('server.start', () => {
@@ -190,7 +192,7 @@ export async function registerServices(isPrimaryCluster = true) {
                 } else C.warning(false, 'SCHEDULE DISABLED ON THIS SERVER')
             }
         } catch (err) {
-            error.serverError(null, 'Error while registering service', { serviceName, err })
+            throwError.serverError(null, 'Error while registering service', { serviceName, err })
         }
     }
 
@@ -201,11 +203,10 @@ export async function registerServices(isPrimaryCluster = true) {
 
 function returnErrIfWrongEnv(forEnv?: Env) {
     if (forEnv) {
-        const env = clientAppConfig.serverConfig.env
-        const isWrongEnvStr = typeof forEnv === 'string' && env !== forEnv
+        const isWrongEnvStr = typeof forEnv === 'string' && env.env !== forEnv
         const isWrongEnvArr = Array.isArray(forEnv) && !forEnv.includes(env)
         if (isWrongEnvStr || isWrongEnvArr) {
-            error.serverError(null, 'wrongEnv', { actualEnv: env, authorizedEnv: forEnv })
+            throwError.serverError(null, 'wrongEnv', { actualEnv: env, authorizedEnv: forEnv })
         }
     }
 }

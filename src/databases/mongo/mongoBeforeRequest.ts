@@ -11,7 +11,7 @@ import { applyMaskIncludingOnPopulatedFieldsRecursive } from './services/maskSer
 import event from '../../event'
 
 import { getId } from 'topkat-utils'
-import { getProjectDatabaseModels } from '../../helpers/getProjectDatabase'
+import { getProjectDatabaseModels } from '../../helpers/getProjectModelsAndDaos'
 
 export async function mongoBeforeRequest(
     ctx: Ctx,

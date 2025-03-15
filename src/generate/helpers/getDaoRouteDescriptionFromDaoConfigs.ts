@@ -6,7 +6,8 @@ import defaultDaoConfigMongo from '../../databases/mongo/defaultDaoConfigMongo'
 
 import { getApiEndpointsPerRolesFromDao } from '../../databases/helpers/getApiEndpointsPerRolesFromDao'
 import { objEntries, pushIfNotExist } from 'topkat-utils'
-import { serverConfig } from '../../cache/green_dot.app.config.cache'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getProjectDatabaseDaos } from '../../helpers/getProjectModelsAndDaos'
 
 
 
@@ -15,36 +16,37 @@ export async function getDaoRouteDescriptionFromDaoConfigs() {
 
   const allDaoRoutes: string[] = []
   const daoRoutesConfig = {} as RouteFromDaoConfigForGenerateSdk
-  const { platformForPermission } = serverConfig
 
-  const dbConfForDb = await serverConfig.dbConfigs()
+  const mainConfig = await getMainConfig()
+  const { allRoles, generateSdkConfig } = mainConfig
+  const { sdkNameForRole } = generateSdkConfig
 
-  for (const [dbId, dbConfForCollections] of objEntries(dbConfForDb)) {
-    for (const dbConfForCollection of Object.values(dbConfForCollections)) {
-      for (const [modelName, daoConfig] of objEntries(dbConfForCollection.daoConfigsParsed)) {
+  const daos = await getProjectDatabaseDaos()
 
-        const defaultConf = defaultDaoConfigMongo
-        const daoConfigSure = daoConfig || defaultConf
+  for (const [dbId, daoForModels] of objEntries(daos)) {
+    for (const [modelName, dao] of objEntries(daoForModels)) {
 
-        const { fullMethodsPerRole } = getApiEndpointsPerRolesFromDao(daoConfigSure.expose, serverConfig.allRoles)
+      const defaultConf = defaultDaoConfigMongo
+      const daoConfigSure = dao || defaultConf
 
-        for (const [role, allMethods] of objEntries(fullMethodsPerRole)) {
-          for (const fnName of allMethods) {
+      const { fullMethodsPerRole } = getApiEndpointsPerRolesFromDao(daoConfigSure.expose, allRoles)
 
-            const route = `/${dbId}/${modelName}/${fnName}`
-            const platform = platformForPermission[role]
-            allDaoRoutes[role] ??= []
-            daoRoutesConfig[platform] ??= {}
+      for (const [role, allMethods] of objEntries(fullMethodsPerRole)) {
+        for (const fnName of allMethods) {
 
-            pushIfNotExist(allDaoRoutes, route)
+          const route = `/${dbId}/${modelName}/${fnName}`
+          const platform = sdkNameForRole[role]
+          allDaoRoutes[role] ??= []
+          daoRoutesConfig[platform] ??= {}
 
-            daoRoutesConfig[platform][route] = {
-              dbType: daoConfig.type,
-              dbId,
-              dbName: 'default',
-              modelName,
-              daoMethod: fnName,
-            }
+          pushIfNotExist(allDaoRoutes, route)
+
+          daoRoutesConfig[platform][route] = {
+            dbType: dao.type,
+            dbId,
+            dbName: 'default',
+            modelName,
+            daoMethod: fnName,
           }
         }
       }

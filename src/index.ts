@@ -7,7 +7,6 @@ import { newSystemCtx, newPublicCtx } from './ctx'
 import coreTestFlow from './tests/core.test-flows'
 import { unPopulate } from './databases/mongo/services/populateService'
 import { service } from './service'
-import { getMainConfig } from './helpers/getGreenDotConfigs'
 
 export const coreTestFlows = coreTestFlow
 
@@ -42,8 +41,6 @@ export { genericHookInterpreter } from './databases/0_hooks/hookInterpreterGener
 export { getApiEndpointsPerRolesFromDao } from './databases/helpers/getApiEndpointsPerRolesFromDao'
 
 export * from './databases/mongo/types/mongoDbTypes'
-export * from './security/helpers/parseForClause'
-export * from './security/helpers/convertPermsToModelFields'
 
 export { type InferTypeRead, type InferTypeWrite, type InferType, Definition } from 'good-cop'
 

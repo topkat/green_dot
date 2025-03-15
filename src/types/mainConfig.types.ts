@@ -31,10 +31,27 @@ export type GreenDotConfig<
   allRoles: readonly RolesAll[]
   /** List all permissions that will be used in the app. Usually like `['hasPremiumMembership', 'hasVerifiedIdentity'...']`. Put here all permissions that may differentiate users on what they have access to  */
   allPermissions: readonly AllPermissions[]
-  /** */
-  defaultPermForAll?: Partial<Record<AllPermissions, boolean>>
-  /** */
-  defaultPermForRole?: Record<RolesAll, Partial<Record<AllPermissions, boolean>>>
+  /** Permissions restrictions that apply to all users. Eg: `isLocked: false` is considered mandatory for all users to connect
+  * @example
+  *```ts
+  * {
+  *   isLocked: false,
+  *   isDeleted: false,
+  *   hasAgreedWithTermsAndConditions: true,
+  * }
+  * ```
+  */
+  defaultPermRestrictionForAll: Partial<Record<AllPermissions, boolean>>
+  /** Permissions restrictions that apply to users with role. Eg: Let's say that by default you want all users to be `isEmailVerified: true`. This is where you set it
+  * @example
+  *```ts
+  * {
+  *   appUser: { isEmailVerified: true },
+  *   admin: {},
+  * }
+  * ```
+  */
+  defaultPermRestrictionForRole: Record<RolesAll, Partial<Record<AllPermissions, boolean>>>
 
   /** Giving a ctx, this function is meant to retrieve the user in the database. It just usually returns something like `await myDb.dbName.user.getById(ctx.GM, ctx._id, { triggerErrorIfNotSet: true })` and is used internally to provide ctx.getUser() shortcut (that will use cache if requested twice) */
   getUserFromCtx?: (ctx: Ctx) => CtxUser

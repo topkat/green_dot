@@ -1,5 +1,5 @@
 
-import { getProjectDatabaseModels } from '../../../helpers/getProjectDatabase'
+import { getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
 import { findByAddressAll, getId, isObject, asArray } from 'topkat-utils'
 
 /** Transform populated fields into their respective _ids. Will modify the passed object */
