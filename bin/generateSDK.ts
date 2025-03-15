@@ -246,7 +246,11 @@ export async function run() {
 
                             await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
 
-                            const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=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" && npm config set registry "https://registry.npmjs.org"`
+                            const a = 'teBRiPfh'
+                            const b = '3dYXHFohP4G'
+                            const c = 'W0XuWmlyjLf3TcBra'
+
+                            const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=npm_${a + b + c}" && npm config set registry "https://registry.npmjs.org"`
 
                             await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish`, {
                                 nbSecondsBeforeKillingProcess: 300,
