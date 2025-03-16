@@ -31,7 +31,8 @@
         }
     },
     "scripts": {
-        "bump:patch": "bump --patch"
+        "bump": "bump --patch",
+        "publish": "bump --patch"
     },
     "dependencies": {
         "@tanstack/react-query": "5.28.6",

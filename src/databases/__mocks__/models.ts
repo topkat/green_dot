@@ -52,7 +52,7 @@ export const models: Models = {
                 expose: [],
                 mask: [createDaoParsed<User<any>>({
                     // mask password field for read and all admin and users
-                    for: [{ role: 'user' }, { role: 'admin' }],
+                    for: [{ role: 'user' as any }, { role: 'admin' as any }],
                     on: ['getAll', 'getOne'],
                     mask: () => ({
                         password: true,
@@ -71,7 +71,7 @@ export const models: Models = {
                 expose: [],
                 mask: [createDaoParsed<Organization<any>>({
                     // mask ADMIN fields for users all methods
-                    for: [{ role: 'user' }],
+                    for: [{ role: 'user' as any }],
                     mask: () => ({
                         'admin*': true,
                         anotherFieldUserHaveNoAccess: true,
@@ -79,7 +79,7 @@ export const models: Models = {
                     })
                 }), createDaoParsed<Organization<any>>({
                     // mask ADMIN fields for users all methods
-                    for: [{ role: 'user' }],
+                    for: [{ role: 'user' as any }],
                     select: () => ({
                         name: true,
                         anotherFieldUserHaveNoAccess: true, // so this should not be masked in the end while admin fields should be

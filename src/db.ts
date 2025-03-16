@@ -39,6 +39,7 @@ type AllDbIds = DbIds[keyof DbIds]
 //  ═╩═ ╩ ╚╩ ═╩═   ╩     ╚══╝ ╚══╝ ═══╝
 
 let isRunning = false
+let userPermissionFields = [] as (keyof UserPermissionFields)[]
 
 export async function initDbs(resetCache: boolean = false) {
 
@@ -65,6 +66,7 @@ export async function initDbs(resetCache: boolean = false) {
         ...mainConfigs.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
         ...convertRoleToPermsToModelFields(mainConfigs.allRoles)
       }
+      userPermissionFields = Object.keys(permissionsFields) as any
 
       if (!models.user) {
         // we inject a user model
@@ -80,7 +82,6 @@ export async function initDbs(resetCache: boolean = false) {
     }
 
     if (type === 'mongo') {
-
       //----------------------------------------
       // DATABASES INITIALISATION
       //----------------------------------------
@@ -100,10 +101,10 @@ export async function initDbs(resetCache: boolean = false) {
             models as any
           )
         } else throw new Error(`Unknown dbType ${type}`)
-
-        if (typeof cache[databaseId]?.dbConfigs === 'undefined') C.error(false, 'WHY THAT ?!?' + `modelConfig.dbConfigs[${databaseId}] not set TODO DELETEME if no error is triggered`)
       }
-    } else throwError.serverError(`Database type not implemented: ${type}`, { dbName: dbName, dbType: type })
+    } else {
+      throwError.serverError(`Database type not implemented: ${type}`, { dbName: dbName, dbType: type })
+    }
   }
 
   if (!hasDefaultDatabase) throw throwError.serverError(`No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
@@ -138,6 +139,10 @@ export const db = new Proxy({} as DbType[MainDbName], {
     return cache[defaultDatabaseName][prop]
   },
 })
+
+export function getUserPermissionFields() {
+  return userPermissionFields
+}
 
 //  ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗
 //  ║    ╠══╣ ║    ╠══╣ ╠═

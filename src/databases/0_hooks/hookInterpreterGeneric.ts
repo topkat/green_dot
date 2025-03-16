@@ -1,7 +1,7 @@
 
 
 import { throwError } from '../../core.error'
-import { DaoHookShared, daoGenericMethods, DaoGenericMethods, DaoHookSharedParsed, RolesPlusTechnicals } from '../../types/core.types'
+import { DaoHookShared, daoGenericMethods, DaoGenericMethods, DaoHookSharedParsed } from '../../types/core.types'
 import { DaoHookNamesMongo, MongoDaoParsed } from '../mongo/types/mongoDbTypes'
 import { hookValidators, HookValidator } from './hookValidators'
 import { notForToFor, notOnToOn } from '../../security/notForToForAndNotOnToOn'
@@ -15,7 +15,7 @@ export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>
     hookIndex: number,
     hookName: HookName,
     hook: DaoHookShared & { hasBeenValidated?: boolean },
-    allRoles?: readonly RolesPlusTechnicals[],
+    allRoles?: readonly Ctx['role'][],
 ): Promise<MongoDaoParsed<any>[HookName]> {
 
     const mainConfig = getMainConfig()

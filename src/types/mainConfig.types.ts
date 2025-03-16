@@ -10,10 +10,7 @@ export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: st
 // GENERAL CONFIG
 //----------------------------------------
 
-export type GreenDotConfig<
-  RolesAll extends string = string,
-  AllPermissions extends string = string
-> = {
+export type GreenDotConfig = {
   /** Default process.env.NODE_ENV */
   env: string
   /** Determine if we should consider being in PRODUCTION mode, you can get that value in your code with getEnv(). We can not always determine if we are in production just with env variable (Eg: production, beta, preprod...) so you have to do it manually */
@@ -30,9 +27,9 @@ export type GreenDotConfig<
   //  ╔══╗ ╔══╗ ╦╗ ╔ ╦╗ ╔ ╔══╗ ═╗╔═ ═╦═ ╔══╗ ╦╗ ╔
   //  ║    ║  ║ ║╚╗║ ║╚╗║ ╠═    ╠╣   ║  ║  ║ ║╚╗║
   //  ╚══╝ ╚══╝ ╩ ╚╩ ╩ ╚╩ ╚══╝ ═╝╚═ ═╩═ ╚══╝ ╩ ╚╩
-  allRoles: readonly RolesAll[]
+  allRoles: readonly GD['role'][]
   /** List all permissions that will be used in the app. Usually like `['hasPremiumMembership', 'hasVerifiedIdentity'...']`. Put here all permissions that may differentiate users on what they have access to  */
-  allPermissions: readonly AllPermissions[]
+  allPermissions: readonly GD['permissions'][]
   /** Permissions restrictions that apply to all users. Eg: `isLocked: false` is considered mandatory for all users to connect
   * @example
   *```ts
@@ -43,7 +40,7 @@ export type GreenDotConfig<
   * }
   * ```
   */
-  defaultPermRestrictionForAll: Partial<Record<AllPermissions, boolean>>
+  defaultPermRestrictionForAll: Partial<Record<GD['permissions'], boolean>>
   /** Permissions restrictions that apply to users with role. Eg: Let's say that by default you want all users to be `isEmailVerified: true`. This is where you set it
   * @example
   *```ts
@@ -53,7 +50,7 @@ export type GreenDotConfig<
   * }
   * ```
   */
-  defaultPermRestrictionForRole: Record<RolesAll, Partial<Record<AllPermissions, boolean>>>
+  defaultPermRestrictionForRole: Partial<Record<GD['role'], Partial<Record<GD['permissions'], boolean>>>>
 
   /** Giving a ctx, this function is meant to retrieve the user in the database. It just usually returns something like `await myDb.dbName.user.getById(ctx.GM, ctx._id, { triggerErrorIfNotSet: true })` and is used internally to provide ctx.getUser() shortcut (that will use cache if requested twice) */
   getUserFromCtx?: (ctx: Ctx) => CtxUser
@@ -108,7 +105,7 @@ export type GreenDotConfig<
     }>
   }
   /** Configure how the SDK are generated */
-  generateSdkConfig: GenerateSdkConfig<RolesAll>
+  generateSdkConfig: GenerateSdkConfig
 }
 
 

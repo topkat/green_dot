@@ -50,7 +50,7 @@ export { makeApiCall } from './services/makeApiCall'
 
 export { _ } from './validator'
 
-export { db, dbs } from './db'
+export { db, dbs, getUserPermissionFields } from './db'
 export { ModelTypes } from './cache/dbs/index.generated'
 
 export { getActiveAppName, getActiveDbName } from './helpers/getAndInitActiveAppAndDatabaseName'

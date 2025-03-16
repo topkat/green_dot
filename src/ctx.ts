@@ -37,7 +37,7 @@ export class CtxClass {
     /** actual userId or a public | system generic id */
     _id: string = publicUserId
     /** The actual user role as given by the JWT token */
-    role: ({} & string) | TechnicalRoles = 'public'
+    role: GD['role'] | TechnicalRoles = 'public'
     /** All valid authentication methods used by the user */
     authenticationMethod: Array<AuthenticationMethod | 'apiKey' | 'accessToken'> = []
     /** Used to define through witch platform the ctx is connected, to be overrided by app */
@@ -45,9 +45,9 @@ export class CtxClass {
     /** user stored in the cache */
     _user?: ModelTypes['user']
     /** The actual user permissions fields as given by the JWT token */
-    permissions: Record<string, any>
+    permissions: UserPermissionFields
     /** This is to store the type that will be used in all the for clauses in the app, since in a for you have to provide role. This is not the ideal place to put it, toDo */
-    permissionsWithoutRolePermissions!: Record<string, any>
+    permissionsWithoutRolePermissions!: UserPermissionsWithoutRolePerms
     /** Api request informations */
     api: {
         params: Record<string, any>
@@ -133,7 +133,7 @@ export class CtxClass {
     /** Use that to change the role used by the actual Ctx, other user permission related fields may be changed at the same time, that's why there is the param fieldsToMergeWithCtxUser */
     useRole(
         role: Ctx['role'],
-        permissionsOrUser: typeof this['permissions'] = {},
+        permissionsOrUser: Partial<typeof this['permissions']> = {},
         /** default: true; If false, will return the created ctx without modifying the actual one */
         modifyActualCtx = true
     ) {
@@ -203,7 +203,7 @@ export class CtxClass {
             role,
             isSystem: false,
             isPublic: role === 'public',
-            permissions: {},
+            permissions: {} as any,
         } satisfies Partial<Ctx>
 
         for (const perm of allPermissions) {
@@ -230,8 +230,8 @@ declare global {
     interface Ctx extends CtxClass { }
     interface CtxUser {
         _id: Ctx['_id']
-        role: Ctx['role'] | PublicRole
-        permissions: Ctx['permissions']
+        role: Ctx['role']
+        permissions: Partial<Ctx['permissions']>
         platform?: Ctx['platform']
         _user?: Ctx['_user']
         authenticationMethod?: Ctx['authenticationMethod']
@@ -245,6 +245,7 @@ declare global {
 //----------------------------------------
 
 export const systemRole = 'system'
+export type SystemRole = typeof systemRole
 export const publicRole = 'public'
 export type PublicRole = typeof publicRole
 export const technicalRoles = [systemRole, publicRole] as const

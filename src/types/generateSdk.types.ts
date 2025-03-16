@@ -1,5 +1,6 @@
 
 
+import { PublicRole, SystemRole } from '../ctx'
 import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDaoTypes'
 import { ServiceRegistered } from './services.types'
 
@@ -7,11 +8,11 @@ import { ServiceRegistered } from './services.types'
 export const generateSdkRouteTypes = ['dao', 'service'] as const
 export type GenerateSdkRouteTypes = typeof generateSdkRouteTypes[number]
 
-export type GenerateSdkConfig<RolesAll extends string = string> = NoExtraProperties<{
+export type GenerateSdkConfig = NoExtraProperties<{
   /** Enable generating a SDK for each one of your roles. For reminder, each roles correspond to a particular UI or entry point in the app, so User role may connect to a mobile app and Admin role may use a web dashboard. Each one of them needing their own SDK. */
   enable: boolean
   /** In green_dot, every role represents a different UI (platform). So let's say you have a webapp and an admin dashboard, the object will be formatted as follow: `{ admin: 'adminSdk', user: 'appSdk' }`. */
-  sdkNameForRole: { [role in RolesAll]: Ctx['platform'] }
+  sdkNameForRole: { [role in Exclude<GD['role'], SystemRole | PublicRole>]: GD['platform'] }
   /** by default, this will be `root_folder/SDKs/mySdk`, use a path relative to the root of your application */
   parentFolder?: string
   /** Publish SDKs on NPM via prompt that let's you choose what to publish. This can be useful to really separate back/front and be able to consume the SDK in another project */

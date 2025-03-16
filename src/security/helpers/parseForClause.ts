@@ -1,14 +1,14 @@
 
 
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { ForClauseWithAll, ForClauseParsedWithAll, ForClauseParsed, ForClauseItem } from '../../types/core.types'
+import { ForClauseWithAll, ForClauseParsedWithAll, ForClauseParsed } from '../../types/core.types'
 
 import { asArray } from 'topkat-utils'
 
 
 
 /** Merge default permissions and replace ALL by all permissions */
-export async function parseForClause<T extends ForClauseParsedWithAll | ForClauseWithAll<string>>(
+export async function parseForClause<T extends ForClauseParsedWithAll | ForClauseWithAll<any>>(
   forClause: T
 ): Promise<ForClauseParsed[]> {
 
@@ -18,9 +18,9 @@ export async function parseForClause<T extends ForClauseParsedWithAll | ForClaus
 
   const output = []
 
-  for (let p of forClauseArr) {
+  for (const pRaw of forClauseArr) {
 
-    if (typeof p === 'string') p = { role: p }
+    const p = typeof pRaw === 'string' ? { role: pRaw } : pRaw
 
     if (p.role === 'public') {
       output.push(p as ForClauseParsed)
@@ -46,5 +46,5 @@ async function getDefaultPerms(role: string, toMerge = {}) {
     ...(mainConfig.defaultPermRestrictionForAll || {}),
     ...(mainConfig.defaultPermRestrictionForRole?.[role] || {}),
     ...toMerge,
-  } as ForClauseItem
+  } as ForClauseParsed
 }

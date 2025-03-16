@@ -8,10 +8,7 @@ import { Request, Response } from 'express'
 // GENERAL CONFIG
 //----------------------------------------
 
-export type GreenDotAppConfig<
-  RolesAll extends string = any,
-  AllPermissions extends string = any
-> = {
+export type GreenDotAppConfig = {
   name: string,
   /** Default process.env.NODE_ENV */
   env?: Env
@@ -26,11 +23,11 @@ export type GreenDotAppConfig<
     copyDocJsonToFolder?: string
   }
   apiKeys: {
-    [apiKey in (RolesAll | (string & {}))]?: {
+    [apiKey in (GD['role'] | (string & {}))]?: {
       _id?: string
       token: string
-      role?: RolesAll
-      permissions?: Partial<Record<AllPermissions, any>>
+      role?: GD['role']
+      permissions?: Partial<Record<GD['permissions'], any>>
       // TODO
       /** Add IPs to whitelist, all other IPs will be non-authorized to authenticate with apiKey */
       ipWhitelist?: MaybeArray<string>

@@ -3,7 +3,7 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { C, capitalize1st } from 'topkat-utils'
+import { C } from 'topkat-utils'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 
 
@@ -17,12 +17,6 @@ export async function generateIndexForDbCachedFiles(indexFile: ReturnType<typeof
 
   const indexFileContent = `
 ${indexFile.imports}
-
-type UserAdditionalFields = {
-${[...mainConfig.allPermissions, ...mainConfig.allRoles.map(role => 'is' + capitalize1st(role))]
-      .map(perm => `  ${perm}: 'boolean'`)
-      .join('\n')}
-}
 
 export type AllModels = ${indexFile.allModels.length ? `{
     ${indexFile.allModels}
