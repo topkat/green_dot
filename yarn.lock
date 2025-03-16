@@ -1719,7 +1719,7 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
-bump-simple@^1.0.24:
+bump-simple@^1.0.24, bump-simple@^1.0.29:
   version "1.0.29"
   resolved "https://registry.yarnpkg.com/bump-simple/-/bump-simple-1.0.29.tgz#32bd363105667e39dc079d1124c1cabed8ada082"
   integrity sha512-W2Na+pP5T/YIeVbHOA+DvkKix+acqMfDpmWCKR4ldIETO9yzb9/rPRuNLn0BRi29IORb5iP+7Pfo1WILtt0iCA==

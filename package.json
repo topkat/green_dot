@@ -17,7 +17,11 @@
     "build": "tscp && tsc",
     "tsc": "tsc",
     "build:watch": "tscp & tsc -w --preserveWatchOutput",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "// RELEASE": "",
+    "publish": "npm run bump:patch",
+    "bump": "npm run bump:patch",
+    "bump:patch": "bump --patch"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.3.3",
@@ -44,6 +48,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.22.5",
+    "bump-simple": "^1.0.29",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^11.0.4",
