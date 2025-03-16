@@ -1,16 +1,33 @@
 import { getMainConfig } from './getGreenDotConfigs'
+import { throwError } from '../core.error'
 
 
 
-export const env = new Proxy({} as ReturnType<typeof getEnv>, {
-  get(o, p) {
-    return getEnv()[p]
+type EnvType = {
+  env: Env
+  isProd: boolean
+  isTest: boolean
+}
+
+export const env = new Proxy({} as EnvType, {
+  get(o, p: keyof EnvType) {
+    return getEnv(p)
   }
 })
 
-function getEnv() {
-  const { env, isProdEnv, isTestEnv } = getMainConfig()
-  return {
-    env: env as Env, isProd: isProdEnv, isTest: isTestEnv
+function getEnv(prop: keyof EnvType) {
+  const mainConf = getMainConfig(true)
+  if (!mainConf && prop !== 'env') {
+    throwError.serverError(`Do not use env.isProd or env.isTest straight in the body of your ts files since server needs to start to evaluate those variables correctly. If you really need to, you have to create and use a local version.`)
   }
+  const {
+    env = process.env.NODE_ENV,
+    isProdEnv,
+    isTestEnv
+  } = mainConf || {}
+  return ({
+    env: env as Env,
+    isProd: isProdEnv,
+    isTest: isTestEnv
+  } satisfies EnvType)[prop]
 }

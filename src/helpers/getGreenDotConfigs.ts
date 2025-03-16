@@ -29,8 +29,8 @@ export async function initGreenDotConfigs(props: {
 
 let greenDotConfigsCache: GreenDotConfigWithDefaults & GDpathConfig
 
-export function getMainConfig(): typeof greenDotConfigsCache {
-  if (!greenDotConfigsCache) throw throwError.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+export function getMainConfig(silent = false): typeof greenDotConfigsCache {
+  if (!greenDotConfigsCache && !silent) throw throwError.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotConfigsCache
 }
 
@@ -78,7 +78,7 @@ async function initDbConfigCache(resetCache = false) {
     }
   } catch (err) {
     C.error(err)
-    throw `ERROR in ./${pathNameErrExtraInfos}/green_dot.db.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`
+    throw `ERROR in .${pathNameErrExtraInfos}/green_dot.db.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`
   }
 }
 
@@ -114,7 +114,7 @@ async function initAppConfigCache(resetCache = false) {
       }
     } catch (err) {
       C.error(err)
-      throw `ERROR in ./${pathNameErrExtraInfos}/green_dot.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`
+      throw `ERROR in .${pathNameErrExtraInfos}/green_dot.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`
     }
   }
 }

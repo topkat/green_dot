@@ -14,13 +14,11 @@ import { isset, DescriptiveError, ErrorOptions, C } from 'topkat-utils'
 export const throwError = new Proxy({}, {
     get(target, p) {
         // This ensure that in all case an error is thrown, even the error is not registered
-        if (p in target) return target[p]
-        else {
-            C.error(false, 'Unknown error ' + (p as string) + '. Error has not been correctly registered.')
-            return (...params) => {
-                // INJECT CTX since we probably are in a context where ctx is not available. If not ctx.throw is preferred
-                return getThrowErrorFn({ msg: p })(null, ...params)
-            }
+        if (p in target == false) C.error(false, 'Unknown error ' + (p as string) + '. Error has not been correctly registered.')
+        return (...params) => {
+            const [additionalMsg, options] = Object.keys(serverErrors).includes(p as string) ? params : ['', ...params]
+            // INJECT CTX since we probably are in a context where ctx is not available. If not ctx.throw is preferred
+            return getThrowErrorFn({ msg: (p as string) + (additionalMsg ? '\n> ' + additionalMsg : '') })(null, options)
         }
     },
 }) as { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }
@@ -110,6 +108,7 @@ const coreErrors = registerErrors({
 const serverErrors = registerErrors({
     serverError: { code: 500 },
     applicationError: { code: 422 },
+    500: { code: 500 },
 } as const, true)
 
 //  ╔══╗ ╦  ╦ ╔══╗ ╦╗╔╦ ╔══╗ ╦╗ ╔ ══╦══   ╔══╗ ╦    ╔══╗ ╔═╗  ╔══╗ ╦      ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══

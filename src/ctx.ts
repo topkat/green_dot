@@ -4,6 +4,7 @@ import { getMainConfig } from './helpers/getGreenDotConfigs'
 import { ApiOutputTypes } from './types/core.types'
 import mongoose from 'mongoose'
 import { Request, Response } from 'express'
+import { env } from './helpers/getEnv'
 
 import { getId } from 'topkat-utils'
 import { throwError } from './core.error'
@@ -76,9 +77,6 @@ export class CtxClass {
         previousCtx?: Ctx,
     ) {
 
-        const { env } = getMainConfig()
-        if (this.env !== env) this.env = env
-
         if ('isCtx' in ctxUser) {
             Object.assign(this, ctxUser)
         } else {
@@ -108,7 +106,7 @@ export class CtxClass {
         // TODO type override make "this" type not to work
         // events.emit('ctx.creation', this as any)
 
-        return withGodMode(this)
+        return withProxy(this)
     }
     /** Cleanly throw an error, associating all ctx infos to it (user._id, aplication, service name, route...) */
     throw = new Proxy(
@@ -262,13 +260,15 @@ export type AuthenticationMethod = typeof authenticationMethod[number]
 /** This is to check if the user Id a real logged userId or a generated one corresponding to public or system */
 export const isAnonymousUser = id => [systemUserId, publicUserId].includes(id)
 
-/** adds ctx.GM alias of ctx.system() for god mode */
-function withGodMode<T extends CtxClass>(
+function withProxy<T extends CtxClass>(
     ctx: T
 ): T & { GM: T & { isSystem: true, isPublic: false } } {
     return new Proxy(ctx, {
         get(target, prop) {
-            if (prop === 'GM') return withGodMode(ctx.isSystem ? ctx : ctx.system())
+            // allow to use more digest ctx.GM (God Mode) as an alias for ctx.system()
+            if (prop === 'GM') return withProxy(ctx.isSystem ? ctx : ctx.system())
+            // helps returning always last env
+            else if (prop === 'env') return env.env
             else return target[prop]
         }
     }) as any

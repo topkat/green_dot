@@ -5,6 +5,7 @@ import { initGreenDotConfigs } from '../helpers/getGreenDotConfigs'
 import { createNewTask } from './createNewTask'
 import { generateIndexForProjectDb } from './build/generateIndexForProjectDb'
 import { generateIndexForProjectApp } from './build/generateIndexForProjectApp'
+import { C } from 'topkat-utils'
 
 
 export async function buildCommand() {
@@ -19,9 +20,11 @@ export async function buildCommand() {
 
   // From Here, we execute some project app so it may be more sensitive
 
-  await build.step(`Initiating cache`, () => initGreenDotConfigs({}))
+  await build.step(`Getting green_dot configs`, async () => await initGreenDotConfigs({}), { watch: true, cleanOnError: true })
 
-  await build.step(`Generating types for databases`, generateDbCachedFiles)
+  await build.step(`Generating types for databases`, generateDbCachedFiles, { watch: true, cleanOnError: true })
+
+  C.log(C.dim('='.repeat(50) + '\n'))
 
   build.end(`Successfully built green_dot project`)
 

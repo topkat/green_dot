@@ -243,7 +243,7 @@ export async function getMongoMaskForUser(
 
 function convertAddrToRegexpIfWildCard(shouldMatchAddr: string): string | RegExp {
     if (shouldMatchAddr.includes('*')) {
-        const regexp = escapeRegexp(shouldMatchAddr, { parseStarChar: true })
+        const regexp = escapeRegexp(shouldMatchAddr, { parseWildcard: true })
         const regStr = '^' + regexp
         return new RegExp(regStr)
     } else return shouldMatchAddr

@@ -13,7 +13,7 @@ import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 export async function generateIndexForDbCachedFiles(indexFile: ReturnType<typeof getNewIndexForDbCacheFileStructure> = getNewIndexForDbCacheFileStructure()) {
 
   const mainConfig = getMainConfig()
-  const dbConfigs = await getDbConfigs()
+  const dbConfigs = getDbConfigs()
 
   const indexFileContent = `
 ${indexFile.imports}
@@ -24,10 +24,11 @@ export type AllModels = ${indexFile.allModels.length ? `{
 
 export type DbIds = ${indexFile.dbIds.length ? `{
     ${indexFile.dbIds}
-}` : 'Record<string, any>'}
+}` : 'Record<string, string>'}
 
-export type MainDbName = ${mainConfig.defaultDatabaseName && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
+export type MainDbName = ${mainConfig && mainConfig.defaultDatabaseName && dbConfigs && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
 
+${indexFile.imports.length ? `
 type Result = MergeMultipleObjects<AllModels>
 
 /** With this getter you can safely use your model types anywhere (even in db folders).
@@ -38,7 +39,8 @@ export type ModelTypes = {
     [K in keyof Result]: Result[K]['Read']
 } & {
     [K in keyof Result as \`\${K & string}Write\`]: Result[K]['Write']
-}
+}`
+      : 'export type ModelTypes = Record<string, any>'}
 `
 
   await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'index.generated.ts'), indexFileContent)
