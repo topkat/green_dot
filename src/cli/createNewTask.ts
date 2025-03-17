@@ -1,8 +1,8 @@
-import chokidar from 'chokidar'
-import { C, cliLoadingSpinner, perfTimer, waitUntilTrue } from 'topkat-utils'
-import { getProjectPaths } from '../helpers/getProjectPaths'
+
+import { C, cliLoadingSpinner, perfTimer } from 'topkat-utils'
 import { cleanCommand } from './clean.command'
 import { onFileChange } from './fileWatcher'
+import { terminalCharSize } from './helpers/cli'
 
 
 /** This will start a task, measure performances as well as cut build into steps for easier debugging, performance tracking and better user logs
@@ -24,7 +24,7 @@ export function createNewTask() {
 
       const t2 = perfTimer()
 
-      C.line(`${this._stepNb}) ${title}`, 50)
+      C.line(`${this._stepNb}) ${title}`, terminalCharSize, undefined, undefined, 0)
 
       try {
         await callback()
@@ -40,17 +40,8 @@ export function createNewTask() {
           await onFileChange(async () => {
             C.log(`\n\n`)
             if (cleanOnError) await cleanCommand()
-            process.exit(0)
-          })
-
-          // TODO DELETEME
-          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
-          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
-          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
-          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
-          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
-          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
-
+            process.exit(1)
+          }, { autoClose: true })
         } else {
           throw err
         }

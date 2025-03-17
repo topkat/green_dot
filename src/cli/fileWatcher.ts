@@ -6,7 +6,7 @@ export async function onFileChange(
   onFileChangeCallback: (filePath: string) => any,
   {
     /** Autoclose watcher on first change */
-    autoClose = true,
+    autoClose = false,
     /** Await until a file change occurs */
     awaitChange = true
   } = {}

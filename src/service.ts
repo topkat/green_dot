@@ -1,13 +1,13 @@
 
 import { asArray } from 'topkat-utils'
-import { Service, ServiceClean } from './types/services.types'
+import { ScheduleService, Service, ServiceClean } from './types/services.types'
 import { _, Definition, GenericDef } from 'good-cop'
 import { notForToFor } from './security/notForToForAndNotOnToOn'
 
 /** This is the base function for registering services. It handle types as
   * well as basic service cleanup. So it takes a Service and return a ServiceClean
   */
-export function service<
+export function svc<
   InputType extends Record<string, GenericDef> | GenericDef | GenericDef[] = [],
   OutputType extends GenericDef = undefined
 >(svc: Service<InputType, OutputType>) {
@@ -64,4 +64,10 @@ export function service<
   svcClean.hasBeenParsed = true
 
   return svcClean
+}
+
+
+
+export function schedule(schedule: ScheduleService) {
+  return schedule
 }

@@ -86,13 +86,17 @@ export function autoFindAndInitActiveAppAndDbPaths(path = process.cwd()) {
 
   let hasBeenFound = false
 
-  const activeAppName = greenDotPathsCache.appConfigs.find(p => (path + '/').includes(p.folderPath))
+  if (!greenDotPathsCache) throw 'Cache not implemented for autoFindAndInitActiveAppAndDbPaths()'
+
+  const { appConfigs, dbConfigs } = greenDotPathsCache
+
+  const activeAppName = appConfigs.length === 1 ? appConfigs[0] : appConfigs.find(p => (path + '/').includes(p.folderPath))
   if (activeAppName) {
     greenDotPathsCache.activeApp = activeAppName
     hasBeenFound = true
   }
 
-  const activeDbName = greenDotPathsCache.dbConfigs.find(p => (path + '/').includes(p.folderPath))
+  const activeDbName = dbConfigs.length === 1 ? dbConfigs[0] : dbConfigs.find(p => (path + '/').includes(p.folderPath))
   if (activeDbName) {
     greenDotPathsCache.activeDb = activeDbName
     hasBeenFound = true

@@ -18,7 +18,7 @@ export async function generateIndexForDbCachedFiles(indexFile: ReturnType<typeof
   const indexFileContent = `
 ${indexFile.imports}
 
-export type AllModels = ${indexFile.allModels.length ? `{
+export type AllModelsWithReadWrite = ${indexFile.allModels.length ? `{
 ${indexFile.allModels}}`
       : 'Record<string, any>'}
 
@@ -29,7 +29,7 @@ ${indexFile.dbIds}}`
 export type MainDbName = ${mainConfig && mainConfig.defaultDatabaseName && dbConfigs && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
 
 ${indexFile.imports.length ? `
-type Result = MergeMultipleObjects<AllModels>
+type Result = MergeMultipleObjects<AllModelsWithReadWrite>
 
 /** With this getter you can safely use your model types anywhere (even in db folders).
 If you use straight type like \`\`\`User\`\`\`, it may error when you are in a database folder
@@ -39,8 +39,21 @@ export type ModelTypes = {
     [K in keyof Result]: Result[K]['Read']
 } & {
     [K in keyof Result as \`\${K & string}Write\`]: Result[K]['Write']
-}`
-      : 'export type ModelTypes = Record<string, any>'}
+}
+
+/** All ModelNames for all DB Names: 'modelName1' | 'modelName2'...  */
+export type ModelNames = keyof Result
+
+/** ModelNames for DB { [dbName]: 'modelName1' | 'modelName2'... } */
+export type ModelNamesForDb = { [K in keyof AllModelsWithReadWrite]: keyof AllModelsWithReadWrite[K] }
+`
+      : `export type ModelTypes = Record<string, any>
+/** All ModelNames for all DB Names: 'modelName1' | 'modelName2'...  */
+export type ModelNames = string
+
+/** ModelNames for DB { [dbName]: 'modelName1' | 'modelName2'... } */
+export type ModelNamesForDb = Record<string, string>
+`}
 `
 
   await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'index.generated.ts'), indexFileContent)

@@ -1,6 +1,6 @@
 
 
-import { AllModels, DbIds, MainDbName } from './cache/dbs/index.generated'
+import { AllModelsWithReadWrite, DbIds, MainDbName } from './cache/dbs/index.generated'
 import { throwError } from './core.error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
@@ -20,9 +20,9 @@ import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
 //
 // Types needs are computed appart from logic in this case
 
-type DbType = {
-  [K in keyof AllModels]: {
-    [L in keyof AllModels[K]]: AllModels[K][L] extends ModelReadWrite ? DaoMethodsMongo<AllModels[K][L]> : never
+export type Dbs = {
+  [K in keyof AllModelsWithReadWrite]: {
+    [L in keyof AllModelsWithReadWrite[K]]: AllModelsWithReadWrite[K][L] extends ModelReadWrite ? DaoMethodsMongo<AllModelsWithReadWrite[K][L]> : never
   } & ModelAdditionalFields
 } & {
   [k in MainDbName]: {
@@ -30,6 +30,8 @@ type DbType = {
     GD_serverBlacklistModel: DaoMethodsMongo<{ Read: typeof GD_serverBlacklistModel.tsTypeRead, Write: typeof GD_serverBlacklistModel.tsTypeWrite }>
   }
 }
+
+export type Db = Dbs[MainDbName]
 
 type AllDbIds = DbIds[keyof DbIds]
 
@@ -120,7 +122,7 @@ export async function initDbs(resetCache: boolean = false) {
 /** Use that in your backend app has the main DB entry point of any database operations.
  * @example ```db.myDbName.myModelName.count(ctx, { status: 'success' })```
  */
-export const dbs = new Proxy({} as DbType, {
+export const dbs = new Proxy({} as Dbs, {
   // proxy pattern here is a workaround to ensure user always get the latest db cache version
   // on server start, we need to await initDb to ensure the cache always has a value and can
   // be called anywhere in the app
@@ -130,7 +132,7 @@ export const dbs = new Proxy({} as DbType, {
   },
 })
 
-export const db = new Proxy({} as DbType[MainDbName], {
+export const db = new Proxy({} as Db, {
   // we also use proxy here for we can use getGreenDotConfigSync() without instanciating it
   // once in the file and thus wait until db and cache are operational
   // In short we make sync out of async (more DX friendly at usage)

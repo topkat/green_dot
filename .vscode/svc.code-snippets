@@ -47,7 +47,7 @@
             "        const $5 = ctx.${6/(getAll)|(getOne)|(create)|(update)|(delete)/${1:+data}${2:+data}${3:+inputFields}${4:+inputFields}${5:+DELETEME}/}",
             "        $14",
             "    },",
-            "} satisfies t.DaoEventService<t.Models.AllModels, '${5:modelName}', '$6', '$7'>",
+            "} satisfies t.DaoEventService<AllModelsWithReadWrite, '${5:modelName}', '$6', '$7'>",
         ]
     },
     "svc:schedule": {
@@ -55,7 +55,7 @@
             "svc:schedule",
         ],
         "body": [
-            "export const ${1:service} = {",
+            "export const ${1:service} = schedule({",
             "    schedule: {",
             "        frequency: ${2|'0 * * * *'\\, // every hour,'0 */12 * * *'\\, // 2 times a day,frequency: '0 5 * * *'\\, // once a day at 05:00,'0 5 1 * *'\\, // At 05:00 on day-of-month 1|}",
             "${3:        frequencyDevEnv: ${4|'* * * * *','never','server.start'|},}",
@@ -63,7 +63,7 @@
             "    async main(ctx) {",
             "        $14",
             "    },",
-            "} satisfies t.ScheduleService",
+            "})",
         ]
     },
 }
