@@ -40,4 +40,5 @@ export { getActiveAppConfig, getActiveDbConfig, getMainConfig, registerMainConfi
 export { env } from './helpers/getEnv'
 
 export { sendEmail } from './services/sendEmail'
+
 export { generateUniqueToken } from './services/generateUniqueToken'
