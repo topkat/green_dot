@@ -21,16 +21,16 @@ export const throwError = new Proxy({}, {
             return getThrowErrorFn({ msg: (p as string) + (additionalMsg ? '\n> ' + additionalMsg : '') })(null, options)
         }
     },
-}) as { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }
+}) as ThrowErrorTypeSafe
 
 /** This is to register new errors and custom errors and make them available in the project */
 export function registerErrors<T extends Record<string, ErrorOptions>>(errObj: T, withCustomMsgParam = false) {
     for (const [errName, errOptions] of Object.entries(errObj)) {
         if (withCustomMsgParam) {
             // Error with a a CUSTOM MESSAGE. Eg: throw.myError(ctx, msg, options)
-            throwError[errName] = (ctx: Ctx | null, msg: string, options: ErrorOptions = {}) => {
+            throwError[errName] = ((ctx: Ctx | null, msg: string, options: ErrorOptions = {}) => {
                 return sharedErrorEndpoint(ctx, msg, { ...errOptions, ...options })
-            }
+            }) as any // TODO needs simplification
         } else {
             // Classic error. Eg: throw.myError(ctx, options)
             throwError[errName] = getThrowErrorFn(errOptions)
@@ -117,8 +117,12 @@ const serverErrors = registerErrors({
 
 export type RegisterErrorType<T extends Record<string, any>> = Record<keyof T, (ctx: Ctx | null, extraInfosOrOptions?: ErrorOptions) => void>
 
-type CoreErrors = RegisterErrorType<typeof coreErrors>
-type CoreErrorWithCustomMessage = Record<keyof typeof serverErrors, (ctx: Ctx | null, message: string, extraInfosOrOptions?: ErrorOptions) => void>
+export type CoreErrors = RegisterErrorType<typeof coreErrors>
+export type CoreErrorWithCustomMessage = Record<keyof typeof serverErrors, (ctx: Ctx | null, message: string, extraInfosOrOptions?: ErrorOptions) => void>
+
+export type ThrowErrorTypeSafe = HasKeys<Omit<GreenDotErrors, keyof CoreErrors | keyof CoreErrorWithCustomMessage>> extends true // just in case environement is not application
+    ? { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }
+    : Record<string, (...params: [(string | ObjectGeneric)?, ObjectGeneric?]) => any>
 
 declare global {
     interface GreenDotErrors extends CoreErrors { }

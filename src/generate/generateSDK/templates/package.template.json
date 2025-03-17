@@ -37,7 +37,7 @@
     "dependencies": {
         "@tanstack/react-query": "5.28.6",
         "axios": "^1.7.4",
-        "typescript-generic-types": "1.0.8"
+        "typescript-generic-types": "1.0.9"
     },
     "devDependencies": {
         "bump-simple": "1.0.29",

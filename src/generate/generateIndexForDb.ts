@@ -1,7 +1,4 @@
-
-
 import fs from 'fs-extra'
-import Path from 'path'
 import { getProjectPaths } from '../helpers/getProjectPaths'
 import glob from 'fast-glob'
 import { C, capitalize1st } from 'topkat-utils'
@@ -11,12 +8,10 @@ const modelOrDaoRegexp = /[/\\]([^/\\]+)\.(model|dao)\.ts$/
 
 /** Generates index.generated.ts files in client database folder */
 export async function generateIndexForProjectDb() {
-  const { dbConfigs, mainConfig } = await getProjectPaths()
+  const { dbConfigs } = await getProjectPaths()
 
   for (const { generatedIndexPath, folderPath } of dbConfigs) {
-    const dbPathRelative = Path.relative(mainConfig.folderPath, folderPath)
     try {
-
       const allFiles = await glob.async('**/*.@(model|dao).ts', {
         cwd: folderPath,
         onlyFiles: true,
@@ -30,8 +25,7 @@ export async function generateIndexForProjectDb() {
 
       for (const file of allFiles) {
         const match = file.match(modelOrDaoRegexp) as [any, string, 'dao' | 'model']
-        if (match && ! /[/\\]default\.dao\.ts/.test(file)) {
-
+        if (match && !/[/\\]default\.dao\.ts/.test(file)) {
           const [, moduleName, moduleType] = match
           const moduleNameCapital = capitalize1st(moduleName)
           const moduleTypeCapital = capitalize1st(moduleType)
@@ -42,7 +36,6 @@ export async function generateIndexForProjectDb() {
             types += `export type ${moduleNameCapital} = typeof ${moduleName}Model.tsTypeRead\n` +
               `export type ${moduleNameCapital}Read = typeof ${moduleName}Model.tsTypeRead\n` +
               `export type ${moduleNameCapital}Write = typeof ${moduleName}Model.tsTypeWrite\n`
-
             modelsVar += `  ${moduleName}Model,\n`
           } else {
             daoVar += `  ${moduleName}Dao,\n`
@@ -53,12 +46,11 @@ export async function generateIndexForProjectDb() {
       const fileContent = `${imports}\n\n${types}\n\nconst models = {\n${modelsVar}}\n\nconst daos = {\n${daoVar}}\n\nexport { models, daos }`
 
       await fs.outputFile(generatedIndexPath, fileContent, 'utf-8')
-
-      C.success(`Successfully generated index for /${dbPathRelative} database`)
+      C.success(`Successfully generated index for ${folderPath}`)
 
     } catch (err) {
       C.error(err)
-      throw C.error(false, 'ERROR CREATING INDEX FOR DATABASE /' + dbPathRelative)
+      throw C.error(false, 'ERROR CREATING INDEX FOR DATABASE ' + folderPath)
     }
   }
 }

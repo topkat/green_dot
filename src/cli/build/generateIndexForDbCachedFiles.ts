@@ -19,12 +19,12 @@ export async function generateIndexForDbCachedFiles(indexFile: ReturnType<typeof
 ${indexFile.imports}
 
 export type AllModels = ${indexFile.allModels.length ? `{
-    ${indexFile.allModels}
-}` : 'Record<string, any>'}
+${indexFile.allModels}}`
+      : 'Record<string, any>'}
 
 export type DbIds = ${indexFile.dbIds.length ? `{
-    ${indexFile.dbIds}
-}` : 'Record<string, string>'}
+${indexFile.dbIds}}`
+      : 'Record<string, string>'}
 
 export type MainDbName = ${mainConfig && mainConfig.defaultDatabaseName && dbConfigs && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
 
@@ -33,7 +33,7 @@ type Result = MergeMultipleObjects<AllModels>
 
 /** With this getter you can safely use your model types anywhere (even in db folders).
 If you use straight type like \`\`\`User\`\`\`, it may error when you are in a database folder
- * @example \`\`\`type User = ModelTypes['user']\`\`\` 
+ * @example \`\`\`type User = ModelTypes['user']\`\`\`
 */
 export type ModelTypes = {
     [K in keyof Result]: Result[K]['Read']

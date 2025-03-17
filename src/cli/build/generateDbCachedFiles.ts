@@ -40,7 +40,6 @@ export async function generateDbCachedFiles(resetCache = false) {
     //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ╚══╝ ╚══╝     ╩     ╩   ╩    ╚══╝ ═══╝
 
     for (const [modelName, model] of Object.entries(models) as [string, Definition][]) {
-
       const modelNameCapital = capitalize1st(modelName)
 
       const tsTypes = model.getTsTypeAsString()
@@ -69,11 +68,11 @@ export async function generateDbCachedFiles(resetCache = false) {
 
     indexFile.imports += `import { AllModels as ${dbNameCapital}AllModels } from './${dbName}.modelTypes.generated'\n`
     if (dbName === mainConfig.defaultDatabaseName) {
-      indexFile.allModels += `{ [K in keyof ${dbNameCapital}AllModels]: K extends 'user' ? ${dbNameCapital}AllModels[K] & { Read: UserPermissionFields, Write: Partial<UserPermissionFields> } : ${dbNameCapital}AllModels[K] }`
+      indexFile.allModels += `    ${dbName}: { [K in keyof ${dbNameCapital}AllModels]: K extends 'user' ? ${dbNameCapital}AllModels[K] & { Read: UserPermissionFields, Write: Partial<UserPermissionFields> } : ${dbNameCapital}AllModels[K] }\n`
     } else {
-      indexFile.allModels += `${dbName}: ${dbNameCapital}AllModels\n`
+      indexFile.allModels += `    ${dbName}: ${dbNameCapital}AllModels\n`
     }
-    indexFile.dbIds += `${dbName}: '${dbIds.join(`' | '`)}'\n`
+    indexFile.dbIds += `    ${dbName}: '${dbIds.join(`' | '`)}'\n`
 
     await generateIndexForDbCachedFiles(indexFile)
 

@@ -66,11 +66,11 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "typescript-cp": "^0.1.9",
-    "typescript-generic-types": "1.0.8"
+    "typescript-generic-types": "1.0.9"
   },
   "bin": {
-    "dot": "src/cli/dot.command.ts",
-    "green_dot": "src/cli/dot.command.ts",
-    "gd": "src/cli/dot.command.ts"
+    "dot": "src/cli/cliEntryPoint.ts",
+    "green_dot": "src/cli/cliEntryPoint.ts",
+    "gd": "src/cli/cliEntryPoint.ts"
   }
 }

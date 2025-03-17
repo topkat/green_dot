@@ -3,7 +3,7 @@
 import { getDbConfigs } from './getGreenDotConfigs'
 import { Definition } from 'good-cop'
 import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
-import { C } from 'topkat-utils'
+import { C, objEntries } from 'topkat-utils'
 import { safeImport } from './safeImports'
 import { parseDaos } from '../databases/parseDaos'
 
@@ -23,7 +23,7 @@ async function initCache(resetCache = false) {
   for (const { generatedIndexPath, name: dbName } of dbConfigs) {
     const fileContent = await safeImport(generatedIndexPath) as DatabaseIndexFileContent
 
-    modelsCache[dbName] = fileContent.models
+    modelsCache[dbName] = objEntries(fileContent.models).reduce((obj, [modelName, content]) => ({ ...obj, [modelName.replace(/Model$/, '')]: content }), {})
 
     daosCache[dbName] = await parseDaos(Object.keys(fileContent.models), fileContent.daos, fileContent.defaultDao)
   }

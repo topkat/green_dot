@@ -17,8 +17,6 @@ export async function parseDaos<
   defaultDaoConfig?: MongoDaoParsed<any> | MongoDao<any>,
 ): Promise<DaoConfigsParsed> {
 
-
-
   const daoConfigsParsed = daoConfigsGeneratedRaw as any as DaoConfigsParsed
 
   for (const modelName of modelNames) {
@@ -48,9 +46,9 @@ function setDaoDefaultValues(
   dao.populate ??= []
 }
 
-async function mergeDaoWith(original: MongoDaoParsed<any>, toMerge: MongoDaoParsed<any> | MongoDao<any>) {
+async function mergeDaoWith(original: MongoDaoParsed<any>, toMerge?: MongoDaoParsed<any> | MongoDao<any>) {
 
-  const toMergeNew = JSONstringyParse(toMerge)
+  const toMergeNew = toMerge ? JSONstringyParse(toMerge) : {}
 
   for (const hookName in toMergeNew) {
     const hookInDaoConfForModel = original[hookName]

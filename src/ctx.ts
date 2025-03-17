@@ -7,7 +7,7 @@ import { Request, Response } from 'express'
 import { env } from './helpers/getEnv'
 
 import { getId } from 'topkat-utils'
-import { throwError } from './core.error'
+import { throwError, ThrowErrorTypeSafe } from './core.error'
 import { dbs } from './db'
 import { ModelTypes } from './cache/dbs/index.generated'
 
@@ -110,11 +110,11 @@ export class CtxClass {
     }
     /** Cleanly throw an error, associating all ctx infos to it (user._id, aplication, service name, route...) */
     throw = new Proxy(
-        {} as { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void },
+        {} as ThrowErrorTypeSafe,
         {
             /** This will inject Ctx (this) as first param of error */
             get: (_, p) => {
-                const errorFn = throwError[p]
+                const errorFn = throwError[p as string]
                 if (typeof errorFn === 'function') {
                     return (...args) => { // arrow function here are the trick for keeping this in that context
                         return errorFn.apply(throwError, [
@@ -122,7 +122,7 @@ export class CtxClass {
                             ...args
                         ])
                     }
-                } else return throwError[p] // here all not existing errors are handled by throwError proxy
+                } else return throwError[p as string] // here all not existing errors are handled by throwError proxy
             },
         })
     //----------------------------------------
