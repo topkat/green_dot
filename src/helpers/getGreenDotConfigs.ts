@@ -55,7 +55,7 @@ async function initMainConfigCache(resetCache = false) {
 let greenDotDbConfigsCache: Array<GreenDotDbConfig & GDpathConfigWithIndex>
 
 export function getDbConfigs() {
-  if (!greenDotConfigsCache) throw throwError.serverError('Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotDbConfigsCache) throw throwError.serverError('Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotDbConfigsCache
 }
 
@@ -93,14 +93,14 @@ async function initDbConfigCache(resetCache = false) {
 let greenDotAppConfigsCache: Array<GreenDotAppConfig & GDpathConfigWithIndex>
 
 export function getAppConfigs() {
-  if (!greenDotConfigsCache) throw throwError.serverError('Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotAppConfigsCache) throwError.serverError('Trying to call getAppConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotAppConfigsCache
 
 }
 
 export async function getActiveAppConfig() {
   const { activeApp } = await getProjectPaths()
-  if (!activeApp) throw throwError.serverError('Trying to call getActiveAppConfig() but not active Db is to be found')
+  if (!activeApp) throwError.serverError('Trying to call getActiveAppConfig() but not active Db is to be found')
   return greenDotAppConfigsCache.find(c => c.folderPath === activeApp.folderPath) as GreenDotAppConfig & GDpathConfigWithIndex
 }
 

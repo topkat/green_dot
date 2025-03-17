@@ -1,12 +1,13 @@
 
-import { C } from 'topkat-utils'
+import { C, cliLoadingSpinner } from 'topkat-utils'
 import { StartServerConfig } from './dot.command'
 import { buildCommand } from './build.command'
 import { clearCli, cliIntro } from './helpers/cli'
 import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
 import { nestor } from './helpers/nestorBot'
 import { onFileChange } from './fileWatcher'
-import { startServer } from '../startServer'
+import { startServer, stopServer } from '../startServer'
+import { getActiveAppServices } from '../helpers/getProjectServices'
 
 let watcherOn = true
 
@@ -28,6 +29,8 @@ export async function startDevProdCommand(props: StartServerConfig) {
     autoFindAndInitActiveAppAndDbPaths(folder)
   }
 
+  process.env.SAFE_IMPORT_SILENT = '1'
+
   clearCli()
   cliIntro()
 
@@ -41,17 +44,34 @@ export async function startDevProdCommand(props: StartServerConfig) {
       -> Press "q" to quit
 `)
 
-  await startServer()
 
-  // await timeout(200000)
+  try {
 
-  await onFileChange(() => {
+    const { init } = await import('green_dot' as any)
+
+    await init()
+
+    await getActiveAppServices() // init cache
+
+    await startServer()
+
+  } catch (err) {
+    C.error(err)
+    if (watcherOn === false) userInputKeyHandler('w')
+    // const spin = new cliLoadingSpinner('dots')
+    // spin.start('Waiting for file change')
+    C.warning(false, 'Waiting for file change')
+  }
+
+
+  await onFileChange(async path => {
+    C.info(`File change detected for ${path}, restarting...`)
     if (watcherOn) {
       C.log(`\n\n`)
+      await stopServer()
       process.exit(1)
     }
   })
-
 }
 
 //  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══

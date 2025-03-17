@@ -17,14 +17,14 @@ export async function parseDaos<
   defaultDaoConfig?: MongoDaoParsed<any> | MongoDao<any>,
 ): Promise<DaoConfigsParsed> {
 
-  const daoConfigsParsed = daoConfigsGeneratedRaw as any as DaoConfigsParsed
+  const daoConfigsParsed = {} as DaoConfigsParsed
 
   for (const modelName of modelNames) {
     // DEFAULT VALUES FOR EACH DAO
-    (daoConfigsParsed as any)[modelName] ??= {}
+    (daoConfigsParsed as any)[modelName] ??= daoConfigsGeneratedRaw[modelName + 'Dao']
 
-    await setDaoDefaultValues(daoConfigsParsed[modelName], defaultDaoConfig)
-    await mergeDaoWith(daoConfigsParsed[modelName], defaultDaoConfig)
+    await mergeDaoWithDefaults(daoConfigsParsed[modelName], defaultDaoConfig)
+
     await registerDaoHooks(modelName, daoConfigsParsed[modelName])
   }
 
@@ -38,15 +38,10 @@ export async function parseDaos<
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
 
-function setDaoDefaultValues(
-  dao: Partial<MongoDao<any> | MongoDaoParsed<any>>,
-  defaultConfig: Partial<MongoDao<any> | MongoDaoParsed<any>> = {},
-) {
-  dao.expose ??= defaultConfig.expose || []
-  dao.populate ??= []
-}
+async function mergeDaoWithDefaults(original: MongoDaoParsed<any>, toMerge?: MongoDaoParsed<any> | MongoDao<any>) {
 
-async function mergeDaoWith(original: MongoDaoParsed<any>, toMerge?: MongoDaoParsed<any> | MongoDao<any>) {
+  original.expose ??= []
+  original.populate ??= []
 
   const toMergeNew = toMerge ? JSONstringyParse(toMerge) : {}
 

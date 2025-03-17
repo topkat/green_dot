@@ -34,7 +34,8 @@ export async function generateIndexForProjectDb() {
         const relativeToRoot = Path.relative(folderPath, file).replace('.ts', '')
 
         if (isDefault) {
-          topOfFile += `export * as defaultDao from './${relativeToRoot}'\n`
+          topOfFile += `import _defaultDao from './${relativeToRoot}'\n`
+          daoVar += `  _defaultDao,\n`
         } else if (match) {
 
           const [, moduleName, moduleType] = match

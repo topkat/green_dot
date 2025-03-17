@@ -74,8 +74,8 @@ export async function generateDbCachedFiles(resetCache = false) {
     }
     indexFile.dbIds += `    ${dbName}: '${dbIds.join(`' | '`)}'\n`
 
-    await generateIndexForDbCachedFiles(indexFile)
-
   }
+
+  await generateIndexForDbCachedFiles(indexFile)
 }
 

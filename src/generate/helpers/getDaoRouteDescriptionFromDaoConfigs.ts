@@ -2,8 +2,6 @@
 
 import { RouteFromDaoConfigForGenerateSdk } from '../../types/core.types'
 
-import defaultDaoConfigMongo from '../../databases/mongo/defaultDaoConfigMongo'
-
 import { getApiEndpointsPerRolesFromDao } from '../../databases/helpers/getApiEndpointsPerRolesFromDao'
 import { objEntries, pushIfNotExist } from 'topkat-utils'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
@@ -26,10 +24,7 @@ export async function getDaoRouteDescriptionFromDaoConfigs() {
   for (const [dbId, daoForModels] of objEntries(daos)) {
     for (const [modelName, dao] of objEntries(daoForModels)) {
 
-      const defaultConf = defaultDaoConfigMongo
-      const daoConfigSure = dao || defaultConf
-
-      const { fullMethodsPerRole } = getApiEndpointsPerRolesFromDao(daoConfigSure.expose, allRoles)
+      const { fullMethodsPerRole } = getApiEndpointsPerRolesFromDao(dao.expose, allRoles)
 
       for (const [role, allMethods] of objEntries(fullMethodsPerRole)) {
         for (const fnName of allMethods) {

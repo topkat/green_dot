@@ -3,29 +3,37 @@
 import { getDbConfigs } from './getGreenDotConfigs'
 import { Definition } from 'good-cop'
 import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
-import { C, objEntries } from 'topkat-utils'
+import { objEntries } from 'topkat-utils'
 import { safeImport } from './safeImports'
 import { parseDaos } from '../databases/parseDaos'
+import { throwError } from '../core.error'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩
 
-const modelsCache = {} as { [dbName: string]: { [modelName: string]: Definition } }
-const daosCache = {} as { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> } }
+let modelsCache: { [dbName: string]: { [modelName: string]: Definition } }
+let daosCache: { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> } }
 
 let cacheInitialized = false
 
-async function initCache(resetCache = false) {
+export async function initProjectAndDaosCache(resetCache = false) {
   if (cacheInitialized && resetCache === false) return
+  modelsCache = {}
+  daosCache = {}
   cacheInitialized = true
   const dbConfigs = getDbConfigs()
   for (const { generatedIndexPath, name: dbName } of dbConfigs) {
     const fileContent = await safeImport(generatedIndexPath) as DatabaseIndexFileContent
-
     modelsCache[dbName] = objEntries(fileContent.models).reduce((obj, [modelName, content]) => ({ ...obj, [modelName.replace(/Model$/, '')]: content }), {})
 
-    daosCache[dbName] = await parseDaos(Object.keys(fileContent.models), fileContent.daos, fileContent.defaultDao)
+    const { _defaultDao, ...regularDaos } = fileContent.daos
+
+    daosCache[dbName] = await parseDaos(
+      Object.keys(modelsCache[dbName]),
+      regularDaos,
+      _defaultDao
+    )
   }
 }
 
@@ -35,19 +43,19 @@ async function initCache(resetCache = false) {
 //  ╩  ╩ ╚══╝ ╚══╝ ╚══╝ ╚══╝ ═══╝
 
 export async function getProjectDatabaseModels(resetCache = false) {
-  await initCache(resetCache)
+  await initProjectAndDaosCache(resetCache)
   return modelsCache
 }
 
 export function getProjectDatabaseModelsSync() {
-  initCache() // just in case it didn't run
+  if (!modelsCache) throwError.serverError(`Cache for database has not been initialized, please make sure you run initProjectAndDaosCache() first`)
   return modelsCache
 }
 
 export async function getProjectDatabaseModelsForDbName(dbName: string, resetCache = false) {
-  await initCache(resetCache)
+  await initProjectAndDaosCache(resetCache)
   const models = modelsCache[dbName]
-  if (!models) throw C.error(false, `No database model with name ${dbName} found in configs. Available names: ${Object.keys(modelsCache)}`)
+  if (!models) throwError.serverError(`No database model with name ${dbName} found in configs. Available names: ${Object.keys(modelsCache)}`)
   return models
 }
 
@@ -56,14 +64,14 @@ export async function getProjectDatabaseModelsForDbName(dbName: string, resetCac
 //  ╚══╝ ╩  ╩ ╚══╝ ═══╝
 
 export async function getProjectDatabaseDaos(resetCache = false) {
-  await initCache(resetCache)
+  await initProjectAndDaosCache(resetCache)
   return daosCache
 }
 
 export async function getProjectDatabaseDaosForDbName(dbName: string, resetCache = false) {
-  await initCache(resetCache)
+  await initProjectAndDaosCache(resetCache)
   const daos = daosCache[dbName]
-  if (!daos) throw C.error(false, `No Dao model with name ${dbName} found in configs. Available names: ${Object.keys(daosCache)}`)
+  if (!daos) throwError.serverError(`No Dao model with name ${dbName} found in configs. Available names: ${Object.keys(daosCache)}`)
   return daos
 }
 

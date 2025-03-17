@@ -1,6 +1,6 @@
 
 
-import express from 'express'
+import express, { } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import xmlparser from 'express-xml-bodyparser'
@@ -22,117 +22,122 @@ import { getMainConfig, getActiveAppConfig } from './helpers/getGreenDotConfigs'
 import { registerDaoApi } from './registerModules/registerDaoApi'
 import { registerServiceApi } from './registerModules/registerServicesApi'
 import { registerServices } from './registerModules/registerServices'
+import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
 
 dotenv.config()
 
 const { DISPLAY_NO_BUILD_WARNING } = ENV()
 
+let server: ReturnType<ReturnType<typeof express>['listen']>
 
 export async function startServer(
     isMaster = true,
 ) {
-    try {
-        const mainConfig = getMainConfig()
-        const appConfig = await getActiveAppConfig()
 
-        // INTRO
-        if (isMaster) {
-            // if (isReloadModules) C.gradientize(`${'='.repeat(45)}\n|| SERVER SOFT RESTART${' '.repeat(45 - 24)}||\n${'='.repeat(45)}`) else
-            C.gradientize(appConfig.serverCliIntro) // CLI intro
-            C.log(C.primary(`Env: ${mainConfig.env} | Schedules: ${appConfig.enableSchedules ? '✓' : '✖️'} | Seeds: ${appConfig.enableSeed ? '✓' : '✖️'}\n`))
-            if (DISPLAY_NO_BUILD_WARNING) C.error(false, `✓ LOCAL BUILD NOT RAN`)
-            else C.log(C.primary(`✓ BUILD ${appConfig.name}`))
-        }
+    const mainConfig = getMainConfig()
+    const appConfig = await getActiveAppConfig()
+    await initProjectAndDaosCache()
 
-        registerConfig(appConfig.dataValidationConfig)
+    // INTRO
+    if (isMaster) {
+        // if (isReloadModules) C.gradientize(`${'='.repeat(45)}\n|| SERVER SOFT RESTART${' '.repeat(45 - 24)}||\n${'='.repeat(45)}`) else
+        C.gradientize(appConfig.serverCliIntro) // CLI intro
+        C.log(C.primary(`Env: ${mainConfig.env} | Schedules: ${appConfig.enableSchedules ? '✓' : '✖️'} | Seeds: ${appConfig.enableSeed ? '✓' : '✖️'}\n`))
+        if (DISPLAY_NO_BUILD_WARNING) C.error(false, `✓ LOCAL BUILD NOT RAN`)
+        else C.log(C.primary(`✓ BUILD ${appConfig.name}`))
+    }
 
-        const app = express()
+    registerConfig(appConfig.dataValidationConfig)
 
-        // initAws(serverConfig.awsConfig)
-        initTelegramBot()
+    const app = express()
 
-        app.disable('x-powered-by')
+    // initAws(serverConfig.awsConfig)
+    initTelegramBot()
 
-        app.use((_, res, next) => {
-            res.set({
-                'Content-Security-Policy': `default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests`,
-                'Cross-Origin-Opener-Policy': 'same-origin',
-                'Cross-Origin-Resource-Policy': 'same-origin',
-                // 'Origin-Agent-Cluster': '?1',
-                'Referrer-Policy': 'no-referrer',
-                'Strict-Transport-Security': 'max-age=15552000; includeSubDomains',
-                'X-Content-Type-Options': 'nosniff',
-                'X-DNS-Prefetch-Control': 'off',
-                'X-Download-Options': 'noopen',
-                'X-Frame-Options': 'SAMEORIGIN',
-                'X-Permitted-Cross-Domain-Policies': 'none',
-                'X-XSS-Protection': '0',
-            })
-            next()
+    app.disable('x-powered-by')
+
+    app.use((_, res, next) => {
+        res.set({
+            'Content-Security-Policy': `default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests`,
+            'Cross-Origin-Opener-Policy': 'same-origin',
+            'Cross-Origin-Resource-Policy': 'same-origin',
+            // 'Origin-Agent-Cluster': '?1',
+            'Referrer-Policy': 'no-referrer',
+            'Strict-Transport-Security': 'max-age=15552000; includeSubDomains',
+            'X-Content-Type-Options': 'nosniff',
+            'X-DNS-Prefetch-Control': 'off',
+            'X-Download-Options': 'noopen',
+            'X-Frame-Options': 'SAMEORIGIN',
+            'X-Permitted-Cross-Domain-Policies': 'none',
+            'X-XSS-Protection': '0',
         })
+        next()
+    })
 
-        app.use(cookieParser())
-        app.use(cors({
-            credentials: true,
-            origin: function (origin, callback) {
-                const err = () => {
-                    callback(new DescriptiveError('Not allowed by CORS: ' + origin, { origin, env: mainConfig.env, code: 500, doNotThrow: true }))
-                }
-                const success = () => callback(null, true)
-                if (!origin) success()
-                else if (typeof appConfig?.corsOrigin === 'function') {
-                    if (appConfig.corsOrigin(origin)) success()
-                    else err()
-                } else if (!appConfig?.corsOrigin || appConfig?.corsOrigin.includes(origin)) success()
-                else err()
-            },
-        }))
-        app.use((req, res, next) => {
-            const initialBody = { ...req.body }
-
-            if (req.headers['content-type']?.startsWith('multipart/form-data')) {
-                multer({ storage: multer.memoryStorage() }).any()(req as any, res as any, (err) => { // TODO fix type ??
-                    if (err) {
-                        return res.status(400).send({ error: 'Error processing multipart/form-data' })
-                    }
-                    req.body = { ...initialBody, ...req.body }
-                    next()
-                })
-            } else {
-                next()
+    app.use(cookieParser())
+    app.use(cors({
+        credentials: true,
+        origin: function (origin, callback) {
+            const err = () => {
+                callback(new DescriptiveError('Not allowed by CORS: ' + origin, { origin, env: mainConfig.env, code: 500, doNotThrow: true }))
             }
-        })
-        app.use(bodyParser.urlencoded({ extended: false }))
-        app.use(xmlparser())
-        app.use(express.text())
-        app.use(bodyParser.json({ limit: '1mb' }))
-        app.set('trust proxy', true) // https://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
+            const success = () => callback(null, true)
+            if (!origin) success()
+            else if (typeof appConfig?.corsOrigin === 'function') {
+                if (appConfig.corsOrigin(origin)) success()
+                else err()
+            } else if (!appConfig?.corsOrigin || appConfig?.corsOrigin.includes(origin)) success()
+            else err()
+        },
+    }))
+    app.use((req, res, next) => {
+        const initialBody = { ...req.body }
+
+        if (req.headers['content-type']?.startsWith('multipart/form-data')) {
+            multer({ storage: multer.memoryStorage() }).any()(req as any, res as any, (err) => { // TODO fix type ??
+                if (err) {
+                    return res.status(400).send({ error: 'Error processing multipart/form-data' })
+                }
+                req.body = { ...initialBody, ...req.body }
+                next()
+            })
+        } else {
+            next()
+        }
+    })
+    app.use(bodyParser.urlencoded({ extended: false }))
+    app.use(xmlparser())
+    app.use(express.text())
+    app.use(bodyParser.json({ limit: '1mb' }))
+    app.set('trust proxy', true) // https://stackoverflow.com/questions/10849687/express-js-how-to-get-remote-client-address
 
 
-        // REGISTER DAO API
-        await registerDaoApi(app)
+    // REGISTER DAO API
+    await registerDaoApi(app)
 
-        // REGISTER SERVICES
-        const allRoutesFromServices = await registerServices(isMaster)
+    // REGISTER SERVICES
+    const allRoutesFromServices = await registerServices(isMaster)
 
-        // REGISTER SERVICE API
-        await registerServiceApi(app, allRoutesFromServices)
+    // REGISTER SERVICE API
+    await registerServiceApi(app, allRoutesFromServices)
 
 
-        await new Promise(resolve => app.listen(appConfig.port, () => resolve(1)))
+    await new Promise(resolve => {
+        server = app.listen(appConfig.port, () => resolve(1))
+    })
 
-        if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
+    if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
 
-        // seed and server.start events shall be triggerred before exposing routes. This avoid
-        // accidentally hitting a route without seeded content
-        await event.emit('server.start', newSystemCtx(), isMaster, app)
+    // seed and server.start events shall be triggerred before exposing routes. This avoid
+    // accidentally hitting a route without seeded content
+    await event.emit('server.start', newSystemCtx(), isMaster, app)
 
-        // ALIVE ROUTE
-        app.get('/alive', generateLoginMw(), rateLimiterMiddleware(), (_, res) => res.json(true))
+    // ALIVE ROUTE
+    app.get('/alive', generateLoginMw(), rateLimiterMiddleware(), (_, res) => res.json(true))
 
-        // ASYNC this is async to gain in server loading time
-        setTimeout(async () => {
-
+    // ASYNC this is async to gain in server loading time
+    setTimeout(async () => {
+        try {
             // Expose a route for killing the server process (allow to emulate servers down)
             if (mainConfig.isTestEnv) app.get(`/killProcess`, logRouteInfos('Killing Process', '💀'), () => process.exit(0))
 
@@ -161,14 +166,19 @@ export async function startServer(
                     C.error(false, `Swagger doc could not be generated and initiated`)
                 }
             }
-
-        }, 2000)
-
-    } catch (err) {
-        C.error(false, `Server couldn't start`)
-        C.error(err)
-    }
+        } catch (err) {
+            C.error(err)
+            C.error(false, 'An error has occurred in ASYNC part of server start. See log above for more informations')
+        }
+    }, 2000)
 }
 
 
-
+export async function stopServer() {
+    return new Promise(resolve => {
+        server?.close?.(() => {
+            C.info('Server stopped gracefully...')
+            resolve(1)
+        })
+    })
+}
