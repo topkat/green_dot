@@ -29,7 +29,6 @@ const { DISPLAY_NO_BUILD_WARNING } = ENV()
 
 
 export async function startServer(
-    appName: string,
     isMaster = true,
 ) {
     try {
@@ -156,7 +155,7 @@ export async function startServer(
             if (!mainConfig.isProdEnv) {
                 await generateMainBackendFiles()
                 try {
-                    const swaggerDoc = await import(`./cache/${appName}.swaggerDoc.generated.json`)
+                    const swaggerDoc = await import(`./cache/${appConfig.name}.swaggerDoc.generated.json`)
                     swaggerDocInit(app, swaggerDoc, appConfig.serverLiveUrl)
                 } catch (err) {
                     C.error(false, `Swagger doc could not be generated and initiated`)

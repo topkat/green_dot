@@ -53,7 +53,6 @@ export { _ } from './validator'
 export { db, dbs, getUserPermissionFields } from './db'
 export { ModelTypes } from './cache/dbs/index.generated'
 
-export { getActiveAppName, getActiveDbName } from './helpers/getAndInitActiveAppAndDatabaseName'
 export { getActiveAppConfig, getActiveDbConfig, getMainConfig } from './helpers/getGreenDotConfigs'
 
 export { env } from './helpers/getEnv'

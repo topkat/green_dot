@@ -31,7 +31,7 @@ async function sendTeamsMsgGeneric(
     errExtraInfos,
 ) {
     try {
-        const { alerts } = getActiveAppConfig()
+        const { alerts } = await getActiveAppConfig()
         if (alerts && alerts.teams?.enable) {
             const { teamsWebhookUrl } = alerts.teams
             await sendTeamsMessage(teamsWebhookUrl, card)

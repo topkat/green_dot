@@ -21,7 +21,7 @@ export async function buildCommand(props: StartServerConfig) {
 
   // From Here, we execute some project app so it may be more sensitive
 
-  await build.step(`Getting green_dot configs`, async () => await initGreenDotConfigs({}), { watch: true, cleanOnError: true })
+  await build.step(`Getting green_dot configs`, async () => await initGreenDotConfigs(), { watch: true, cleanOnError: true })
 
   if (props.env !== 'prod') {
     await build.step(`Generating types for databases`, generateDbCachedFiles, { watch: true, cleanOnError: true })

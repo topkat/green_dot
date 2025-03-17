@@ -2,6 +2,7 @@ import chokidar from 'chokidar'
 import { C, cliLoadingSpinner, perfTimer, waitUntilTrue } from 'topkat-utils'
 import { getProjectPaths } from '../helpers/getProjectPaths'
 import { cleanCommand } from './clean.command'
+import { onFileChange } from './fileWatcher'
 
 
 /** This will start a task, measure performances as well as cut build into steps for easier debugging, performance tracking and better user logs
@@ -36,24 +37,19 @@ export function createNewTask() {
           const spin = new cliLoadingSpinner('dots')
           spin.start('Waiting for file change')
 
-          const paths = await getProjectPaths()
-
-          const w = chokidar
-            .watch(paths.mainConfig.folderPath, {
-              persistent: true, // Keep process alive
-              ignored: [/node_modules/, /\/dist\//, /(^|[/\\])\..//* dot files */],
-              ignoreInitial: true,
-            })
-
-          w.on('change', async () => {
-            w.close()
+          await onFileChange(async () => {
             C.log(`\n\n`)
             if (cleanOnError) await cleanCommand()
-            process.exit(1)
+            process.exit(0)
           })
 
-          // wait forever just for it doesn't continue the script
-          await waitUntilTrue(() => false, 0, false, false)
+          // TODO DELETEME
+          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
+          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
+          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
+          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
+          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
+          console.log(`SHOULD NOT BE LOGGED UNTIL END OF PROCESS`)
 
         } else {
           throw err

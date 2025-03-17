@@ -6,21 +6,14 @@ import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types'
 import { safeImport } from './safeImports'
 import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
 import { throwError } from '../core.error'
-import { getActiveAppName, getActiveDbName, initActiveAppName, initActiveDbName } from './getAndInitActiveAppAndDatabaseName'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩
-export async function initGreenDotConfigs(props: {
-  appName?: string,
-  dbName?: string,
-  resetCache?: boolean,
-}) {
-  if (props.appName) initActiveAppName(props.appName)
-  if (props.dbName) initActiveDbName(props.dbName)
-  await initMainConfigCache(props.resetCache)
-  await initAppConfigCache(props.resetCache)
-  await initDbConfigCache(props.resetCache)
+export async function initGreenDotConfigs(resetCache = false) {
+  await initMainConfigCache(resetCache)
+  await initAppConfigCache(resetCache)
+  await initDbConfigCache(resetCache)
 }
 
 //  ╦╗╔╦ ╔══╗ ═╦═ ╦╗ ╔   ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
@@ -57,9 +50,10 @@ export function getDbConfigs() {
   return greenDotDbConfigsCache
 }
 
-export function getActiveDbConfig() {
-  const dbName = getActiveDbName()
-  return greenDotDbConfigsCache.find(c => c.name === dbName)
+export async function getActiveDbConfig() {
+  const { activeDb } = await getProjectPaths()
+  if (!activeDb) throw throwError.serverError('Trying to call getActiveDbConfig() but not active Db is to be found')
+  return greenDotDbConfigsCache.find(c => c.folderPath === activeDb.folderPath)
 }
 
 async function initDbConfigCache(resetCache = false) {
@@ -95,9 +89,10 @@ export function getAppConfigs() {
 
 }
 
-export function getActiveAppConfig() {
-  const appName = getActiveAppName()
-  return greenDotAppConfigsCache.find(c => c.name === appName) as GreenDotAppConfig & GDpathConfigWithIndex
+export async function getActiveAppConfig() {
+  const { activeApp } = await getProjectPaths()
+  if (!activeApp) throw throwError.serverError('Trying to call getActiveAppConfig() but not active Db is to be found')
+  return greenDotAppConfigsCache.find(c => c.folderPath === activeApp.folderPath) as GreenDotAppConfig & GDpathConfigWithIndex
 }
 
 async function initAppConfigCache(resetCache = false) {

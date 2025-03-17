@@ -20,9 +20,10 @@ let greenDotPathsCache: {
   appConfigs: PathConfArr
   /** Paths to all green_dot.db.config.ts that can be found in the project alongside their DB names (folder name) */
   dbConfigs: PathConfArr
+
+  activeApp?: GDpathConfigWithIndex
+  activeDb?: GDpathConfigWithIndex
 }
-
-
 
 
 export async function getProjectPaths(resetCache = false) {
@@ -40,7 +41,6 @@ export async function getProjectPaths(resetCache = false) {
     const rootPath = mainConfigPath.replace(/[/\\][^/\\]*$/, '')
 
     // FIND ALL GREEN DOT CONFIGS
-
     const allFiles = await glob.async('**/green_dot.*.config.*', {
       cwd: rootPath,
       ignore: ['node_modules/**', '**/.*/**'],
@@ -61,6 +61,8 @@ export async function getProjectPaths(resetCache = false) {
       appConfigs: appConfigPaths,
       dbConfigs: dbConfigPaths,
     }
+
+    autoFindAndInitActiveAppAndDbPaths()
   }
 
   return greenDotPathsCache
@@ -78,4 +80,23 @@ function configFilePathMapper(path: string) {
     generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
     generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '2_generated')
   }
+}
+
+export function autoFindAndInitActiveAppAndDbPaths(path = process.cwd()) {
+
+  let hasBeenFound = false
+
+  const activeAppName = greenDotPathsCache.appConfigs.find(p => (path + '/').includes(p.folderPath))
+  if (activeAppName) {
+    greenDotPathsCache.activeApp = activeAppName
+    hasBeenFound = true
+  }
+
+  const activeDbName = greenDotPathsCache.dbConfigs.find(p => (path + '/').includes(p.folderPath))
+  if (activeDbName) {
+    greenDotPathsCache.activeDb = activeDbName
+    hasBeenFound = true
+  }
+
+  return hasBeenFound
 }

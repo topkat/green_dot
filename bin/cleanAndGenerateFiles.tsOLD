@@ -13,7 +13,7 @@ import { C } from 'topkat-utils'
 export async function cleanGeneratedFiles() {
   try {
 
-    const { generatedFolderPath } = getActiveAppConfig()
+    const { generatedFolderPath } = await getActiveAppConfig()
 
     //----------------------------------------
     // CLEAN GENERATED FILES

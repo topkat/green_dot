@@ -21,7 +21,7 @@ export async function generateSDKconfigForServices(
     if (env === 'production' || env === 'preprod') return
 
     const mainConfig = getMainConfig()
-    const appConfig = getActiveAppConfig()
+    const appConfig = await getActiveAppConfig()
 
     const { generateSdkConfig, platforms } = mainConfig
 
