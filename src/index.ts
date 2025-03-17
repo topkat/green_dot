@@ -1,29 +1,11 @@
 
 import 'typescript-generic-types'
 import './types/global.types'
-import events from './event'
-import sendEmail from './services/sendEmail'
-import { newSystemCtx, newPublicCtx } from './ctx'
 import coreTestFlow from './tests/core.test-flows'
-import { unPopulate } from './databases/mongo/services/populateService'
-import { service } from './service'
 
 export const coreTestFlows = coreTestFlow
 
-export const core$ = {
-    on: events.on,
-    off: events.off,
-    emit: events.emit,
-    emitSync: events.emitSync,
-    sendEmail,
-    newSystemCtx,
-    newPublicCtx,
-    unPopulate,
-    service,
-    svc: service,
-}
-
-export const svc = service
+export { svc, schedule } from './service'
 
 export { throwError, type RegisterErrorType } from './core.error'
 export { unPopulate } from './databases/mongo/services/populateService'
@@ -53,6 +35,8 @@ export { _ } from './validator'
 export { db, dbs, getUserPermissionFields } from './db'
 export { ModelTypes } from './cache/dbs/index.generated'
 
-export { getActiveAppConfig, getActiveDbConfig, getMainConfig } from './helpers/getGreenDotConfigs'
+export { getActiveAppConfig, getActiveDbConfig, getMainConfig, registerMainConfig } from './helpers/getGreenDotConfigs'
 
 export { env } from './helpers/getEnv'
+
+export { sendEmail } from './services/sendEmail'

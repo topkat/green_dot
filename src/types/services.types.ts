@@ -257,7 +257,11 @@ export type ApiResponses = typeof apiResponses[number]
 //----------------------------------------
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type ScheduleString = 'server.start' | 'never' | (string & {}) // hack for types and string
+export type ScheduleString =
+  'server.start'
+  | 'never'
+  | '0 * * * *'
+  | (string & {}) // hack for types and string
 
 export type Schedule = {
   frequency: ScheduleString

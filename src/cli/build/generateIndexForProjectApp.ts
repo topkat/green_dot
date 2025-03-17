@@ -13,12 +13,13 @@ export async function generateIndexForProjectApp() {
 
   const { appConfigs, mainConfig } = await getProjectPaths()
 
-  for (const { generatedIndexPath, folderPath } of appConfigs) {
-    const appPathRelative = Path.relative(mainConfig.folderPath, folderPath)
+  for (const { generatedIndexPath, folderPath: appConfigFolderPath } of appConfigs) {
+    const appPathRelative = Path.relative(mainConfig.folderPath, appConfigFolderPath)
+    const mainPathRelative = Path.relative(appConfigFolderPath, mainConfig.folderPath)
     try {
 
       const allFiles = await glob.async('**/*.@(svc|schedule|event|error).ts', {
-        cwd: folderPath,
+        cwd: appConfigFolderPath,
         onlyFiles: true,
         absolute: true,
       })
@@ -36,7 +37,7 @@ export async function generateIndexForProjectApp() {
         if (match) {
 
           const [, moduleName, moduleType] = match
-          const relativeToRoot = Path.relative(folderPath, file).replace('.ts', '')
+          const relativeToRoot = Path.relative(appConfigFolderPath, file).replace('.ts', '')
 
           if (moduleType === 'error') {
             indexContent.imports += `import ${moduleName}Errors from './${relativeToRoot}'\n`
@@ -48,7 +49,10 @@ export async function generateIndexForProjectApp() {
       }
 
       const fileContent = `
-import { RegisterErrorType } from 'green_dot'
+import { RegisterErrorType, registerMainConfig } from 'green_dot'
+import mainConfig from '${mainPathRelative}/green_dot.config'
+
+registerMainConfig(mainConfig)
 
 ${indexContent.imports}
 

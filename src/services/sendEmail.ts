@@ -51,7 +51,7 @@ export type SendEmailConfig = {
     useAwsSmtp?: boolean
 }
 
-export default async function sendEmail(ctx, subject, content, recipients: string | string[] = '', { useTestAccount, smtpConfig, fromAddress, attachments, vars, useAwsSmtp }: SendEmailConfig = {}) {
+export async function sendEmail(ctx, subject, content, recipients: string | string[] = '', { useTestAccount, smtpConfig, fromAddress, attachments, vars, useAwsSmtp }: SendEmailConfig = {}) {
     try {
         let smtpAccount: typeof smtpConfig
 

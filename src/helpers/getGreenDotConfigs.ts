@@ -16,6 +16,15 @@ export async function initGreenDotConfigs(resetCache = false) {
   await initDbConfigCache(resetCache)
 }
 
+export function registerMainConfig(conf: GreenDotConfig) {
+  greenDotConfigsCache = {
+    ...mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf),
+  } as any
+  getProjectPaths().then(({ mainConfig: mainConfigPaths }) => {
+    Object.assign(greenDotConfigsCache, mainConfigPaths)
+  })
+}
+
 //  ╦╗╔╦ ╔══╗ ═╦═ ╦╗ ╔   ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
 //  ║╚╝║ ╠══╣  ║  ║╚╗║   ║    ║  ║ ║╚╗║ ╠═    ║  ║ ═╦
 //  ╩  ╩ ╩  ╩ ═╩═ ╩ ╚╩   ╚══╝ ╚══╝ ╩ ╚╩ ╩    ═╩═ ╚══╝

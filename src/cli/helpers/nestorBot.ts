@@ -1,5 +1,6 @@
 import { cliPrompt } from 'simple-cli-prompt'
 import { asArray, C, randomItemInArray } from 'topkat-utils'
+import { cutStringToTerminalLines, terminalCharSize } from './cli'
 
 type CliPromptOptions = {
   choices: string[] | readonly string[]
@@ -52,7 +53,8 @@ export const nestor = {
     })
   },
   say(sentence: string[] | string, log = true) {
-    const s = '\n🤖 < ' + randomItemInArray(asArray(sentence)) + '\n\n'
+    const lines = cutStringToTerminalLines(randomItemInArray(asArray(sentence)), terminalCharSize - 5).join('\n     ')
+    const s = '\n🤖 < ' + lines + '\n\n'
     if (log) C.log(s)
     return s
   }
