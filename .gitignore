@@ -36,6 +36,6 @@ Thumbs.db
 /.history
 /.nyc_output
 
-
 !build
 !/src/build/**/*
+!src/cache/dbs/index.generated.ts
