@@ -6,7 +6,9 @@
 # compiled output
 /dist
 tmp/
-cache/
+
+src/cache/*
+!src/cache/dbs/index.generated.ts
 
 # dependencies
 node_modules
@@ -35,7 +37,3 @@ Thumbs.db
 #visual studio history
 /.history
 /.nyc_output
-
-!build
-!/src/build/**/*
-!src/cache/dbs/index.generated.ts
