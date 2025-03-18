@@ -35,8 +35,12 @@ function startProcess(script: string, args: string[]) {
 
   childProcess.on('exit', code => {
     if (code !== 0) {
-      clearCli()
-      startProcess(script, args)
+      if (code === 4) { // error in build command
+        process.exit(1)
+      } else { // error in application
+        clearCli()
+        startProcess(script, args)
+      }
     }
   })
 }

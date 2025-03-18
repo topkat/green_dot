@@ -1,8 +1,7 @@
 #!/usr/bin/env ts-node
 
-
 import { app, Command } from 'command-line-application'
-import { objEntries } from 'topkat-utils'
+import { C, objEntries } from 'topkat-utils'
 
 import { buildCommand } from './build.command'
 import '../types/global.types'
@@ -58,17 +57,29 @@ const commands = {
 clearCli()
 cliIntro()
 
-const { _command, ...args } = app({
-  name: 'dot',
-  description: 'dot CLI from green_dot backend framework',
-  examples: objEntries(commands).map(([name, command]) => `dot ${name} # ${command.description}`),
-  commands: objEntries(commands).map(([name, command]) => ({ name, ...command, execute: undefined, exitAfter: undefined }))
-}) as { _command: keyof typeof commands }
+try {
 
-commands[_command].execute(parseArgs(args)).then(() => {
-  const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
-  if (c.exitAfter) process.exit(0)
-})
+  const { _command, ...args } = app({
+    name: 'dot',
+    description: 'dot CLI from green_dot backend framework',
+    examples: objEntries(commands).map(([name, command]) => `dot ${name} # ${command.description}`),
+    commands: objEntries(commands).map(([name, command]) => ({ name, ...command, execute: undefined, exitAfter: undefined })),
+  }, { error: 'throw' }) as { _command: keyof typeof commands }
+
+  commands[_command].execute(parseArgs(args)).then(() => {
+    const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
+    if (c.exitAfter) process.exit(0)
+  })
+
+} catch (err) {
+  const msg = err && err.message
+  if (msg && msg.includes('Found unknown command')) {
+    C.error(false, msg + '\n')
+    C.info(`Available commands: ${Object.keys(commands).join(', ')}`)
+    C.log('\n')
+  } else C.error(err)
+  process.exit(4)
+}
 
 //  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗

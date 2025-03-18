@@ -10,7 +10,7 @@ import { throwError } from '../core.error'
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩
-export async function initGreenDotConfigs(resetCache = false) {
+export async function initGreenDotConfigs(resetCache = false, withoutApp = false) {
   await initMainConfigCache(resetCache)
   await initAppConfigCache(resetCache)
   await initDbConfigCache(resetCache)

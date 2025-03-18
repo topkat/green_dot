@@ -1,5 +1,5 @@
 
-import { C, cliLoadingSpinner } from 'topkat-utils'
+import { C } from 'topkat-utils'
 import { StartServerConfig } from './dot.command'
 import { buildCommand } from './build.command'
 import { clearCli, cliIntro } from './helpers/cli'
@@ -34,7 +34,7 @@ export async function startDevProdCommand(props: StartServerConfig) {
   clearCli()
   cliIntro()
 
-  process.stdin.setRawMode(true)
+  process.stdin.setRawMode?.(true)
   process.stdin.resume()
   process.stdin.on('data', userInputKeyHandler)
 
@@ -61,10 +61,12 @@ export async function startDevProdCommand(props: StartServerConfig) {
     // const spin = new cliLoadingSpinner('dots')
     // spin.start('Waiting for file change')
     C.warning(false, 'Waiting for file change')
+    C.warning(false, 'Waiting for file change')
   }
 
 
   await onFileChange(async path => {
+    if (path.includes('generated')) return
     C.info(`File change detected for ${path}, restarting...`)
     if (watcherOn) {
       C.log(`\n\n`)

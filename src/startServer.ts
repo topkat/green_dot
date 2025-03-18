@@ -158,15 +158,18 @@ export async function startServer(
             app.use(getExpressErrHandlerMW())
 
             if (!mainConfig.isProdEnv) {
-                await generateMainBackendFiles()
                 try {
+                    await generateMainBackendFiles()
                     const swaggerDoc = await import(`./cache/${appConfig.name}.swaggerDoc.generated.json`)
                     swaggerDocInit(app, swaggerDoc, appConfig.serverLiveUrl)
                 } catch (err) {
-                    C.error(false, `Swagger doc could not be generated and initiated`)
+                    C.error(err)
+                    C.warning(false, `Swagger doc could not be generated and initiated`)
                 }
             }
         } catch (err) {
+            const err2 = err as DescriptiveError
+            if (err2 instanceof DescriptiveError) err2.hasBeenLogged = true
             C.error(err)
             C.error(false, 'An error has occurred in ASYNC part of server start. See log above for more informations')
         }

@@ -17,7 +17,12 @@ export async function onFileChange(
   const w = chokidar
     .watch(paths.mainConfig.folderPath, {
       // persistent: true, // Keep process alive
-      ignored: [/node_modules/, /\/dist\//, /(^|[/\\])\..//* dot files */],
+      ignored: [
+        /node_modules/,
+        /\/dist\//,
+        /(^|[/\\])\../, // dot files
+        /\.generated\.[a-zA-Z0-9_]{1,5}$/
+      ],
       ignoreInitial: true,
     })
 

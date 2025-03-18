@@ -3072,13 +3072,13 @@ good-cop@1.2.10:
     "@types/mongoose" "^5.11.97"
     topkat-utils "^1.2.61"
 
-good-cop@1.3.5:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/good-cop/-/good-cop-1.3.5.tgz#5388e10f0a9245aa753304e9990bd61b95d4c830"
-  integrity sha512-+BZCQI5X4DOPY7YQTy0vAYd7ouh25X6n4D3AuloEuXzTwBUpc36bzLtGAln3m38JGUiVrj5X3XAmel7nTtlORQ==
+good-cop@^1.3.7:
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/good-cop/-/good-cop-1.3.7.tgz#5dc868bb356fbab9229c10d42724febbf493c5bc"
+  integrity sha512-BMPK0g8YS/PAbdMe6Tmu3icen0AYdKaqoYzgoI8UmM0sJt/FOCux8/gIe93xZeEPLikfNYHGF4Hst/2lc1JoVw==
   dependencies:
     "@types/mongoose" "^5.11.97"
-    topkat-utils "^1.2.105"
+    topkat-utils "^1.3.6"
     typescript-generic-types "^1.0.2"
 
 gopd@^1.0.1, gopd@^1.2.0:
@@ -5689,12 +5689,12 @@ topkat-utils@1.2.96:
   resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.2.96.tgz#1a90ec539f14ad4ede7341c083018bc847f57eaa"
   integrity sha512-ZGEkblQSfHcub3xJF0j7ldOtovRQSoH/g1bD8FIYLLjnLFz9Dyjm6+K3vu21bVIcgDnBa3whN/7cC6FkSjjnYQ==
 
-topkat-utils@1.3.6:
+topkat-utils@1.3.6, topkat-utils@^1.3.6:
   version "1.3.6"
   resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.3.6.tgz#7feb38be7d9d5de3c163406c88e5cbdb235ed124"
   integrity sha512-VHpoObefxL0aioqggRm7d0NXaMG1Ee5F6Zcc9qrqpT342tNwYAb208UCHKjOASReDwpQa5rAD1AsLrjRlOHhPg==
 
-topkat-utils@^1.2.105, topkat-utils@^1.2.106, topkat-utils@^1.2.107, topkat-utils@^1.2.61:
+topkat-utils@^1.2.106, topkat-utils@^1.2.107, topkat-utils@^1.2.61:
   version "1.2.117"
   resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.2.117.tgz#0c14b440b40a5e0282b2068413a3ea74da309f29"
   integrity sha512-DLvwQ6ppVvyQkR/vdfHZszs5zI9NgwSuShMiFNRw+qnqeZ+SWeY+sN2frNQsTB2zf/4duCQAX7A5y/JVpP76zg==

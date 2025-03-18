@@ -138,6 +138,7 @@ export const db = new Proxy({} as Db, {
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
     const { defaultDatabaseName } = getMainConfig()
+    console.log('cache', defaultDatabaseName, JSON.stringify(Object.keys(cache), null, 2))
     return cache[defaultDatabaseName][prop]
   },
 })

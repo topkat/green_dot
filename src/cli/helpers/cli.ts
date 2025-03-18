@@ -12,7 +12,7 @@ export function cliIntro() {
 }
 
 export function clearCli() {
-  process.stdout.write('\x1Bc')
+  // process.stdout.write('\x1Bc')
 }
 
 const wrapText = (str: string, width: number) => str.match(new RegExp(`(.{1,${width}})(\\s|$)`, 'g'))?.map(l => l.trim()) || []
