@@ -22,7 +22,7 @@ import { getMainConfig, getActiveAppConfig } from './helpers/getGreenDotConfigs'
 import { registerDaoApi } from './registerModules/registerDaoApi'
 import { registerServiceApi } from './registerModules/registerServicesApi'
 import { registerServices } from './registerModules/registerServices'
-import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
+// import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
 
 dotenv.config()
 
@@ -36,7 +36,7 @@ export async function startServer(
 
     const mainConfig = getMainConfig()
     const appConfig = await getActiveAppConfig()
-    await initProjectAndDaosCache()
+    // await initProjectAndDaosCache()
 
     // INTRO
     if (isMaster) {

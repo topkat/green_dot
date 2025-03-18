@@ -9,7 +9,7 @@ export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string,
 type PathConfArr = GDpathConfigWithIndex[]
 
 export const greenDotCacheModuleFolder = Path.resolve(__dirname, '../cache/dbs')
-if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, 'ERROR: green_dot local cache folder for DB is not existing')
+if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, `ERROR: green_dot local cache folder for DB is not existing. __dirname:${__dirname} greenDotCacheModuleFolder:${greenDotCacheModuleFolder} `)
 
 
 

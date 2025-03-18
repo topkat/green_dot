@@ -6,10 +6,14 @@ import { createNewTask } from './createNewTask'
 import { generateIndexForProjectDb } from './build/generateIndexForProjectDb'
 import { generateIndexForProjectApp } from './build/generateIndexForProjectApp'
 import { C } from 'topkat-utils'
-import { StartServerConfig } from './dot.command'
+// import { StartServerConfig } from './dot.command'
+import { getServerConfigFromEnv } from './helpers/cli'
 
+const env = getServerConfigFromEnv()
 
-export async function buildCommand(props: StartServerConfig) {
+export async function buildCommand() {
+
+  console.log(`CHECKPLZ `, process.env.GREEN_DOT_CLI_PARAMS)
 
   const build = createNewTask()
 
@@ -23,7 +27,7 @@ export async function buildCommand(props: StartServerConfig) {
 
   await build.step(`Getting green_dot configs`, async () => await initGreenDotConfigs(false, true), { watch: true, cleanOnError: true })
 
-  if (props.env !== 'prod') {
+  if (env.env !== 'prod') {
     await build.step(`Generating types for databases`, generateDbCachedFiles, { watch: true, cleanOnError: true })
   }
 

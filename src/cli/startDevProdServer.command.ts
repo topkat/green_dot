@@ -1,7 +1,5 @@
 
 import { C } from 'topkat-utils'
-import { StartServerConfig } from './dot.command'
-import { buildCommand } from './build.command'
 import { clearCli, cliIntro } from './helpers/cli'
 import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
 import { nestor } from './helpers/nestorBot'
@@ -10,11 +8,9 @@ import { startServer, stopServer } from '../startServer'
 import { getActiveAppServices } from '../helpers/getProjectServices'
 
 let watcherOn = true
+// const env = getServerConfigFromEnv()
 
-
-export async function startDevProdCommand(props: StartServerConfig) {
-
-  await buildCommand(props)
+export async function startDevProdCommand() {
 
   const { activeApp, appConfigs } = await getProjectPaths()
 
@@ -47,11 +43,12 @@ export async function startDevProdCommand(props: StartServerConfig) {
 
   try {
 
+    // Here ther is a context problem as 'green_dot' and '../someLocalFile' do not belong to the same context
+    // So this is the workaround
     const { init } = await import('green_dot' as any)
-
     await init()
 
-    await getActiveAppServices() // init cache
+    // await getActiveAppServices() // init cache
 
     await startServer()
 
@@ -83,6 +80,8 @@ export async function startDevProdCommand(props: StartServerConfig) {
 function userInputConfirmLog(txt: string) {
   C.log(C.logClr(C.bg(0, 255, 0) + ' ' + txt + ' '))
 }
+
+
 
 function userInputKeyHandler(buff) {
 

@@ -17,6 +17,8 @@ declare global {
   type UserRolePermissionFields = { [K in GD['role']as `is${Capitalize<K>}`]: boolean }
   type UserPermissionFields = Record<GD['permissions'], boolean> & UserRolePermissionFields
   type UserPermissionsWithoutRolePerms = Omit<UserPermissionFields, keyof UserRolePermissionFields>
+
+
 }
 
 export default {} // avoid typescript bug

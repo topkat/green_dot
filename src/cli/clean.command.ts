@@ -11,7 +11,7 @@ export async function cleanCommand() {
 
   C.info('Cleaning Files')
 
-  await build.step(`Clean`, generateIndexForDbCachedFiles)
+  await build.step(`Clean`, generateIndexForDbCachedFiles, { cleanOnError: false, doNotDisplayTime: true })
 
   C.log(C.dim('='.repeat(50) + '\n'))
 

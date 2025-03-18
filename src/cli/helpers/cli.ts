@@ -20,3 +20,30 @@ const wrapText = (str: string, width: number) => str.match(new RegExp(`(.{1,${wi
 export function cutStringToTerminalLines(str: string, size: number) {
   return wrapText(str, size || terminalCharSize)
 }
+
+
+
+
+//  ╔══╗ ╦    ═╦═   ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ║    ║     ║    ╠══╣ ╠═╦╝ ║ ═╦ ╚══╗
+//  ╚══╝ ╚══╝ ═╩═   ╩  ╩ ╩ ╚  ╚══╝ ═══╝
+
+export type ConfigFromCli = { env: 'dev' | 'prod' }
+
+const defaultEnv = { env: 'dev' } satisfies ConfigFromCli
+
+
+export function cliArgsToEnv(args: Record<string, any>) {
+
+  const argsParsed = { env: 'dev' } as ConfigFromCli
+
+  // TODO test and take in account
+  if (args.production === true) argsParsed.env = 'prod'
+
+  process.env.GREEN_DOT_CLI_PARAMS = JSON.stringify(argsParsed)
+
+}
+
+export function getServerConfigFromEnv() {
+  return JSON.parse(process.env.GREEN_DOT_CLI_PARAMS || JSON.stringify(defaultEnv)) as ConfigFromCli
+}

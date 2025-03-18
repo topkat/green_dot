@@ -46,8 +46,10 @@ export { generateUniqueToken } from './services/generateUniqueToken'
 
 import { initGreenDotConfigs } from './helpers/getGreenDotConfigs'
 import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
+import { getActiveAppServices } from './helpers/getProjectServices'
 
 export async function init() {
   await initGreenDotConfigs()
   await initProjectAndDaosCache()
+  await getActiveAppServices()
 }

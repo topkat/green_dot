@@ -20,7 +20,7 @@ export function createNewTask() {
   return {
     _stepNb: 1,
     _startTime: Date.now(),
-    async step(title: string, callback: FunctionGeneric, { watch = false, cleanOnError = false } = {}) {
+    async step(title: string, callback: FunctionGeneric, { watch = false, cleanOnError = false, doNotDisplayTime = false } = {}) {
 
       const t2 = perfTimer()
 
@@ -28,7 +28,7 @@ export function createNewTask() {
 
       try {
         await callback()
-        C.log(C.dim(`\nStep ${this._stepNb} took ${t2.end()}`))
+        if (!doNotDisplayTime) C.log(C.dim(`\nStep ${this._stepNb} took ${t2.end()}`))
         this._stepNb++
       } catch (err) {
         C.error(err)
