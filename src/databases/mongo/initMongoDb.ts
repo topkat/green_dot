@@ -48,6 +48,8 @@ export type ModelsConfigCache<AllModels extends Record<string, any> = any> = {
 
 let nbDatabaseConnected = 0
 let nbDatabaseTotal = 0
+let displayConnexionWarning1 = true
+let displayConnexionWarning2 = true
 
 export async function mongoInitDb(
     dbName: keyof DbIds,
@@ -73,6 +75,20 @@ export async function mongoInitDb(
     mongooseOptions.connectTimeoutMS ??= env !== 'production' && env !== 'preprod' ? env === 'build' ? 2147483647 : 30000 : 1000 * 60 * 7 // avoid error when setting a breakpoint
     const mongooseConnection = mongoose.createConnection(connexionString, mongooseOptions)
 
+    setTimeout(() => {
+        if (displayConnexionWarning1) {
+            luigi.warn(`Loading database for 5.000.000.000 nanoseconds...\n\nHave you started your db ?`)
+            displayConnexionWarning1 = false
+        }
+    }, 5000)
+
+    setTimeout(() => {
+        if (displayConnexionWarning2) {
+            luigi.warn(`🔮 blip...bloup...checking my crystal ball...Mmmh....I feel a database connexion error will throw soon...`)
+            displayConnexionWarning2 = false
+        }
+    }, 20000)
+
     mongooseConnection.on('error', err => {
         const lessVerboseErr = { message: err?.message }
         if (env !== 'build') {
@@ -80,14 +96,17 @@ export async function mongoInitDb(
             C.log('\n\n')
             luigi.say([
                 `Senior advice here => please check that you have a database running at ${connexionString.replace(/:[^@]+@/, '****************')}.\nTips: Use 'run-rs' npm package to easily start mongoDb with replica sets locally.\n\n`,
-                `Blip..bloup... There is 94% chances that you forget to start your database. Please check that you have a database running at ${connexionString.replace(/:[^@]+@/, '****************')}.\nTips: Use 'run-rs' npm package to easily start mongoDb with replica sets locally.\n\n`,
+                `Blip..bloup... There is 94% chances that you forget to start your database.\nPlease check that you have a database running at ${connexionString.replace(/:[^@]+@/, '****************')}.\nTips: Use 'run-rs' npm package to easily start mongoDb with replica sets locally.\n\n`,
             ])
         }
     })
+
     mongooseConnection.on('connected', () => {
         C.log(C.primary(`✓ DB connected: ${dbId} > ${connexionString.includes('127.0.0') ? 'localhost' : connexionString?.split('@')?.[1]}${connexionString.replace(/^.*(\/[^/]+)$/, '$1').replace(/\?[^?]+$/, '')}`))
         nbDatabaseConnected++
         if (nbDatabaseConnected >= nbDatabaseTotal) {
+            displayConnexionWarning1 = false
+            displayConnexionWarning2 = false
             event.emit('database.connected')
         }
 

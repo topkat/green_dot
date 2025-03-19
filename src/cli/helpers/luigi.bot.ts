@@ -54,10 +54,14 @@ export const luigi = {
   },
   say(sentence: string[] | string, { log = 'log' }: { log?: false | 'log' | 'warning' | 'error' } = {}) {
     const lines = cutStringToTerminalLines(randomItemInArray(asArray(sentence)), terminalCharSize - 5).join('\n     ')
-    const s = '\n🤖 < ' + lines + '\n\n'
+    const s = '🤖 < ' + lines + '\n\n'
+    if (log !== false) C.log('\n')
     if (log === 'log') C.log(s)
-    else if (log === 'warning') C.warning(false, s)
-    else if (log === 'error') C.error(false, s)
+    else if (log === 'warning') C.logClr(s, [255, 122, 0])
+    else if (log === 'error') C.log(C.red(s))
     return s
   },
+  warn(sentence: string[] | string) {
+    return this.say(sentence, { log: 'warning' })
+  }
 }

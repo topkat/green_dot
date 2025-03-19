@@ -21,6 +21,7 @@ import { registerServices } from './registerModules/registerServices'
 import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
 import { env } from './helpers/getEnv'
 import { startServerAsyncTasks } from './startServerAsyncTasks'
+import { init } from './init'
 
 dotenv.config()
 
@@ -32,31 +33,34 @@ declare global {
     interface GDeventNames extends NewEventType<'server.start', [isMaster: boolean, app: Express]> { }
 }
 
-export async function startServer(
-    isMaster = true,
-) {
+export async function startServer(isMaster = true) {
+
+    await init()
 
     const mainConfig = getMainConfig()
     const appConfig = await getActiveAppConfig()
 
-    // INTRO
+    // CLI INTRO
     if (isMaster) {
-        // if (isReloadModules) C.gradientize(`${'='.repeat(45)}\n|| SERVER SOFT RESTART${' '.repeat(45 - 24)}||\n${'='.repeat(45)}`) else
-        C.gradientize(appConfig.serverCliIntro) // CLI intro
+        C.gradientize(appConfig.serverCliIntro)
         C.log(C.primary(`Env: ${mainConfig.env} | Schedules: ${appConfig.enableSchedules ? '✓' : '✖️'} | Seeds: ${appConfig.enableSeed ? '✓' : '✖️'}\n`))
         if (DISPLAY_NO_BUILD_WARNING) C.error(false, `✓ LOCAL BUILD NOT RAN`)
         else C.log(C.primary(`✓ BUILD ${appConfig.name}`))
     }
 
     // SERVER START EVENT
-    await event.on('database.connected', async () => {
-        if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
+    event.on('database.connected', async () => {
+        try {
+            if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
 
-        // seed and server.start events shall be triggerred before exposing routes. This avoid
-        // accidentally hitting a route without seeded content
-        await event.emit('server.start', isMaster, app)
+            // seed and server.start events shall be triggered before exposing routes.
+            // This avoid accidentally hitting a route without seeded content
+            await event.emit('server.start', isMaster, app)
 
-        throw 'CHECK IF CATCHED CORRECTLY'
+        } catch (err) {
+            C.error(false, 'catched1')
+            throw 'CHECK IF CATCHED CORRECTLY'
+        }
     })
 
     // INIT DBS

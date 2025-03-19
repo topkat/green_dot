@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-//   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
+// /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
 import { app, Command } from 'command-line-application'
@@ -8,6 +8,7 @@ import { clearCli, cliIntro, cliArgsToEnv } from './helpers/cli'
 import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
+import { onFileChange } from './fileWatcher'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
 
@@ -77,8 +78,15 @@ async function start() {
       for (const step of c.steps) {
         next = await new Promise(resolve => {
           startChildProcess([__dirname + '/childProcessEntryPoint.ts', step], code => {
-            console.log(`code`, code)
-            if (code !== 0) {
+            if (code === 1001) {
+              onFileChange(async path => {
+                if (path.includes('generated')) return
+
+                C.info(`File change detected for ${path}, restarting...`)
+                C.log(`\n\n`)
+                resolve('reload')
+              })
+            } else if (code !== 0) {
               process.stdout.write('\x1Bc')
               resolve('reload')
             } else {
@@ -88,7 +96,6 @@ async function start() {
         })
         if (next === 'reload') break
       }
-      console.log(`next`, next)
     } while (next === 'reload')
 
     if (c.exitAfter) process.exit(0)

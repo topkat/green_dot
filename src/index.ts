@@ -44,3 +44,5 @@ export { generateUniqueToken } from './services/generateUniqueToken'
 
 export { init } from './init'
 export { initDbs } from './db'
+
+export { startServer, stopServer } from './startServer'

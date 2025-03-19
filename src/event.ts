@@ -10,7 +10,7 @@ export const event = {
         callback: (...params: GDeventNames[EventName]) => any,
         priority = 50
     ) {
-        if (!isset(event.registeredEvents[eventName])) event.registeredEvents[eventName] = []
+        event.registeredEvents[eventName] ??= []
         event.registeredEvents[eventName].push([priority, callback])
         event.registeredEvents[eventName].sort(([priorityA], [priorityB]) => priorityB - priorityA)
     },
@@ -35,11 +35,10 @@ export const event = {
         eventName: EventName,
         ...params: GDeventNames[EventName]
     ) {
+        // TODO try catch in all events and msg like plz use try catch in your events handlers
         const metadata = {}
-        if (!isset(event.registeredEvents[eventName])) event.registeredEvents[eventName] = []
-        if (event.registeredEvents[eventName]) {
-            for (const [, callback] of event.registeredEvents[eventName]) await callback(...params, metadata)
-        }
+        event.registeredEvents[eventName] ??= []
+        for (const [, callback] of event.registeredEvents[eventName]) await callback(...params, metadata)
         return metadata
     },
     /** SYNCHRONOUS
@@ -49,10 +48,8 @@ export const event = {
         ...params: GDeventNames[EventName]
     ) {
         const metadata = {}
-        if (!isset(event.registeredEvents[eventName])) event.registeredEvents[eventName] = []
-        if (event.registeredEvents[eventName]) {
-            for (const [, callback] of event.registeredEvents[eventName]) callback(...params, metadata)
-        }
+        event.registeredEvents[eventName] ??= []
+        for (const [, callback] of event.registeredEvents[eventName]) callback(...params, metadata)
         return metadata
     },
     registeredEvents: {} as { [EventName: string]: Array<[priority: number, callback: Function]> },

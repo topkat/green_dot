@@ -1,3 +1,5 @@
+
+// /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 import chokidar from 'chokidar'
 import { getProjectPaths } from '../helpers/getProjectPaths'
 

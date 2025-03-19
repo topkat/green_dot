@@ -4,11 +4,8 @@ import { clearCli, cliIntro } from './helpers/cli'
 import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './fileWatcher'
-import { startServer, stopServer } from '../startServer'
-import { init as initLocal } from '../init'
 
 let watcherOn = true
-// const env = getServerConfigFromEnv()
 
 export async function startDevProdCommand() {
 
@@ -40,30 +37,38 @@ export async function startDevProdCommand() {
       -> Press "q" to quit
 `)
 
+  const { startServer, stopServer } = await import('green_dot' as any)
+
+  const errorHandler = async err => {
+    C.error(err)
+    await stopServer()
+    if (watcherOn === false) userInputKeyHandler('w')
+    // Don't put spinner here
+    luigi.warn(`Waiting for file change before restarting process...`)
+    process.exit(1001)
+  }
+
+  // Catch All App Errors, even the unhandled ones
+  process.on('unhandledRejection', errorHandler)
+  process.on('uncaughtException', errorHandler)
 
   try {
-
-    // TODO FIXME Here there is a context problem as 'green_dot' and '../someLocalFile' do not belong to the same context
-    // So this is the workaround
-    const { init: initModule } = await import('green_dot' as any)
-
-    await initModule()
-    await initLocal()
+    // Here it's important that we load the npm module to avoid
+    // creating multiple context of execution. Actually we'll
+    // use the same green_dot module that the app use and not
+    // a local version
 
     await startServer()
 
   } catch (err) {
-    C.error(err)
-    if (watcherOn === false) userInputKeyHandler('w')
-    // Don't put spinner here
-    C.warning(false, 'Waiting for file change')
+    errorHandler(err)
   }
 
-
+  // HOT RELOAD
   await onFileChange(async path => {
     if (path.includes('generated')) return
-    C.info(`File change detected for ${path}, restarting...`)
     if (watcherOn) {
+      C.info(`File change detected for ${path}, restarting...`)
       C.log(`\n\n`)
       await stopServer()
       process.exit(1)

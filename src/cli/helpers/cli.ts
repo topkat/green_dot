@@ -16,7 +16,7 @@ export function clearCli() {
   // process.stdout.write('\x1Bc')
 }
 
-const wrapText = (str: string, width: number) => str.match(new RegExp(`(.{1,${width}})(\\s|$)`, 'g'))?.map(l => l.trim()) || []
+const wrapText = (str: string, width: number) => str.match(new RegExp(`(.{0,${width}})(\\s|$)`, 'g'))?.map(l => l.trim()) || []
 
 export function cutStringToTerminalLines(str: string, size: number) {
   return wrapText(str, size || terminalCharSize)
