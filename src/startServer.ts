@@ -22,7 +22,8 @@ import { getMainConfig, getActiveAppConfig } from './helpers/getGreenDotConfigs'
 import { registerDaoApi } from './registerModules/registerDaoApi'
 import { registerServiceApi } from './registerModules/registerServicesApi'
 import { registerServices } from './registerModules/registerServices'
-// import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
+import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
+import { initDbs } from './db'
 
 dotenv.config()
 
@@ -36,7 +37,6 @@ export async function startServer(
 
     const mainConfig = getMainConfig()
     const appConfig = await getActiveAppConfig()
-    // await initProjectAndDaosCache()
 
     // INTRO
     if (isMaster) {
@@ -46,6 +46,13 @@ export async function startServer(
         if (DISPLAY_NO_BUILD_WARNING) C.error(false, `✓ LOCAL BUILD NOT RAN`)
         else C.log(C.primary(`✓ BUILD ${appConfig.name}`))
     }
+
+    await initProjectAndDaosCache()
+    await initDbs(false, 'local')
+
+    const { initDbs: app22 } = await import('green_dot' as any)
+
+    await app22(false, 'module')
 
     registerConfig(appConfig.dataValidationConfig)
 
@@ -79,7 +86,7 @@ export async function startServer(
         credentials: true,
         origin: function (origin, callback) {
             const err = () => {
-                callback(new DescriptiveError('Not allowed by CORS: ' + origin, { origin, env: mainConfig.env, code: 500, doNotThrow: true }))
+                callback(new DescriptiveError('Not allowed by CORS: ' + origin, { origin, env: mainConfig.env, code: 500 }))
             }
             const success = () => callback(null, true)
             if (!origin) success()

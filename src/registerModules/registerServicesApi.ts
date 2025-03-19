@@ -1,6 +1,6 @@
 
 
-import { throwError } from '../core.error'
+import { error } from '../core.error'
 import { generateLoginMw } from '../security/login.middleware'
 import { sortUrlsByDeepnessInArrayOrObject } from './utils/sortUrlByDeepness'
 import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware'
@@ -29,7 +29,7 @@ export async function registerServiceApi(
             const method = methodRaw.toLowerCase()
             const routeStr = '/' + route
             allRoutes.push(routeStr)
-            if (!isset(app[method])) throwError.serverError('API method do not exist', { methodRaw })
+            if (!isset(app[method])) throw error.serverError('API method do not exist', { methodRaw })
 
             if (forEnv) {
                 // trigger 404 if wrong env
@@ -40,7 +40,7 @@ export async function registerServiceApi(
                         routeStr,
                         (_, res) => {
                             // vv this can help to catch penetration trial vv
-                            if (env.isProd) throwError.serverError('tryingToAccessDevRouteInProduction', { route, doNotThrow: true, actualEnv: env.env, exectedEnv: forEnv, notifyAdmins: true })
+                            if (env.isProd) error.serverError('tryingToAccessDevRouteInProduction', { route, actualEnv: env.env, exectedEnv: forEnv, notifyAdmins: true })
                             res.status(404).end()
                         }
                     )
@@ -93,7 +93,7 @@ export async function registerServiceApi(
                             docx: () => res.send(Buffer.from(output)), // new Buffer(output, 'binary')
                             bufferObject: () => sendBufferObject(res, output),
                             excel: () => {
-                                if (!isset(output.title, output.wb)) ctx.throw.serverError('excel output should be provided in the form of { wb, title }')
+                                if (!isset(output.title, output.wb)) throw ctx.error.serverError('excel output should be provided in the form of { wb, title }')
                                 return output.wb.write(`${output.title.replace(' ', '-')}.xlsx`, res)
                             },
                             json: () => res.json(output),

@@ -22,7 +22,7 @@ export async function mongoSanitizeFilter(ctx: Ctx, localConfig: LocalConfigPars
 
         if (/"\$[^"]+"/.test(filterStringified)) {
             await ctx.addWarning()
-            ctx.throw.filterWithMongoOperatorsNotAllowed({ filter: localConfig.filter })
+            throw ctx.error.filterWithMongoOperatorsNotAllowed({ filter: localConfig.filter })
         }
 
         localConfig.filterSanitized = true // avoid to be triggered twice (for ex on update + read after updt)

@@ -6,26 +6,23 @@ import { createNewTask } from './createNewTask'
 import { generateIndexForProjectDb } from './build/generateIndexForProjectDb'
 import { generateIndexForProjectApp } from './build/generateIndexForProjectApp'
 import { C } from 'topkat-utils'
-// import { StartServerConfig } from './dot.command'
 import { getServerConfigFromEnv } from './helpers/cli'
 
 const env = getServerConfigFromEnv()
 
 export async function buildCommand() {
 
-  console.log(`CHECKPLZ `, process.env.GREEN_DOT_CLI_PARAMS)
-
   const build = createNewTask()
 
-  // From here we build index and we don'd require to execute project code
+  // From here we build indexes and we don't require to execute project code
 
   await build.step(`Generating indexes for databases`, generateIndexForProjectDb)
 
   await build.step(`Generating indexes for applications`, generateIndexForProjectApp)
 
-  // From Here, we execute some project app so it may be more sensitive
+  // From Here, we execute some project code so it may break more easily
 
-  await build.step(`Getting green_dot configs`, async () => await initGreenDotConfigs(false, true), { watch: true, cleanOnError: true })
+  await build.step(`Getting green_dot configs`, async () => await initGreenDotConfigs(false), { watch: true, cleanOnError: true })
 
   if (env.env !== 'prod') {
     await build.step(`Generating types for databases`, generateDbCachedFiles, { watch: true, cleanOnError: true })

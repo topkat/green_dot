@@ -5,7 +5,7 @@ import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/
 import { nestor } from './helpers/nestorBot'
 import { onFileChange } from './fileWatcher'
 import { startServer, stopServer } from '../startServer'
-import { getActiveAppServices } from '../helpers/getProjectServices'
+import { init as init2 } from '../init'
 
 let watcherOn = true
 // const env = getServerConfigFromEnv()
@@ -43,21 +43,19 @@ export async function startDevProdCommand() {
 
   try {
 
-    // Here ther is a context problem as 'green_dot' and '../someLocalFile' do not belong to the same context
+    // TODO FIXME Here there is a context problem as 'green_dot' and '../someLocalFile' do not belong to the same context
     // So this is the workaround
     const { init } = await import('green_dot' as any)
-    await init()
 
-    // await getActiveAppServices() // init cache
+    await init()
+    await init2()
 
     await startServer()
 
   } catch (err) {
     C.error(err)
     if (watcherOn === false) userInputKeyHandler('w')
-    // const spin = new cliLoadingSpinner('dots')
-    // spin.start('Waiting for file change')
-    C.warning(false, 'Waiting for file change')
+    // Don't put spinner here
     C.warning(false, 'Waiting for file change')
   }
 

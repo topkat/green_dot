@@ -1,15 +1,14 @@
 #!/usr/bin/env ts-node
-/* eslint-disable no-console */
 
-// /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
+//   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
 import { app, Command } from 'command-line-application'
 import { clearCli, cliIntro, cliArgsToEnv } from './helpers/cli'
-import type { ChildProcessCommands } from './dot.command' // is not imported at runtime
+import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
-// /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
+//   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
@@ -34,7 +33,7 @@ const commands = {
   dev: {
     description: 'Start a server in dev mode with hot reloading',
     steps: [
-      'build',
+      // 'build',
       'startServer'
     ],
     exitAfter: true,
@@ -77,7 +76,8 @@ async function start() {
     do {
       for (const step of c.steps) {
         next = await new Promise(resolve => {
-          startChildProcess([__dirname + '/dot.command.ts', step], code => {
+          startChildProcess([__dirname + '/childProcessEntryPoint.ts', step], code => {
+            console.log(`code`, code)
             if (code !== 0) {
               process.stdout.write('\x1Bc')
               resolve('reload')
@@ -88,6 +88,7 @@ async function start() {
         })
         if (next === 'reload') break
       }
+      console.log(`next`, next)
     } while (next === 'reload')
 
     if (c.exitAfter) process.exit(0)

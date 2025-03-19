@@ -44,7 +44,7 @@ export async function checkUserBlacklistCache(ctx, { discriminator }) {
 
     if (item && item.lockUntil && new Date(item.lockUntil) > new Date()) {
       // USER IS LOCKED
-      ctx.throw.accessDenied({
+      throw ctx.error.accessDenied({
         nbBans: item.nbBan,
         lockedUntil: item.lockUntil,
         additionalMessage: 'Your account has been suspended due to a violation of our terms of service. Please contact support for further assistance if you believe this is a mistake.'

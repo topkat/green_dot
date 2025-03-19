@@ -7,11 +7,10 @@ export const coreTestFlows = coreTestFlow
 
 export { svc, schedule } from './service'
 
-export { throwError, type RegisterErrorType } from './core.error'
+export { error, type RegisterErrorType, registerErrors } from './core.error'
 export { unPopulate } from './databases/mongo/services/populateService'
 export * from './startServer'
 export { generateMainBackendFiles } from './generate/generateMainBackendFiles'
-export { registerErrors } from './core.error'
 export { newSystemCtx, newPublicCtx, CtxClass, isAnonymousUser, systemUserId, publicUserId, technicalRoles, systemRole, publicRole, authenticationMethod, ctx } from './ctx'
 export * from './types/core.types'
 export * as CoreTypes from './types/core.types'
@@ -43,13 +42,5 @@ export { sendEmail } from './services/sendEmail'
 
 export { generateUniqueToken } from './services/generateUniqueToken'
 
-
-import { initGreenDotConfigs } from './helpers/getGreenDotConfigs'
-import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
-import { getActiveAppServices } from './helpers/getProjectServices'
-
-export async function init() {
-  await initGreenDotConfigs()
-  await initProjectAndDaosCache()
-  await getActiveAppServices()
-}
+export { init } from './init'
+export { initDbs } from './db'

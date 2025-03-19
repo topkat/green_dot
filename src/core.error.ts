@@ -3,65 +3,78 @@
 import { sendErrorViaTelegram } from './services/sendViaTelegram'
 import { sendErrorOnTeams } from './services/sendViaTeams'
 
-import { isset, DescriptiveError, ErrorOptions, C } from 'topkat-utils'
+import { isset, DescriptiveError, ErrorOptions, C, createProxy } from 'topkat-utils'
 
 
 //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╔══╗ ╦  ╦ ╦╗ ╔ ╔══╗ ══╦══ ═╦═ ╔══╗ ╦╗ ╔ ╔═══
 //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝   ╠═   ║  ║ ║╚╗║ ║      ║    ║  ║  ║ ║╚╗║ ╚══╗
 //  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚    ╩    ╚══╝ ╩ ╚╩ ╚══╝   ╩   ═╩═ ╚══╝ ╩ ╚╩ ═══╝
 
+type ErrorObject = Record<string, ErrorOptions>
 
-export const throwError = new Proxy({}, {
-    get(target, p) {
-        // This ensure that in all case an error is thrown, even the error is not registered
-        if (p in target == false) C.error(false, 'Unknown error ' + (p as string) + '. Error has not been correctly registered.')
-        return (...params) => {
-            const [additionalMsg, options] = Object.keys(serverErrors).includes(p as string) ? params : ['', ...params]
-            // INJECT CTX since we probably are in a context where ctx is not available. If not ctx.throw is preferred
-            return getThrowErrorFn({ msg: (p as string) + (additionalMsg ? '\n> ' + additionalMsg : '') })(null, options)
-        }
-    },
-}) as ThrowErrorTypeSafe
+const defaultErrors = {} as ErrorObject
+const defaultErrorsWithCustomMsg = {} as ErrorObject
+
+/** Throws an error with contextual informations (ctx, custom infos...). Eg: throw error.serverError() */
+export const error = createErrorProxy(false) as ThrowErrorTypeSafe // Eg: throw.serverError(msg, options)
+
+export const errorWithCtx = createErrorProxy(true) as GreenDotErrors // Add the ctx as first param of the error. Eg: throw.serverError(ctx, msg, options)
+
+function createErrorProxy(addCtxFnInParams: boolean) {
+    return createProxy({}, {
+        get(target, p: string) {
+            // This ensure that in all case an error is thrown, even the error is not registered
+            if (p in target === false) {
+                p = 'serverError'
+                C.warning(false, `Trying to throw an unknown error "${p}". green_dot errors has not been correctly registered. Generic error thrown instead. Please see documentation on how to throw errors on green_dot or open a github issue.`)
+            }
+            return (...params) => {
+
+                const ctx = (addCtxFnInParams ? params.shift() || null : null) as Ctx
+
+                let message: string, options: ErrorOptions
+
+                if (defaultErrorsWithCustomMsg[p]) {
+                    message = params[0]
+                    options = { ...defaultErrorsWithCustomMsg[p], ...(params[1] || {}) }
+                } else if (defaultErrors[p]) {
+                    message = p + (defaultErrors[p]?.msg ? ` ${defaultErrors[p]?.msg}` : '')
+                    options = { ...defaultErrors[p], ...(params[0] || {}) }
+                } else {
+                    C.warning(false, `Trying to throw an unknown error "${p}". green_dot errors has not been correctly registered. Generic error thrown instead. Please see documentation on how to throw errors on green_dot or open a github issue.`)
+                    message = 'serverError'
+                    options = params[0]
+                }
+
+                if (!isset(options.code)) options.code = 422 // default
+
+                const extraInfos = { userId: ctx ? ctx._id : undefined, ...options }
+
+                const error = new DescriptiveError(message, extraInfos)
+
+                setTimeout(() => { // ASYNC
+                    // wait for the error to be catched, at this time options.doNotLog can be changed
+                    // This is a way to 'undo' any error alerts... in certain cases
+                    if (!error.doNotLog && (options.notifyAdmins === true || (options.notifyAdmins === undefined && options.code === 500))) {
+                        // NOTIFY ADMINS
+                        sendErrorOnTeams(ctx, options.code, message, error, error?.stack?.toString())
+                        sendErrorViaTelegram(options.code, message, error?.toString())
+                    }
+                })
+                return error
+            }
+        },
+    })
+}
+
 
 /** This is to register new errors and custom errors and make them available in the project */
-export function registerErrors<T extends Record<string, ErrorOptions>>(errObj: T, withCustomMsgParam = false) {
-    for (const [errName, errOptions] of Object.entries(errObj)) {
-        if (withCustomMsgParam) {
-            // Error with a a CUSTOM MESSAGE. Eg: throw.myError(ctx, msg, options)
-            throwError[errName] = ((ctx: Ctx | null, msg: string, options: ErrorOptions = {}) => {
-                return sharedErrorEndpoint(ctx, msg, { ...errOptions, ...options })
-            }) as any // TODO needs simplification
-        } else {
-            // Classic error. Eg: throw.myError(ctx, options)
-            throwError[errName] = getThrowErrorFn(errOptions)
-        }
-    }
+export function registerErrors<T extends ErrorObject>(errObj: T, withCustomMsgParam = false) {
+    Object.assign(withCustomMsgParam ? defaultErrorsWithCustomMsg : defaultErrors, errObj)
     return errObj
 }
 
-function getThrowErrorFn(errOptionsToMerge: ErrorOptions) {
-    return (ctx: Ctx | null, options: ErrorOptions = {}) => {
-        return sharedErrorEndpoint(ctx, options?.errMsgId || errOptionsToMerge?.msg || errOptionsToMerge?.message, { ...errOptionsToMerge, ...options })
-    }
-}
 
-
-function sharedErrorEndpoint(ctx: Ctx | null, msg: string, options: ErrorOptions = {}) {
-    const infosFromCtx = ctx && ctx._id ? { userId: ctx._id } : {}
-    const extraInfos = { ...infosFromCtx, ...options }
-    const error = new DescriptiveError(msg, extraInfos)
-    if (!isset(options.code)) options.code = 422 // default
-    setTimeout(() => { // ASYNC
-        // wait for the error to be catched, at this time options.doNotLog can be changed
-        if (!error.doNotLog && (options.notifyAdmins === true || (options.notifyAdmins === undefined && options.code === 500))) {
-            // NOTIFY ADMINS
-            sendErrorOnTeams(ctx, options.code || 500, msg, error, error?.stack?.toString())
-            sendErrorViaTelegram(options.code, msg, error?.toString())
-        }
-    })
-    if (options.doNotThrow !== true) throw error
-    else return error
-}
 
 //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╦    ═╦═ ╔═══ ══╦══
 //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝   ║     ║  ╚══╗   ║
@@ -110,6 +123,8 @@ const serverErrors = registerErrors({
     applicationError: { code: 422 },
     500: { code: 500 },
 } as const, true)
+
+
 
 //  ╔══╗ ╦  ╦ ╔══╗ ╦╗╔╦ ╔══╗ ╦╗ ╔ ══╦══   ╔══╗ ╦    ╔══╗ ╔═╗  ╔══╗ ╦      ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
 //  ╠══╣ ║  ║ ║ ═╦ ║╚╝║ ╠═   ║╚╗║   ║     ║ ═╦ ║    ║  ║ ╠═╩╗ ╠══╣ ║        ║   ╚═╦═╝ ╠══╝ ╠═   ╚══╗

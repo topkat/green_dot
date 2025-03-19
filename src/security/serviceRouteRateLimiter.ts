@@ -66,7 +66,7 @@ export const rateLimiter = {
                 sendRateLimiterTeamsMessage(ctx, { route, discriminator, nbAttempts, ip, userId, extraInfos })
             }
 
-            ctx.throw.tooManyRequests(!env.isProd ? {
+            throw ctx.error.tooManyRequests(!env.isProd ? {
                 route,
                 nbAttempts: rateLimiterCache[discriminator][route].nbAttempts.length,
                 maxAttempts: maxNbAttemptsInGivenTimeWindow,

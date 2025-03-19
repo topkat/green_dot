@@ -5,7 +5,7 @@ import { MainTypes, Definition } from 'good-cop'
 import { capitalize1st, includes } from 'topkat-utils'
 
 import { daoValidators } from '../../databases/mongo/types/mongoDaoTypes'
-import { throwError } from '../../core.error'
+import { error } from '../../core.error'
 import { RouteFromSevicesConfigForGenerateSdk, AllPossibleDaoMethods, DbType, ApiMethod, ServiceDocObject } from '../../types/core.types'
 import { _ } from '../../validator'
 import { getDaoRouteDescriptionFromDaoConfigs } from '../helpers/getDaoRouteDescriptionFromDaoConfigs'
@@ -188,7 +188,7 @@ async function getTsTypingsFromDaoTypeTemplate(dbType: DbType, fnName: AllPossib
         }
     }
     const ts = tsForMethod[dbType][fnName]
-    if (typeof ts === 'undefined') throwError.serverError(`oneTypeIsNotDefinedInDaoTypeFile`, { method: fnName, availableMethods: Object.keys(tsForMethod[dbType]) })
+    if (typeof ts === 'undefined') throw error.serverError(`oneTypeIsNotDefinedInDaoTypeFile`, { method: fnName, availableMethods: Object.keys(tsForMethod[dbType]) })
     return ts
 }
 

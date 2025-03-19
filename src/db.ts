@@ -1,7 +1,7 @@
 
 
 import { AllModelsWithReadWrite, DbIds, MainDbName } from './cache/dbs/index.generated'
-import { throwError } from './core.error'
+import { error } from './core.error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
@@ -12,7 +12,22 @@ import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } fr
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
 import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
+import { DbConfigsObj } from './types/dbConfig.types'
 
+
+//  ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗
+//  ║    ╠══╣ ║    ╠══╣ ╠═
+//  ╚══╝ ╩  ╩ ╚══╝ ╩  ╩ ╚══╝
+//
+//----------------------------------------
+// CACHE HANDLING
+//- - - - - - - - - - - - - - - - - - - -
+// Cache is here to prevent a database initializing twice, and to
+// refresh database initialization if needed, for example
+// to take in account new DBs that may have been created since last
+// server start
+//----------------------------------------
+const cache = {} as ModelsConfigCache
 
 //  ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
 //    ║   ╚═╦═╝ ╠══╝ ╠═   ╚══╗
@@ -43,7 +58,9 @@ type AllDbIds = DbIds[keyof DbIds]
 let isRunning = false
 let userPermissionFields = [] as (keyof UserPermissionFields)[]
 
-export async function initDbs(resetCache: boolean = false) {
+export async function initDbs(resetCache: boolean = false, id: string) {
+
+  (cache as any).ENV = id
 
   if (isRunning) {
     await timeout(2000)
@@ -61,9 +78,10 @@ export async function initDbs(resetCache: boolean = false) {
 
     if (mainConfigs.defaultDatabaseName === dbName) {
       // DEFAULT DATABASE
+      // So we put all technical green_dot fields
       hasDefaultDatabase = true
 
-      // inject permissions fields in user
+      // inject permissions fields in user model
       const permissionsFields = {
         ...mainConfigs.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
         ...convertRoleToPermsToModelFields(mainConfigs.allRoles)
@@ -87,31 +105,35 @@ export async function initDbs(resetCache: boolean = false) {
       //----------------------------------------
       // DATABASES INITIALISATION
       //----------------------------------------
-      for (const [databaseId, connectionConfig] of objEntries(connexionConfigs)) {
+      const { connexionString, ...conf } = connexionConfigs
 
-        dbIdsToDbNames[databaseId] = dbName
+      const connexionObj = typeof connexionString === 'string' ? { [dbName]: connexionString } : connexionString
 
-        if (cache?.[databaseId].dbConfigs) continue // even when clearing cache, you don't want to reinit projects
+      for (const [dbId, mongoConStr] of objEntries(connexionObj)) {
 
-        if (type === 'mongo') {
-          await mongoInitDb<AllDbIds>(
-            dbName,
-            databaseId,
-            cache,
-            connectionConfig,
-            daos,
-            models as any
-          )
-        } else throw new Error(`Unknown dbType ${type}`)
+        dbIdsToDbNames[dbId] = dbName
+
+        if (cache?.[dbId]?.dbConfigs) continue // even when clearing cache, you don't want to reinit projects
+
+        await mongoInitDb<AllDbIds>(
+          dbName,
+          dbId,
+          cache,
+          { ...conf, connexionString: mongoConStr },
+          daos,
+          models as any
+        )
       }
     } else {
-      throwError.serverError(`Database type not implemented: ${type}`, { dbName: dbName, dbType: type })
+      throw error.serverError(`Database type not implemented: ${type}. Please make sure you provided green_dot.config.ts a defaultDatabase`, { dbName: dbName, dbType: type })
     }
   }
 
-  if (!hasDefaultDatabase) throw throwError.serverError(`No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
+  if (!hasDefaultDatabase) throw error.serverError(`No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
 
   isRunning = false
+
+  C.log(C.primary(`✓ DB Initialized`))
 }
 
 
@@ -127,8 +149,9 @@ export const dbs = new Proxy({} as Dbs, {
   // on server start, we need to await initDb to ensure the cache always has a value and can
   // be called anywhere in the app
   get(_, prop: string) {
-    if (!cache[prop]) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
-    return cache[prop]
+    console.log(`cache`, (cache as any).ENV)
+    if (!cache[prop]?.db) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
+    return cache[prop].db
   },
 })
 
@@ -138,25 +161,12 @@ export const db = new Proxy({} as Db, {
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
     const { defaultDatabaseName } = getMainConfig()
-    console.log('cache', defaultDatabaseName, JSON.stringify(Object.keys(cache), null, 2))
-    return cache[defaultDatabaseName][prop]
+    console.log(`cache`, (cache as any).ENV)
+    if (!cache[defaultDatabaseName]?.db?.[prop]) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
+    return cache[defaultDatabaseName].db[prop]
   },
 })
 
 export function getUserPermissionFields() {
   return userPermissionFields
 }
-
-//  ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗
-//  ║    ╠══╣ ║    ╠══╣ ╠═
-//  ╚══╝ ╩  ╩ ╚══╝ ╩  ╩ ╚══╝
-//
-//----------------------------------------
-// CACHE HANDLING
-//- - - - - - - - - - - - - - - - - - - -
-// Cache is here to prevent a database initializing twice, and to
-// refresh database initialization if needed, for example
-// to take in account new DBs that may have been created since last
-// server start
-//----------------------------------------
-const cache = {} as ModelsConfigCache

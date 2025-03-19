@@ -1,5 +1,5 @@
 import { getMainConfig } from './getGreenDotConfigs'
-import { throwError } from '../core.error'
+import { error } from '../core.error'
 
 
 
@@ -18,7 +18,7 @@ export const env = new Proxy({} as EnvType, {
 function getEnv(prop: keyof EnvType) {
   const mainConf = getMainConfig(true)
   if (!mainConf && prop !== 'env') {
-    throwError.serverError(`Do not use env.isProd or env.isTest straight in the body of your ts files since server needs to start to evaluate those variables correctly. If you really need to, you have to create and use a local version.`)
+    throw error.serverError(`Do not use env.isProd or env.isTest straight in the body of your ts files since server needs to start to evaluate those variables correctly. If you really need to, you have to create and use a local version.`)
   }
   const {
     env = process.env.NODE_ENV,

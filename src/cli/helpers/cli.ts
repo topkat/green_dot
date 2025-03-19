@@ -1,4 +1,5 @@
 
+// /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 import { C } from 'topkat-utils'
 import pkg from '../../../package.json'
 

@@ -47,7 +47,7 @@ export async function mongoBeforeRequest(
             newCtx = ctx.clone({ ...localConfig, method, inputFields: localConfig.inputFields, createdId: localConfig.inputFields._id }) satisfies CreateEventBeforeCtx<any>
         } else if (method === 'update') {
             if (!localConfig.ressourceId && event.registeredEvents[eventName] && event.registeredEvents[eventName].length) {
-                ctx.throw.serverError(`An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
+                throw ctx.error.serverError(`An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
             }
             newCtx = ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields: localConfig.inputFields }) satisfies UpdateEventCtx<any>
         } else if (method === 'getOne') {
@@ -56,7 +56,7 @@ export async function mongoBeforeRequest(
             newCtx = ctx.clone({ ...localConfig, method }) satisfies GetAllEventBeforeCtx
         } else if (method === 'delete') {
             newCtx = ctx.clone({ ...localConfig, method, deletedId: ressourceId }) satisfies DeleteEventCtx
-        } else ctx.throw.serverError('notExistingMethod', { method })
+        } else throw ctx.error.serverError('notExistingMethod', { method })
 
         await event.emit(eventName, newCtx.GM)
     }

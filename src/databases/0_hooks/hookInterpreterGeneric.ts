@@ -1,6 +1,6 @@
 
 
-import { throwError } from '../../core.error'
+import { error } from '../../core.error'
 import { DaoHookShared, daoGenericMethods, DaoGenericMethods, DaoHookSharedParsed } from '../../types/core.types'
 import { DaoHookNamesMongo, MongoDaoParsed } from '../mongo/types/mongoDbTypes'
 import { hookValidators, HookValidator } from './hookValidators'
@@ -36,7 +36,7 @@ export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>
                 priority: 50,
             }
 
-            if (!isset(hookInterpreter)) throwError.serverError(`PLEASE PROVIDE A VALIDATOR FOR ${hookName} HOOK`)
+            if (!isset(hookInterpreter)) throw error.serverError(`PLEASE PROVIDE A VALIDATOR FOR ${hookName} HOOK`)
 
             // convert all possible as array syntax
             for (const fnName of ['for', 'notFor', 'on', 'notOn', 'expose']) {
@@ -85,7 +85,7 @@ export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>
 
         // validate hook
         if (!hookInterpreter.validate(hook)) {
-            throwError.serverError(
+            throw error.serverError(
                 hookInterpreter.errMsg || `${modelName}.hooks.${hookName}[${hookIndex}] format not valid for hook`,
                 { daoName: modelName, hookType: hookName, hookIndex, hook: JSON.stringify(hook, null, 2) }
             )

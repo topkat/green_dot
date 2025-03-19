@@ -45,7 +45,7 @@ export async function registerDaoApi(
 
                 ctx.isFromGeneratedDbApi = true
 
-                if (typeof dbId === 'undefined') ctx.throw.serverError('aCompanyMustBeProvidedInOrderToConnectWithDaoApi', { ctxUser: ctx.getUserMinimal(), dbIdUndefined: true })
+                if (typeof dbId === 'undefined') throw ctx.error.serverError('aCompanyMustBeProvidedInOrderToConnectWithDaoApi', { ctxUser: ctx.getUserMinimal(), dbIdUndefined: true })
 
 
                 const errExtraInfos = { ...req.params, fn: `registerDaoApi` }
@@ -54,12 +54,12 @@ export async function registerDaoApi(
                 const model = models[dbId]?.[modelName]
                 const dao = daos[dbId]?.[modelName]
 
-                if (typeof model === 'undefined') ctx.throw.modelDoNotExist(errExtraInfos)
+                if (typeof model === 'undefined') throw ctx.error.modelDoNotExist(errExtraInfos)
 
                 const dbName = dbIdsToDbNames[dbId]
-                if (!dbName) ctx.throw.serverError('dbIdsToDbNames should be instanciated with all db names')
+                if (!dbName) throw ctx.error.serverError('dbIdsToDbNames should be instanciated with all db names')
 
-                if (!isset(daoValidators[daoFunction as any])) ctx.throw.functionDoNotExistInModel({ ...errExtraInfos, daoFunction })
+                if (!isset(daoValidators[daoFunction as any])) throw ctx.error.functionDoNotExistInModel({ ...errExtraInfos, daoFunction })
 
                 const { paramsValidator, method } = daoValidators[daoFunction as any] as { method: DaoGenericMethods, paramsValidator: Definition, pathParamNb?: number }
 

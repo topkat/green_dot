@@ -12,7 +12,6 @@ export function getExpressErrHandlerMW() {
             const isStrErr = typeof err === 'string'
             const errMsg = (isStrErr ? err : (err.msg || err.message)) as string
             const extraInfos = {
-                doNotThrow: true,
                 doNotDisplayCode: true,
                 doNotWaitOneFrameForLog: true,
                 code: 500,

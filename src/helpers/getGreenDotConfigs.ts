@@ -5,12 +5,12 @@ import { GDpathConfig, GDpathConfigWithIndex, getProjectPaths } from './getProje
 import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types'
 import { safeImport } from './safeImports'
 import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
-import { throwError } from '../core.error'
+import { error } from '../core.error'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩
-export async function initGreenDotConfigs(resetCache = false, withoutApp = false) {
+export async function initGreenDotConfigs(resetCache = false) {
   await initMainConfigCache(resetCache)
   await initAppConfigCache(resetCache)
   await initDbConfigCache(resetCache)
@@ -32,7 +32,7 @@ export function registerMainConfig(conf: GreenDotConfig) {
 let greenDotConfigsCache: GreenDotConfigWithDefaults & GDpathConfig
 
 export function getMainConfig(silent = false): typeof greenDotConfigsCache {
-  if (!greenDotConfigsCache && !silent) throw throwError.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotConfigsCache && !silent) throw error.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotConfigsCache
 }
 
@@ -55,13 +55,13 @@ async function initMainConfigCache(resetCache = false) {
 let greenDotDbConfigsCache: Array<GreenDotDbConfig & GDpathConfigWithIndex>
 
 export function getDbConfigs() {
-  if (!greenDotDbConfigsCache) throw throwError.serverError('Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotDbConfigsCache) throw error.serverError('Trying to call getGreenDotDbConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotDbConfigsCache
 }
 
 export async function getActiveDbConfig() {
   const { activeDb } = await getProjectPaths()
-  if (!activeDb) throw throwError.serverError('Trying to call getActiveDbConfig() but not active Db is to be found')
+  if (!activeDb) throw error.serverError('Trying to call getActiveDbConfig() but not active Db is to be found')
   return greenDotDbConfigsCache.find(c => c.folderPath === activeDb.folderPath)
 }
 
@@ -93,14 +93,14 @@ async function initDbConfigCache(resetCache = false) {
 let greenDotAppConfigsCache: Array<GreenDotAppConfig & GDpathConfigWithIndex>
 
 export function getAppConfigs() {
-  if (!greenDotAppConfigsCache) throwError.serverError('Trying to call getAppConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotAppConfigsCache) throw error.serverError('Trying to call getAppConfigs() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
   return greenDotAppConfigsCache
 
 }
 
 export async function getActiveAppConfig() {
   const { activeApp } = await getProjectPaths()
-  if (!activeApp) throwError.serverError('Trying to call getActiveAppConfig() but not active Db is to be found')
+  if (!activeApp) throw error.serverError('Trying to call getActiveAppConfig() but not active Db is to be found')
   return greenDotAppConfigsCache.find(c => c.folderPath === activeApp.folderPath) as GreenDotAppConfig & GDpathConfigWithIndex
 }
 

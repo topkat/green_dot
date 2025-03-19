@@ -36,7 +36,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             await mongoBeforeRequest(ctx, daoConf, localConfig)
             const promise = MongooseModel.findOne(localConfig.filter, null, { session: ctx.transactionSession })
             const result = await mongoAfterRequest<ModelRead, 'getOne', typeof localConfig>(ctx, daoConf, promise, localConfig)
-            if (config?.triggerErrorIfNotSet === true && !result) ctx.throw.ressourceDoesNotExists({
+            if (config?.triggerErrorIfNotSet === true && !result) throw ctx.error.ressourceDoesNotExists({
                 triggerErrorIfNotSetOption: true,
                 filter,
                 additionalMsg: 'RESSOURCE DO NOT EXIST',
@@ -110,7 +110,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
         async updateMany(ctx, fieldsArr, config) {
             const results = [] as ModelRead[]
             for (const fields of fieldsArr) {
-                if (!isset(getId(fields))) ctx.throw.serverError('_id field must be set when updating field', { fieldsOrArr: fieldsArr })
+                if (!isset(getId(fields))) throw ctx.error.serverError('_id field must be set when updating field', { fieldsOrArr: fieldsArr })
                 const originalId = getId(fields)
                 const localConfig = getLocalConfigForWrite('update', 'getAll', config, { _id: originalId }, fields)
                 delete fields._id
@@ -159,7 +159,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
         async deleteWithFilter(ctx, filter) {
             if (!ctx.isSystem && !filter._id) ctx.throw[403]({ errorCode: '29667' })
-            if (Object.keys(filter).length === 0) ctx.throw.wrongValueForParam({ msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
+            if (Object.keys(filter).length === 0) throw ctx.error.wrongValueForParam({ msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
             const localConfig = getLocalConfigForWrite('delete', 'getAll', undefined, filter)
 
             // if (daoConf.modelConfig?.hardDelete === false) {

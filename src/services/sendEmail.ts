@@ -97,6 +97,6 @@ export async function sendEmail(ctx, subject, content, recipients: string | stri
         if (useTestAccount) C.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`)
         return info
     } catch (err) {
-        ctx.throw.sendEmailError({ recipients, err, fromAddress, varsUsed: vars, attachmentsLength: attachments?.length || 0 })
+        throw ctx.error.sendEmailError({ recipients, err, fromAddress, varsUsed: vars, attachmentsLength: attachments?.length || 0 })
     }
 }

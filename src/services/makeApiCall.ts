@@ -9,7 +9,7 @@ type ApiCallConfig = Partial<{
   body: Record<string, any>
 }> & Parameters<typeof apiCall>[1]
 
-export async function makeApiCall(ctx, url: string, config?: ApiCallConfig) {
+export async function makeApiCall(ctx: Ctx, url: string, config?: ApiCallConfig) {
 
   const { errorHandling = 'throw', body, data: dta, ...axiosConf } = config || {}
 
@@ -24,17 +24,20 @@ export async function makeApiCall(ctx, url: string, config?: ApiCallConfig) {
     const axiosErr: AxiosError<any> = err
 
 
-    const doNotThrow = errorHandling !== 'throw'
+
 
     const errMsg = err.response?.statusText
     const responseData = axiosErr.response?.data
     const respStatus = axiosErr.response?.status
 
-    ctx.throw.applicationError(errMsg, {
+    const err2 = ctx.error.applicationError(errMsg, {
       err,
       code: respStatus || 500,
       responseData,
-      doNotThrow,
     })
+
+    if (errorHandling === 'throw') throw err2
+    else return err2
+
   }
 }

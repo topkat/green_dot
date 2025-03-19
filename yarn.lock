@@ -5689,15 +5689,20 @@ topkat-utils@1.2.96:
   resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.2.96.tgz#1a90ec539f14ad4ede7341c083018bc847f57eaa"
   integrity sha512-ZGEkblQSfHcub3xJF0j7ldOtovRQSoH/g1bD8FIYLLjnLFz9Dyjm6+K3vu21bVIcgDnBa3whN/7cC6FkSjjnYQ==
 
-topkat-utils@1.3.6, topkat-utils@^1.3.6:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.3.6.tgz#7feb38be7d9d5de3c163406c88e5cbdb235ed124"
-  integrity sha512-VHpoObefxL0aioqggRm7d0NXaMG1Ee5F6Zcc9qrqpT342tNwYAb208UCHKjOASReDwpQa5rAD1AsLrjRlOHhPg==
-
 topkat-utils@^1.2.106, topkat-utils@^1.2.107, topkat-utils@^1.2.61:
   version "1.2.117"
   resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.2.117.tgz#0c14b440b40a5e0282b2068413a3ea74da309f29"
   integrity sha512-DLvwQ6ppVvyQkR/vdfHZszs5zI9NgwSuShMiFNRw+qnqeZ+SWeY+sN2frNQsTB2zf/4duCQAX7A5y/JVpP76zg==
+
+topkat-utils@^1.3.10:
+  version "1.3.10"
+  resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.3.10.tgz#0a1e5f840c3fa6f8f5f2631a545d6eb59a1a28bc"
+  integrity sha512-Sh0qlqqoUDersdzjLgVlbNUVo7G4w5I2C+jnU7hb+0PBe+dj8ZwcURFZon1zcSAYzV1KSI8jLqoGT6OJAo9OHA==
+
+topkat-utils@^1.3.6:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/topkat-utils/-/topkat-utils-1.3.6.tgz#7feb38be7d9d5de3c163406c88e5cbdb235ed124"
+  integrity sha512-VHpoObefxL0aioqggRm7d0NXaMG1Ee5F6Zcc9qrqpT342tNwYAb208UCHKjOASReDwpQa5rAD1AsLrjRlOHhPg==
 
 tough-cookie@^2.3.3, tough-cookie@~2.5.0:
   version "2.5.0"

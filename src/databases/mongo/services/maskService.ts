@@ -176,8 +176,8 @@ export async function applyMaskToPopulateConfig(
         const fieldName = populateConfObj.path
         const modelNameForField = modelFlat?.[fieldName]?._refValue
 
-        if (populateConfObj.select && typeof populateConfObj.select !== 'string') ctx.throw.wrongValueForParam({ msg: `onlyStringTypeIsAllowedInPopulateSelect`, fieldName, popConf })
-        if (!modelNameForField) ctx.throw.wrongValueForParam({ msg: `modelDoNotExistForFieldNameInPopulate`, fieldName, popConf, fnName: 'applyMaskToPopulateConfig' })
+        if (populateConfObj.select && typeof populateConfObj.select !== 'string') throw ctx.error.wrongValueForParam({ msg: `onlyStringTypeIsAllowedInPopulateSelect`, fieldName, popConf })
+        if (!modelNameForField) throw ctx.error.wrongValueForParam({ msg: `modelDoNotExistForFieldNameInPopulate`, fieldName, popConf, fnName: 'applyMaskToPopulateConfig' })
 
         if ('populate' in populateConfObj) {
             populateConfObj.populate = await applyMaskToPopulateConfig(ctx, populateConfObj.populate, dbName, modelNameForField, method)
