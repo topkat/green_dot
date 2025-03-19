@@ -32,7 +32,7 @@ export async function generateDbCachedFiles(resetCache = false) {
     const modelNames = Object.keys(models)
     const dbNameCapital = capitalize1st(dbName)
 
-    const dbIds = Object.keys(dbs)
+    const dbIds = typeof dbs.connexionString === 'string' ? [dbName] : Object.keys(dbs.connexionString)
     if (!dbIds.length) continue
 
     //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═╗  ╔═╗    ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══

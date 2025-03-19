@@ -1,5 +1,5 @@
 import { getMainConfig } from './getGreenDotConfigs'
-import { error } from '../core.error'
+import { error } from '../error'
 
 
 

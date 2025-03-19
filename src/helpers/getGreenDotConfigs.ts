@@ -5,7 +5,7 @@ import { GDpathConfig, GDpathConfigWithIndex, getProjectPaths } from './getProje
 import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types'
 import { safeImport } from './safeImports'
 import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
-import { error } from '../core.error'
+import { error } from '../error'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║

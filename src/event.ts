@@ -1,17 +1,24 @@
 
 import { isset } from 'topkat-utils'
 
-const event = {
+export const event = {
     /**
      * @param priority the higher the prior
      */
-    on(eventName: string, callback: Function, priority = 50) {
+    on<EventName extends keyof GDeventNames>(
+        eventName: EventName,
+        callback: (...params: GDeventNames[EventName]) => any,
+        priority = 50
+    ) {
         if (!isset(event.registeredEvents[eventName])) event.registeredEvents[eventName] = []
         event.registeredEvents[eventName].push([priority, callback])
         event.registeredEvents[eventName].sort(([priorityA], [priorityB]) => priorityB - priorityA)
     },
     /** unregister a callback from an event */
-    off(eventName: string, callback: Function) {
+    off<EventName extends keyof GDeventNames>(
+        eventName: EventName,
+        callback: (...params: GDeventNames[EventName]) => any,
+    ) {
         if (!isset(event.registeredEvents[eventName])) return
         const eventIndex = event.registeredEvents[eventName].findIndex(([, callback2]) => callback === callback2)
         if (eventIndex !== -1) {
@@ -24,25 +31,31 @@ const event = {
      * @param {array} paramsValidationArray
      * @returns {Object} metadata (will be passed as final argument of each event function to be modified by the different modules)
     */
-    async emit(eventName: string, ctx: Ctx, ...params) {
+    async emit<EventName extends keyof GDeventNames>(
+        eventName: EventName,
+        ...params: GDeventNames[EventName]
+    ) {
         const metadata = {}
         if (!isset(event.registeredEvents[eventName])) event.registeredEvents[eventName] = []
         if (event.registeredEvents[eventName]) {
-            for (const [, callback] of event.registeredEvents[eventName]) await callback(ctx, ...params, metadata)
+            for (const [, callback] of event.registeredEvents[eventName]) await callback(...params, metadata)
         }
         return metadata
     },
     /** SYNCHRONOUS
     */
-    emitSync(eventName: string, ctx: Ctx, ...params) {
+    emitSync<EventName extends keyof GDeventNames>(
+        eventName: EventName,
+        ...params: GDeventNames[EventName]
+    ) {
         const metadata = {}
         if (!isset(event.registeredEvents[eventName])) event.registeredEvents[eventName] = []
         if (event.registeredEvents[eventName]) {
-            for (const [, callback] of event.registeredEvents[eventName]) callback(ctx, ...params, metadata)
+            for (const [, callback] of event.registeredEvents[eventName]) callback(...params, metadata)
         }
         return metadata
     },
     registeredEvents: {} as { [EventName: string]: Array<[priority: number, callback: Function]> },
 }
 
-export default event
+export default event // @deprecated default

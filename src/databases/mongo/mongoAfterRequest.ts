@@ -4,7 +4,7 @@ import event from '../../event'
 import { applyMaskToPopulateConfig, getMongoMaskForUser } from './services/maskService'
 import { MongoDaoParsed } from './types/mongoDbTypes'
 
-import { DaoGenericMethods, CreateEventAfterCtx, UpdateEventCtx, DeleteEventCtx, GetAllEventAfterCtx, GetOneEventAfterCtx } from '../../types/core.types'
+import { DaoGenericMethods } from '../../types/core.types'
 import { PaginationData, MaybePaginated } from './types/mongoDaoTypes'
 import { LocalConfigParsed } from './types/mongoDbTypes'
 
@@ -82,21 +82,30 @@ export async function mongoAfterRequest<
         if (!ctx.simulateRequest) {
             const eventName = `${modelName}.${method}.after` // user.create.after
 
-            let newCtx: Ctx
             if (method === 'create') {
-                newCtx = ctx.clone({ ...localConfig, method, inputFields, createdId: ressourceId }) satisfies CreateEventAfterCtx<any>
+                event.emit(
+                    `${modelName}.create.after`,
+                    ctx.clone({ ...localConfig, method, inputFields, createdId: ressourceId })
+                )
             } else if (method === 'update') {
                 if (!localConfig.ressourceId && event.registeredEvents[eventName] && event.registeredEvents[eventName].length) {
                     throw ctx.error.serverError(`An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
                 }
-                newCtx = ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields }) satisfies UpdateEventCtx<any>
+                event.emit(
+                    `${modelName}.update.after`,
+                    ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields })
+                )
             } else if (method === 'getOne' || method === 'getAll') {
-                newCtx = ctx.clone({ ...localConfig, method, data: result }) satisfies GetOneEventAfterCtx<any> | GetAllEventAfterCtx<any>
+                event.emit(
+                    `${modelName}.${method}.after`,
+                    ctx.clone({ ...localConfig, method, data: result })
+                )
             } else if (method === 'delete') {
-                newCtx = ctx.clone({ ...localConfig, method, deletedId: localConfig.filter._id }) satisfies DeleteEventCtx
+                event.emit(
+                    `${modelName}.delete.after`,
+                    ctx.clone({ ...localConfig, method, deletedId: localConfig.filter._id })
+                )
             } else throw ctx.error.serverError('notExistingMethod', { method })
-
-            await event.emit(eventName, newCtx.GM)
         }
 
         return result

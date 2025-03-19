@@ -1,6 +1,6 @@
 
 
-import { error } from '../../core.error'
+import { error } from '../../error'
 import { DaoHookShared, daoGenericMethods, DaoGenericMethods, DaoHookSharedParsed } from '../../types/core.types'
 import { DaoHookNamesMongo, MongoDaoParsed } from '../mongo/types/mongoDbTypes'
 import { hookValidators, HookValidator } from './hookValidators'

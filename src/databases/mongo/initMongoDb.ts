@@ -1,15 +1,19 @@
 
 import mongoose from 'mongoose'
-import { error } from '../../core.error'
+import { error } from '../../error'
 import { mongoCreateDao } from './mongoCreateDao'
-
 import { MongoDbConfigModels, MongoDbConfig, Definition, DbConfigsObj } from '../../types/core.types'
 import { MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
-
 import { C, ENV, objEntries } from 'topkat-utils'
+import { luigi } from '../../cli/helpers/luigi.bot'
+import { event } from '../../event'
 
 const { NODE_ENV } = ENV()
 const env: Env = NODE_ENV
+
+declare global {
+    interface GDeventNames extends NewEventType<'databaseConnected', []> { }
+}
 
 type ErrParams = Parameters<typeof error.serverError>
 
@@ -43,7 +47,8 @@ export type ModelsConfigCache<AllModels extends Record<string, any> = any> = {
     }
 }
 
-
+let nbDatabaseConnected = 0
+let nbDatabaseTotal = 0
 
 export async function mongoInitDb<DbIds extends string>(
     dbName: string,
@@ -53,6 +58,8 @@ export async function mongoInitDb<DbIds extends string>(
     daoConfigsParsed: { [k: string]: MongoDaoParsed<any> },
     modelsGenerated: { [modelName: string]: Definition<any, 'def', 'def', false> }
 ) {
+
+    nbDatabaseTotal++
 
     const { connexionString, mongooseOptions = {} } = connectionConfig
 
@@ -68,10 +75,20 @@ export async function mongoInitDb<DbIds extends string>(
     const mongooseConnection = mongoose.createConnection(connexionString, mongooseOptions)
 
     mongooseConnection.on('error', err => {
-        if (env !== 'build') error.serverError(`mongoDatabaseConnexionError`, { err, dbId, dbName })
+        const lessVerboseErr = { message: err?.message }
+        if (env !== 'build') {
+            error.serverError(`mongoDatabaseConnexionError`, { err: lessVerboseErr, dbId, dbName })
+            C.log('\n\n')
+            luigi.say(`Senior advice here => please check that you have a database running at ${connexionString.replace(/:[^@]+@/, '****************')}.\nTips: Use 'run-rs' npm package to easily start mongoDb with replica sets locally.\n\n`)
+        }
     })
     mongooseConnection.on('connected', () => {
         C.log(C.primary(`✓ DB connected: ${dbId} > ${connexionString.includes('127.0.0') ? 'localhost' : connexionString?.split('@')?.[1]}${connexionString.replace(/^.*(\/[^/]+)$/, '$1').replace(/\?[^?]+$/, '')}`))
+        nbDatabaseConnected++
+        if (nbDatabaseConnected >= nbDatabaseTotal) {
+            event.emit('databaseConnected')
+        }
+
     })
 
     const schemas = {} as { [k in DbIds]: mongoose.Schema }

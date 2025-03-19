@@ -6,7 +6,7 @@ import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
 import { objEntries } from 'topkat-utils'
 import { safeImport } from './safeImports'
 import { parseDaos } from '../databases/parseDaos'
-import { error } from '../core.error'
+import { error } from '../error'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║

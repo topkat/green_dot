@@ -1,6 +1,6 @@
 
 
-import { error } from '../core.error'
+import { error } from '../error'
 import { generateLoginMw } from '../security/login.middleware'
 import { sortUrlsByDeepnessInArrayOrObject } from './utils/sortUrlByDeepness'
 import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware'

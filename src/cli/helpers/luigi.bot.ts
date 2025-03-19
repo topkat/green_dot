@@ -8,7 +8,7 @@ type CliPromptOptions = {
 }
 
 
-export const nestor = {
+export const luigi = {
   greet() {
     this.say([
       'Greetings, carbon-based entity! Awaiting instructions',
@@ -40,7 +40,7 @@ export const nestor = {
     message: string
   ): Promise<boolean> {
     return await cliPrompt({
-      message: this.say(message, false),
+      message: this.say(message, { log: false }),
       confirm: true,
     })
   },
@@ -48,14 +48,16 @@ export const nestor = {
     config: T
   ): Promise<T['choices'][number]> {
     return await cliPrompt({
-      message: config.message ? this.say(config.message, false) : undefined,
+      message: config.message ? this.say(config.message, { log: false }) : undefined,
       choices: config.choices
     })
   },
-  say(sentence: string[] | string, log = true) {
+  say(sentence: string[] | string, { log = 'log' }: { log?: false | 'log' | 'warning' | 'error' } = {}) {
     const lines = cutStringToTerminalLines(randomItemInArray(asArray(sentence)), terminalCharSize - 5).join('\n     ')
     const s = '\n🤖 < ' + lines + '\n\n'
-    if (log) C.log(s)
+    if (log === 'log') C.log(s)
+    else if (log === 'warning') C.warning(false, s)
+    else if (log === 'error') C.error(false, s)
     return s
-  }
+  },
 }

@@ -4,7 +4,7 @@ import { Definition } from 'good-cop'
 import { asArray, C, isset, isValid, camelCaseToWords, kebabCase, objEntries } from 'topkat-utils'
 
 import { doPermApplyToCtx } from '../security/doPermApplyToCtx'
-import { error } from '../core.error'
+import { error } from '../error'
 import { newSystemCtx } from '../ctx'
 import event from '../event'
 import { AllServicesKeys, Schedule, ServiceClean } from '../types/core.types'

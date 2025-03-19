@@ -1,6 +1,6 @@
 
 
-import express, { } from 'express'
+import express, { Express } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import xmlparser from 'express-xml-bodyparser'
@@ -10,7 +10,6 @@ import { C, registerConfig, ENV, DescriptiveError } from 'topkat-utils'
 import multer from 'multer'
 
 import event from './event'
-import { newSystemCtx } from './ctx'
 import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
 import { initTelegramBot } from './services/sendViaTelegram'
 import { generateMainBackendFiles } from './generate/generateMainBackendFiles'
@@ -23,13 +22,16 @@ import { registerDaoApi } from './registerModules/registerDaoApi'
 import { registerServiceApi } from './registerModules/registerServicesApi'
 import { registerServices } from './registerModules/registerServices'
 import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
-import { initDbs } from './db'
 
 dotenv.config()
 
 const { DISPLAY_NO_BUILD_WARNING } = ENV()
 
 let server: ReturnType<ReturnType<typeof express>['listen']>
+
+declare global {
+    interface GDeventNames extends NewEventType<'server.start', [isMaster: boolean, app: Express]> { }
+}
 
 export async function startServer(
     isMaster = true,
@@ -47,21 +49,29 @@ export async function startServer(
         else C.log(C.primary(`✓ BUILD ${appConfig.name}`))
     }
 
+    // SERVER START EVENT
+    await event.on('databaseConnected', async () => {
+        if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
+
+        // seed and server.start events shall be triggerred before exposing routes. This avoid
+        // accidentally hitting a route without seeded content
+        await event.emit('server.start', isMaster, app)
+    })
+
+    // INIT DBS
     await initProjectAndDaosCache()
-    await initDbs(false, 'local')
-
-    const { initDbs: app22 } = await import('green_dot' as any)
-
-    await app22(false, 'module')
+    // await initDbs(false, 'local')
+    const { initDbs: initDbModule } = await import('green_dot' as any)
+    await initDbModule(false, 'module')
 
     registerConfig(appConfig.dataValidationConfig)
 
     const app = express()
 
-    // initAws(serverConfig.awsConfig)
     initTelegramBot()
 
-    app.disable('x-powered-by')
+    // HEADERS SECURITY
+    app.disable('x-powered-by') // good security practice to not show that we rely on express under the hood
 
     app.use((_, res, next) => {
         res.set({
@@ -133,11 +143,6 @@ export async function startServer(
         server = app.listen(appConfig.port, () => resolve(1))
     })
 
-    if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
-
-    // seed and server.start events shall be triggerred before exposing routes. This avoid
-    // accidentally hitting a route without seeded content
-    await event.emit('server.start', newSystemCtx(), isMaster, app)
 
     // ALIVE ROUTE
     app.get('/alive', generateLoginMw(), rateLimiterMiddleware(), (_, res) => res.json(true))

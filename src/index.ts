@@ -7,7 +7,7 @@ export const coreTestFlows = coreTestFlow
 
 export { svc, schedule } from './service'
 
-export { error, type RegisterErrorType, registerErrors } from './core.error'
+export { error, type RegisterErrorType, registerErrors } from './error'
 export { unPopulate } from './databases/mongo/services/populateService'
 export * from './startServer'
 export { generateMainBackendFiles } from './generate/generateMainBackendFiles'
@@ -32,7 +32,7 @@ export { makeApiCall } from './services/makeApiCall'
 export { _ } from './validator'
 
 export { db, dbs, getUserPermissionFields, Db, Dbs } from './db'
-export { ModelTypes, ModelNames, ModelNamesForDb, MainDbName, AllModelsWithReadWrite } from './cache/dbs/index.generated'
+export { ModelTypes, ModelNames, ModelNamesForDb, MainDbName, ModelsWithDbNamesAndReadWrite as AllModelsWithReadWrite } from './cache/dbs/index.generated'
 
 export { getActiveAppConfig, getActiveDbConfig, getMainConfig, registerMainConfig } from './helpers/getGreenDotConfigs'
 

@@ -22,12 +22,7 @@ export const errorWithCtx = createErrorProxy(true) as GreenDotErrors // Add the 
 
 function createErrorProxy(addCtxFnInParams: boolean) {
     return createProxy({}, {
-        get(target, p: string) {
-            // This ensure that in all case an error is thrown, even the error is not registered
-            if (p in target === false) {
-                p = 'serverError'
-                C.warning(false, `Trying to throw an unknown error "${p}". green_dot errors has not been correctly registered. Generic error thrown instead. Please see documentation on how to throw errors on green_dot or open a github issue.`)
-            }
+        get(_, p: string) {
             return (...params) => {
 
                 const ctx = (addCtxFnInParams ? params.shift() || null : null) as Ctx

@@ -10,12 +10,13 @@ import { LocalConfigParsed } from './types/mongoDbTypes'
 import { DaoGenericMethods, ModelReadWrite } from '../../types/core.types'
 
 import { asArray, getId, deepClone, isset } from 'topkat-utils'
+import { DbIds, ModelNames } from '../../cache/dbs/index.generated'
 
 export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
     MongooseModel: mongoose.Model<any>,
-    dbId: string,
-    dbName: string,
-    modelName: string,
+    dbId: DbIds[keyof DbIds],
+    dbName: keyof DbIds,
+    modelName: ModelNames,
     daoConf: MongoDaoParsed<any>
 ) {
 

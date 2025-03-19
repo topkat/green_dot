@@ -1,7 +1,7 @@
 
 
-import { AllModelsWithReadWrite, DbIds, MainDbName } from './cache/dbs/index.generated'
-import { error } from './core.error'
+import { ModelsWithDbNamesAndReadWrite, DbIds, MainDbName } from './cache/dbs/index.generated'
+import { error } from './error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
@@ -12,7 +12,6 @@ import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } fr
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
 import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
-import { DbConfigsObj } from './types/dbConfig.types'
 
 
 //  ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗
@@ -36,8 +35,8 @@ const cache = {} as ModelsConfigCache
 // Types needs are computed appart from logic in this case
 
 export type Dbs = {
-  [K in keyof AllModelsWithReadWrite]: {
-    [L in keyof AllModelsWithReadWrite[K]]: AllModelsWithReadWrite[K][L] extends ModelReadWrite ? DaoMethodsMongo<AllModelsWithReadWrite[K][L]> : never
+  [K in keyof ModelsWithDbNamesAndReadWrite]: {
+    [L in keyof ModelsWithDbNamesAndReadWrite[K]]: ModelsWithDbNamesAndReadWrite[K][L] extends ModelReadWrite ? DaoMethodsMongo<ModelsWithDbNamesAndReadWrite[K][L]> : never
   } & ModelAdditionalFields
 } & {
   [k in MainDbName]: {
@@ -49,6 +48,7 @@ export type Dbs = {
 export type Db = Dbs[MainDbName]
 
 type AllDbIds = DbIds[keyof DbIds]
+
 
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══   ╔═╗  ╔═╗  ╔═══
@@ -149,7 +149,7 @@ export const dbs = new Proxy({} as Dbs, {
   // on server start, we need to await initDb to ensure the cache always has a value and can
   // be called anywhere in the app
   get(_, prop: string) {
-    console.log(`cache`, (cache as any).ENV)
+    // console.log(`cache`, (cache as any).ENV)
     if (!cache[prop]?.db) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
     return cache[prop].db
   },
@@ -161,7 +161,7 @@ export const db = new Proxy({} as Db, {
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
     const { defaultDatabaseName } = getMainConfig()
-    console.log(`cache`, (cache as any).ENV)
+    // console.log(`cache`, (cache as any).ENV)
     if (!cache[defaultDatabaseName]?.db?.[prop]) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
     return cache[defaultDatabaseName].db[prop]
   },

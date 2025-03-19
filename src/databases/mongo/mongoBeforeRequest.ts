@@ -3,7 +3,6 @@ import { LocalConfigParsed, MongoDaoParsed } from './types/mongoDbTypes'
 import { hookInterpreterExpose } from '../0_hooks/hookInterpreterExpose'
 import { mongoFilterHookInterpreter } from './hooks/mongoFilterHookInterpreter'
 import { mongoSanitizeFilter } from './services/mongoSanitizeFilter'
-import { CreateEventBeforeCtx, UpdateEventCtx, DeleteEventCtx, GetAllEventBeforeCtx, GetOneEventBeforeCtx } from '../../types/core.types'
 
 import { unPopulate } from './services/populateService'
 import { applyMaskIncludingOnPopulatedFieldsRecursive } from './services/maskService'
@@ -41,24 +40,36 @@ export async function mongoBeforeRequest(
     if (!ctx.simulateRequest && !localConfig.disableEmittingEvents) {
         const eventName = `${modelName}.${method}.before` // user.create.before
 
-        let newCtx: Ctx
         // all that mess to keep type safe on ctx, ctx has different type depending on the method (getOne, update...)
         if (method === 'create') {
-            newCtx = ctx.clone({ ...localConfig, method, inputFields: localConfig.inputFields, createdId: localConfig.inputFields._id }) satisfies CreateEventBeforeCtx<any>
+            event.emit(
+                `${modelName}.create.before`,
+                ctx.clone({ ...localConfig, method, inputFields: localConfig.inputFields, createdId: localConfig.inputFields._id })
+            )
         } else if (method === 'update') {
             if (!localConfig.ressourceId && event.registeredEvents[eventName] && event.registeredEvents[eventName].length) {
                 throw ctx.error.serverError(`An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
             }
-            newCtx = ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields: localConfig.inputFields }) satisfies UpdateEventCtx<any>
+            event.emit(
+                `${modelName}.update.before`,
+                ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields: localConfig.inputFields })
+            )
         } else if (method === 'getOne') {
-            newCtx = ctx.clone({ ...localConfig, method }) satisfies GetOneEventBeforeCtx
+            event.emit(
+                `${modelName}.getOne.before`,
+                ctx.clone({ ...localConfig, method })
+            )
         } else if (method === 'getAll') {
-            newCtx = ctx.clone({ ...localConfig, method }) satisfies GetAllEventBeforeCtx
+            event.emit(
+                `${modelName}.getAll.before`,
+                ctx.clone({ ...localConfig, method })
+            )
         } else if (method === 'delete') {
-            newCtx = ctx.clone({ ...localConfig, method, deletedId: ressourceId }) satisfies DeleteEventCtx
+            event.emit(
+                `${modelName}.delete.before`,
+                ctx.clone({ ...localConfig, method, deletedId: ressourceId })
+            )
         } else throw ctx.error.serverError('notExistingMethod', { method })
-
-        await event.emit(eventName, newCtx.GM)
     }
 
     if (hasFields) {

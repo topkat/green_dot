@@ -20,11 +20,13 @@ export async function generateIndexForDbCachedFiles(
     // CLEAN FILE
     indexFileContent += `
 
-export type AllModelsWithReadWrite = Record<string, any>
+export type ModelsWithDbNamesAndReadWrite = Record<string, any>
 
 export type DbIds = Record<string, string>
 
 export type MainDbName = string
+
+export type ModelsWithReadWrite = Record<string, any>
 
 export type ModelTypes = Record<string, Record<string, Record<string, any>>> // type safety
 
@@ -42,7 +44,7 @@ export type ModelNamesForDb = Record<string, string>
     indexFileContent += `
 ${indexFile.imports}
 
-export type AllModelsWithReadWrite = {
+export type ModelsWithDbNamesAndReadWrite = {
 ${indexFile.allModels}\
 }
 
@@ -52,23 +54,23 @@ ${indexFile.dbIds}\
 
 export type MainDbName = ${mainConfig && mainConfig.defaultDatabaseName && dbConfigs && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
 
-type Result = MergeMultipleObjects<AllModelsWithReadWrite>
+export type ModelsWithReadWrite = MergeMultipleObjects<ModelsWithDbNamesAndReadWrite>
 
 /** With this getter you can safely use your model types anywhere (even in db folders).
 If you use straight type like \`\`\`User\`\`\`, it may error when you are in a database folder
  * @example \`\`\`type User = ModelTypes['user']\`\`\`
 */
 export type ModelTypes = {
-    [K in keyof Result]: Result[K]['Read']
+    [K in keyof ModelsWithReadWrite]: ModelsWithReadWrite[K]['Read']
 } & {
-    [K in keyof Result as \`\${K & string}Write\`]: Result[K]['Write']
+    [K in keyof ModelsWithReadWrite as \`\${K & string}Write\`]: ModelsWithReadWrite[K]['Write']
 }
 
 /** All ModelNames for all DB Names: 'modelName1' | 'modelName2'...  */
-export type ModelNames = keyof Result
+export type ModelNames = keyof ModelsWithReadWrite
 
 /** ModelNames for DB { [dbName]: 'modelName1' | 'modelName2'... } */
-export type ModelNamesForDb = { [K in keyof AllModelsWithReadWrite]: keyof AllModelsWithReadWrite[K] }
+export type ModelNamesForDb = { [K in keyof ModelsWithDbNamesAndReadWrite]: keyof ModelsWithDbNamesAndReadWrite[K] }
 `
   }
 

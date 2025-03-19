@@ -2,10 +2,10 @@
 import { C } from 'topkat-utils'
 import { clearCli, cliIntro } from './helpers/cli'
 import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
-import { nestor } from './helpers/nestorBot'
+import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './fileWatcher'
 import { startServer, stopServer } from '../startServer'
-import { init as init2 } from '../init'
+import { init as initLocal } from '../init'
 
 let watcherOn = true
 // const env = getServerConfigFromEnv()
@@ -15,12 +15,12 @@ export async function startDevProdCommand() {
   const { activeApp, appConfigs } = await getProjectPaths()
 
   if (!activeApp) {
-    const folder = await nestor.askSelection({
+    const folder = await luigi.askSelection({
       message: 'Which server do you want that I start ?',
       choices: appConfigs.map(appConf => appConf.folderPath)
     })
 
-    nestor.confirm()
+    luigi.confirm()
 
     autoFindAndInitActiveAppAndDbPaths(folder)
   }
@@ -34,7 +34,7 @@ export async function startDevProdCommand() {
   process.stdin.resume()
   process.stdin.on('data', userInputKeyHandler)
 
-  nestor.say(`Starting server...\n
+  luigi.say(`Starting server...\n
       -> Press "w" to toggle file watch and restart mode
       -> Press "r" to restart server manually
       -> Press "q" to quit
@@ -45,10 +45,10 @@ export async function startDevProdCommand() {
 
     // TODO FIXME Here there is a context problem as 'green_dot' and '../someLocalFile' do not belong to the same context
     // So this is the workaround
-    const { init } = await import('green_dot' as any)
+    const { init: initModule } = await import('green_dot' as any)
 
-    await init()
-    await init2()
+    await initModule()
+    await initLocal()
 
     await startServer()
 

@@ -5,7 +5,7 @@ import { MainTypes, Definition } from 'good-cop'
 import { capitalize1st, includes } from 'topkat-utils'
 
 import { daoValidators } from '../../databases/mongo/types/mongoDaoTypes'
-import { error } from '../../core.error'
+import { error } from '../../error'
 import { RouteFromSevicesConfigForGenerateSdk, AllPossibleDaoMethods, DbType, ApiMethod, ServiceDocObject } from '../../types/core.types'
 import { _ } from '../../validator'
 import { getDaoRouteDescriptionFromDaoConfigs } from '../helpers/getDaoRouteDescriptionFromDaoConfigs'

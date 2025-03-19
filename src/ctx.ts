@@ -7,7 +7,7 @@ import { Request, Response } from 'express'
 import { env } from './helpers/getEnv'
 
 import { getId } from 'topkat-utils'
-import { ThrowErrorTypeSafe, errorWithCtx } from './core.error'
+import { ThrowErrorTypeSafe, errorWithCtx } from './error'
 import { dbs } from './db'
 import { ModelTypes } from './cache/dbs/index.generated'
 
