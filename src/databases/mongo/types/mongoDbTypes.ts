@@ -1,7 +1,7 @@
 import { DaoHookShared, DaoHookSharedParsed, DaoShared, DaoSharedParsed, daoHookNamesShared, DaoGenericMethods, MaskHook } from '../../../types/core.types'
 import mongoose from 'mongoose'
 import { AsFilter, RequestConfigGetOne, RequestConfigRead, RequestConfigWrite, PopulateConfig, SortConfig } from './mongoDaoTypes'
-import { ModelNames, DbIds } from '../../../cache/dbs/index.generated'
+import { ModelNames, DbIds, AllDbIds } from '../../../cache/dbs/index.generated'
 
 export * from './mongoDaoTypes'
 
@@ -11,7 +11,7 @@ export type DaoHookNamesMongo = typeof daoHookNamesMongo[number]
 
 export type LocalConfigParsed = {
     dbName: keyof DbIds
-    dbId: DbIds[keyof DbIds],
+    dbId: AllDbIds,
     modelName: ModelNames
     method: DaoGenericMethods
     /** provided for write method to specify which config is used when returning document */

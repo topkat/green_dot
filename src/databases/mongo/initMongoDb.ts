@@ -7,6 +7,7 @@ import { MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
 import { C, ENV, objEntries } from 'topkat-utils'
 import { luigi } from '../../cli/helpers/luigi.bot'
 import { event } from '../../event'
+import { AllDbIds, DbIds } from '../../cache/dbs/index.generated'
 
 const { NODE_ENV } = ENV()
 const env: Env = NODE_ENV
@@ -36,8 +37,6 @@ export type ModelAdditionalFields = {
     mongooseModels: { [modelNames: string]: mongoose.Model<any> }
 }
 
-
-
 export type ModelsConfigCache<AllModels extends Record<string, any> = any> = {
     [dbId: string]: {
         db: {
@@ -50,9 +49,9 @@ export type ModelsConfigCache<AllModels extends Record<string, any> = any> = {
 let nbDatabaseConnected = 0
 let nbDatabaseTotal = 0
 
-export async function mongoInitDb<DbIds extends string>(
-    dbName: string,
-    dbId: string,
+export async function mongoInitDb(
+    dbName: keyof DbIds,
+    dbId: AllDbIds,
     modelsConfigCache: ModelsConfigCache,
     connectionConfig: Omit<DbConfigsObj, 'connexionString'> & { connexionString: string },
     daoConfigsParsed: { [k: string]: MongoDaoParsed<any> },
@@ -91,9 +90,9 @@ export async function mongoInitDb<DbIds extends string>(
 
     })
 
-    const schemas = {} as { [k in DbIds]: mongoose.Schema }
-    const mongooseModels = {} as { [k in DbIds]: mongoose.Model<any> }
-    const typedDatabase = {} as { [k in DbIds]: Awaited<ReturnType<typeof mongoCreateDao>> }
+    const schemas = {} as { [k in AllDbIds]: mongoose.Schema }
+    const mongooseModels = {} as { [k in AllDbIds]: mongoose.Model<any> }
+    const typedDatabase = {} as { [k in AllDbIds]: Awaited<ReturnType<typeof mongoCreateDao>> }
     const dbConfs: MongoDbConfigModels = {}
 
     for (const [modelName, models] of objEntries(modelsGenerated)) {
@@ -107,7 +106,7 @@ export async function mongoInitDb<DbIds extends string>(
         // BUILD DAO
         //----------------------------------------
         const daoConf = daoConfigsParsed[modelName]
-        typedDatabase[modelName] = await mongoCreateDao(mongooseModels[modelName], dbId, dbName, modelName, daoConf)
+        typedDatabase[modelName] = await mongoCreateDao(mongooseModels[modelName], dbId, dbName, modelName as any, daoConf)
 
         //----------------------------------------
         // BUILD DB CONFIGS
@@ -173,6 +172,6 @@ export async function mongoInitDb<DbIds extends string>(
 
     modelsConfigCache[dbId].db = {
         ...typedDatabase,
-        ...modelAdditionalFields,
+        ...modelAdditionalFields as any,
     }
 }

@@ -1,6 +1,6 @@
 
 
-import { ModelsWithDbNamesAndReadWrite, DbIds, MainDbName } from './cache/dbs/index.generated'
+import { ModelsWithDbNamesAndReadWrite, MainDbName, AllDbIds, DbIds } from './cache/dbs/index.generated'
 import { error } from './error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
@@ -46,9 +46,6 @@ export type Dbs = {
 }
 
 export type Db = Dbs[MainDbName]
-
-type AllDbIds = DbIds[keyof DbIds]
-
 
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══   ╔═╗  ╔═╗  ╔═══
@@ -115,13 +112,13 @@ export async function initDbs(resetCache: boolean = false, id: string) {
 
         if (cache?.[dbId]?.dbConfigs) continue // even when clearing cache, you don't want to reinit projects
 
-        await mongoInitDb<AllDbIds>(
-          dbName,
-          dbId,
+        await mongoInitDb(
+          dbName as keyof DbIds,
+          dbId as AllDbIds,
           cache,
           { ...conf, connexionString: mongoConStr },
           daos,
-          models as any
+          models
         )
       }
     } else {

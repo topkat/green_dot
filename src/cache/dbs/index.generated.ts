@@ -16,6 +16,8 @@ export type DbIds = {
     website: 'model4'
 }
 
+export type AllDbIds = DbIds[keyof DbIds]
+
 export type MainDbName = 'bangk'
 
 export type ModelsWithReadWrite = MergeMultipleObjects<ModelsWithDbNamesAndReadWrite>

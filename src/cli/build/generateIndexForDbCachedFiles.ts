@@ -24,6 +24,8 @@ export type ModelsWithDbNamesAndReadWrite = Record<string, any>
 
 export type DbIds = Record<string, string>
 
+export type AllDbIds = string
+
 export type MainDbName = string
 
 export type ModelsWithReadWrite = Record<string, any>
@@ -51,6 +53,8 @@ ${indexFile.allModels}\
 export type DbIds = {
 ${indexFile.dbIds}\
 }
+
+export type AllDbIds = DbIds[keyof DbIds]
 
 export type MainDbName = ${mainConfig && mainConfig.defaultDatabaseName && dbConfigs && dbConfigs.length ? `'${mainConfig.defaultDatabaseName}'` : 'string'}
 
