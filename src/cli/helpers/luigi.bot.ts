@@ -1,6 +1,6 @@
 import { cliPrompt } from 'simple-cli-prompt'
 import { asArray, C, randomItemInArray } from 'topkat-utils'
-import { cutStringToTerminalLines, terminalCharSize } from './cli'
+import { wrapCliText, terminalCharSize } from './cli'
 
 type CliPromptOptions = {
   choices: string[] | readonly string[]
@@ -52,8 +52,16 @@ export const luigi = {
       choices: config.choices
     })
   },
-  say(sentence: string[] | string, { log = 'log' }: { log?: false | 'log' | 'warning' | 'error' } = {}) {
-    const lines = cutStringToTerminalLines(randomItemInArray(asArray(sentence)), terminalCharSize - 5).join('\n     ')
+  say(
+    sentence: string[] | string,
+    { log = 'log', noWrap = false }: {
+      log?: false | 'log' | 'warning' | 'error'
+      noWrap?: boolean
+    } = {},
+  ) {
+    let lines: string
+    if (noWrap) lines = randomItemInArray(asArray(sentence))
+    else lines = wrapCliText(randomItemInArray(asArray(sentence)), terminalCharSize - 5).join('\n     ')
     const s = '🤖 < ' + lines + '\n\n'
     if (log !== false) C.log('\n')
     if (log === 'log') C.log(s)

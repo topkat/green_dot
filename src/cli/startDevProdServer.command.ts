@@ -5,6 +5,7 @@ import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/
 import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './fileWatcher'
 
+
 let watcherOn = true
 
 export async function startDevProdCommand() {
@@ -31,18 +32,18 @@ export async function startDevProdCommand() {
   process.stdin.resume()
   process.stdin.on('data', userInputKeyHandler)
 
-  luigi.say(`Starting server...\n
-      -> Press "w" to toggle file watch and restart mode
-      -> Press "r" to restart server manually
-      -> Press "q" to quit
-`)
+  luigi.say(`Starting server...
+    -> Press ${letter('H')} to toggle hot-reload
+    -> Press ${letter('R')} to restart server
+    -> Press ${letter('Q')} to quit
+`, { noWrap: true })
 
   const { startServer, stopServer } = await import('green_dot' as any)
 
   const errorHandler = async err => {
     C.error(err)
     await stopServer()
-    if (watcherOn === false) userInputKeyHandler('w')
+    if (watcherOn === false) userInputKeyHandler('h')
     // Don't put spinner here
     luigi.warn(`Waiting for file change before restarting process...`)
     process.exit(1001)
@@ -84,6 +85,10 @@ function userInputConfirmLog(txt: string) {
   C.log(C.logClr(C.bg(0, 255, 0) + ' ' + txt + ' '))
 }
 
+function letter(txt: string) {
+  return C.bg(200, 200, 200) + C.rgb(0, 0, 0) + ' ' + txt + ' ' + C.reset
+}
+
 
 
 function userInputKeyHandler(buff) {
@@ -106,7 +111,7 @@ function userInputKeyHandler(buff) {
     process.stdout.write('  ') // Simulate tab spaces
   } else if (hex === '0D') {
     process.stdout.write('\n')// Newline
-  } else if (char === 'w') {
+  } else if (char === 'h') {
     // WATCH MODE TOGGLE
     watcherOn = !watcherOn
     userInputConfirmLog('WATCHER: ' + (watcherOn ? 'ON' : 'OFF'))
