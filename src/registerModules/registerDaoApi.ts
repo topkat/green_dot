@@ -68,7 +68,7 @@ export async function registerDaoApi(
                 //----------------------------------------
                 const { authorizedApiEndpoint } = getApiEndpointsPerRolesFromDao(dao.expose, allRoles)
                 const isApiAuthorized = authorizedApiEndpoint.includes(daoFunction) || false
-                if (!isApiAuthorized) ctx.throw[404]({ fn: 'registerDaoApi.daoConfig.isApiExposedGeneric' })
+                if (!isApiAuthorized) throw ctx.error[404]({ fn: 'registerDaoApi.daoConfig.isApiExposedGeneric' })
 
                 //----------------------------------------
                 // IS EXPOSED TO PERM

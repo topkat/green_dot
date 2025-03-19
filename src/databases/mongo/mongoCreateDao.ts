@@ -115,7 +115,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
                 const localConfig = getLocalConfigForWrite('update', 'getAll', config, { _id: originalId }, fields)
                 delete fields._id
                 await mongoBeforeRequest(ctx, daoConf, localConfig)
-                if (localConfig.filter?._id !== originalId) ctx.throw[403]({ originalId, allowedId: localConfig.filter?._id })
+                if (localConfig.filter?._id !== originalId) throw ctx.error[403]({ originalId, allowedId: localConfig.filter?._id })
                 if (!ctx.simulateRequest) {
                     const promise = MongooseModel.updateOne(localConfig.filter, localConfig.inputFields, { session: ctx.transactionSession })
                     await mongoAfterRequest<ModelRead, 'update'>(ctx, daoConf, promise, localConfig)
@@ -141,7 +141,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             const localConfig = getLocalConfigForWrite('update', 'getAll', config, filter, fields)
             await mongoBeforeRequest(ctx, daoConf, localConfig)
             if (!ctx.isSystem && localConfig?.filter?._id) { // forcing _id filter since updateWithFilter is too powerful
-                ctx.throw[403]({ msg: 'updateWithFilterNotAllowed', allowedId: localConfig.filter?._id })
+                throw ctx.error[403]({ msg: 'updateWithFilterNotAllowed', allowedId: localConfig.filter?._id })
             }
             if (!ctx.simulateRequest) {
                 const returnVal = await MongooseModel.updateMany(filter, localConfig.inputFields, { session: ctx.transactionSession })
@@ -158,7 +158,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
         },
 
         async deleteWithFilter(ctx, filter) {
-            if (!ctx.isSystem && !filter._id) ctx.throw[403]({ errorCode: '29667' })
+            if (!ctx.isSystem && !filter._id) throw ctx.error[403]({ errorCode: '29667' })
             if (Object.keys(filter).length === 0) throw ctx.error.wrongValueForParam({ msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
             const localConfig = getLocalConfigForWrite('delete', 'getAll', undefined, filter)
 
