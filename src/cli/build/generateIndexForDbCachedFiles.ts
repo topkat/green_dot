@@ -78,7 +78,7 @@ export type ModelNamesForDb = { [K in keyof ModelsWithDbNamesAndReadWrite]: keyo
 `
   }
 
-  await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'index.generated.ts'), indexFileContent)
+  await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'dbs', 'index.generated.ts'), indexFileContent)
 
   C.success(`Successfully generated local cache/dbs/index.generated.ts`)
 }

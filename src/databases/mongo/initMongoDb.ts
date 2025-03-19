@@ -13,7 +13,7 @@ const { NODE_ENV } = ENV()
 const env: Env = NODE_ENV
 
 declare global {
-    interface GDeventNames extends NewEventType<'databaseConnected', []> { }
+    interface GDeventNames extends NewEventType<'database.connected', []> { }
 }
 
 type ErrParams = Parameters<typeof error.serverError>
@@ -78,14 +78,17 @@ export async function mongoInitDb(
         if (env !== 'build') {
             error.serverError(`mongoDatabaseConnexionError`, { err: lessVerboseErr, dbId, dbName })
             C.log('\n\n')
-            luigi.say(`Senior advice here => please check that you have a database running at ${connexionString.replace(/:[^@]+@/, '****************')}.\nTips: Use 'run-rs' npm package to easily start mongoDb with replica sets locally.\n\n`)
+            luigi.say([
+                `Senior advice here => please check that you have a database running at ${connexionString.replace(/:[^@]+@/, '****************')}.\nTips: Use 'run-rs' npm package to easily start mongoDb with replica sets locally.\n\n`,
+                `Blip..bloup... There is 94% chances that you forget to start your database. Please check that you have a database running at ${connexionString.replace(/:[^@]+@/, '****************')}.\nTips: Use 'run-rs' npm package to easily start mongoDb with replica sets locally.\n\n`,
+            ])
         }
     })
     mongooseConnection.on('connected', () => {
         C.log(C.primary(`✓ DB connected: ${dbId} > ${connexionString.includes('127.0.0') ? 'localhost' : connexionString?.split('@')?.[1]}${connexionString.replace(/^.*(\/[^/]+)$/, '$1').replace(/\?[^?]+$/, '')}`))
         nbDatabaseConnected++
         if (nbDatabaseConnected >= nbDatabaseTotal) {
-            event.emit('databaseConnected')
+            event.emit('database.connected')
         }
 
     })

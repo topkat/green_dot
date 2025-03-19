@@ -10,18 +10,17 @@ import { C, registerConfig, ENV, DescriptiveError } from 'topkat-utils'
 import multer from 'multer'
 
 import event from './event'
-import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
 import { initTelegramBot } from './services/sendViaTelegram'
-import { generateMainBackendFiles } from './generate/generateMainBackendFiles'
-import { swaggerDocInit } from './documentation/swaggerDoc.init'
 import { generateLoginMw } from './security/login.middleware'
-import { rateLimiterMiddleware, rateLimiter as rateLimiterSvc } from './security/serviceRouteRateLimiter'
+import { rateLimiterMiddleware } from './security/serviceRouteRateLimiter'
 import { logRouteInfos } from './registerModules/apiMiddlewares/logRouteInfo.middleware'
 import { getMainConfig, getActiveAppConfig } from './helpers/getGreenDotConfigs'
 import { registerDaoApi } from './registerModules/registerDaoApi'
 import { registerServiceApi } from './registerModules/registerServicesApi'
 import { registerServices } from './registerModules/registerServices'
 import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
+import { env } from './helpers/getEnv'
+import { startServerAsyncTasks } from './startServerAsyncTasks'
 
 dotenv.config()
 
@@ -50,12 +49,14 @@ export async function startServer(
     }
 
     // SERVER START EVENT
-    await event.on('databaseConnected', async () => {
+    await event.on('database.connected', async () => {
         if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
 
         // seed and server.start events shall be triggerred before exposing routes. This avoid
         // accidentally hitting a route without seeded content
         await event.emit('server.start', isMaster, app)
+
+        throw 'CHECK IF CATCHED CORRECTLY'
     })
 
     // INIT DBS
@@ -147,45 +148,11 @@ export async function startServer(
     // ALIVE ROUTE
     app.get('/alive', generateLoginMw(), rateLimiterMiddleware(), (_, res) => res.json(true))
 
+    // Expose a route for killing the server process (allow to emulate servers down)
+    if (env.isTest && process.env.NODE_ENV !== 'production') app.get(`/killProcess`, logRouteInfos('Killing Process', '💀'), () => process.exit(0))
+
     // ASYNC this is async to gain in server loading time
-    setTimeout(async () => {
-        try {
-            // Expose a route for killing the server process (allow to emulate servers down)
-            if (mainConfig.isTestEnv) app.get(`/killProcess`, logRouteInfos('Killing Process', '💀'), () => process.exit(0))
-
-            // 404 catch all routes, make sure they are declared after everything (even custom user declared routes)
-            app.use(
-                generateLoginMw(),
-                async (req, res, next) => {
-                    try {
-                        C.error(false, `Route not found: ${req.method} ${req.originalUrl}`)
-                        await rateLimiterSvc.recordAttemptAndThrowIfNeeded((req as any)?.ctx, '404')
-                        return res.status(404).end()
-                    } catch (err) {
-                        next(err)
-                    }
-                }
-            )
-
-            app.use(getExpressErrHandlerMW())
-
-            if (!mainConfig.isProdEnv) {
-                try {
-                    await generateMainBackendFiles()
-                    const swaggerDoc = await import(`./cache/${appConfig.name}.swaggerDoc.generated.json`)
-                    swaggerDocInit(app, swaggerDoc, appConfig.serverLiveUrl)
-                } catch (err) {
-                    C.error(err)
-                    C.warning(false, `Swagger doc could not be generated and initiated`)
-                }
-            }
-        } catch (err) {
-            const err2 = err as DescriptiveError
-            if (err2 instanceof DescriptiveError) err2.hasBeenLogged = true
-            C.error(err)
-            C.error(false, 'An error has occurred in ASYNC part of server start. See log above for more informations')
-        }
-    }, 2000)
+    setTimeout(async () => await startServerAsyncTasks(app), 2000)
 }
 
 

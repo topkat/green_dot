@@ -57,7 +57,7 @@ export async function generateDbCachedFiles(resetCache = false) {
 
     modelTypeFileContent += `export type ModelNames = keyof AllModels\n\n`
 
-    await fs.outputFile(Path.join(greenDotCacheModuleFolder, dbName + '.modelTypes.generated.ts'), modelTypeFileContent)
+    await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'dbs', dbName + '.modelTypes.generated.ts'), modelTypeFileContent)
 
     C.success(`Successfully generated ${dbName + '.modelTypes.generated.ts'}`)
 

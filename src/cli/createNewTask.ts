@@ -24,7 +24,7 @@ export function createNewTask() {
 
       const t2 = perfTimer()
 
-      C.line(`${this._stepNb}) ${title}`, terminalCharSize, undefined, undefined, 0)
+      C.line(`${this._stepNb}) ${title}`, terminalCharSize)
 
       try {
         await callback()
