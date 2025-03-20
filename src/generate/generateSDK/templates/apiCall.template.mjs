@@ -27,14 +27,14 @@ const sideEffects = {}
 const getServerState = () => serverState
 
 let onError = (err, status) => {
-    if (err && err.msg) {
+    if (err && err.message) {
         const {
-            msg = err && err.response && err.response.statusText,
+            message = err && err.response && err.response.statusText,
             code = err.code || err.status || err.response && err.response.status,
             ...extraInfos
         } = err || {}
 
-        const fullMsg = `${code} ${msg}`
+        const fullMsg = `${code} ${message}`
         const content = JSON.stringify(extraInfos, null, 2)
             .replace(/^ {2}(\s*)"([^"]+)"/gm, '$1$2')
             .replace(/(^{|}$)/g, '')

@@ -118,7 +118,8 @@ async function initAppConfigCache(resetCache = false) {
       }
     } catch (err) {
       C.error(err)
-      throw `ERROR in .${pathNameErrExtraInfos}/green_dot.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`
+      C.error(false, `ERROR in .${pathNameErrExtraInfos}/green_dot.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`)
+      process.exit(201) // hot reload
     }
   }
 }

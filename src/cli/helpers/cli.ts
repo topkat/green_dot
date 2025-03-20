@@ -18,7 +18,7 @@ export function cliIntro() {
 }
 
 export function clearCli() {
-  // process.stdout.write('\x1Bc')
+  process.stdout.write('\x1Bc')
 }
 
 export const wrapCliText = (str: string, width = terminalCharSize) => str.match(new RegExp(`(.{0,${width}})(\\s|$)`, 'g'))?.map(l => l.trim()) || []

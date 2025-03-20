@@ -1,10 +1,10 @@
 
 import 'typescript-generic-types'
 import { QueryClient } from '@tanstack/react-query'
-import { InitBackendConfig } from './sdkHelpers/initBackend'
+
 
 export type SdkError = {
-  msg: string
+  message: string
   code: number
   [key: string]: any
 }

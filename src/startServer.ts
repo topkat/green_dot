@@ -22,6 +22,7 @@ import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
 import { env } from './helpers/getEnv'
 import { startServerAsyncTasks } from './startServerAsyncTasks'
 import { init } from './init'
+import { newSystemCtx } from './ctx'
 
 dotenv.config()
 
@@ -50,17 +51,11 @@ export async function startServer(isMaster = true) {
 
     // SERVER START EVENT
     event.on('database.connected', async () => {
-        try {
-            if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
+        if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
 
-            // seed and server.start events shall be triggered before exposing routes.
-            // This avoid accidentally hitting a route without seeded content
-            await event.emit('server.start', isMaster, app)
-
-        } catch (err) {
-            C.error(false, 'catched1')
-            throw 'CHECK IF CATCHED CORRECTLY'
-        }
+        // seed and server.start events shall be triggered before exposing routes.
+        // This avoid accidentally hitting a route without seeded content
+        await event.emit('server.start', newSystemCtx(), isMaster, app)
     })
 
     // INIT DBS

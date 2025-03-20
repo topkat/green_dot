@@ -21,12 +21,12 @@ export async function startDevProdCommand() {
     luigi.confirm()
 
     autoFindAndInitActiveAppAndDbPaths(folder)
+
+    clearCli()
+    cliIntro()
   }
 
   process.env.SAFE_IMPORT_SILENT = '1'
-
-  clearCli()
-  cliIntro()
 
   process.stdin.setRawMode?.(true)
   process.stdin.resume()
@@ -45,8 +45,7 @@ export async function startDevProdCommand() {
     await stopServer()
     if (watcherOn === false) userInputKeyHandler('h')
     // Don't put spinner here
-    luigi.warn(`Waiting for file change before restarting process...`)
-    process.exit(1001)
+    process.exit(201) // hot reload
   }
 
   // Catch All App Errors, even the unhandled ones

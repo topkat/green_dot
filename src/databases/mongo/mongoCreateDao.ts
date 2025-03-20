@@ -142,7 +142,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             const localConfig = getLocalConfigForWrite('update', 'getAll', config, filter, fields)
             await mongoBeforeRequest(ctx, daoConf, localConfig)
             if (!ctx.isSystem && localConfig?.filter?._id) { // forcing _id filter since updateWithFilter is too powerful
-                throw ctx.error[403]({ msg: 'updateWithFilterNotAllowed', allowedId: localConfig.filter?._id })
+                throw ctx.error[403]({ message: 'updateWithFilterNotAllowed', allowedId: localConfig.filter?._id })
             }
             if (!ctx.simulateRequest) {
                 const returnVal = await MongooseModel.updateMany(filter, localConfig.inputFields, { session: ctx.transactionSession })
@@ -160,7 +160,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
         async deleteWithFilter(ctx, filter) {
             if (!ctx.isSystem && !filter._id) throw ctx.error[403]({ errorCode: '29667' })
-            if (Object.keys(filter).length === 0) throw ctx.error.wrongValueForParam({ msg: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
+            if (Object.keys(filter).length === 0) throw ctx.error.wrongValueForParam({ message: 'deleteWithFilterForbiddenWithEmptyFilter', filter })
             const localConfig = getLocalConfigForWrite('delete', 'getAll', undefined, filter)
 
             // if (daoConf.modelConfig?.hardDelete === false) {

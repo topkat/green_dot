@@ -78,7 +78,13 @@ async function start() {
       for (const step of c.steps) {
         next = await new Promise(resolve => {
           startChildProcess([__dirname + '/childProcessEntryPoint.ts', step], code => {
-            if (code === 1001) {
+            if (!code || code === 0) {
+              // SUCCESS EXIT
+              resolve('continue')
+            } else if (code === 201) {
+              C.log('\n\n')
+              C.warning(false, `Waiting for file change before restarting process...\n\n`)
+              // HOT RELOAD
               onFileChange(async path => {
                 if (path.includes('generated')) return
 
@@ -86,11 +92,10 @@ async function start() {
                 C.log(`\n\n`)
                 resolve('reload')
               })
-            } else if (code !== 0) {
+            } else {
+              // ERROR EXIT RESTART PROCESS
               process.stdout.write('\x1Bc')
               resolve('reload')
-            } else {
-              resolve('continue')
             }
           })
         })
@@ -101,9 +106,9 @@ async function start() {
     if (c.exitAfter) process.exit(0)
 
   } catch (err) {
-    const msg = err && err.message
-    if (msg && msg.includes('Found unknown command')) {
-      C.error(false, msg + '\n')
+    const message = err && err.message
+    if (message && message.includes('Found unknown command')) {
+      C.error(false, message + '\n')
       C.info(`Available commands: ${Object.keys(commands).join(', ')}`)
       C.log('\n')
     } else C.error(err)

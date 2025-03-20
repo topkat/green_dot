@@ -1,5 +1,6 @@
 
 import { isset } from 'topkat-utils'
+import { newSystemCtx } from './ctx'
 
 export const event = {
     /**
@@ -35,10 +36,10 @@ export const event = {
         eventName: EventName,
         ...params: GDeventNames[EventName]
     ) {
-        // TODO try catch in all events and msg like plz use try catch in your events handlers
+        // TODO try catch in all events and message like plz use try catch in your events handlers
         const metadata = {}
         event.registeredEvents[eventName] ??= []
-        for (const [, callback] of event.registeredEvents[eventName]) await callback(...params, metadata)
+        for (const [, callback] of event.registeredEvents[eventName]) await callback(newSystemCtx(), ...params, metadata)
         return metadata
     },
     /** SYNCHRONOUS
@@ -49,7 +50,7 @@ export const event = {
     ) {
         const metadata = {}
         event.registeredEvents[eventName] ??= []
-        for (const [, callback] of event.registeredEvents[eventName]) callback(...params, metadata)
+        for (const [, callback] of event.registeredEvents[eventName]) callback(newSystemCtx(), ...params, metadata)
         return metadata
     },
     registeredEvents: {} as { [EventName: string]: Array<[priority: number, callback: Function]> },

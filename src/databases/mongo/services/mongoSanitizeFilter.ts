@@ -50,7 +50,7 @@ export async function mongoSanitizeFilter(ctx: Ctx, localConfig: LocalConfigPars
 
 
     // async function applyMaskToFilter<T>(filter: AsFilter<T>): Promise<AsFilter<T>> {
-    //     // if (Object.keys(filter).some(f => f.startsWith('$'))) errors.wrongValueForParam(ctx, { msg: `unauthorizedFilter`, filter: localConfig.filter, unauthorized: Object.keys(filter).filter(f => f.startsWith('$')) })
+    //     // if (Object.keys(filter).some(f => f.startsWith('$'))) errors.wrongValueForParam(ctx, { message: `unauthorizedFilter`, filter: localConfig.filter, unauthorized: Object.keys(filter).filter(f => f.startsWith('$')) })
     //     // MASK UNAUTHORIZED DATA IN FILTER
     //     const newFilter = await applyMaskOnObjectForUser(ctx, dbName, modelName, method, filter) // masking shall not impact query operators ($ne, $gte...) since they are not supposed to be 1st level
     //     // for (const unauthorized of unauthorizedOperators) {

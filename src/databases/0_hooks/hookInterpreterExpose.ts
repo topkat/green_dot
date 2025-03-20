@@ -12,7 +12,7 @@ export async function hookInterpreterExpose(
     method: DaoGenericMethods,
     modelName
 ) {
-    if (ctx.isSystem) return true
+    if (ctx?.isSystem) return true
     const exposeHooks = await appliableHooksForUser(ctx, hooks, method, 'alwaysReturnTrue', 'matchStrict', 'alwaysReturnTrue')
     const authorizedMethods = []
     for (const { expose: exposedMethods } of exposeHooks) authorizedMethods.push(...exposedMethods)

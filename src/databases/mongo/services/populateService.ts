@@ -19,10 +19,10 @@ export async function forEachPopulateField<ModelName extends string>(
     recursive = false
 ) {
     const models = await getProjectDatabaseModels()
-    if (!modelFlatObjCache[dbName][modelName]) {
-        modelFlatObjCache[dbName] ??= {}
-        modelFlatObjCache[dbName][modelName] = models[dbName][modelName]._getDefinitionObjFlat(false, def => def._refValue)
-    }
+
+    modelFlatObjCache[dbName] ??= {}
+    modelFlatObjCache[dbName][modelName] ??= models[dbName][modelName]._getDefinitionObjFlat(false, def => def._refValue)
+
     const populateAddresses = modelFlatObjCache[dbName][modelName]
 
     // const { populateAddrFlatWithModelName } = models

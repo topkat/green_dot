@@ -16,9 +16,9 @@ const defaultErrors = {} as ErrorObject
 const defaultErrorsWithCustomMsg = {} as ErrorObject
 
 /** Throws an error with contextual informations (ctx, custom infos...). Eg: throw error.serverError() */
-export const error = createErrorProxy(false) as ThrowErrorTypeSafe // Eg: throw.serverError(msg, options)
+export const error = createErrorProxy(false) as ThrowErrorTypeSafe // Eg: throw.serverError(message, options)
 
-export const errorWithCtx = createErrorProxy(true) as GreenDotErrors // Add the ctx as first param of the error. Eg: throw.serverError(ctx, msg, options)
+export const errorWithCtx = createErrorProxy(true) as GreenDotErrors // Add the ctx as first param of the error. Eg: throw.serverError(ctx, message, options)
 
 function createErrorProxy(addCtxFnInParams: boolean) {
     return createProxy({}, {
@@ -33,7 +33,7 @@ function createErrorProxy(addCtxFnInParams: boolean) {
                     message = params[0]
                     options = { ...defaultErrorsWithCustomMsg[p], ...(params[1] || {}) }
                 } else if (defaultErrors[p]) {
-                    message = p + (defaultErrors[p]?.msg ? ` ${defaultErrors[p]?.msg}` : '')
+                    message = p + (defaultErrors[p]?.message ? ` ${defaultErrors[p]?.message}` : '')
                     options = { ...defaultErrors[p], ...(params[0] || {}) }
                 } else {
                     C.warning(false, `Trying to throw an unknown error "${p}". green_dot errors has not been correctly registered. Generic error thrown instead. Please see documentation on how to throw errors on green_dot or open a github issue.`)
@@ -76,12 +76,12 @@ export function registerErrors<T extends ErrorObject>(errObj: T, withCustomMsgPa
 //  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚    ╚══╝ ═╩═ ═══╝   ╩
 
 const coreErrors = registerErrors({
-    404: { code: 404, msg: 'notFound' },
-    403: { code: 403, msg: 'userDoNotHaveThePermission' },
-    422: { code: 422, msg: 'wrongParams' },
-    401: { code: 401, msg: 'accessDenied' },
-    409: { code: 401, msg: 'conflict' },
-    429: { code: 429, msg: 'tooManyRequests' },
+    404: { code: 404, message: 'notFound' },
+    403: { code: 403, message: 'userDoNotHaveThePermission' },
+    422: { code: 422, message: 'wrongParams' },
+    401: { code: 401, message: 'accessDenied' },
+    409: { code: 401, message: 'conflict' },
+    429: { code: 429, message: 'tooManyRequests' },
     // DATA VALIDATION
     ressourceDoesNotExists: { code: 404 },
     accessDenied: { code: 403 },

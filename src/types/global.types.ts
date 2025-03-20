@@ -24,7 +24,7 @@ declare global {
 
   interface GDeventNames extends GDeventNamesBase { }
 
-  type NewEventType<EventName extends string, Params extends any[] = []> = { [k in EventName]: Params }
+  type NewEventType<EventName extends string, Params extends any[] = []> = { [k in EventName]: [systemCtx: Ctx, ...params: Params] }
 
 }
 
