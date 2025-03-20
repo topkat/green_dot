@@ -10,7 +10,7 @@ export function getExpressErrHandlerMW() {
         else if (!isset(err.log)) {
             // NON DESCRIPTIVE ERRORS
             const isStrErr = typeof err === 'string'
-            const errMsg = (isStrErr ? err : (err.msg || err.message)) as string
+            const errMsg = (isStrErr ? err : err.message) as string
             const extraInfos = {
                 doNotDisplayCode: true,
                 doNotWaitOneFrameForLog: true,
