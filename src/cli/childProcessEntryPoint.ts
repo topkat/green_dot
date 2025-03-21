@@ -3,6 +3,7 @@
 import '../types/global.types'
 import { buildCommand } from './build.command'
 import { cleanCommand } from './clean.command'
+import { generateCommand } from './generate.command'
 import { startDevProdCommand } from './startDevProdServer.command'
 
 
@@ -15,8 +16,6 @@ const [, , command] = process.argv as [string, string, ChildProcessCommands]
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
-
-
 
 type CommandPlus = Record<string, { execute: Function, exitAfter?: boolean }>
 
@@ -31,6 +30,10 @@ const commands = {
   },
   startServer: {
     execute: startDevProdCommand,
+    exitAfter: true,
+  },
+  generate: {
+    execute: generateCommand,
     exitAfter: true,
   },
 } satisfies CommandPlus

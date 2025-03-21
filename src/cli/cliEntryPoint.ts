@@ -34,15 +34,17 @@ const commands = {
   dev: {
     description: 'Start a server in dev mode with hot reloading',
     steps: [
-      // 'build',
+      'build',
       'startServer'
     ],
     exitAfter: true,
   },
-  // generate: {
-  //   description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
-  //   execute: buildCommand,
-  // },
+  generate: {
+    description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
+    steps: [
+      'generate'
+    ],
+  },
 } satisfies CommandPlus
 
 
