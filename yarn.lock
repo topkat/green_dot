@@ -528,7 +528,7 @@
     "@inquirer/type" "^3.0.5"
     ansi-escapes "^4.3.2"
 
-"@inquirer/prompts@^7.3.3", "@inquirer/prompts@^7.4.0":
+"@inquirer/prompts@^7.4.0":
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/@inquirer/prompts/-/prompts-7.4.0.tgz#bd9be38372be8db75afb04776eb0cf096ae9814b"
   integrity sha512-EZiJidQOT4O5PYtqnu1JbF0clv36oW2CviR66c7ma4LsupmmQlUwmdReGKRp456OWPWMz3PdrPiYg3aCk3op2w==
@@ -5307,10 +5307,10 @@ signal-exit@^4.0.1, signal-exit@^4.1.0:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-4.1.0.tgz#952188c1cbd546070e2dd20d0f41c0ae0530cb04"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
 
-simple-cli-prompt@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/simple-cli-prompt/-/simple-cli-prompt-1.0.4.tgz#022bdadce3ada1e8224167706f2c6650b5741164"
-  integrity sha512-4N9dibFvvlmBjsEA/Del9AZ0vNjyXl3l9hE0Yx4A3dKlxp7cogUy3atxgKm7xm7IvNoZyDJCL1W14YBeBm+8UQ==
+simple-cli-prompt@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/simple-cli-prompt/-/simple-cli-prompt-1.0.5.tgz#e11a4b6a86488a9852a995d66807e95756d473c4"
+  integrity sha512-QwEoUOQKjQ/A5Zh8Qd3sCSTqukkx31XsYVs5+WyKLAWDscrl+VVW0sLOR8v4gsgxcRp5KkiwiIn70KJKvFfnjg==
   dependencies:
     bump-simple "^1.0.24"
     inquirer "^12.1.0"

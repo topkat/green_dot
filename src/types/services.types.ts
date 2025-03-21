@@ -130,15 +130,15 @@ export interface Service<
   OutputType extends GenericDef = undefined
 > extends BaseService {
 
-  /** Validate Service Params sent via API and can be used for automatic documentation. You can:
-  * * Use good-cop type, like: _.number() or _.object({...})
-  * * Use an array of function params like [_.number(), _.boolean()]
+  /** Input Params (body of the request) types for runtime validation and typing. You can:
+  * * Use good-cop types, like: _.number() or _.object({...})
+  * * Use an array of types like [_.number(), _.boolean()]
   * * Use a simple object like { nb: _.number(), bool: _.boolean() }
-  This will generate the typescript type and validate params at runtime
+  This will infer the typescript type and validate params at runtime
    */
   input?: Readonly<InputType>
 
-  /** Validate and Generate type for service Return value. Use good-cop type, like _.number() or _.object({...}) */
+  /** Service Return Type for runtime validation and typing. Use good-cop type, like _.number() or _.object({...}) */
   output?: OutputType
 
   /** The main function for the service, call it in app with myService.main(...), in the api you can access it via SDK like $.myService() */

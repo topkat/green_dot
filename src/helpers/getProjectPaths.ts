@@ -29,16 +29,8 @@ let greenDotPathsCache: {
 export async function getProjectPaths(resetCache = false) {
 
   if (!greenDotPathsCache || resetCache === true) {
-    // FIND ROOT PATH
-    let mainConfigPath = Path.join(process.cwd(), 'green_dot.config.ts')
-    let exists = await fs.exists(mainConfigPath)
-    if (!exists) mainConfigPath = Path.join(process.cwd(), '../green_dot.config.ts')
-    exists = await fs.exists(mainConfigPath)
-    if (!exists) mainConfigPath = Path.join(process.cwd(), '../../green_dot.config.ts')
-    exists = await fs.exists(mainConfigPath)
-    if (!exists) throw C.error(false, 'green_dot.config.ts NOT FOUND. Please ensure you run the command from a valid green_dot project')
 
-    const rootPath = mainConfigPath.replace(/[/\\][^/\\]*$/, '')
+    const { mainConfigPath, rootPath } = await findProjectPath()
 
     // FIND ALL GREEN DOT CONFIGS
     const allFiles = await glob.async('**/green_dot.*.config.*', {
@@ -66,6 +58,24 @@ export async function getProjectPaths(resetCache = false) {
   }
 
   return greenDotPathsCache
+}
+
+
+
+
+export async function findProjectPath(silent = false) {
+  let mainConfigPath = Path.join(process.cwd(), 'green_dot.config.ts')
+  let exists = await fs.exists(mainConfigPath)
+  if (!exists) mainConfigPath = Path.join(process.cwd(), '../green_dot.config.ts')
+  exists = await fs.exists(mainConfigPath)
+  if (!exists) mainConfigPath = Path.join(process.cwd(), '../../green_dot.config.ts')
+  exists = await fs.exists(mainConfigPath)
+
+  if (!exists && !silent) throw C.error(false, './green_dot.config.ts NOT FOUND. Please ensure you run the command from a valid green_dot project')
+
+  const rootPath = mainConfigPath.replace(/[/\\][^/\\]*$/, '')
+
+  return { rootPath, mainConfigPath, exists }
 }
 
 

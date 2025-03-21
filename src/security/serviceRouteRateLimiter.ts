@@ -20,7 +20,7 @@ const rateLimiterCache = {} as {
 type NbAttempts = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '10' | '15' | '20' | '30' | '50' | '60' | '100' | '150' | '200'
 type TimeRange = 'min' | '30s' | '5s'
 
-type RateLimiterStr = `${NbAttempts}/${TimeRange}` | 'disable' // '5/min' | '10/min' | '20/min' | '5/30s'
+export type RateLimiterStr = `${NbAttempts}/${TimeRange}` | 'disable' // '5/min' | '10/min' | '20/min' | '5/30s'
 
 type RateLimiterObj = {
     /** Max nb attemps in the given time window */

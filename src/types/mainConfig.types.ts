@@ -2,7 +2,7 @@
 import 'typescript-generic-types'
 import { GenerateSdkConfig } from './generateSdk.types'
 import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
-import { RateLimiterConfig } from '../security/serviceRouteRateLimiter'
+import { RateLimiterConfig, RateLimiterStr } from '../security/serviceRouteRateLimiter'
 
 export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: string }
 
@@ -106,6 +106,26 @@ export type GreenDotConfig = {
   }
   /** Configure how the SDK are generated */
   generateSdkConfig: GenerateSdkConfig
+
+  /** Generate Command Options */
+  generateCommandOptions?: Partial<{
+    apiServiceDefaultOptions?: {
+      /** TODO generate jsDoc on your SDK as well as on swagger documentation...etc
+      * * 'simple': a simple line string
+      * * 'extended': a string and an array of thrown errors to be documented */
+      docStyle: 'none' | 'simple' | 'extended',
+      /** TODO document this */
+      rateLimiter: RateLimiterStr
+      /** By default, Api route is inferred from the service name. So if you service
+      * is called subscribeNewsletter, the route will be
+      * 'http://my.api/subscribe-newsletter'.
+      * Use this if you want custom route. */
+      displayApiRouteField: boolean
+      /** By default all api methods (GET, POST...) in green_dot are POST for simplicity
+      * if you want to expose your route with another method, this is the way to go */
+      displayApiMethodField: boolean
+    }
+  }>
 }
 
 
