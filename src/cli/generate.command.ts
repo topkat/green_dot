@@ -10,6 +10,7 @@ import { findProjectPath } from '../helpers/getProjectPaths'
 import { templater } from 'simple-file-templater'
 import { getMainConfig } from '../helpers/getGreenDotConfigs'
 import { RateLimiterStr } from '../security/serviceRouteRateLimiter'
+import { generateService } from './generate/cliGenerateService'
 
 
 export async function generateCommand() {
@@ -49,7 +50,7 @@ export async function generateCommand() {
 
     await templater(
       Path.resolve(__dirname, './templates'),
-      sdkRoot,
+      'TODO',
       [
         // ESM => COMMON JS
 
@@ -91,68 +92,3 @@ async function generateBlankProject() {
 }
 
 
-async function generateService(fileName: string) {
-
-  const { allRoles, generateCommandOptions } = await getMainConfig()
-  const { apiServiceDefaultOptions } = generateCommandOptions || {}
-
-  const roles = await luigi.askSelection(
-    `Who is allowed to access this route?`,
-    [
-      { name: 'Public (the route is available without connexion)', value: 'public' },
-      ...allRoles.map(r => ({ name: capitalize1st(r), value: r }))
-    ] as const,
-    { multi: true }
-  )
-
-  const selection = await luigi.askSelection([
-    `Let's go ?`
-  ], [
-    `OK`,
-    `Advanced options`,
-  ])
-
-  let { displayApiMethodField, displayApiRouteField, docStyle, rateLimiter } = apiServiceDefaultOptions || {}
-
-  if (selection === 'Advanced options') {
-
-    luigi.tips(`In your green_dot.config.ts file, you can configure \`{ generateCommandOptions }\` to set the default values of a generated file`)
-
-    docStyle = await luigi.askSelection(
-      `What style of doc do you want to write for your service ?\n${C.dim('Doc are used to display info on hover in the SDK, generate Swagger doc...etc')}`,
-      [
-        { value: 'none' satisfies typeof docStyle, description: 'Only weaks need docs' },
-        { value: 'simple' satisfies typeof docStyle, description: 'A simple line exmplaining your service' },
-        { value: 'extended' satisfies typeof docStyle, description: 'An extended documentation with errors documented' },
-      ] as const,
-      { default: docStyle }
-    )
-
-    rateLimiter = await luigi.askSelection(
-      `Do you want to set a rate limiter?\n${C.dim('Rate limiter is an important security feature that allow only a reasonable number of apiCalls in a given time window')}`,
-      ['disable', '5/30s', '10/30s', '30/30s'] satisfies RateLimiterStr[]
-    )
-
-  }
-
-  const file = `
-import { svc, db, _ } from 'green_dot'
-
-
-export const ${fileName} = svc({
-    for: [${roles.length ? `'${roles.join(`', '`)}'` : ''}],
-    doc: \`Write your service doc here\`,
-    input: {
-      exempleField: _.string()
-    },
-    output: _.undefined(),
-    rateLimiter: '5/min',
-    async main(ctx, {
-        exempleField,
-    }) {
-        
-    },
-})
-
-`
-}

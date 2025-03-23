@@ -2,6 +2,27 @@
     //----------------------------------------
     // SVC
     //----------------------------------------
+    "gd_svc:newApiService": {
+        "prefix": [
+            "gd_svc:newApiService",
+        ],
+        "body": [
+            "export const ${TM_FILENAME_BASE/(.*)\\..+$/$1/} = $.svc({",
+            "    doc: {",
+            "        description: `$5`,",
+            "        errors: [],",
+            "    },",
+            "${2:    ${3|for,notFor|}: '$4',}",
+            "    input: {",
+            "        $6",
+            "    },",
+            "    output: _$10,",
+            "    async main(ctx, {$11}) {",
+            "        $13",
+            "    },",
+            "})",
+        ]
+    },
     "svc:apiWithObjParams": {
         "prefix": [
             "svc:api",

@@ -13,10 +13,10 @@ export async function startDevProdCommand() {
   const { activeApp, appConfigs } = await getProjectPaths()
 
   if (!activeApp) {
-    const folder = await luigi.askSelection({
-      message: 'Which server do you want that I start ?',
-      choices: appConfigs.map(appConf => appConf.folderPath)
-    })
+    const folder = await luigi.askSelection(
+      'Which server do you want that I start ?',
+      appConfigs.map(appConf => appConf.folderPath)
+    )
 
     luigi.confirm()
 
