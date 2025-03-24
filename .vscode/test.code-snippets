@@ -5,7 +5,7 @@
     "assert": {
         "scope": "javascript,typescript",
         "prefix": [
-            "assert",
+            "gd_assert",
             "newAssertion"
         ],
         "body": [
@@ -15,8 +15,7 @@
     "test:route": {
         "scope": "javascript,typescript",
         "prefix": [
-            "new:test-route",
-            "test:route"
+            "gd_test:classicApiRouteSnippet",
         ],
         "body": [
             "{",
@@ -51,7 +50,7 @@
     "test:svc": {
         "scope": "javascript,typescript",
         "prefix": [
-            "new:test-svc",
+            "gd_test:testServiceViaSdk_success",
             "test:svc"
         ],
         "body": [
@@ -67,7 +66,7 @@
     "test:systemServerAction": {
         "scope": "javascript,typescript",
         "prefix": [
-            "new:test-svc-system-server-action",
+            "gd_test:testServiceViaSdk_serverAction",
             "test:svc-system-serverAction"
         ],
         "body": [
@@ -83,7 +82,7 @@
     "test:new": {
         "scope": "javascript,typescript",
         "prefix": [
-            "new:test-svc-error",
+            "gd_test:testServiceViaSdk_error",
             "test:svc-error"
         ],
         "body": [
