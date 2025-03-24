@@ -5,7 +5,7 @@ import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
 export type GDpathConfig = { path: string, folderPath: string }
-export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string, generatedFolderPath: string }
+export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string, generatedFolderPath: string, folderPathRelative: string }
 type PathConfArr = GDpathConfigWithIndex[]
 
 export const greenDotCacheModuleFolder = Path.resolve(__dirname, '../cache')
@@ -64,18 +64,25 @@ export async function getProjectPaths(resetCache = false) {
 
 
 export async function findProjectPath(silent = false) {
-  let mainConfigPath = Path.join(process.cwd(), 'green_dot.config.ts')
+  const cwd = process.cwd()
+  let isSubFolder = false
+  let mainConfigPath = Path.join(cwd, 'green_dot.config.ts')
   let exists = await fs.exists(mainConfigPath)
-  if (!exists) mainConfigPath = Path.join(process.cwd(), '../green_dot.config.ts')
-  exists = await fs.exists(mainConfigPath)
-  if (!exists) mainConfigPath = Path.join(process.cwd(), '../../green_dot.config.ts')
-  exists = await fs.exists(mainConfigPath)
+  if (!exists) {
+    isSubFolder = true
+    mainConfigPath = Path.join(cwd, '../green_dot.config.ts')
+    exists = await fs.exists(mainConfigPath)
+    if (!exists) {
+      mainConfigPath = Path.join(cwd, '../../green_dot.config.ts')
+      exists = await fs.exists(mainConfigPath)
+    }
+  }
 
   if (!exists && !silent) throw C.error(false, './green_dot.config.ts NOT FOUND. Please ensure you run the command from a valid green_dot project')
 
-  const rootPath = mainConfigPath.replace(/[/\\][^/\\]*$/, '')
+  const rootPath = mainConfigPath.replace(/[/\\][^/\\]*$/, '') // replace last path bit
 
-  return { rootPath, mainConfigPath, exists }
+  return { rootPath, mainConfigPath, exists, cwd, isSubFolder }
 }
 
 
@@ -84,9 +91,11 @@ export async function findProjectPath(silent = false) {
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
 function configFilePathMapper(path: string) {
+  const folderPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, '')
   return {
     path: path,
-    folderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, ''),
+    folderPath,
+    folderPathRelative: Path.relative(greenDotPathsCache.mainConfig.folderPath, folderPath),
     generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
     generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '2_generated')
   }

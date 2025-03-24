@@ -7,7 +7,7 @@
             "gd_svc:newApiService",
         ],
         "body": [
-            "export const ${TM_FILENAME_BASE/(.*)\\..+$/$1/} = $.svc({",
+            "export const ${TM_FILENAME_BASE/(.*)\\..+$/$1/} = svc({",
             "    doc: {",
             "        description: `$5`,",
             "        errors: [],",

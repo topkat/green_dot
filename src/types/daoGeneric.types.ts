@@ -38,7 +38,7 @@ export type DaoSharedParsed = {
 export type ExposeDaoConfig = (Omit<DaoHookShared, 'on' | 'notOn'> & { expose?: MaybeArray<DaoMethodsWithReadWrite> })
 
 export type DaoShared = {
-  /** Define a global access permissions on a model for a certain user role */
+  /** Configure what is automatically exposed to outside world via API alongside the permission that is allowed to read / write the model. To have more granularity on which fields should be exposed or which document should be accessed use dao.mask or dao.filter */
   expose?: ExposeDaoConfig[]
 }
 

@@ -3,7 +3,7 @@
     // DAO
     //----------------------------------------
     "dao:mask": {
-        "prefix": "dao:mask",
+        "prefix": "gd_dao:mask",
         "body": [
             "{",
             "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
@@ -13,7 +13,7 @@
         ]
     },
     "dao:filter": {
-        "prefix": "dao:filter",
+        "prefix": "gd_dao:filter",
         "body": [
             "{",
             "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
@@ -25,7 +25,7 @@
         ]
     },
     "dao.expose": {
-        "prefix": "dao:expose",
+        "prefix": "gd_dao:expose",
         "body": [
             "{",
             "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",

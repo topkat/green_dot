@@ -1,12 +1,11 @@
 
-import Path from 'path'
-import { templater } from 'simple-file-templater'
+import fs from 'fs-extra'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { C, capitalize1st } from 'topkat-utils'
+import { C, capitalize1st, camelCaseToWords } from 'topkat-utils'
 import { luigi } from '../helpers/luigi.bot'
 import { RateLimiterStr } from '../../security/serviceRouteRateLimiter'
 
-export async function generateService(fileName: string) {
+export async function cliGenerateService(fileName: string, filePath: string) {
 
   const { allRoles, generateCommandOptions } = await getMainConfig()
   const { apiServiceDefaultOptions } = generateCommandOptions || {}
@@ -20,6 +19,17 @@ export async function generateService(fileName: string) {
     { multi: true }
   )
 
+  const inputParametersStr = await luigi.askUserInput(
+    `Comma separated list for input parameters?\n${C.dim(`Eg: for a money transfer service, we may want "amount,currency,targetAccount...".\nLeave blank if your service has no parameters`)}`,
+    { default: 'exemple' }
+  )
+
+  const inputParameters = inputParametersStr.split(',').map(p => p.trim())
+
+  let { docStyle, rateLimiter } = apiServiceDefaultOptions || {}
+  const { displayApiMethodField = false, displayApiRouteField = false } = apiServiceDefaultOptions || {}
+
+
   const selection = await luigi.askSelection([
     `Let's go ?`
   ], [
@@ -27,16 +37,20 @@ export async function generateService(fileName: string) {
     `Advanced options`,
   ])
 
-  let { displayApiMethodField, displayApiRouteField, docStyle, rateLimiter } = apiServiceDefaultOptions || {}
+  const isAdvanced = selection === 'Advanced options'
 
-  if (selection === 'Advanced options') {
+  const method = displayApiMethodField || isAdvanced ? await getMethod() : undefined
+
+  const route = displayApiRouteField || isAdvanced ? await getRoute() : undefined
+
+  if (isAdvanced) {
 
     luigi.tips(`In your green_dot.config.ts file, you can configure \`{ generateCommandOptions }\` to set the default values of a generated file`)
 
     docStyle = await luigi.askSelection(
       `What style of doc do you want to write for your service ?\n${C.dim('Doc are used to display info on hover in the SDK, generate Swagger doc...etc')}`,
       [
-        { value: 'none' satisfies typeof docStyle, description: 'Only weaks need docs' },
+        { value: 'none' satisfies typeof docStyle, description: 'Only the weaks need docs' },
         { value: 'simple' satisfies typeof docStyle, description: 'A simple line exmplaining your service' },
         { value: 'extended' satisfies typeof docStyle, description: 'An extended documentation with errors documented' },
       ] as const,
@@ -57,52 +71,24 @@ import { svc, db, _ } from 'green_dot'
 export const ${fileName} = svc({
     for: [${roles.length ? `'${roles.join(`', '`)}'` : ''}],
 ${docStyle === 'none' ? '' : docTemplate[docStyle] + '\n'}\
-    input: {
-      exempleField: _.string()
-    },
-    output: _.undefined(),
-    rateLimiter: '5/min',
-    async main(ctx, {
-        exempleField,
-    }) {
-        
+${method ? `    route: [${method}, ${route || camelCaseToWords(fileName).join('-')}],\n` : ''}\
+${!method && route ? `    route: ${route},\n` : ''}\
+${inputParameters ? inputParametersTemplate(inputParameters) + '\n' : ''}\
+    output: _.string(), // TODO valid types are _.string(), _.model('myDb', 'modelName'), _.object({ a: _.number() })
+${rateLimiter === 'disable' ? '' : `    rateLimiter: '${rateLimiter}',\n`}\
+    async main(ctx${inputParameters ? '' : `, {${inputParameters.join(', ')}}`}) {
+        return 'TODO'
     },
 })
-
 `
-  await templater(
-    Path.resolve(__dirname, './templates'),
-    'TODO',
-    [
-      // ESM => COMMON JS
 
-      // Import default
-      [/import ([^\s]*) from ['"]([^'"]+)['"]/g, 'const $1 = require(\'$2\')'],
-      // Import named
-      [/import {([^}]+)} from ['"]([^'"]+)['"]/g, 'const {$1} = require(\'$2\')'],
-      // Import all
-      [/import \* as ([^\s]+) from ['"]([^'"]+)['"]/g, 'const $1 = require(\'$2\')'],
-      // Export default
-      [/export default ([^\s]+)/g, 'module.exports = $1'],
-      // Export named
-      [/export (?:const|let|var|function) ([^\s(]+) ?=?/g, 'exports.$1 ='],
-
-      [/export \{/, 'module.exports = {'],
-      // extensions in imports (avoid targetting package.json "exports")
-      [/(import .*)\.mjs/g, `$1.cjs`],
-      [/(require.*)\.mjs/g, `$1.cjs`],
-    ],
-    [
-      ['.template', ''],
-      ['.mjs', '.cjs'],
-    ],
-    [/\.ts$/]
-  )
-
-
+  await fs.outputFile(filePath, file, 'utf-8')
 
 }
 
+//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
 const docTemplate = {
   simple: `\
@@ -114,4 +100,27 @@ const docTemplate = {
             [404, 'notFound', \`This is an exemple Error description\`],
         ]
     },`
+}
+
+const inputParametersTemplate = (inputParameters: string[]) => `/
+    input: {
+      ${inputParameters.map(p => `      ${p}: _.string()\n`)}
+    },`
+
+
+async function getMethod() {
+  const meth = await luigi.askSelection(
+    `Api Method (optional) ?\n${C.dim(`By default all routes are POST in green_dot, and everything is passed in req.body. Use this setting if you want to override the default behavior.`)}`,
+    ['Keep default', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE',] as const,
+    { default: 'Keep default' }
+  )
+  return meth === 'Keep default' || meth === 'POST' ? undefined : meth
+}
+
+async function getRoute() {
+  const res = await luigi.askUserInput(
+    `Api Route (optional) ?\n${C.dim(`By default routes are based on the service name. Eg: if the service is called subscribeToNewsletter, the generated route will be subscribe-to-newsletter`)}`,
+    { default: 'Keep default' }
+  )
+  return res === 'Keep default' || !res ? undefined : res
 }

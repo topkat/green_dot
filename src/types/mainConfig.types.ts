@@ -122,7 +122,8 @@ export type GreenDotConfig = {
       * Use this if you want custom route. */
       displayApiRouteField: boolean
       /** By default all api methods (GET, POST...) in green_dot are POST for simplicity
-      * if you want to expose your route with another method, this is the way to go */
+      * if you want to expose your route with another method, this is the way to go.
+      * You can get req in ctx.api.req, for exemple for queryString ctx.api.req.query */
       displayApiMethodField: boolean
     }
   }>

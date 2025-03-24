@@ -1,4 +1,4 @@
-import { input, select, checkbox, confirm } from '@inquirer/prompts'
+import { input, select, checkbox, confirm, search, number } from '@inquirer/prompts'
 import { asArray, C, randomItemInArray } from 'topkat-utils'
 import { wrapCliText, terminalCharSize } from './cli'
 
@@ -32,10 +32,21 @@ export const luigi = {
   //   }
   // },
   async askUserInput(
-    message: string
+    message: string,
+    conf?: Omit<Parameters<typeof input>[0], 'message'>
   ) {
     return await input({
       message: this.say(message, { log: false }),
+      ...(conf || {}),
+    })
+  },
+  async askNumberInput(
+    message: string,
+    conf?: Omit<Parameters<typeof number>[0], 'message'>
+  ) {
+    return await number({
+      message: this.say(message, { log: false }),
+      ...(conf || {}),
     })
   },
   async askConfirmation(
@@ -54,6 +65,17 @@ export const luigi = {
     return await (multi ? checkbox : select)({
       message: luigi.say(msg, { log: false }),
       choices: choices as any,
+      ...config,
+    }) as any
+  },
+  async autoComplete<T extends Parameters<typeof search>[0]['source']>(
+    msg: string | string[],
+    searchFn: T,
+    config?: Omit<Parameters<typeof search>[0], 'source'>
+  ): Promise<string> { //Awaited<ReturnType<T>>[number]
+    return await search({
+      message: luigi.say(msg, { log: false }),
+      source: searchFn,
       ...config,
     }) as any
   },
