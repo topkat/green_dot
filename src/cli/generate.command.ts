@@ -2,23 +2,19 @@
 
 import Path from 'path'
 import fs from 'fs-extra'
-import { C, camelCaseify, capitalize1st } from 'topkat-utils'
-import { createNewTask } from './createNewTask'
-import { generateIndexForDbCachedFiles } from './build/generateIndexForDbCachedFiles'
+import { C, camelCaseify } from 'topkat-utils'
 import { luigi } from './helpers/luigi.bot'
 import { findProjectPath, getProjectPaths } from '../helpers/getProjectPaths'
-import { templater } from 'simple-file-templater'
-import { getMainConfig } from '../helpers/getGreenDotConfigs'
-import { RateLimiterStr } from '../security/serviceRouteRateLimiter'
 import { cliGenerateService } from './generate/cliGenerateService'
 import { cliGenerateModel } from './generate/cliGenerateModel'
 import { cliGenerateSchedule } from './generate/cliGenerateSchedule'
 import { cliGenerateErrorFile } from './generate/cliGenerateErrorFile'
+import { cliGenerateTestFlow } from './generate/cliGenerateTestFlow'
 
 
 export async function generateCommand() {
 
-  const { exists, cwd } = await findProjectPath(true)
+  const { exists } = await findProjectPath(true)
 
   if (!exists) {
 
@@ -116,6 +112,8 @@ export async function generateCommand() {
       //    ║   ╠═   ╚══╗   ║     ╠═   ║    ║  ║ ║╔╗║
       //    ╩   ╚══╝ ═══╝   ╩     ╩    ╚══╝ ╚══╝ ╩╝╚╩
 
+      await cliGenerateTestFlow(fileName, filePathWithoutExt)
+
     } else if (selection === 'app') {
 
       //  ╔══╗ ╔══╗ ╔══╗
@@ -142,34 +140,34 @@ export async function generateCommand() {
 
 
 
-    await templater(
-      Path.resolve(__dirname, './templates'),
-      'TODO',
-      [
-        // ESM => COMMON JS
+    // await templater(
+    //   Path.resolve(__dirname, './templates'),
+    //   'TODO',
+    //   [
+    //     // ESM => COMMON JS
 
-        // Import default
-        [/import ([^\s]*) from ['"]([^'"]+)['"]/g, 'const $1 = require(\'$2\')'],
-        // Import named
-        [/import {([^}]+)} from ['"]([^'"]+)['"]/g, 'const {$1} = require(\'$2\')'],
-        // Import all
-        [/import \* as ([^\s]+) from ['"]([^'"]+)['"]/g, 'const $1 = require(\'$2\')'],
-        // Export default
-        [/export default ([^\s]+)/g, 'module.exports = $1'],
-        // Export named
-        [/export (?:const|let|var|function) ([^\s(]+) ?=?/g, 'exports.$1 ='],
+    //     // Import default
+    //     [/import ([^\s]*) from ['"]([^'"]+)['"]/g, 'const $1 = require(\'$2\')'],
+    //     // Import named
+    //     [/import {([^}]+)} from ['"]([^'"]+)['"]/g, 'const {$1} = require(\'$2\')'],
+    //     // Import all
+    //     [/import \* as ([^\s]+) from ['"]([^'"]+)['"]/g, 'const $1 = require(\'$2\')'],
+    //     // Export default
+    //     [/export default ([^\s]+)/g, 'module.exports = $1'],
+    //     // Export named
+    //     [/export (?:const|let|var|function) ([^\s(]+) ?=?/g, 'exports.$1 ='],
 
-        [/export \{/, 'module.exports = {'],
-        // extensions in imports (avoid targetting package.json "exports")
-        [/(import .*)\.mjs/g, `$1.cjs`],
-        [/(require.*)\.mjs/g, `$1.cjs`],
-      ],
-      [
-        ['.template', ''],
-        ['.mjs', '.cjs'],
-      ],
-      [/\.ts$/]
-    )
+    //     [/export \{/, 'module.exports = {'],
+    //     // extensions in imports (avoid targetting package.json "exports")
+    //     [/(import .*)\.mjs/g, `$1.cjs`],
+    //     [/(require.*)\.mjs/g, `$1.cjs`],
+    //   ],
+    //   [
+    //     ['.template', ''],
+    //     ['.mjs', '.cjs'],
+    //   ],
+    //   [/\.ts$/]
+    // )
 
 
   }
@@ -181,7 +179,7 @@ async function generateBlankProject() {
   const projectName = await luigi.askUserInput(`Greetings, carbon-based entity! What is the name of the project you want to create:`)
 
   // TODO
-  console.log(`pro`, projectName)
+  C.log(`pro`, projectName)
 
 }
 

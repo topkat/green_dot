@@ -47,4 +47,4 @@ export { initDbs } from './db'
 
 export { startServer, stopServer } from './startServer'
 
-export { TestFlow, assert } from 'rest-test2'
+export { TestFlow, assert, TestItem } from 'rest-test2'
