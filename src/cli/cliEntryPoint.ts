@@ -96,8 +96,8 @@ async function start() {
               })
             } else {
               // ERROR EXIT RESTART PROCESS
-              process.stdout.write('\x1Bc')
-              resolve('reload')
+              // clearCli()
+              resolve('continue')
             }
           })
         })
