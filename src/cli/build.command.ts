@@ -12,6 +12,8 @@ const env = getServerConfigFromEnv()
 
 export async function buildCommand() {
 
+  process.env.SAFE_IMPORT_VERBOSE = '1'
+
   const build = createNewTask()
 
   // From here we build indexes and we don't require to execute project code
@@ -31,5 +33,7 @@ export async function buildCommand() {
   C.log('\n\n' + C.dim('='.repeat(50) + '\n'))
 
   build.end(`Successfully built green_dot project`)
+
+  process.env.SAFE_IMPORT_VERBOSE = '0'
 
 }

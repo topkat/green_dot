@@ -7,7 +7,9 @@
 * `.model.ts` => database models
 * `.dao.ts` => fichier de configuration de model
 * `.test.ts` => api tests
-* `.test-flow.ts` => api tests index
+* `.seed.ts` => seed service
+* `.schedule.ts` => schedule service
+* `.testSuite.ts` => api tests index
 * `.spec.ts` => unit tests
 
 

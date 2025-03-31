@@ -1,9 +1,8 @@
 
 import 'typescript-generic-types'
 import './types/global.types'
-import coreTestFlow from './tests/core.test-flows'
 
-export const coreTestFlows = coreTestFlow
+export { coreTestSuite } from './tests/core.testSuite'
 
 export { svc, schedule } from './service'
 

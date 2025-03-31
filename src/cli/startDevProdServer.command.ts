@@ -26,8 +26,6 @@ export async function startDevProdCommand() {
     cliIntro()
   }
 
-  process.env.SAFE_IMPORT_SILENT = '1'
-
   process.stdin.setRawMode?.(true)
   process.stdin.resume()
   process.stdin.on('data', userInputKeyHandler)

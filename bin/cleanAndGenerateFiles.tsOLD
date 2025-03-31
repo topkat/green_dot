@@ -31,7 +31,7 @@ export async function cleanGeneratedFiles() {
     //----------------------------------------
     generateImportMappingFile(generatedFolderPath, `.error.ts`, `errors.generated.ts`, { spread: true, fileStartBase: `import { allCoreErrors } from '@core-backend'\n`, fileNamesForExport: ['allCoreErrors'] })
     generateImportMappingFile(generatedFolderPath, `.{svc,cron}.ts`, `services.generated.ts`, { importAllAs: true })
-    generateImportMappingFile(generatedFolderPath, `.test-flow.ts`, `test-flows.generated.ts`, { fileStartBase: `import { coreTestFlows } from '@core-backend'\n`, fileNamesForExport: ['coreTestFlows'] })
+    generateImportMappingFile(generatedFolderPath, `.testSuite.ts`, `testSuite.generated.ts`, { fileStartBase: `import { coreTestFlows } from '@core-backend'\n`, fileNamesForExport: ['coreTestFlows'] })
 
     C.success('Services, testFlows, errors files generated')
 

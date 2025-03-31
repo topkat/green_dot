@@ -16,7 +16,7 @@ const periods = {
 type Period = keyof typeof periods
 
 
-export async function cliGenerateSchedule(fileName: string, filePathWithoutExt: string) {
+export async function cliGenerateSchedule(fileName: string, filePath: string) {
 
   const period = await luigi.askSelection(
     `Period for the schedule?`,
@@ -52,7 +52,7 @@ export const ${fileName}Schedule = schedule({
     },
 })
 `
-  await fs.outputFile(filePathWithoutExt, scheduleFileTemplate, 'utf-8')
+  await fs.outputFile(filePath, scheduleFileTemplate, 'utf-8')
 
 }
 

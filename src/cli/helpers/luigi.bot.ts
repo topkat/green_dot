@@ -1,4 +1,4 @@
-import { input, select, checkbox, confirm, search, number } from '@inquirer/prompts'
+import { input, select, checkbox, confirm, search, number, Separator } from '@inquirer/prompts'
 import { asArray, C, randomItemInArray } from 'topkat-utils'
 import { wrapCliText, terminalCharSize } from './cli'
 
@@ -58,13 +58,15 @@ export const luigi = {
   },
   async askSelection<V extends string | { name?: string, value: string, description?: string }, C extends Omit<Parameters<typeof select>[0], 'message' | 'choices'> & { multi?: boolean }>(
     msg: string | string[],
-    choices: readonly V[],
-    config?: C
+    choices: readonly (V | Separator)[],
+    config: C = { multi: false } as C
   ): Promise<C extends { multi: true } ? (V extends { value: any } ? V['value'] : V)[] : V extends { value: any } ? V['value'] : V> {
     const { multi = false } = config
     return await (multi ? checkbox : select)({
       message: luigi.say(msg, { log: false }),
       choices: choices as any,
+      loop: false,
+      pageSize: 15,
       ...config,
     }) as any
   },
@@ -76,6 +78,7 @@ export const luigi = {
     return await search({
       message: luigi.say(msg, { log: false }),
       source: searchFn,
+      pageSize: 15,
       ...config,
     }) as any
   },
@@ -105,5 +108,8 @@ export const luigi = {
   },
   tips(sentence: string[] | string) {
     return C.logClr(this.say('Tips: ' + sentence, { log: false }), [255, 105, 180])
+  },
+  separator(txt?: string) {
+    return new Separator(txt)
   }
 }

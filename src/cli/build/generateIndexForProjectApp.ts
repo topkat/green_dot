@@ -6,7 +6,7 @@ import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
 // match .svc.ts, .schedule.ts or .event.ts files with first capture group to model name
-const appFilesRegexp = /[/\\]([^/\\]+)\.(svc|schedule|event|error)\.ts$/
+const appFilesRegexp = /[/\\]([^/\\]+)\.(svc|schedule|event|error|seed)\.ts$/
 
 /** Generates index.generated.ts files in client APP folder */
 export async function generateIndexForProjectApp() {
@@ -18,7 +18,7 @@ export async function generateIndexForProjectApp() {
     const mainPathRelative = Path.relative(appConfigFolderPath, mainConfig.folderPath)
     try {
 
-      const allFiles = await glob.async('**/*.@(svc|schedule|event|error).ts', {
+      const allFiles = await glob.async('**/*.@(svc|schedule|event|error|seed).ts', {
         cwd: appConfigFolderPath,
         onlyFiles: true,
         absolute: true,
@@ -32,7 +32,7 @@ export async function generateIndexForProjectApp() {
 
       for (const file of allFiles) {
 
-        const match = file.match(appFilesRegexp) as [any, string, 'svc' | 'schedule' | 'event' | 'error']
+        const match = file.match(appFilesRegexp) as [any, moduleName: string, moduleType: 'svc' | 'schedule' | 'event' | 'error' | 'seed']
 
         if (match) {
 

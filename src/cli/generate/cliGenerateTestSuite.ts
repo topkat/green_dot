@@ -17,7 +17,7 @@ export async function cliGenerateTestFlow(fileName: string, filePath: string) {
     { multi: sdkNb > 1 }
   )
 
-  const testFlowTemplate = `
+  const testSuiteTemplate = `
 /* SYNOPSIS
   // download green_dot VScode/cursor extension to autofill that header with your tests synopsis
 */
@@ -28,16 +28,16 @@ import { $ } from '@bangk/ico-dashboard-sdk'
 ${asArray(sdkToImport).map(name => `import { ${sdkToImport.length === 1 ? '$' : `$ as ${name}Sdk`} } from '${name}'\n`)}/
 
 const testFlow = {
-    name: '${capitalize1st(camelCaseToWords(fileName).join(' '))} test flow',
+    name: '${capitalize1st(camelCaseToWords(fileName).join(' '))} test suite',
     items: [
-      // start by typing gd_test to see available snippets (VScode/cursor IDE only)
+      // start by typing gd_test to see available snippets (VScode/Cursor IDE only)
     ]
 } satisfies TestFlow<TestEnv & {/* put custom type here to override 'env' type */ }>
 
 export default testFlow
 `
 
-  await fs.outputFile(filePath, testFlowTemplate, 'utf-8')
+  await fs.outputFile(filePath, testSuiteTemplate, 'utf-8')
 
   luigi.tips(`In .testFlow.ts file, start by typing gd_test to see available snippets for 'items' and gd_assert to create a new 'assertion'`)
 

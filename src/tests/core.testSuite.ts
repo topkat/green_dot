@@ -3,8 +3,8 @@
 1) Check server alive
 */
 
-const testFlow = {
-    name: 'Core test flows',
+export const coreTestSuite = {
+    name: 'Core test suite',
     priority: 0, // should be fiorst test
     mandatory: true,
     items: [{
@@ -19,5 +19,3 @@ const testFlow = {
         status: 404,
     }]
 }
-
-export default testFlow
