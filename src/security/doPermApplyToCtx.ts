@@ -60,7 +60,7 @@ export async function doPermApplyToCtx(
 
 
 
-export function doPermAndRoleMatch(
+function doPermAndRoleMatch(
     inputRole: string | string[],
     expectedRole: string,
     inputPermissions = {},

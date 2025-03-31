@@ -96,5 +96,3 @@ export function getNewIndexForDbCacheFileStructure() {
     dbIds: '',
   }
 }
-
-export type DbCacheIndexFileStructure = ReturnType<typeof getNewIndexForDbCacheFileStructure>

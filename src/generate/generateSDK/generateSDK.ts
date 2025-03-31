@@ -31,7 +31,7 @@ const { prod = false, onlyDefaults = false } = app({
     }]
 }) as { prod: boolean, onlyDefaults: boolean }
 
-export async function run() {
+async function run() {
 
     const mainConfig = getMainConfig()
     const { generateSdkConfig, platforms } = mainConfig

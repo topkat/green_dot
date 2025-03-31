@@ -37,7 +37,8 @@ export function createNewTask() {
           const spin = new cliLoadingSpinner('dots')
           spin.start('Waiting for file change')
 
-          await onFileChange(async () => {
+          await onFileChange(async (file) => {
+            console.log(`file`, file)
             C.log(`\n\n`)
             if (cleanOnError) await cleanCommand()
             process.exit(1)

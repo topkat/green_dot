@@ -127,8 +127,8 @@ const serverErrors = registerErrors({
 
 export type RegisterErrorType<T extends Record<string, any>> = Record<keyof T, (ctx: Ctx | null, extraInfosOrOptions?: ErrorOptions) => void>
 
-export type CoreErrors = RegisterErrorType<typeof coreErrors>
-export type CoreErrorWithCustomMessage = Record<keyof typeof serverErrors, (ctx: Ctx | null, message: string, extraInfosOrOptions?: ErrorOptions) => void>
+type CoreErrors = RegisterErrorType<typeof coreErrors>
+type CoreErrorWithCustomMessage = Record<keyof typeof serverErrors, (ctx: Ctx | null, message: string, extraInfosOrOptions?: ErrorOptions) => void>
 
 export type ThrowErrorTypeSafe = HasKeys<Omit<GreenDotErrors, keyof CoreErrors | keyof CoreErrorWithCustomMessage>> extends true // just in case environement is not application
     ? { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }

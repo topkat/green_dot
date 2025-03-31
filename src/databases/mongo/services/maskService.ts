@@ -10,7 +10,6 @@ import { getId, objForceWrite, escapeRegexp, flattenObject, unflattenObject } fr
 import { getProjectDatabaseDaos } from '../../../helpers/getProjectModelsAndDaos'
 
 export type Mask<T = any> = DaoHookSharedParsed & MaskHook<T>
-export type MaskObjFlat = Record<string, boolean>
 
 //----------------------------------------
 // MAIN

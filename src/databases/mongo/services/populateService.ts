@@ -11,7 +11,7 @@ export async function unPopulate<ModelName extends string>(dbName: string, model
 
 const modelFlatObjCache = {} as { [dbId: string]: { [modelName: string]: { [populatedFieldNameFlat: string]: string } } }
 
-export async function forEachPopulateField<ModelName extends string>(
+async function forEachPopulateField<ModelName extends string>(
     dbName: string,
     modelName: ModelName,
     fields: Record<string, any>,

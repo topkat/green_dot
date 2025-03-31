@@ -66,17 +66,17 @@ export const createTeamId = <T extends number>(id: T): `TEAM_${T}` => `TEAM_${id
 
 export const userId1 = createUserId(1)
 export const userId2 = createUserId(2)
-export const userId3 = createUserId(3)
+// export const userId3 = createUserId(3)
 
 export const orgId1 = createOrgId(1)
-export const orgId2 = createOrgId(2)
-export const orgId3 = createOrgId(3)
+// export const orgId2 = createOrgId(2)
+// export const orgId3 = createOrgId(3)
 
-export const teamId1 = createTeamId(1)
-export const teamId2 = createTeamId(2)
-export const teamId3 = createTeamId(3)
+//  const teamId1 = createTeamId(1)
+//  const teamId2 = createTeamId(2)
+//  const teamId3 = createTeamId(3)
 
-export type TestRoles = 'public' | 'admin' | 'user' | 'public' | 'system'
+type TestRoles = 'public' | 'admin' | 'user' | 'system'
 
 export function getCtx(userRole: TestRoles = 'public', additionalFields = {}) {
     return { ...newPublicCtx().useRole(userRole as any), ...additionalFields } as any as Ctx

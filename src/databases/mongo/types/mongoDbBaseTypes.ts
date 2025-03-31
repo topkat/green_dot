@@ -20,7 +20,7 @@ export type PopulateConfig<ModelType extends Record<string, any>> = keyof ModelT
 export type SortConfig<ModelType extends Record<string, any>> = Partial<Record<keyof ModelType, 'asc' | 'desc'>>
 
 /** EXPOSED means that all what is defined in those variables are allowed to use by the frontend. So no admin configuration should be present */ // rmv
-export const requestConfigPopulateValidatorEXPOSED = { populate: _.typesOr([_.string(), _.object()]) } // rmv
+const requestConfigPopulateValidatorEXPOSED = { populate: _.typesOr([_.string(), _.object()]) } // rmv
 export type RequestConfigPopulate<ModelType extends Record<string, any>> = {
     populateAsAdmin?: boolean // rmv Should not be present in SDK
     populate?: PopulateConfig<ModelType>[]

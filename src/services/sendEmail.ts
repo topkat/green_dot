@@ -4,21 +4,7 @@ import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
 
 let testAccountCache
 
-export type EmailConfig = {
-    emailFromAddress: string
-    smtp: {
-        host: string
-        port?: number
-        /** true for 465, false for other ports */
-        secure?: boolean
-        auth?: {
-            user?: string
-            pass?: string
-        }
-    }
-}
-
-export async function createTestSmtp() {
+async function createTestSmtp() {
     const testAccount = testAccountCache || await nodemailer.createTestAccount()
 
     return {
@@ -32,7 +18,7 @@ export async function createTestSmtp() {
     }
 }
 
-export type SendEmailConfig = {
+type SendEmailConfig = {
     useTestAccount?: boolean
     fromAddress?: string
     attachments?: string[]
