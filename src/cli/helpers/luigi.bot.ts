@@ -5,6 +5,7 @@ import { wrapCliText, terminalCharSize } from './cli'
 
 export const luigi = {
   greet() {
+    C.log('\n')
     this.say([
       'Greetings, carbon-based entity! Awaiting instructions',
       'System online. Boot sequence complete. What’s the mission?',
@@ -13,8 +14,10 @@ export const luigi = {
       'Hey, what\'s up?', 'Blip...bloup...bip..bip.........',
       'Master the CLI you must, young Padawan'
     ])
+    C.log('\n')
   },
   confirm() {
+    C.log('\n')
     this.say([
       'Perfecto 👌',
       'Tutto bene 👌',
@@ -23,6 +26,7 @@ export const luigi = {
       'Roger that! Executing…',
       'Confirmed. The timeline remains intact... for now',
     ])
+    C.log('\n')
   },
   // messages: {
   //   serverStarted() {
@@ -35,6 +39,7 @@ export const luigi = {
     message: string,
     conf?: Omit<Parameters<typeof input>[0], 'message'>
   ) {
+    C.log('\n')
     return await input({
       message: this.say(message, { log: false }),
       ...(conf || {}),
@@ -44,6 +49,7 @@ export const luigi = {
     message: string,
     conf?: Omit<Parameters<typeof number>[0], 'message'>
   ) {
+    C.log('\n')
     return await number({
       message: this.say(message, { log: false }),
       ...(conf || {}),
@@ -52,6 +58,7 @@ export const luigi = {
   async askConfirmation(
     message: string
   ) {
+    C.log('\n')
     return await confirm({
       message: this.say(message, { log: false }),
     })
@@ -61,6 +68,7 @@ export const luigi = {
     choices: readonly (V | Separator)[],
     config: C = { multi: false } as C
   ): Promise<C extends { multi: true } ? (V extends { value: any } ? V['value'] : V)[] : V extends { value: any } ? V['value'] : V> {
+    C.log('\n')
     const { multi = false } = config
     return await (multi ? checkbox : select)({
       message: luigi.say(msg, { log: false }),
@@ -75,6 +83,7 @@ export const luigi = {
     searchFn: T,
     config?: Omit<Parameters<typeof search>[0], 'source'>
   ): Promise<string> { //Awaited<ReturnType<T>>[number]
+    C.log('\n')
     return await search({
       message: luigi.say(msg, { log: false }),
       source: searchFn,
@@ -101,12 +110,17 @@ export const luigi = {
     return s
   },
   warn(sentence: string[] | string) {
-    return this.say(sentence, { log: 'warning' })
+    C.log('\n')
+    this.say(sentence, { log: 'warning' })
+    C.log('\n')
   },
   info(sentence: string[] | string) {
-    return this.say(sentence, { log: 'warning' })
+    C.log('\n')
+    this.say(sentence, { log: 'warning' })
+    C.log('\n')
   },
   tips(sentence: string[] | string) {
+    C.log('\n\n')
     return C.logClr(this.say('Tips: ' + sentence, { log: false }), [255, 105, 180])
   },
   separator(txt?: string) {

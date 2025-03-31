@@ -20,7 +20,7 @@ export async function cliGenerateService(fileName: string, filePath: string) {
   )
 
   const inputParametersStr = await luigi.askUserInput(
-    `Comma separated list for input parameters?\n${C.dim(`Eg: for a money transfer service, we may want "amount,currency,targetAccount...".\nLeave blank if your service has no parameters`)}`,
+    `Comma separated list for input parameters?\n${C.dim(` * Eg: for a money transfer service, we may want "amount,currency,targetAccount...".\n * Leave blank if your service has no parameters or if you want to set them up later`)}`,
     { default: 'exemple' }
   )
 
@@ -29,6 +29,15 @@ export async function cliGenerateService(fileName: string, filePath: string) {
   let { docStyle, rateLimiter } = apiServiceDefaultOptions || {}
   const { displayApiMethodField = false, displayApiRouteField = false } = apiServiceDefaultOptions || {}
 
+  docStyle = await luigi.askSelection(
+    `What style of doc do you want to write for your service ?\n${C.dim('Doc are used to display info on hover in the SDK, generate Swagger doc...etc')}`,
+    [
+      { value: 'none' satisfies typeof docStyle, description: 'Only the weaks need docs' },
+      { value: 'simple' satisfies typeof docStyle, description: 'A simple line explaining your service (JSdoc like compatible)' },
+      { value: 'extended' satisfies typeof docStyle, description: `An extended documentation (JSdoc like compatible) with errors documented as array (Eg: [404, 'notFound', 'Error description...'])` },
+    ] as const,
+    { default: docStyle }
+  )
 
   const selection = await luigi.askSelection([
     `Let's go ?`
@@ -45,21 +54,14 @@ export async function cliGenerateService(fileName: string, filePath: string) {
 
   if (isAdvanced) {
 
-    luigi.tips(`In your green_dot.config.ts file, you can configure \`{ generateCommandOptions }\` to set the default values of a generated file`)
-
-    docStyle = await luigi.askSelection(
-      `What style of doc do you want to write for your service ?\n${C.dim('Doc are used to display info on hover in the SDK, generate Swagger doc...etc')}`,
-      [
-        { value: 'none' satisfies typeof docStyle, description: 'Only the weaks need docs' },
-        { value: 'simple' satisfies typeof docStyle, description: 'A simple line exmplaining your service' },
-        { value: 'extended' satisfies typeof docStyle, description: 'An extended documentation with errors documented' },
-      ] as const,
-      { default: docStyle }
-    )
-
     rateLimiter = await luigi.askSelection(
-      `Do you want to set a rate limiter?\n${C.dim('Rate limiter is an important security feature that allow only a reasonable number of apiCalls in a given time window')}`,
-      ['disable', '5/30s', '10/30s', '30/30s'] satisfies RateLimiterStr[]
+      `Do you want to set a rate limiter?\n${C.dim('Rate limiter is a security feature that allow only a certain number of apiCalls in a given time window for that service')}`,
+      [
+        { value: 'disable' satisfies RateLimiterStr, description: 'No rate limiter' },
+        { value: '5/30s' satisfies RateLimiterStr, description: 'Allow 5 requests per 30 seconds max' },
+        { value: '10/30s' satisfies RateLimiterStr, description: 'Allow 10 requests per 30 seconds max' },
+        { value: '30/30s' satisfies RateLimiterStr, description: 'Allow 30 requests per 30 seconds max' }
+      ] as const
     )
 
   }
@@ -72,17 +74,20 @@ export const ${fileName} = svc({
     for: [${roles.length ? `'${roles.join(`', '`)}'` : ''}],
 ${docStyle === 'none' ? '' : docTemplate[docStyle] + '\n'}\
 ${method ? `    route: [${method}, ${route || camelCaseToWords(fileName).join('-')}],\n` : ''}\
-${!method && route ? `    route: ${route},\n` : ''}\
+${!method && route ? `    route: '${route}',\n` : ''}\
 ${inputParameters ? inputParametersTemplate(inputParameters) + '\n' : ''}\
-    output: _.string(), // TODO valid types are _.string(), _.model('myDb', 'modelName'), _.object({ a: _.number() })
+    output: _.string(), // TODO valid types are _.string(), _.model('myDb', 'modelName'), _.object({ a: _.number() })...etc.
 ${rateLimiter === 'disable' ? '' : `    rateLimiter: '${rateLimiter}',\n`}\
-    async main(ctx${inputParameters ? '' : `, {${inputParameters.join(', ')}}`}) {
+    async main(ctx${inputParameters ? `, {${inputParameters.join(', ')}}` : ''}) {
         return 'TODO'
     },
 })
 `
 
   await fs.outputFile(filePath, file, 'utf-8')
+
+  luigi.tips(`In your 'green_dot.config.ts' file, you can configure the default values for file generation via the param \`{ generateCommandOptions }\``)
+
 
 }
 
@@ -95,16 +100,16 @@ const docTemplate = {
     doc: \`Write your service doc here\`,`,
   extended: `\
     doc: {
-        description: \`TODO document this service (JSdoc like format, do not write params or returntype doc)\`,
+        description: \`TODO document this service (JSdoc like format, do not write @params or @return, they will automatically be added)\`,
         errors: [
             [404, 'notFound', \`This is an exemple Error description\`],
         ]
     },`
 }
 
-const inputParametersTemplate = (inputParameters: string[]) => `/
+const inputParametersTemplate = (inputParameters: string[]) => `\
     input: {
-      ${inputParameters.map(p => `      ${p}: _.string()\n`)}
+        ${inputParameters.map(p => `${p}: _.string()`).join(',\n        ')}
     },`
 
 
