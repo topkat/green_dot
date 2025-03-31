@@ -11,6 +11,7 @@ import { C } from 'topkat-utils'
 import { onFileChange } from './fileWatcher'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
+const [tsNodePath] = process.argv
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
@@ -41,6 +42,7 @@ const commands = {
   },
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
+    // executeWith: 'bun',
     steps: [
       'generate'
     ],
@@ -79,7 +81,10 @@ async function start() {
     do {
       for (const step of c.steps) {
         next = await new Promise(resolve => {
-          startChildProcess([__dirname + '/childProcessEntryPoint.ts', step], code => {
+
+          const programPath = c?.executeWith === 'bun' ? 'bun' : tsNodePath
+
+          startChildProcess(programPath, [__dirname + '/childProcessEntryPoint.ts', step], code => {
             if (!code || code === 0) {
               // SUCCESS EXIT
               resolve('continue')
@@ -132,6 +137,7 @@ start()
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
 type CommandPlus = Record<string, Omit<Command, 'name'> & {
-  exitAfter?: boolean,
   steps: ChildProcessCommands[]
+  exitAfter?: boolean,
+  executeWith?: 'bun' | 'ts-node'
 }>

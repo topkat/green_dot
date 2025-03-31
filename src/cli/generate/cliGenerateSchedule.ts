@@ -1,6 +1,6 @@
 
 import fs from 'fs-extra'
-import { C, objKeys, pad } from 'topkat-utils'
+import { C, objEntries, pad } from 'topkat-utils'
 import { luigi } from '../helpers/luigi.bot'
 
 
@@ -20,7 +20,7 @@ export async function cliGenerateSchedule(fileName: string, filePath: string) {
 
   const period = await luigi.askSelection(
     `Period for the schedule?`,
-    objKeys(periods)
+    objEntries(periods).map(([k, v]) => ({ value: k, name: v.label }))
   )
 
   let minute = 0

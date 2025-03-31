@@ -1,6 +1,7 @@
 import { input, select, checkbox, confirm, search, number, Separator } from '@inquirer/prompts'
 import { asArray, C, randomItemInArray } from 'topkat-utils'
 import { wrapCliText, terminalCharSize } from './cli'
+import { openInDefaultEditor } from './openInDefaultEditor'
 
 
 export const luigi = {
@@ -116,7 +117,7 @@ export const luigi = {
   },
   info(sentence: string[] | string) {
     C.log('\n')
-    this.say(sentence, { log: 'warning' })
+    this.say(sentence, { log: 'info' })
     C.log('\n')
   },
   tips(sentence: string[] | string) {
@@ -125,5 +126,8 @@ export const luigi = {
   },
   separator(txt?: string) {
     return new Separator(txt)
+  },
+  async openFile(absolutePath: string) {
+    await openInDefaultEditor(absolutePath)
   }
 }

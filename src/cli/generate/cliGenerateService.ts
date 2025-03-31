@@ -4,10 +4,13 @@ import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { C, capitalize1st, camelCaseToWords } from 'topkat-utils'
 import { luigi } from '../helpers/luigi.bot'
 import { RateLimiterStr } from '../../security/serviceRouteRateLimiter'
+import { getProjectPaths } from '../../helpers/getProjectPaths'
 
 export async function cliGenerateService(fileName: string, filePath: string) {
 
   const { allRoles, generateCommandOptions } = await getMainConfig()
+  const { dbConfigs } = await getProjectPaths()
+
   const { apiServiceDefaultOptions } = generateCommandOptions || {}
 
   const roles = await luigi.askSelection(
@@ -67,13 +70,13 @@ export async function cliGenerateService(fileName: string, filePath: string) {
   }
 
   const file = `
-import { svc, db, _ } from 'green_dot'
+import { svc, db,${dbConfigs.length > 1 ? ' dbs,' : ''} _ } from 'green_dot'
 
 
 export const ${fileName} = svc({
     for: [${roles.length ? `'${roles.join(`', '`)}'` : ''}],
 ${docStyle === 'none' ? '' : docTemplate[docStyle] + '\n'}\
-${method ? `    route: [${method}, ${route || camelCaseToWords(fileName).join('-')}],\n` : ''}\
+${method ? `    route: ['${method}', '${route || camelCaseToWords(fileName).join('-')}'],\n` : ''}\
 ${!method && route ? `    route: '${route}',\n` : ''}\
 ${inputParameters ? inputParametersTemplate(inputParameters) + '\n' : ''}\
     output: _.string(), // TODO valid types are _.string(), _.model('myDb', 'modelName'), _.object({ a: _.number() })...etc.
@@ -87,7 +90,6 @@ ${rateLimiter === 'disable' ? '' : `    rateLimiter: '${rateLimiter}',\n`}\
   await fs.outputFile(filePath, file, 'utf-8')
 
   luigi.tips(`In your 'green_dot.config.ts' file, you can configure the default values for file generation via the param \`{ generateCommandOptions }\``)
-
 
 }
 

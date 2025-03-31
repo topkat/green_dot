@@ -11,6 +11,9 @@ import { cliGenerateErrorFile } from './generate/cliGenerateErrorFile'
 import { cliGenerateTestFlow } from './generate/cliGenerateTestSuite'
 import { cliGenerateSeed } from './generate/cliGenerateSeed'
 import { initGreenDotConfigs } from '../helpers/getGreenDotConfigs'
+import { cliGenerateDatabase } from './generate/cliGenerateDatabase'
+import { cliGenerateApp } from './generate/cliGenerateApp'
+import { cliGenerateProject } from './generate/cliGenerateProject'
 
 
 export async function generateCommand() {
@@ -20,8 +23,10 @@ export async function generateCommand() {
   C.log('\n\n')
 
   if (!exists) {
-
-    await generateBlankProject()
+    //  ╔══╗ ╔══╗ ╦╗ ╔   ╦  ╦ ╦  ╦ ╔══╗ ╦    ╔══╗   ╔══╗ ╔══╗ ╔══╗    ╦ ╔══╗ ╔══╗ ══╦══
+    //  ║ ═╦ ╠═   ║╚╗║   ║╔╗║ ╠══╣ ║  ║ ║    ╠═     ╠══╝ ╠═╦╝ ║  ║    ║ ╠═   ║      ║
+    //  ╚══╝ ╚══╝ ╩ ╚╩   ╩╝╚╩ ╩  ╩ ╚══╝ ╚══╝ ╚══╝   ╩    ╩ ╚  ╚══╝ ╚══╝ ╚══╝ ╚══╝   ╩
+    await cliGenerateProject()
 
   } else {
 
@@ -50,33 +55,32 @@ export async function generateCommand() {
       { value: 'frontend', name: 'New frontend', description: 'TODO ??' },
     ] as const)
 
-    //  ╔══╗ ╔══╗ ╔══╗    ╦ ╔══╗ ╔══╗ ══╦══   ══╦══ ╔══╗ ╦╗╔╦ ╔══╗ ╦    ╔══╗ ══╦══ ╔══╗ ╔═══
-    //  ╠══╝ ╠═╦╝ ║  ║    ║ ╠═   ║      ║       ║   ╠═   ║╚╝║ ╠══╝ ║    ╠══╣   ║   ╠═   ╚══╗
-    //  ╩    ╩ ╚  ╚══╝ ╚══╝ ╚══╝ ╚══╝   ╩       ╩   ╚══╝ ╩  ╩ ╩    ╚══╝ ╩  ╩   ╩   ╚══╝ ═══╝
 
     if (selection === 'app') {
 
       //  ╔══╗ ╔══╗ ╔══╗
       //  ╠══╣ ╠══╝ ╠══╝
       //  ╩  ╩ ╩    ╩
-
+      await cliGenerateApp()
     } else if (selection === 'db') {
 
       //  ╔═╗  ╔═╗
       //  ║  ║ ╠═╩╗
       //  ╚══╝ ╚══╝
-
+      await cliGenerateDatabase()
     } else if (selection === 'frontend') {
 
       //  ╔══╗ ╔══╗ ╔══╗ ╦╗ ╔ ══╦══
       //  ╠═   ╠═╦╝ ║  ║ ║╚╗║   ║
       //  ╩    ╩ ╚  ╚══╝ ╩ ╚╩   ╩
-
+      throw 'not implemented 099009'
     } else {
 
-      //  ╔══╗ ╔══╗ ══╦══ ╦  ╦ ╔═══
-      //  ╠══╝ ╠══╣   ║   ╠══╣ ╚══╗
-      //  ╩    ╩  ╩   ╩   ╩  ╩ ═══╝
+      //  ╔══╗ ══╦══ ╦  ╦ ╔══╗ ╔══╗ ╔═══
+      //  ║  ║   ║   ╠══╣ ╠═   ╠═╦╝ ╚══╗
+      //  ╚══╝   ╩   ╩  ╩ ╚══╝ ╩ ╚  ═══╝
+
+      // GET PATHS
 
       let fileName = await luigi.askUserInput(
         `What would be the best name for your file?\n${C.dim('=> camelCase, without extension. Eg: subscribeToNewsletter')}`
@@ -130,6 +134,8 @@ export async function generateCommand() {
 
       const filePathWithExt = filePathWithoutExt + `.${selection}.ts`
 
+      if (await fs.exists(filePathWithExt)) throw C.error(false, `File path ${filePathWithExt} already exist. Please name the file differently.`)
+
       if (isSvc) {
 
         //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗
@@ -145,6 +151,8 @@ export async function generateCommand() {
         } else if (selection === 'seed') {
           await cliGenerateSeed(fileName, filePathWithExt)
         } else throw 'no service type ' + selection + ' configured'
+
+        await luigi.openFile(filePathWithExt)
 
       } else if (selection === 'model') {
 
@@ -166,16 +174,6 @@ export async function generateCommand() {
 
     }
   }
-}
-
-
-async function generateBlankProject() {
-
-  const projectName = await luigi.askUserInput(`Greetings, carbon-based entity! What is the name of the project you want to create:`)
-
-  // TODO
-  C.log(`pro`, projectName)
-
 }
 
 

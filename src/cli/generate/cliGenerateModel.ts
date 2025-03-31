@@ -4,11 +4,13 @@ import { luigi } from '../helpers/luigi.bot'
 
 export async function cliGenerateModel(fileName: string, filePathWithoutExtension: string) {
 
-  luigi.tips(`In .dao.ts file, start by typing gd_dao to see available snippets to autocomplete 'expose', 'mask' and 'filter' fields`)
-
-
   await fs.outputFile(filePathWithoutExtension + '.model.ts', modelFileTemplate(fileName), 'utf-8')
   await fs.outputFile(filePathWithoutExtension + '.dao.ts', daoFileTemplate(fileName), 'utf-8')
+
+  await luigi.openFile(filePathWithoutExtension + '.model.ts')
+  await luigi.openFile(filePathWithoutExtension + '.dao.ts')
+
+  luigi.tips(`In .dao.ts file, start by typing gd_dao to see available snippets to autocomplete 'expose', 'mask' and 'filter' fields`)
 
 }
 
