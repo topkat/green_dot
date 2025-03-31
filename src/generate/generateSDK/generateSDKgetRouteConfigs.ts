@@ -155,7 +155,6 @@ export async function createDaoRouteConfigPerPlatformForSdk() {
 }
 
 
-
 //  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
@@ -165,7 +164,9 @@ async function getTsTypingsFromDaoTypeTemplate(dbType: DbType, fnName: AllPossib
     if (!tsForMethod[dbType]) tsForMethod[dbType] = {}
     if (Object.keys(tsForMethod[dbType]).length === 0) {
 
-        const typeFileUrl = Path.resolve(__dirname, `../../databases/mongo/types/mongoDaoTypes.ts`).replace('dist', 'src')
+
+        // TODO why check in dist ?
+        const typeFileUrl = Path.resolve(__dirname, `../../databases/mongo/types/mongoDaoTypes.ts`).replace('dist/src', 'src')
         const daoTypingsString = await fs.readFile(typeFileUrl, 'utf-8')
         const typeChunk1 = daoTypingsString.split('$$$!!')[1]
 

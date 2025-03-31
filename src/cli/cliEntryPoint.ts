@@ -84,9 +84,9 @@ async function start() {
               // SUCCESS EXIT
               resolve('continue')
             } else if (code === 201) {
+              // HOT RELOAD
               C.log('\n\n')
               C.warning(false, `Waiting for file change before restarting process...\n\n`)
-              // HOT RELOAD
               onFileChange(async path => {
                 if (path.includes('generated')) return
 
@@ -94,6 +94,11 @@ async function start() {
                 C.log(`\n\n`)
                 resolve('reload')
               })
+            } else if (code === 202) {
+              // SIMPLE RESTART
+              C.log('\n\n')
+              C.warning(false, `Restarting server...\n\n`)
+              resolve('reload')
             } else {
               // ERROR EXIT RESTART PROCESS
               // clearCli()

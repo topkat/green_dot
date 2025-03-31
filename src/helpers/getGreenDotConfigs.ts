@@ -17,9 +17,9 @@ export async function initGreenDotConfigs(resetCache = false) {
 }
 
 export function registerMainConfig(conf: GreenDotConfig) {
-  greenDotConfigsCache = {
+  greenDotConfigsCache = computeMainConfigAdditionalFields({
     ...mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf),
-  } as any
+  } as any)
   getProjectPaths().then(({ mainConfig: mainConfigPaths }) => {
     Object.assign(greenDotConfigsCache, mainConfigPaths)
   })
@@ -37,12 +37,12 @@ export function getMainConfig(silent = false): typeof greenDotConfigsCache {
 }
 
 
-async function initMainConfigCache(resetCache = false) {
+export async function initMainConfigCache(resetCache = false) {
   if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
     const { mainConfig: mainConfigPaths } = await getProjectPaths()
     const conf = (await safeImport(mainConfigPaths.path))?.default as GreenDotConfig
     const confWithDefaults = mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf)
-    greenDotConfigsCache = { ...confWithDefaults, ...mainConfigPaths, platforms: Object.values(confWithDefaults.generateSdkConfig.sdkNameForRole || 'default') }
+    greenDotConfigsCache = computeMainConfigAdditionalFields({ ...confWithDefaults, ...mainConfigPaths })
   }
 }
 
@@ -124,3 +124,11 @@ async function initAppConfigCache(resetCache = false) {
   }
 }
 
+//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
+
+function computeMainConfigAdditionalFields(conf: GreenDotConfig): GreenDotConfigWithDefaults & GDpathConfig {
+  (conf as any).platforms = Object.values(conf?.generateSdkConfig?.sdkNameForRole || 'default')
+  return conf as any
+}

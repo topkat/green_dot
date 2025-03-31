@@ -116,7 +116,7 @@ function userInputKeyHandler(buff) {
     userInputConfirmLog('WATCHER: ' + (watcherOn ? 'ON' : 'OFF'))
   } else if (char === 'r') {
     userInputConfirmLog('RESTARTING SERVER')
-    process.exit(1)
+    process.exit(202)
   } else {
     process.stdout.write(char)
   }

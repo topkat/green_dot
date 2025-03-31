@@ -42,11 +42,11 @@ export async function getProjectPaths(resetCache = false) {
 
     const dbConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.db.config'))
-      .map(configFilePathMapper)
+      .map(configFilePathMapper(rootPath))
 
     const appConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.app.config'))
-      .map(configFilePathMapper)
+      .map(configFilePathMapper(rootPath))
 
     greenDotPathsCache = {
       mainConfig: { path: mainConfigPath, folderPath: rootPath },
@@ -90,14 +90,16 @@ export async function findProjectPath(silent = false) {
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-function configFilePathMapper(path: string) {
-  const folderPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, '')
-  return {
-    path: path,
-    folderPath,
-    folderPathRelative: Path.relative(greenDotPathsCache.mainConfig.folderPath, folderPath),
-    generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
-    generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '2_generated')
+function configFilePathMapper(mainConfigFolderPath: string) {
+  return (path: string) => {
+    const folderPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, '')
+    return {
+      path: path,
+      folderPath,
+      folderPathRelative: Path.relative(mainConfigFolderPath, folderPath),
+      generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
+      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '2_generated')
+    }
   }
 }
 
