@@ -1,0 +1,50 @@
+{
+    "name": "@bangk/ico-dashboard-sdk",
+    "version": "1.0.32",
+    "license": "ISC",
+    "main": "api.service.cjs",
+    "types": "api.service.d.ts",
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "exports": {
+        ".": {
+            "require": "./api.service.cjs",
+            "import": "./api.service.mjs",
+            "types": "./api.service.d.ts"
+        },
+        "./constants": {
+            "require": "./constants.cjs",
+            "import": "./constants.mjs",
+            "types": "./constants/index.d.ts"
+        },
+        "./web": {
+            "require": "./init.web.cjs",
+            "import": "./init.web.mjs",
+            "types": "./init.web.ts"
+        },
+        "./require": {
+            "require": "./api.service.cjs",
+            "import": "./api.service.cjs",
+            "types": "./api.service.d.ts"
+        }
+    },
+    "scripts": {
+        "bump:patch": "bump --patch"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "5.28.6",
+        "axios": "^1.7.4",
+        "typescript-generic-types": "1.0.8"
+    },
+    "devDependencies": {
+        "bump-simple": "1.0.29"
+    },
+    "files": [
+        "*.ts",
+        "modelTypes/*.ts",
+        "constants/*.ts",
+        "*"
+    ]
+}

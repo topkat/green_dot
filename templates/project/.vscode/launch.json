@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Dev",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npx",
+            "args": [
+                "green_dot",
+                "dev"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run Build",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npx",
+            "args": [
+                "green_dot",
+                "build"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run Generate",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npx",
+            "args": [
+                "green_dot",
+                "generate"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}

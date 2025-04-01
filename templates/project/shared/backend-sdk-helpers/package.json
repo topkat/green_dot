@@ -1,0 +1,45 @@
+{
+  "name": "@bangk/backend-sdk-helpers",
+  "version": "1.0.7",
+  "description": "",
+  "main": "index.js",
+  "types": "index.ts",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "default": "./index.js",
+      "types": "./index.ts"
+    },
+    "./web": {
+      "default": "./indexWeb.js",
+      "types": "./indexWeb.ts"
+    },
+    "./initBackend": {
+      "default": "./initBackend.js",
+      "types": "./initBackend.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "tsc": "tsc",
+    "build:allPackagesPhase1": "yarn build",
+    "bump:patch": "yarn build && bump --patch"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.28.6",
+    "topkat-utils": "1.3.5",
+    "typescript": "5.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "bump-simple": "1.0.29"
+  },
+  "files": [
+    "dist/**/*",
+    "*.ts",
+    "*"
+  ]
+}

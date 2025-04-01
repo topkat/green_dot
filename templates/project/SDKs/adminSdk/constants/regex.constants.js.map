@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "regex.constants.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../regex.constants.ts"
+  ],
+  "names": [],
+  "mappings": ";;;AAAa,QAAA,aAAa,GAAG,OAAO,CAAA"
+}

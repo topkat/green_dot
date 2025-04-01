@@ -98,7 +98,7 @@ function configFilePathMapper(mainConfigFolderPath: string) {
       folderPath,
       folderPathRelative: Path.relative(mainConfigFolderPath, folderPath),
       generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
-      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '2_generated')
+      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '.generated')
     }
   }
 }

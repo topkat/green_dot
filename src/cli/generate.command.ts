@@ -5,7 +5,7 @@ import { C, camelCaseify } from 'topkat-utils'
 import { luigi } from './helpers/luigi.bot'
 import { findProjectPath, getProjectPaths } from '../helpers/getProjectPaths'
 import { cliGenerateService } from './generate/cliGenerateService'
-import { cliGenerateModel } from './generate/cliGenerateModel'
+import { cliGenerateModelAndDao } from './generate/cliGenerateModelAndDao'
 import { cliGenerateSchedule } from './generate/cliGenerateSchedule'
 import { cliGenerateErrorFile } from './generate/cliGenerateErrorFile'
 import { cliGenerateTestFlow } from './generate/cliGenerateTestSuite'
@@ -160,7 +160,7 @@ export async function generateCommand() {
         //  ║╚╝║ ║  ║ ║  ║ ╠═   ║
         //  ╩  ╩ ╚══╝ ╚══╝ ╚══╝ ╚══╝
 
-        await cliGenerateModel(fileName, filePathWithoutExt)
+        await cliGenerateModelAndDao(fileName, filePathWithoutExt)
 
       } else if (selection === 'testSuite') {
 

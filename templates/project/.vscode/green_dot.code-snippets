@@ -1,0 +1,261 @@
+{
+  //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ═╦═ ╔══╗   ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+  //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝  ║  ║      ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+  //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ═╩═ ╚══╝   ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
+  "Print var to console": {
+    "prefix": [
+      "csl",
+      "gd_log"
+    ],
+    "body": [
+      "console.log(`$1`, ${2:$1} )$3"
+    ],
+    "description": "Print a var to console"
+  },
+  "Console.error": {
+    "prefix": [
+      "cse",
+      "gd_log:error"
+    ],
+    "body": [
+      "console.error($2)"
+    ],
+    "description": "Log ERROR to console"
+  },
+  "Console.time": {
+    "prefix": [
+      "cst",
+      "gd_log:timeStart"
+    ],
+    "body": [
+      "console.time('$1')"
+    ],
+    "description": "Log time to console: usefull for performance testing"
+  },
+  "Console.timeEnd": {
+    "prefix": [
+      "cste",
+      "gd_log:timeEnd"
+    ],
+    "body": [
+      "console.timeEnd('$1')"
+    ],
+    "description": "Log timeEnd to console"
+  },
+  "Console.jsonStringify": {
+    "prefix": [
+      "cstr",
+      "gd_log:jsonstr"
+    ],
+    "body": [
+      "console.log('$1', JSON.stringify(${2:$1}, null, 2))"
+    ],
+  },
+  "jsonStringify": {
+    "prefix": [
+      "jstr",
+      "gd_jsonstringify"
+    ],
+    "body": [
+      "JSON.stringify($1, null, 2)$2"
+    ],
+  },
+  //  ╔═╗  ╔══╗ ══╦══ ╔══╗ ╔═╗  ╔══╗ ╔═══ ╔══╗
+  //  ║  ║ ╠══╣   ║   ╠══╣ ╠═╩╗ ╠══╣ ╚══╗ ╠═  
+  //  ╚══╝ ╩  ╩   ╩   ╩  ╩ ╚══╝ ╩  ╩ ═══╝ ╚══╝
+  "dao:mask": {
+    "prefix": "gd_dao:mask",
+    "body": [
+      "{",
+      "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
+      "${4:    ${5|on,notOn|}: ${6|'ALL','read','write','getAll','getOne','create','update'|},}",
+      "    ${7|select,mask|}: ctx => ({$9}),",
+      "},",
+    ]
+  },
+  "dao:filter": {
+    "prefix": "gd_dao:filter",
+    "body": [
+      "{",
+      "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
+      "${4:    ${5|on,notOn|}: ${6|'ALL','read','write','getAll','getOne','create','update'|},}",
+      "    filter: (ctx, filter) => {",
+      "    filter.$9",
+      "    }",
+      "},",
+    ]
+  },
+  "dao.expose": {
+    "prefix": "gd_dao:expose",
+    "body": [
+      "{",
+      "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
+      "    expose: ${6|'ALL','read','write','getAll','getOne','create','update'|},",
+      "},",
+    ]
+  },
+  //  ══╦══ ╔══╗ ╔═══ ══╦══ ╔═══
+  //    ║   ╠═   ╚══╗   ║   ╚══╗
+  //    ╩   ╚══╝ ═══╝   ╩   ═══╝
+  "assert": {
+    "scope": "javascript,typescript",
+    "prefix": [
+      "gd_assert",
+      "newAssertion"
+    ],
+    "body": [
+      "assert($1, `$1`, $2)"
+    ]
+  },
+  "test:route": {
+    "scope": "javascript,typescript",
+    "prefix": [
+      "gd_test:classicApiRouteSnippet",
+    ],
+    "body": [
+      "{",
+      "    doc: `$4`,",
+      "    route: env => env.routes$1,",
+      "${6:    params: [$8],}",
+      "    after(env, ${10:data}) {",
+      "        $12",
+      "    },",
+      "},"
+    ],
+  },
+  "test:route-error": {
+    "scope": "javascript,typescript",
+    "prefix": [
+      "new:test-route-error",
+      "test:route-error"
+    ],
+    "body": [
+      "{",
+      "    doc: `$4`,",
+      "    route: env => env.routes$1,",
+      "    status: ${2|422,403,401,404,500|},",
+      "    errorMessage: `$5`,",
+      "${6:    params: [$8],}",
+      "    after(env, ${10:data}) {",
+      "        $12",
+      "    },",
+      "},"
+    ],
+  },
+  "test:svc": {
+    "scope": "javascript,typescript",
+    "prefix": [
+      "gd_test:testServiceViaSdk_success",
+      "test:svc"
+    ],
+    "body": [
+      "{",
+      "    d: [ '${2|icoUserA,icoUserB,icoUserC,icoUserD,appUserA,appUserB,appUserC,appUserD,public,system|}', '$4' ],",
+      "    svc: () => $$1(),",
+      "    after(env, ${10:data}: Awaited<ReturnType<typeof $$1>>) {",
+      "        $12",
+      "    },",
+      "},"
+    ],
+  },
+  "test:systemServerAction": {
+    "scope": "javascript,typescript",
+    "prefix": [
+      "gd_test:testServiceViaSdk_serverAction",
+      "test:svc-system-serverAction"
+    ],
+    "body": [
+      "{",
+      "    d: ['system', '$1'],",
+      "    svc: () => serverActionTypedForTests('$2', $3, [$4]),",
+      "    after: (env, data) {",
+      "        $6",
+      "    }",
+      "},",
+    ],
+  },
+  "test:new": {
+    "scope": "javascript,typescript",
+    "prefix": [
+      "gd_test:testServiceViaSdk_error",
+      "test:svc-error"
+    ],
+    "body": [
+      "{",
+      "    d: [ ${2|422,403,401,404,429,409,500|}, '${2|a,b,c,d,public,system|}', '$4' ],",
+      "    errorMessage: `$5`,",
+      "    svc: () => $$1(),",
+      "    after(env, ${10:data}: Awaited<ReturnType<typeof $$1>>) {",
+      "        $12",
+      "    },",
+      "},"
+    ],
+  },
+  //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗ ╔═══
+  //  ╚══╗ ╠═   ╠═╦╝ ╚╗ ║  ║  ║    ╠═   ╚══╗
+  //  ═══╝ ╚══╝ ╩ ╚   ╚═╝ ═╩═ ╚══╝ ╚══╝ ═══╝
+  "gd_svc:newApiService": {
+    "prefix": [
+      "gd_svc:newApiService",
+    ],
+    "body": [
+      "export const ${TM_FILENAME_BASE/(.*)\\..+$/$1/} = $.svc({",
+      "    doc: {",
+      "        description: `$5`,",
+      "        errors: [],",
+      "    },",
+      "${2:    ${3|for,notFor|}: '$4',}",
+      "    input: {",
+      "        $6",
+      "    },",
+      "    output: _$10,",
+      "    async main(ctx, {$11}) {",
+      "        $13",
+      "    },",
+      "})",
+    ]
+  },
+  "svc:eventGeneric": {
+    "prefix": [
+      "gd_svc:onEvent"
+    ],
+    "body": [
+      "export const ${TM_FILENAME_BASE/(.*)\\..+$/$1/} = {",
+      "    on: ['${6|server.start,ctx.creation|}'],",
+      "    async main(ctx) {",
+      "        $13",
+      "    },",
+      "} satisfies t.BaseService",
+    ]
+  },
+  "svc:modelEvent": {
+    "prefix": [
+      "gd_svc:onDatabaseEvent"
+    ],
+    "body": [
+      "export const ${TM_FILENAME_BASE/(.*)\\..+$/$1/} = {",
+      "    on: '$5.${6|getAll,getOne,create,update,delete|}.${7|before,after|}',",
+      "    async main(ctx) {",
+      "        const $5 = ctx.${6/(getAll)|(getOne)|(create)|(update)|(delete)/${1:+data}${2:+data}${3:+inputFields}${4:+inputFields}${5:+DELETEME}/}",
+      "        $14",
+      "    },",
+      "} satisfies t.DaoEventService<AllModelsWithReadWrite, '${5:modelName}', '$6', '$7'>",
+    ]
+  },
+  "svc:schedule": {
+    "prefix": [
+      "gd_svc:schedule",
+    ],
+    "body": [
+      "export const  ${TM_FILENAME_BASE/(.*)\\..+$/$1/}Schedule = schedule({",
+      "    schedule: {",
+      "        frequency: ${2|'0 * * * *'\\, // every hour,'0 */12 * * *'\\, // 2 times a day,frequency: '0 5 * * *'\\, // once a day at 05:00,'0 5 1 * *'\\, // At 05:00 on day-of-month 1|}",
+      "${3:        frequencyDevEnv: ${4|'* * * * *','never','server.start'|},}",
+      "    },",
+      "    async main(ctx) {",
+      "        $14",
+      "    },",
+      "})",
+    ]
+  },
+}

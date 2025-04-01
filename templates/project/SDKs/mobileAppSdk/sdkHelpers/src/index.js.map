@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../index.ts"
+  ],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;AACA,yCAAsB;AACtB,iDAA8B;AAC9B,gDAA6B;AAC7B,4CAAyB;AACzB,2CAAwB;AACxB,0CAAuB"
+}

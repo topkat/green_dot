@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    networks:
+      - backend_network
+
+  backend:
+    build: 
+      context: .  
+      dockerfile: ./Dockerfile  
+    container_name: bangk_app_container
+    ports:
+      - '9086:9086'
+    depends_on:
+      - mongodb
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    driver: bridge

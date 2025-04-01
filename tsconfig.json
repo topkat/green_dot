@@ -38,6 +38,7 @@
   ],
   "exclude": [
     "./src/templates/**/*",
+    "./templates/**/*",
     "./src/generate/generateSDK/templates/**/*",
     "./src/generate/dbFolderGeneratedDefaults/**/*",
     "./src/generate/backendGeneratedDefaults/**/*",
