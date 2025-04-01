@@ -4,7 +4,7 @@ import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { C, capitalize1st, camelCaseToWords, asArray } from 'topkat-utils'
 import { luigi } from '../helpers/luigi.bot'
 
-export async function cliGenerateTestFlow(fileName: string, filePath: string) {
+export async function cliGenerateTestSuite(fileName: string, filePath: string) {
 
   const { generateSdkConfig } = await getMainConfig()
   const { sdkNameForRole } = generateSdkConfig
@@ -22,23 +22,23 @@ export async function cliGenerateTestFlow(fileName: string, filePath: string) {
   // download green_dot VScode/cursor extension to autofill that header with your tests synopsis
 */
 
-import { TestFlow } from '../../1_shared/configs/rest-test-config'
+import { TestSuite } from '../../1_shared/configs/rest-test-config'
 import { assert } from 'green_dot'
 import { $ } from '@bangk/ico-dashboard-sdk'
 ${asArray(sdkToImport).map(name => `import { ${sdkToImport.length === 1 ? '$' : `$ as ${name}Sdk`} } from '${name}'\n`)}/
 
-const testFlow = {
+const testSuite = {
     name: '${capitalize1st(camelCaseToWords(fileName).join(' '))} test suite',
     items: [
       // start by typing gd_test to see available snippets (VScode/Cursor IDE only)
     ]
-} satisfies TestFlow<TestEnv & {/* put custom type here to override 'env' type */ }>
+} satisfies TestSuite<TestEnv & {/* put custom type here to override 'env' type */ }>
 
-export default testFlow
+export default testSuite
 `
 
   await fs.outputFile(filePath, testSuiteTemplate, 'utf-8')
 
-  luigi.tips(`In .testFlow.ts file, start by typing gd_test to see available snippets for 'items' and gd_assert to create a new 'assertion'`)
+  luigi.tips(`In .testSuite.ts file, start by typing gd_test to see available snippets for 'items' and gd_assert to create a new 'assertion'`)
 
 }

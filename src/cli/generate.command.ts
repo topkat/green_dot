@@ -8,7 +8,7 @@ import { cliGenerateService } from './generate/cliGenerateService'
 import { cliGenerateModelAndDao } from './generate/cliGenerateModelAndDao'
 import { cliGenerateSchedule } from './generate/cliGenerateSchedule'
 import { cliGenerateErrorFile } from './generate/cliGenerateErrorFile'
-import { cliGenerateTestFlow } from './generate/cliGenerateTestSuite'
+import { cliGenerateTestSuite } from './generate/cliGenerateTestSuite'
 import { cliGenerateSeed } from './generate/cliGenerateSeed'
 import { initGreenDotConfigs } from '../helpers/getGreenDotConfigs'
 import { cliGenerateDatabase } from './generate/cliGenerateDatabase'
@@ -168,7 +168,7 @@ export async function generateCommand() {
         //    ║   ╠═   ╚══╗   ║     ╠═   ║    ║  ║ ║╔╗║
         //    ╩   ╚══╝ ═══╝   ╩     ╩    ╚══╝ ╚══╝ ╩╝╚╩
 
-        await cliGenerateTestFlow(fileName, filePathWithoutExt)
+        await cliGenerateTestSuite(fileName, filePathWithoutExt)
 
       } else throw C.error(false, 'Not implemented file generation ' + selection)
 

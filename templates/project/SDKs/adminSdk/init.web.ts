@@ -1,1 +1,0 @@
-export { getDeviceInfos, initTrackerListeners } from './sdkHelpers/indexWeb' // not sure why I need that instead of export *

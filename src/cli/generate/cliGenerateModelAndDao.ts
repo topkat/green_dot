@@ -43,6 +43,7 @@ const dao = {
     mask: [
 
     ],
+    populate: []
 } satisfies MongoDao<typeof ${modelName}Model.tsType>
 
 export default dao

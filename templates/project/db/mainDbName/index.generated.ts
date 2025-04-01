@@ -1,19 +1,19 @@
 
-import newsletterSubscriptionsDao from './models/user.dao'
-import newsletterSubscriptionsModel from './models/user.model'
+import userDao from './models/user.dao'
+import userModel from './models/user.model'
 
 
-export type NewsletterSubscriptions = typeof newsletterSubscriptionsModel.tsTypeRead
-export type NewsletterSubscriptionsRead = typeof newsletterSubscriptionsModel.tsTypeRead
-export type NewsletterSubscriptionsWrite = typeof newsletterSubscriptionsModel.tsTypeWrite
+export type NewsletterSubscriptions = typeof userModel.tsTypeRead
+export type NewsletterSubscriptionsRead = typeof userModel.tsTypeRead
+export type NewsletterSubscriptionsWrite = typeof userModel.tsTypeWrite
 
 
 const models = {
-  newsletterSubscriptionsModel,
+  userModel,
 }
 
 const daos = {
-  newsletterSubscriptionsDao,
+  userDao,
 }
 
 export { models, daos }

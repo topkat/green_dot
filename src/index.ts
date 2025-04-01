@@ -46,4 +46,5 @@ export { initDbs } from './db'
 
 export { startServer, stopServer } from './startServer'
 
-export { TestFlow, assert, TestItem } from 'rest-test2'
+export { assert } from './restTest/rest-test'
+export { RestTestConfig, TestSuite, TestItem } from './restTest/rest-test-types'

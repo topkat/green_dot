@@ -5,16 +5,16 @@ const dao = {
     type: 'mongo',
     modelConfig: {},
     expose: [
-
+        // use gd_dao:expose for snippet autocompletion
     ],
     filter: [{
+        for: 'ALL',
         on: 'ALL',
         filter: (ctx, filter) => {
-            if (ctx.role === 'bangkAdmin' && ctx.method !== 'getOne') return
-            else filter._id = ctx._id
-            filter.isDeleted = { $ne: true }
+            // /!\ actually the user can only access his own user and no other users
+            filter._id = ctx._id
         }
-    },],
+    }],
     mask: [{
         // masked in READ AND WRITE situation
         mask: () => ({

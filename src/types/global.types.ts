@@ -4,6 +4,9 @@ interface GDbase {
   platform: 'notImplemented'
   role: 'notImplemented' // needs to be union since string will mess everything
   permissions: 'notImplemented'
+  // TESTS
+  testUserNames: string
+  apiKeys: string
 }
 
 interface GDeventNamesBase {
