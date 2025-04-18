@@ -1,11 +1,10 @@
-
 import Path from 'path'
 import fs from 'fs-extra'
 import { getProjectPaths } from '../../helpers/getProjectPaths'
 import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
-const indexedFiles = ['svc', 'schedule', 'event', 'error', 'seed'] as const
+const indexedFiles = ['svc', 'schedule', 'event', 'error', 'seed', 'test', 'testFlow'] as const
 type IndexedFiles = typeof indexedFiles[number]
 
 
