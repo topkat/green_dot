@@ -32,7 +32,7 @@ const testSuite = {
     items: [
       // start by typing gd_test to see available snippets (VScode/Cursor IDE only)
     ]
-} satisfies TestSuite<TestEnv & {/* put custom type here to override 'env' type */ }>
+} satisfies TestSuite<GD['testEnvType'] & {/* put custom type here to override 'env' type */ }>
 
 export default testSuite
 `

@@ -102,11 +102,11 @@ export type TestEnvBase = {
 
 export interface RestTestConfig<
     // ApiKeys extends string = any,
-    TestEnv extends TestEnvBase = any,
+    // TestEnv extends TestEnvBase = any,
     // TestUserNames extends string = any,
-    ConnexionInfos extends Record<string, any> = any,
-// ApiKeysType extends Record<string, any> = any
-> {
+    // ConnexionInfos extends Record<string, any> = any,
+    // ApiKeysType extends Record<string, any> = any
+    > {
     // TODO document jsdoc
     displayIntroTimeout: number
     mode: 'jsonRpc' | 'rest'
@@ -126,19 +126,19 @@ export interface RestTestConfig<
     /** trigerred before the run */
     onBeforeAllTests?(conf: {
         isReload: boolean
-        env: TestEnv
+        env: GD['testEnvType']
     }): any
     /** triggered BEFORE every tests */
     onBeforeTest?(conf: {
-        env: TestEnv,
-        as?: GD['testUserNames'] | ConnexionInfos,
+        env: GD['testEnvType'],
+        as?: GD['testUserNames'],
         apiKey?: GD['apiKeys'],
         headers: Record<string, any>
     }): any
     /** triggered AFTER every tests */
     onAfterTest?(conf: {
-        env: TestEnv,
-        as?: GD['testUserNames'] | ConnexionInfos,
+        env: GD['testEnvType'],
+        as?: GD['testUserNames'],
         apiKey?: GD['apiKeys'],
         headers: Record<string, any>
     }): any

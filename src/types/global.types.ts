@@ -7,6 +7,7 @@ interface GDbase {
   // TESTS
   testUserNames: string
   apiKeys: string
+  testEnvType: any
 }
 
 interface GDeventNamesBase {
@@ -30,7 +31,7 @@ declare global {
   type NewEventType<EventName extends string, Params extends any[] = []> = { [k in EventName]: [systemCtx: Ctx, ...params: Params] }
 
 
-  interface TestEnv { }
+  // interface TestEnv { }
 
 }
 

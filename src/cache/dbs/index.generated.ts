@@ -1,19 +1,19 @@
 
 import { AllModels as AdminAllModels } from './admin.modelTypes.generated'
-import { AllModels as BangkAllModels } from './bangk.modelTypes.generated'
 import { AllModels as WebsiteAllModels } from './website.modelTypes.generated'
+import { AllModels as BangkAllModels } from './bangk.modelTypes.generated'
 
 
 export type ModelsWithDbNamesAndReadWrite = {
     admin: AdminAllModels
-    bangk: { [K in keyof BangkAllModels]: K extends 'user' ? BangkAllModels[K] & { Read: UserPermissionFields, Write: Partial<UserPermissionFields> } : BangkAllModels[K] }
     website: WebsiteAllModels
+    bangk: { [K in keyof BangkAllModels]: K extends 'user' ? BangkAllModels[K] & { Read: UserPermissionFields, Write: Partial<UserPermissionFields> } : BangkAllModels[K] }
 }
 
 export type DbIds = {
     admin: 'admin'
-    bangk: 'bangk'
     website: 'website'
+    bangk: 'bangk'
 }
 
 export type AllDbIds = DbIds[keyof DbIds]

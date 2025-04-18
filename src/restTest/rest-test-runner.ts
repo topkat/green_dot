@@ -185,7 +185,7 @@ export const testRunner = {
 
         if (auth) headers.Authorization = await parseTestConfigValue(auth, env)
         let stringApiKey: string
-        let realAs: string | Record<string, any>
+        let realAs: string
         if (apiKey) {
             const realApiKey = await parseTestConfigValue(apiKey, env) as string
             stringApiKey = testRunner.config.apiKeys[realApiKey]?.token ?? realApiKey
