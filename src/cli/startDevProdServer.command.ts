@@ -66,10 +66,10 @@ export async function startDevProdCommand() {
   await onFileChange(async path => {
     if (path.includes('generated')) return
     if (watcherOn) {
-      C.info(`File change detected for ${path}, restarting...`)
+      C.info(`File change detected for ${path}, restarting (hr)...`)
       C.log(`\n\n`)
       await stopServer()
-      process.exit(1)
+      process.exit(202)
     }
   })
 }

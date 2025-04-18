@@ -95,7 +95,7 @@ async function start() {
               onFileChange(async path => {
                 if (path.includes('generated')) return
 
-                C.info(`File change detected for ${path}, restarting...`)
+                C.info(`File change detected for ${path}, restarting (cp)...`)
                 C.log(`\n\n`)
                 resolve('reload')
               })

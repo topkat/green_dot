@@ -5,8 +5,12 @@ import { getProjectPaths } from '../../helpers/getProjectPaths'
 import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
+const indexedFiles = ['svc', 'schedule', 'event', 'error', 'seed'] as const
+type IndexedFiles = typeof indexedFiles[number]
+
+
 // match .svc.ts, .schedule.ts or .event.ts files with first capture group to model name
-const appFilesRegexp = /[/\\]([^/\\]+)\.(svc|schedule|event|error|seed)\.ts$/
+const appFilesRegexp = new RegExp(`[/\\\\]([^/\\\\]+)\\.(${indexedFiles.join('|')})\\.ts$`)
 
 /** Generates index.generated.ts files in client APP folder */
 export async function generateIndexForProjectApp() {
@@ -18,7 +22,7 @@ export async function generateIndexForProjectApp() {
     const mainPathRelative = Path.relative(appConfigFolderPath, mainConfig.folderPath)
     try {
 
-      const allFiles = await glob.async('**/*.@(svc|schedule|event|error|seed).ts', {
+      const allFiles = await glob.async(`**/*.@(${indexedFiles.join('|')}).ts`, {
         cwd: appConfigFolderPath,
         onlyFiles: true,
         absolute: true,
@@ -32,7 +36,7 @@ export async function generateIndexForProjectApp() {
 
       for (const file of allFiles) {
 
-        const match = file.match(appFilesRegexp) as [any, moduleName: string, moduleType: 'svc' | 'schedule' | 'event' | 'error' | 'seed']
+        const match = file.match(appFilesRegexp) as [any, moduleName: string, moduleType: IndexedFiles]
 
         if (match) {
 
