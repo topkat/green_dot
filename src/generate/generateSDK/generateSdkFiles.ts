@@ -10,7 +10,6 @@ import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbC
 
 
 export async function generateSdkFiles(
-    monorepoRoot: string,
     sdkRoot: string,
     platform: string,
     daoMethods: GenerateSDKparamsForDao[string]['methodConfigAll'],

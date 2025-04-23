@@ -120,7 +120,6 @@ export async function generateSdk(onlyDefaults = false) {
             //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ═══╝ ╚══╝ ╩  ╚
 
             await generateSdkFiles(
-                monorepoRoot,
                 sdkRoot,
                 platform,
                 methodConfigAll,
