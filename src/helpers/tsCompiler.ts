@@ -2,82 +2,46 @@ import * as ts from 'typescript'
 import fs from 'fs-extra'
 import Path from 'path'
 
-export async function compileTypeScriptToFile(
-  sourceCode: string,
-  outputPath: string,
-  options: ts.CompilerOptions = {
-    target: ts.ScriptTarget.ES2020,
-    module: ts.ModuleKind.CommonJS,
-    strict: true,
-    esModuleInterop: true,
-    skipLibCheck: true,
-    forceConsistentCasingInFileNames: true,
-  }
-): Promise<void> {
-  // Create a source file
-  const sourceFile = ts.createSourceFile(
-    'temp.ts',
-    sourceCode,
-    ts.ScriptTarget.ES2020,
-    true
-  )
-
-  // Create a program
-  const program = ts.createProgram(['temp.ts'], options)
-
-  // Get the emit output
-  const emitResult = program.emit()
-
-  // Check for compilation errors
-  const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics)
-
-  if (allDiagnostics.length > 0) {
-    const errors = allDiagnostics.map(diagnostic => {
-      if (diagnostic.file) {
-        const { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!)
-        const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
-        return `Error ${line + 1},${character + 1}: ${message}`
-      } else {
-        return ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
-      }
-    })
-    throw new Error(`TypeScript compilation failed:\n${errors.join('\n')}`)
-  }
-
-  // Ensure the output directory exists
-  await fs.ensureDir(Path.dirname(outputPath))
-
-  // Write the compiled JavaScript to the output file
-  const outputFile = outputPath.replace(/\.ts$/, '.js')
-  await fs.writeFile(outputFile, emitResult.emittedFiles[0], 'utf-8')
-
-  // If source maps were generated, write them too
-  if (emitResult.emittedFiles[1]) {
-    await fs.writeFile(outputFile + '.map', emitResult.emittedFiles[1], 'utf-8')
-  }
+interface CompileOptions {
+  projectPath: string
+  outputPath?: string
+  customOptions?: ts.CompilerOptions
 }
 
-export async function compileTypeScriptToMemory(
-  sourceCode: string,
-  options: ts.CompilerOptions = {
-    target: ts.ScriptTarget.ES2020,
-    module: ts.ModuleKind.CommonJS,
-    strict: true,
-    esModuleInterop: true,
-    skipLibCheck: true,
-    forceConsistentCasingInFileNames: true,
+export async function compileTypeScriptProject(options: CompileOptions): Promise<string> {
+  const { projectPath, outputPath, customOptions } = options
+
+  // Read and parse tsconfig.json
+  const tsConfigPath = Path.join(projectPath, 'tsconfig.json')
+  const tsConfigExists = await fs.pathExists(tsConfigPath)
+
+  if (!tsConfigExists) {
+    throw new Error(`tsconfig.json not found in ${projectPath}`)
   }
-): Promise<string> {
-  // Create a source file
-  const sourceFile = ts.createSourceFile(
-    'temp.ts',
-    sourceCode,
-    ts.ScriptTarget.ES2020,
-    true
+
+  const tsConfigContent = await fs.readFile(tsConfigPath, 'utf-8')
+  const tsConfig = ts.parseConfigFileTextToJson(tsConfigPath, tsConfigContent)
+
+  if (tsConfig.error) {
+    throw new Error(`Error parsing tsconfig.json: ${tsConfig.error.messageText}`)
+  }
+
+  // Parse compiler options
+  const parsedConfig = ts.parseJsonConfigFileContent(
+    tsConfig.config,
+    ts.sys,
+    projectPath
   )
 
-  // Create a program
-  const program = ts.createProgram(['temp.ts'], options)
+  // Merge custom options if provided
+  const compilerOptions: ts.CompilerOptions = {
+    ...parsedConfig.options,
+    ...customOptions,
+    outDir: outputPath || parsedConfig.options.outDir
+  }
+
+  // Create program with all files in the project
+  const program = ts.createProgram(parsedConfig.fileNames, compilerOptions)
 
   // Get the emit output
   const emitResult = program.emit()
@@ -98,5 +62,6 @@ export async function compileTypeScriptToMemory(
     throw new Error(`TypeScript compilation failed:\n${errors.join('\n')}`)
   }
 
-  return emitResult.emittedFiles[0]
+  // Return the output directory path
+  return compilerOptions.outDir || projectPath
 }

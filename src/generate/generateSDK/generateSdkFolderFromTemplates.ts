@@ -6,6 +6,8 @@ import { templater } from 'simple-file-templater'
 import { C, objEntries } from 'topkat-utils'
 import { AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 import { GreenDotConfig } from '../../types/mainConfig.types'
+import { compileTypeScriptProject } from '../../helpers/tsCompiler'
+import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 
 
 
@@ -121,10 +123,23 @@ export async function generateSdkFolderFromTemplates(
   //----------------------------------------
   // SDK HELPER
   //----------------------------------------
-  const monorepoRoot = Path.join(sdkRoot, '../../')
+
+  // COMPILE
+  const sdkHelperDistPath = Path.join(greenDotCacheModuleFolder, '/sdkHelperDist')
+
+  if (!await fs.exists(sdkHelperDistPath)) {
+    const sdkHelperFolderPath = Path.resolve(__dirname, '../../../templates/sdkHelpersModule')
+    if (! await fs.exists(sdkHelperFolderPath)) throw new Error('sdkHelperFolderPath not existing in green_dot: ' + sdkHelperFolderPath)
+    await compileTypeScriptProject({
+      projectPath: sdkHelperFolderPath,
+      outputPath: Path.join(greenDotCacheModuleFolder, '/sdkHelperDist'),
+    })
+  }
+
+  // COPY
   const sdkHelperPath = Path.join(sdkRoot, 'sdkHelpers')
   if (await fs.exists(sdkHelperPath)) await fs.remove(sdkHelperPath)
-  await fs.copy(Path.join(monorepoRoot, './packages/backend-sdk-helpers/dist'), sdkHelperPath)
+  await fs.copy(sdkHelperDistPath, sdkHelperPath)
 
 }
 
