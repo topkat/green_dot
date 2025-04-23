@@ -76,7 +76,7 @@ export async function generateSdkFolderFromTemplates(
   }
 
   await templater(
-    Path.resolve(__dirname, './templates'),
+    Path.resolve(__dirname, '../../../templates/sdkTemplate'),
     sdkRoot,
     [
       ...replaceInFiles,
@@ -88,7 +88,7 @@ export async function generateSdkFolderFromTemplates(
 
   // COMMON JS MODULES
   await templater(
-    Path.resolve(__dirname, './templates'),
+    Path.resolve(__dirname, '../../../templates/sdkTemplate'),
     sdkRoot,
     [
       ...replaceInFiles,

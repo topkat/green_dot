@@ -76,6 +76,6 @@ export async function generateDbCachedFiles(resetCache = false) {
 
   }
 
-  await generateIndexForDbTypeFiles(indexFile)
+  await generateIndexForDbTypeFiles({ indexFile })
 }
 
