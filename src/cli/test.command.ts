@@ -9,6 +9,7 @@ import { GreenDotApiTestsConfig, TestSuite } from '../restTest/rest-test-types'
 import fs from 'fs-extra'
 import Path from 'path'
 import { testRunner } from '../restTest/rest-test-runner'
+import { GreenDotConfig } from '../types/mainConfig.types'
 
 
 let watcherOn = false
@@ -20,9 +21,7 @@ const { filter, isReload, ci = false } = getServerConfigFromEnv<{ filter?: strin
 
 export async function testCommand() {
 
-  const { appConfigs } = await getProjectPaths()
-
-  const { testConfig, allTests } = await findTestPaths(appConfigs)
+  const { testConfig, allTests } = await findTestPaths()
 
   handleUserInputInCli()
 
@@ -208,7 +207,9 @@ function handleUserInputInCli() {
 }
 
 
-async function findTestPaths(appConfigs: AppConfigPaths) {
+async function findTestPaths() {
+
+  const { appConfigs, mainConfig } = await getProjectPaths()
 
   const testConfigs = appConfigs.map(apconf => apconf.testConfigPath).filter(e => e)
 
@@ -230,9 +231,11 @@ async function findTestPaths(appConfigs: AppConfigPaths) {
 
   const testIndexPath = appConfigs.find(appConf => appConf.testConfigPath === testConfigPath).testIndexPath
 
+  const mainConfig2 = await import(mainConfig.path) as GreenDotConfig // IMPORT GLOBAL TYPES
+
   const testConfig = await import(testConfigPath) as GreenDotApiTestsConfig
 
   const tests = await import(testIndexPath) as { allTests: { [fileName: string]: TestSuite } }
 
-  return { testConfig, allTests: tests.allTests }
+  return { testConfig, allTests: tests.allTests, mainConfig: mainConfig2 }
 }

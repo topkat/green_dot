@@ -26,7 +26,7 @@ export type GreenDotAppConfig = {
     [apiKey in (GD['role'] | (string & {}))]?: {
       _id?: string
       token: string
-      role?: GD['role']
+      role?: GD['role'] // GD['role'] extends 'notImplemented' ? string : GD['role']
       permissions?: Partial<Record<GD['permissions'], any>>
       // TODO
       /** Add IPs to whitelist, all other IPs will be non-authorized to authenticate with apiKey */
