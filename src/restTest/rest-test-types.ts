@@ -85,7 +85,9 @@ export type TestSuiteRaw<TestUserNames extends string = any, ConnexionInfos exte
     beforeReloadAll?: TestElement<TestUserNames, ConnexionInfos, RestTestConfigType>[]
 }
 
-export type TestSuite<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends GreenDotApiTestsConfig = any> = TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType> | (() => MaybePromise<TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType>>)
+export type TestSuite<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends GreenDotApiTestsConfig = any> =
+    TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType>
+    | (() => MaybePromise<TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType>>)
 
 export type TestFunction<RestTestConfigType extends GreenDotApiTestsConfig> = (env: RestTestConfigType['env']) => void
 

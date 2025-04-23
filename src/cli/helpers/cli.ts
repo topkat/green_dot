@@ -26,14 +26,14 @@ export const wrapCliText = (str: string, width = terminalCharSize) => str.match(
 //  ║    ║     ║    ╠══╣ ╠═╦╝ ║ ═╦ ╚══╗
 //  ╚══╝ ╚══╝ ═╩═   ╩  ╩ ╩ ╚  ╚══╝ ═══╝
 
-type ConfigFromCli = { env: 'dev' | 'prod' }
+type ConfigFromCli = { env: 'dev' | 'prod', isReload: boolean }
 
-const defaultEnv = { env: 'dev' } satisfies ConfigFromCli
+const defaultEnv = { env: 'dev', isReload: false } satisfies ConfigFromCli
 
 
-export function cliArgsToEnv(args: Record<string, any>) {
+export function cliArgsToEnv(args: Record<string, any>, isReload: boolean) {
 
-  const argsParsed = { env: 'dev' } as ConfigFromCli
+  const argsParsed = { env: 'dev', isReload } as ConfigFromCli
 
   // TODO test and take in account
   if (args.production === true) argsParsed.env = 'prod'
@@ -45,6 +45,10 @@ export function cliArgsToEnv(args: Record<string, any>) {
 export function getServerConfigFromEnv<AdditionalEnv extends Record<string, any> = {}>() {
   return JSON.parse(process.env.GREEN_DOT_CLI_PARAMS || JSON.stringify(defaultEnv)) as ConfigFromCli & AdditionalEnv
 }
+
+//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
 /** Green background log */
 export function userInputConfirmLog(txt: string) {

@@ -13,7 +13,6 @@ export type ChildProcessCommands = keyof typeof commands
 
 const [, , command] = process.argv as [string, string, ChildProcessCommands]
 
-
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝

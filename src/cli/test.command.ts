@@ -1,104 +1,63 @@
 
-import { C } from 'topkat-utils'
+import { C, JSONstringyParse, noDuplicateFilter, removeCircularJSONstringify } from 'topkat-utils'
 import { clearCli, cliBadge, cliIntro, getServerConfigFromEnv, userInputConfirmLog, userInputKeyHandler } from './helpers/cli'
-import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
+import { AppConfigPaths, autoFindAndInitActiveAppAndDbPaths, getProjectPaths, greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './fileWatcher'
 import { intro as testCliIntro } from '../restTest/rest-test-ascii-display'
-import { GreenDotApiTestsConfig } from '../restTest/rest-test-types'
+import { GreenDotApiTestsConfig, TestSuite } from '../restTest/rest-test-types'
+import fs from 'fs-extra'
+import Path from 'path'
+import { testRunner } from '../restTest/rest-test-runner'
 
 
-let watcherOn = true
+let watcherOn = false
+let envCache: any[] = []
+let restTestState = {}
+let startAtTestNb = 0
 
-const cliVars = getServerConfigFromEnv<{ filter: string }>()
+const { filter, isReload, ci = false } = getServerConfigFromEnv<{ filter?: string, ci?: boolean }>()
 
 export async function testCommand() {
 
   const { appConfigs } = await getProjectPaths()
 
-  const testConfigs = appConfigs.map(apconf => apconf.testConfigPath).filter(e => e)
-  const testConfigPath = await findTestConfig(testConfigs)
+  const { testConfig, allTests } = await findTestPaths(appConfigs)
 
   handleUserInputInCli()
 
-  const testConfig = await import(testConfigPath) as GreenDotApiTestsConfig
+  C.log(testCliIntro)
 
-
-  const startAtTestNb = /^\d+$/.test(startAtTestNbStr) ? parseInt(startAtTestNbStr) : 0
-  const isReload = startAtTestNb > 0
-
-  let restTestState = {}
   if (isReload) {
-    // eslint-disable-next-line no-console
-    console.log(testCliIntro) // do not use C.log
-    restTestState = await retrieveEnvFromFile()
+    const { restTestState: rts, env, startAtTestNb: tn } = await retrieveEnvFromFile()
+    envCache = env
+    startAtTestNb = tn
+    restTestState = rts
   }
 
-  const testFlowPath2 = path.resolve(process.cwd(), testFlowPath)
-  const configPath2 = path.resolve(process.cwd(), configPath)
-
-  const restTest = await import('./index.js')
-  const scenario = await import(testFlowPath2)
-  const restTestConfig = await import(configPath2)
-
-  await restTest.testRunner.runScenario(scenario.default as any, {
-    ...restTestConfig.restTestConfig,
-    onError: onErrorCli,
-    startAtTestNb,
-    env: { ...restTestConfig.restTestConfig.env, ...getEnvAtTest(startAtTestNb) },
-    afterTest,
-    displayIntroTimeout: startAtTestNb > 0 ? 0 : restTestConfig.restTestConfig.displayIntroTimeout,
-    filter,
-    isReload,
-    restTestState,
-  })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  const errorHandler = async err => {
-    C.error(err)
-    await stopServer()
-    if (watcherOn === false) userInputKeyHandler('h')
-    // Don't put spinner here
-    process.exit(201) // hot reload
-  }
+  watcherOn = false
 
   // Catch All App Errors, even the unhandled ones
   process.on('unhandledRejection', errorHandler)
   process.on('uncaughtException', errorHandler)
 
   try {
-    // Here it's important that we load the npm module to avoid
-    // creating multiple context of execution. Actually we'll
-    // use the same green_dot module that the app use and not
-    // a local version
 
-    await startServer()
+    await testRunner.runScenario(allTests, {
+      ...testConfig,
+      onError: async (actualTestNb, rsState) => {
+        startAtTestNb = actualTestNb
+        restTestState = rsState
+        await saveEnvToFile()
+      },
+      startAtTestNb,
+      env: { ...testConfig.env, ...getEnvAtTest(startAtTestNb) },
+      afterTest,
+      displayIntroTimeout: startAtTestNb > 0 ? 0 : testConfig.displayIntroTimeout,
+      filter,
+      isReload,
+      restTestState,
+    })
 
   } catch (err) {
     errorHandler(err)
@@ -110,7 +69,6 @@ export async function testCommand() {
     if (watcherOn) {
       C.info(`File change detected for ${path}, restarting (hr)...`)
       C.log(`\n\n`)
-      await stopServer()
       process.exit(202)
     }
   })
@@ -122,36 +80,51 @@ export async function testCommand() {
 
 
 
+async function errorHandler(err) {
+  C.error(err)
 
+  if (ci) process.exit(1)
+  else {
+    watcherOn = true
 
+    const choice = await luigi.askSelection(
+      `Hey, it seems everything didn't happens as expected...\n * Tips: save a file to trigger hot reload and restart tests\n * press ${cliBadge('W')} to disable watcher\n\nWhat should we do next?`,
+      ['Replay last', 'Ignore', 'Replay all', 'Exit'] as const
+    )
 
+    if (choice === 'Exit') process.exit(0)
+    else if (choice === 'Replay all') {
+      startAtTestNb = 0
+    } else if (choice === 'Ignore') {
+      startAtTestNb += 1
+    }
 
+    await saveEnvToFile()
 
-
-
-
-
-
-
-
-
-
-async function onErrorCli(actualTestNb: number, restTestState: Record<string, any> = {}) {
-  await saveEnvToFile(restTestState)
-
-  // eslint-disable-next-line no-console
-  console.log(`%%${actualTestNb}%%`) // send test number so that parent process can interpolate it
-
-  process.exit(0)
+    process.exit(201) // simple reload
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 async function afterTest(actualTestNb: number, env: Record<string, any>) {
   const previousEnv = getEnvAtTest(actualTestNb - 1)
-  const allKeys = noDuplicateFilter([...Object.keys(previousEnv), ...Object.keys(env)])
+  const allEnvKeys = noDuplicateFilter([...Object.keys(previousEnv), ...Object.keys(env)])
   const actualEnv = JSONstringyParse(env)
 
-  for (const k of allKeys) {
+  for (const k of allEnvKeys) {
     if (JSON.stringify(actualEnv[k]) === JSON.stringify(previousEnv[k])) delete actualEnv[k]
     else if (typeof actualEnv[k] === 'undefined' && previousEnv[k]) actualEnv[k] = undefined // should override
   }
@@ -163,27 +136,45 @@ function getEnvAtTest(testNb: number) {
   return Object.assign({}, ...envCache.slice(0, testNb + 1))
 }
 
-async function saveEnvToFile(restTestState: Record<string, any> = {}) {
-  await fs.writeFile('./.testenv', removeCircularJSONstringify({
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  ╔══╗ ╦╗ ╔ ╦  ╦   ╔══╗ ═╦═ ╦    ╔══╗
+//  ╠═   ║╚╗║ ╚╗ ║   ╠═    ║  ║    ╠═
+//  ╚══╝ ╩ ╚╩  ╚═╝   ╩    ═╩═ ╚══╝ ╚══╝
+
+type RestTestSave = {
+  env: any[]
+  restTestState: Record<string, any>
+  startAtTestNb?: number
+}
+
+const testEnvFilePath = Path.join(greenDotCacheModuleFolder, '/.testenv')
+
+async function saveEnvToFile() {
+  console.log(`CHECK IF SAVED TWICE ON ERR`)
+  await fs.outputFile(testEnvFilePath, removeCircularJSONstringify({
     env: envCache,
     restTestState,
-  }))
+    startAtTestNb,
+  } satisfies RestTestSave))
 }
 
 async function retrieveEnvFromFile() {
-  const fileAsStr = await fs.readFile('./.testenv', 'utf-8')
+  const fileAsStr = await fs.readFile(testEnvFilePath, 'utf-8')
   const saveObj = (fileAsStr ? JSON.parse(fileAsStr) : { env: [], restTestState: {} }) as RestTestSave
-  envCache = saveObj.env
-  return saveObj.restTestState
+  return saveObj
 }
-
-type RestTestSave = { env: any[], restTestState: Record<string, any> }
-
-
-
-
-
-
 
 
 
@@ -217,23 +208,31 @@ function handleUserInputInCli() {
 }
 
 
-async function findTestConfig(testConfigs: string[]) {
+async function findTestPaths(appConfigs: AppConfigPaths) {
+
+  const testConfigs = appConfigs.map(apconf => apconf.testConfigPath).filter(e => e)
+
+  let testConfigPath = testConfigs[0]
 
   if (!testConfigs.length) {
     throw new Error('No test config found for any projects, please make sure you have green_dot.apiTests.config.ts file on your project')
   } else if (testConfigs.length > 1) {
-    const testConfigPath = await luigi.askSelection(
+    testConfigPath = await luigi.askSelection(
       'Which app should I test ?',
-      testConfigs
+      appConfigs.map(apconf => apconf.testConfigPath).filter(e => e)
     )
 
     luigi.confirm()
 
     clearCli()
     cliIntro()
-
-    return testConfigPath
-  } else {
-    return testConfigs[0]
   }
+
+  const testIndexPath = appConfigs.find(appConf => appConf.testConfigPath === testConfigPath).testIndexPath
+
+  const testConfig = await import(testConfigPath) as GreenDotApiTestsConfig
+
+  const tests = await import(testIndexPath) as { allTests: { [fileName: string]: TestSuite } }
+
+  return { testConfig, allTests: tests.allTests }
 }

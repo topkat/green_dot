@@ -53,6 +53,10 @@ const commands = {
       name: 'filter',
       description: 'filter=user will only pass tests that contains user in their name',
       type: String
+    }, {
+      name: 'ci',
+      type: Boolean,
+      description: `Run tests in CI mode: will fail and quit process with code 1 on the first error`,
     }],
     steps: [
       'test'
@@ -82,8 +86,7 @@ async function start() {
       error: 'throw'
     }) as { _command: keyof typeof commands }
 
-    cliArgsToEnv(args)
-
+    cliArgsToEnv(args, false)
 
     const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
 
@@ -122,7 +125,11 @@ async function start() {
             }
           })
         })
-        if (next === 'reload') break
+
+        if (next === 'reload') {
+          cliArgsToEnv(args, true)
+          break
+        }
       }
     } while (next === 'reload')
 

@@ -10,13 +10,13 @@ export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string,
 export const greenDotCacheModuleFolder = Path.resolve(__dirname, '../cache')
 if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, `ERROR: green_dot local cache folder for DB is not existing. __dirname:${__dirname} greenDotCacheModuleFolder:${greenDotCacheModuleFolder} `)
 
-
+export type AppConfigPaths = Array<GDpathConfigWithIndex & { testConfigPath?: string, testIndexPath?: string }>
 
 let greenDotPathsCache: {
   /** Path of green_dot.config.ts */
   mainConfig: GDpathConfig
   /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
-  appConfigs: Array<GDpathConfigWithIndex & { testConfigPath?: string }>
+  appConfigs: AppConfigPaths
   /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
   dbConfigs: GDpathConfigWithIndex[]
 
@@ -101,7 +101,9 @@ function configFilePathMapper(mainConfigFolderPath: string, includesTestConfig =
       generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '.generated'),
     }
     if (includesTestConfig) {
-      (paths as any).testConfigPath = path.replace(/\.[/\\]app[^/\\]\./, `.apiTests.`)
+      const yoTsBullshit = paths as any
+      yoTsBullshit.testConfigPath = path.replace(/\.[/\\]app[^/\\]\./, `.apiTests.`)
+      yoTsBullshit.testIndexPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'testIndex.generated.ts')
     }
     return paths
   }
