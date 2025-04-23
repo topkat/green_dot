@@ -13,15 +13,17 @@ import { AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 export async function generateSdkFolderFromTemplates(
   platform: string,
   sdkRoot: string,
+  // <DO_NOT> get MAIN CONFIG in this file because we may be in safe mode
+  platforms: string[],
+  generateSdkConfig = {},
+  // </DO_NOT>
+  // Optinal params
   allMethodsObjectForSdk: AllMethodsObjectForSdk = { dbRead: {}, dbWrite: {}, service: {} },
   tsApiTypes: string = '',
   allMethodNames: string[] = [],
   backendProjectForSdk: string[] = [],
   queriesToInvalidate: { [query: string]: string[] } = {},
 ) {
-
-  const mainConfig = getMainConfig()
-  const { platforms, generateSdkConfig } = mainConfig
 
   const allMethodsString = JSON.stringify(allMethodsObjectForSdk)
 

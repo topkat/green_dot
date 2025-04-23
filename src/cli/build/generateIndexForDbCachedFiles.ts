@@ -10,9 +10,11 @@ import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 
 
 /** If this function is called alone, it will generate a default index file that is typescript valid and safe */
-export async function generateIndexForDbCachedFiles(
-  indexFile?
-) {
+export async function generateIndexForDbTypeFiles({
+  indexFile = undefined as ReturnType<typeof getNewIndexForDbCacheFileStructure> | undefined,
+  outputFolder = greenDotCacheModuleFolder,
+  outputFileNameWithoutExtension = 'index.generated',
+}) {
 
   let indexFileContent = ''
 
@@ -78,7 +80,7 @@ export type ModelNamesForDb = { [K in keyof ModelsWithDbNamesAndReadWrite]: keyo
 `
   }
 
-  await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'dbs', 'index.generated.ts'), indexFileContent)
+  await fs.outputFile(Path.join(outputFolder, 'dbs', outputFileNameWithoutExtension + '.ts'), indexFileContent)
 
   C.success(`Successfully generated local cache/dbs/index.generated.ts`)
 }

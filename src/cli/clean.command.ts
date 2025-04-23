@@ -2,7 +2,7 @@
 
 import { C } from 'topkat-utils'
 import { createNewTask } from './createNewTask'
-import { generateIndexForDbCachedFiles } from './build/generateIndexForDbCachedFiles'
+import { generateIndexForDbTypeFiles } from './build/generateIndexForDbCachedFiles'
 
 
 export async function cleanCommand() {
@@ -11,7 +11,7 @@ export async function cleanCommand() {
 
   C.info('Cleaning Files')
 
-  await build.step(`Clean`, generateIndexForDbCachedFiles, { cleanOnError: false, doNotDisplayTime: true })
+  await build.step(`Clean`, generateIndexForDbTypeFiles, { cleanOnError: false, doNotDisplayTime: true })
 
   C.log(C.dim('='.repeat(50) + '\n'))
 

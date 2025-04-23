@@ -7,10 +7,11 @@ import { getDbConfigs } from '../../helpers/getGreenDotConfigs'
 
 
 
-export async function generateModelFolderInSdk(monorepoRoot: string, platform: string) {
+export async function generateModelFolderInSdk(
+  sdkRoot: string,
+) {
 
   const dbConfigs = getDbConfigs()
-  const sdkRoot = Path.resolve(monorepoRoot, `SDKs/${platform}Sdk`)
 
   let modelIndexFile = ''
   const exportLine = [] as string[]

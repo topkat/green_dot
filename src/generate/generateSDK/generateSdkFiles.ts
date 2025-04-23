@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import Path from 'path'
 import { displayObjectClean } from '../helpers/displayObjectClean'
 import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
-import { generateModelFolderInSdk } from './generateModelFolderInSdk'
+import { generateModelFolderInSdk } from './generateModelFolderInSdkOLD'
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 
 

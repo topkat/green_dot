@@ -10,10 +10,11 @@ import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates
 import { GenerateSDKparamsForService } from '../../types/generateSdk.types'
 import { getMainConfig, makeApiCall } from '../..'
 import { generateSDKconfigForDaos } from './generateSDKconfigForDao'
-import { generateModelFolderInSdk } from './generateModelFolderInSdk'
+import { generateModelFolderInSdk } from './generateModelFolderInSdkOLD'
 import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs'
 import { getAppConfigs } from '../../helpers/getGreenDotConfigs'
 import { findProjectPath } from '../../helpers/getProjectPaths'
+import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbCachedFiles'
 
 
 export async function generateSdk(onlyDefaults = false) {
@@ -23,33 +24,7 @@ export async function generateSdk(onlyDefaults = false) {
         mainConfig = getMainConfig()
     } catch (err) {
         // SAFE MODE (mainly one of the greenDot config is requiring a SDK 🙃)
-        C.error(false, err)
-        C.info('Error: trying generating SDKs in SAFE mode')
-
-        const { rootPath } = await findProjectPath()
-
-        const sdkRoot = Path.resolve(rootPath, './SDKs')
-
-        if (await fs.exists(sdkRoot)) {
-
-            const sdkPaths = await fs.readdir(sdkRoot)
-            console.log(`TODO check if it's the right path`, sdkPaths)
-            const monorepoRoot = rootPath
-
-            for (const sdkPath of sdkPaths) {
-                // const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
-                const lastFolderName = sdkPath.split(Path.sep).pop()
-                console.log(`TODO check lastFolderName as the form of platformSdk no additional things`, lastFolderName)
-                const platform = lastFolderName.replace('Sdk', '')
-                console.log(`TODO check platform is correctly formatted`, platform)
-                await generateSdkFolderFromTemplates(platform, sdkPath)
-                await generateModelFolderInSdk(monorepoRoot, platform)
-            }
-
-            if (onlyDefaults) {
-                return C.success(`Generated SDK SAFE`)
-            }
-        }
+        return SAFEmode(err)
     }
 
     const { isProdEnv, generateSdkConfig, platforms } = mainConfig
@@ -63,8 +38,8 @@ export async function generateSdk(onlyDefaults = false) {
     // REBUILD DEFAULT FOLDER
     for (const platform of platforms) {
         const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
-        await generateSdkFolderFromTemplates(platform, sdkRootPath)
-        await generateModelFolderInSdk(monorepoRoot, platform)
+        await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
+        await generateModelFolderInSdk(sdkRootPath)
     }
 
     if (onlyDefaults) {
@@ -304,6 +279,44 @@ export async function generateSdk(onlyDefaults = false) {
 
     C.success(`Generated SDK defaults`)
 
+}
+
+
+
+
+//  ╔═══ ╔══╗ ╔══╗ ╔══╗   ╦╗╔╦ ╔══╗ ╔═╗  ╔══╗
+//  ╚══╗ ╠══╣ ╠═   ╠═     ║╚╝║ ║  ║ ║  ║ ╠═
+//  ═══╝ ╩  ╩ ╩    ╚══╝   ╩  ╩ ╚══╝ ╚══╝ ╚══╝
+// This mode helps generating defaults generic SDKs to avoid type error
+// on intermediate build, the it reconstruct everything with right types
+
+async function SAFEmode(err) {
+    C.error(false, err)
+    C.info('Error: trying generating SDKs in SAFE mode')
+
+    const { rootPath } = await findProjectPath()
+
+    const sdkRoot = Path.resolve(rootPath, './SDKs')
+
+    if (await fs.exists(sdkRoot)) {
+
+        const sdkPaths = (await fs.readdir(sdkRoot)).filter(name => name.includes('Sdk'))
+
+        const getPlatformFromPath = sdkPath => sdkPath.split(Path.sep).pop().replace('Sdk', '')
+        const platforms = sdkPaths.map(sdkPath => getPlatformFromPath(sdkPath))
+
+        for (const sdkPath of sdkPaths) {
+            const platform = getPlatformFromPath(sdkPath)
+
+            await generateSdkFolderFromTemplates(platform, sdkPath, platforms)
+            await generateIndexForDbTypeFiles({
+                outputFolder: sdkPath,
+                outputFileNameWithoutExtension: 'modelTypes.generated.ts'
+            })
+        }
+
+        return C.success(`Generated SDK SAFE`)
+    }
 }
 
 

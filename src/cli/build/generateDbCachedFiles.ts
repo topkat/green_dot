@@ -7,7 +7,7 @@ import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
 import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-import { generateIndexForDbCachedFiles, getNewIndexForDbCacheFileStructure } from './generateIndexForDbCachedFiles'
+import { generateIndexForDbTypeFiles, getNewIndexForDbCacheFileStructure } from './generateIndexForDbCachedFiles'
 
 
 
@@ -76,6 +76,6 @@ export async function generateDbCachedFiles(resetCache = false) {
 
   }
 
-  await generateIndexForDbCachedFiles(indexFile)
+  await generateIndexForDbTypeFiles(indexFile)
 }
 
