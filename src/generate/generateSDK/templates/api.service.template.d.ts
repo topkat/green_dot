@@ -1,9 +1,8 @@
 
-import * as modelTypes from './model-types.generated'
-import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongo-db-base-types.generated'
+import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongodbBaseTypes.generated'
 import { SdkError, ServerUrls, SdkInitOptions, Breakpoints } from './apiCall'
 import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query'
-import { ModelNames } from './model-types.generated'
+import { ModelNames } from './modelTypes.generated'
 import { InitBackendConfig } from './sdkHelpers/initBackend'
 import { ImgData } from './img'
 
@@ -11,7 +10,7 @@ export * from './sdkHelpers'
 
 type MethodNames = '%%AllMethodNameTypeString%%'
 
-export * from './model-types.generated'
+export * from './modelTypes.generated'
 
 export type ApiType = {
   init(config: SdkInitOptions): void

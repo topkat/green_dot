@@ -4,8 +4,8 @@ import fs from 'fs-extra'
 import Path from 'path'
 import { templater } from 'simple-file-templater'
 import { C, objEntries } from 'topkat-utils'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { AllMethodsObjectForSdk } from '../../types/generateSdk.types'
+import { GreenDotConfig } from '../../types/mainConfig.types'
 
 
 
@@ -15,7 +15,7 @@ export async function generateSdkFolderFromTemplates(
   sdkRoot: string,
   // <DO_NOT> get MAIN CONFIG in this file because we may be in safe mode
   platforms: string[],
-  generateSdkConfig = {},
+  generateSdkConfig = {} as GreenDotConfig['generateSdkConfig'],
   // </DO_NOT>
   // Optinal params
   allMethodsObjectForSdk: AllMethodsObjectForSdk = { dbRead: {}, dbWrite: {}, service: {} },

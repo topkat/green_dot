@@ -3,13 +3,15 @@ import fs from 'fs-extra'
 import Path from 'path'
 import { displayObjectClean } from '../helpers/displayObjectClean'
 import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
-import { generateModelFolderInSdk } from './generateModelFolderInSdkOLD'
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbCachedFiles'
 
 
 
 export async function generateSdkFiles(
     monorepoRoot: string,
+    sdkRoot: string,
     platform: string,
     daoMethods: GenerateSDKparamsForDao[string]['methodConfigAll'],
     servicesMethods: Record<string, [serverKey: string, serviceName: string]>,
@@ -19,7 +21,7 @@ export async function generateSdkFiles(
     queriesToInvalidate: { [query: string]: string[] }
 ) {
 
-    const sdkRoot = Path.resolve(monorepoRoot, `SDKs/${platform}Sdk`)
+    const { platforms, generateSdkConfig } = getMainConfig()
 
     const allMethodsObjectForSdk = { service: servicesMethods, ...daoMethods } satisfies AllMethodsObjectForSdk
 
@@ -32,25 +34,23 @@ export async function generateSdkFiles(
         .replace(/}\s*$/, '')
 
     //----------------------------------------
-    // FILL SDK FOLDER\
+    // POPULATE SDK FOLDER
     //----------------------------------------
-    await generateSdkFolderFromTemplates(platform, sdkRoot, allMethodsObjectForSdk, tsApiTypes, allMethodNames, backendProjectForSdk, queriesToInvalidate)
+    await generateSdkFolderFromTemplates(platform, sdkRoot, platforms, generateSdkConfig, allMethodsObjectForSdk, tsApiTypes, allMethodNames, backendProjectForSdk, queriesToInvalidate)
 
     //----------------------------------------
     // DATABASE TYPES EMBEDDED IN SDK
     //----------------------------------------
-    await generateModelFolderInSdk(monorepoRoot, platform)
+    await generateIndexForDbTypeFiles({
+        outputFolder: sdkRoot,
+        outputFileNameWithoutExtension: 'modelTypes.generated.ts'
+    })
 
-    // mongo-db-base-types.generated.ts
+    // mongodbBaseTypes.generated.ts
     const databaseFilePath = Path.resolve(__dirname, '../../databases/mongo/types/mongoDbBaseTypes.ts')
-    await copyFile(databaseFilePath, 'mongo-db-base-types.generated.ts', false, sdkRoot, str => str.replace(/.*\/\/ rmv.*/g, ''))
+    await copyFile(databaseFilePath, 'mongodbBaseTypes.generated.ts', false, sdkRoot, str => str.replace(/.*\/\/ rmv.*/g, ''))
 
-    //----------------------------------------
-    // CONSTANTS
-    //----------------------------------------
-    const constantPath = Path.join(sdkRoot, 'constants')
-    if (await fs.exists(constantPath)) await fs.rmdir(constantPath)
-    await fs.copy(Path.join(monorepoRoot, './packages/global-shared/dist'), constantPath)
+    // TODO add ability to embbed custom files in SDK (compiled at build time dynamically ?)
 
 }
 

@@ -10,7 +10,6 @@ import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates
 import { GenerateSDKparamsForService } from '../../types/generateSdk.types'
 import { getMainConfig, makeApiCall } from '../..'
 import { generateSDKconfigForDaos } from './generateSDKconfigForDao'
-import { generateModelFolderInSdk } from './generateModelFolderInSdkOLD'
 import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs'
 import { getAppConfigs } from '../../helpers/getGreenDotConfigs'
 import { findProjectPath } from '../../helpers/getProjectPaths'
@@ -39,7 +38,10 @@ export async function generateSdk(onlyDefaults = false) {
     for (const platform of platforms) {
         const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
         await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
-        await generateModelFolderInSdk(sdkRootPath)
+        await generateIndexForDbTypeFiles({
+            outputFolder: sdkRootPath,
+            outputFileNameWithoutExtension: 'modelTypes.generated.ts'
+        })
     }
 
     if (onlyDefaults) {
@@ -119,6 +121,7 @@ export async function generateSdk(onlyDefaults = false) {
 
             await generateSdkFiles(
                 monorepoRoot,
+                sdkRoot,
                 platform,
                 methodConfigAll,
                 servicesMethodsMerged,
