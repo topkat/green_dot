@@ -13,6 +13,7 @@ import { GreenDotConfig } from '../../types/mainConfig.types'
 export async function generateSdkFolderFromTemplates(
   platform: string,
   sdkRoot: string,
+  repoRoot: string,
   // <DO_NOT> get MAIN CONFIG in this file because we may be in safe mode
   platforms: string[],
   generateSdkConfig = {} as GreenDotConfig['generateSdkConfig'],

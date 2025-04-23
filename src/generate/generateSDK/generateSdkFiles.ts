@@ -6,7 +6,7 @@ import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbCachedFiles'
-
+import { getProjectPaths } from '../../helpers/getProjectPaths'
 
 
 export async function generateSdkFiles(
@@ -21,6 +21,7 @@ export async function generateSdkFiles(
 ) {
 
     const { platforms, generateSdkConfig } = getMainConfig()
+    const { mainConfig } = await getProjectPaths()
 
     const allMethodsObjectForSdk = { service: servicesMethods, ...daoMethods } satisfies AllMethodsObjectForSdk
 
@@ -35,7 +36,7 @@ export async function generateSdkFiles(
     //----------------------------------------
     // POPULATE SDK FOLDER
     //----------------------------------------
-    await generateSdkFolderFromTemplates(platform, sdkRoot, platforms, generateSdkConfig, allMethodsObjectForSdk, tsApiTypes, allMethodNames, backendProjectForSdk, queriesToInvalidate)
+    await generateSdkFolderFromTemplates(platform, sdkRoot, mainConfig.folderPath, platforms, generateSdkConfig, allMethodsObjectForSdk, tsApiTypes, allMethodNames, backendProjectForSdk, queriesToInvalidate)
 
     //----------------------------------------
     // DATABASE TYPES EMBEDDED IN SDK

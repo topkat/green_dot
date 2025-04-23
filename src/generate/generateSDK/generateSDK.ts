@@ -30,14 +30,14 @@ export async function generateSdk(onlyDefaults = false) {
 
     if (!generateSdkConfig?.enable) return
 
-    const monorepoRoot = mainConfig.folderPath
-    const sdkRoot = Path.resolve(monorepoRoot, './SDKs')
+    const repoRoot = mainConfig.folderPath
+    const sdkRoot = Path.resolve(repoRoot, './SDKs')
     const appConfigs = getAppConfigs()
 
     // REBUILD DEFAULT FOLDER
     for (const platform of platforms) {
         const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
-        await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
+        await generateSdkFolderFromTemplates(platform, sdkRootPath, repoRoot, platforms, generateSdkConfig)
         await generateIndexForDbTypeFiles({
             outputFolder: sdkRootPath,
             outputFileNameWithoutExtension: 'modelTypes.generated.ts'
@@ -223,7 +223,7 @@ export async function generateSdk(onlyDefaults = false) {
                             commitWarning = true
                         }
 
-                        const sdkPathRelative = Path.relative(monorepoRoot, sdkRootPath)
+                        const sdkPathRelative = Path.relative(repoRoot, sdkRootPath)
 
                         await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
 
@@ -254,7 +254,7 @@ export async function generateSdk(onlyDefaults = false) {
 
             await execWaitForOutput(`git add -A`)
 
-            await execWaitForOutput(`cd ${monorepoRoot || '.'} && git commit -m "New SDKs versions: ${changedSdkMessage}"`, {
+            await execWaitForOutput(`cd ${repoRoot || '.'} && git commit -m "New SDKs versions: ${changedSdkMessage}"`, {
                 nbSecondsBeforeKillingProcess: 300,
                 stringOrRegexpToSearchForConsideringDone: 'file changed',
             })
@@ -310,7 +310,7 @@ async function SAFEmode(err) {
         for (const sdkPath of sdkPaths) {
             const platform = getPlatformFromPath(sdkPath)
 
-            await generateSdkFolderFromTemplates(platform, sdkPath, platforms)
+            await generateSdkFolderFromTemplates(platform, sdkPath, rootPath, platforms)
             await generateIndexForDbTypeFiles({
                 outputFolder: sdkPath,
                 outputFileNameWithoutExtension: 'modelTypes.generated.ts'
