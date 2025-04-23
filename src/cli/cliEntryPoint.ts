@@ -47,6 +47,17 @@ const commands = {
       'generate'
     ],
   },
+  test: {
+    description: 'Launch tests',
+    options: [{
+      name: 'filter',
+      description: 'filter=user will only pass tests that contains user in their name',
+      type: String
+    }],
+    steps: [
+      'test'
+    ],
+  },
 } satisfies CommandPlus
 
 

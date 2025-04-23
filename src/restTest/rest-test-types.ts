@@ -15,7 +15,7 @@ type HttpHeaders = {
     [k: string]: string
 }
 
-interface Test2<TestUserNames extends string, ConnexionInfos extends Record<string, any>, RestTestConfigType extends RestTestConfig> {
+interface Test2<TestUserNames extends string, ConnexionInfos extends Record<string, any>, RestTestConfigType extends GreenDotApiTestsConfig> {
     /** d stands for description and is meant to describe the action / route in the most readable format: d: [403, 'userA', 'create a transaction with more that the maximum amount'] */
     d?:
     [Statuses, TestUserNames | ConnexionInfos | 'public' | 'system', string]
@@ -60,13 +60,13 @@ interface Test2<TestUserNames extends string, ConnexionInfos extends Record<stri
 }
 
 // TODO clean that as it's needed for module extension
-export interface Test<TestUserNames extends string, ConnexionInfos extends Record<string, any>, RestTestConfigType extends RestTestConfig> extends Test2<TestUserNames, ConnexionInfos, RestTestConfigType> { }
+export interface Test<TestUserNames extends string, ConnexionInfos extends Record<string, any>, RestTestConfigType extends GreenDotApiTestsConfig> extends Test2<TestUserNames, ConnexionInfos, RestTestConfigType> { }
 
 
-export type TestItem<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends RestTestConfig = any> = (TestElement<TestUserNames, ConnexionInfos, RestTestConfigType> | TestSuite<TestUserNames, ConnexionInfos, RestTestConfigType>)
+export type TestItem<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends GreenDotApiTestsConfig = any> = (TestElement<TestUserNames, ConnexionInfos, RestTestConfigType> | TestSuite<TestUserNames, ConnexionInfos, RestTestConfigType>)
 
 
-export type TestSuiteRaw<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends RestTestConfig = any> = {
+export type TestSuiteRaw<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends GreenDotApiTestsConfig = any> = {
     name?: string
     defaults?: TestType<RestTestConfigType['env'], Partial<Test<TestUserNames, ConnexionInfos, RestTestConfigType>>>
     /** The lesser the better priority */
@@ -85,11 +85,11 @@ export type TestSuiteRaw<TestUserNames extends string = any, ConnexionInfos exte
     beforeReloadAll?: TestElement<TestUserNames, ConnexionInfos, RestTestConfigType>[]
 }
 
-export type TestSuite<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends RestTestConfig = any> = TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType> | (() => MaybePromise<TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType>>)
+export type TestSuite<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends GreenDotApiTestsConfig = any> = TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType> | (() => MaybePromise<TestSuiteRaw<TestUserNames, ConnexionInfos, RestTestConfigType>>)
 
-export type TestFunction<RestTestConfigType extends RestTestConfig> = (env: RestTestConfigType['env']) => void
+export type TestFunction<RestTestConfigType extends GreenDotApiTestsConfig> = (env: RestTestConfigType['env']) => void
 
-export type TestElement<TestUserNames extends string, ConnexionInfos extends Record<string, any>, RestTestConfigType extends RestTestConfig> =
+export type TestElement<TestUserNames extends string, ConnexionInfos extends Record<string, any>, RestTestConfigType extends GreenDotApiTestsConfig> =
     Test<TestUserNames, ConnexionInfos, RestTestConfigType> |
     TestFn<RestTestConfigType['env'], void> |
     TestSuite<TestUserNames, ConnexionInfos, RestTestConfigType>
@@ -100,7 +100,7 @@ export type TestEnvBase = {
 } & Record<string, any>
 
 
-export interface RestTestConfig<
+export interface GreenDotApiTestsConfig<
     // ApiKeys extends string = any,
     // TestEnv extends TestEnvBase = any,
     // TestUserNames extends string = any,

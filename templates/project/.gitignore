@@ -12,7 +12,6 @@ coverage-jest
 # next.js
 .next/
 out/
-build
 dist
 
 # misc

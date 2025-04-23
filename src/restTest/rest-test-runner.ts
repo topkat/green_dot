@@ -1,5 +1,5 @@
 
-import { TestSuite, Test as TestRaw, TestType, RestMethod, RestTestConfig, TestElement, TestSuiteRaw, TestEnvBase } from './rest-test-types'
+import { TestSuite, Test as TestRaw, TestType, RestMethod, GreenDotApiTestsConfig, TestElement, TestSuiteRaw, TestEnvBase } from './rest-test-types'
 import { title } from './rest-test-ascii-display'
 import axios, { AxiosError } from 'axios'
 import { assert, restTest } from './rest-test'
@@ -12,7 +12,7 @@ type TestEnv = ObjectGeneric
 type TestArray = ({ testNumber: number, test: TestElement<any, any, any>, testSuite: TestSuiteRaw, sectionName: string })[]
 
 export const testRunner = {
-    async runScenario(scenario: { [fileName: string]: TestSuite }, config: RestTestConfig) {
+    async runScenario(scenario: { [fileName: string]: TestSuite }, config: GreenDotApiTestsConfig) {
 
         const { startAtTestNb = 0, isReload, restTestState } = config
 
@@ -80,7 +80,7 @@ export const testRunner = {
         await testRunner.runTestSuite(startAtTestNb, config, runBeforeSuite)
     },
 
-    async runTestSuite(fromTestNb: number, config: RestTestConfig, runBeforeSuite: TestElement<any, any, any>[]) {
+    async runTestSuite(fromTestNb: number, config: GreenDotApiTestsConfig, runBeforeSuite: TestElement<any, any, any>[]) {
         try {
             if (runBeforeSuite.length) C.info(`BEFORE RELOAD TEST SUITE`)
             try {
@@ -324,7 +324,7 @@ export const testRunner = {
     actualTestNb: 0,
     testArray: [] as TestArray,
     env: { users: {} } as TestEnvBase,
-    config: {} as RestTestConfig,
+    config: {} as GreenDotApiTestsConfig,
     isStopped: false,
     displayTitleCache: '',
     reset() {

@@ -47,4 +47,4 @@ export { initDbs } from './db'
 export { startServer, stopServer } from './startServer'
 
 export { assert } from './restTest/rest-test'
-export { RestTestConfig, TestSuite, TestItem } from './restTest/rest-test-types'
+export { GreenDotApiTestsConfig, TestSuite, TestItem } from './restTest/rest-test-types'

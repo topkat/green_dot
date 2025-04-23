@@ -6,7 +6,6 @@ import { C } from 'topkat-utils'
 
 export type GDpathConfig = { path: string, folderPath: string }
 export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string, generatedFolderPath: string, folderPathRelative: string }
-type PathConfArr = GDpathConfigWithIndex[]
 
 export const greenDotCacheModuleFolder = Path.resolve(__dirname, '../cache')
 if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, `ERROR: green_dot local cache folder for DB is not existing. __dirname:${__dirname} greenDotCacheModuleFolder:${greenDotCacheModuleFolder} `)
@@ -17,9 +16,9 @@ let greenDotPathsCache: {
   /** Path of green_dot.config.ts */
   mainConfig: GDpathConfig
   /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
-  appConfigs: PathConfArr
-  /** Paths to all green_dot.db.config.ts that can be found in the project alongside their DB names (folder name) */
-  dbConfigs: PathConfArr
+  appConfigs: Array<GDpathConfigWithIndex & { testConfigPath?: string }>
+  /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
+  dbConfigs: GDpathConfigWithIndex[]
 
   activeApp?: GDpathConfigWithIndex
   activeDb?: GDpathConfigWithIndex
@@ -46,7 +45,8 @@ export async function getProjectPaths(resetCache = false) {
 
     const appConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.app.config'))
-      .map(configFilePathMapper(rootPath))
+      .map(configFilePathMapper(rootPath, true))
+
 
     greenDotPathsCache = {
       mainConfig: { path: mainConfigPath, folderPath: rootPath },
@@ -90,16 +90,20 @@ export async function findProjectPath(silent = false) {
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-function configFilePathMapper(mainConfigFolderPath: string) {
+function configFilePathMapper(mainConfigFolderPath: string, includesTestConfig = false) {
   return (path: string) => {
     const folderPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, '')
-    return {
+    const paths = {
       path: path,
       folderPath,
       folderPathRelative: Path.relative(mainConfigFolderPath, folderPath),
       generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
-      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '.generated')
+      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '.generated'),
     }
+    if (includesTestConfig) {
+      (paths as any).testConfigPath = path.replace(/\.[/\\]app[^/\\]\./, `.apiTests.`)
+    }
+    return paths
   }
 }
 

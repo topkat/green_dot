@@ -5,6 +5,7 @@ import { buildCommand } from './build.command'
 import { cleanCommand } from './clean.command'
 import { generateCommand } from './generate.command'
 import { startDevProdCommand } from './startDevProdServer.command'
+import { testCommand } from './test.command'
 
 
 
@@ -34,6 +35,10 @@ const commands = {
   },
   generate: {
     execute: generateCommand,
+    exitAfter: true,
+  },
+  test: {
+    execute: testCommand,
     exitAfter: true,
   },
 } satisfies CommandPlus
