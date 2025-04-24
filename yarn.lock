@@ -6096,7 +6096,12 @@ typescript-cp@^0.1.9:
     rimraf "^5.0.0"
     tar "^6.1.13"
 
-typescript-generic-types@1.0.9, typescript-generic-types@^1.0.0, typescript-generic-types@^1.0.2:
+typescript-generic-types@1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.12.tgz#388a0fad66c1a8fb59d2a410e5416bed53f44f97"
+  integrity sha512-P+DCf06dEAq5dbzDkMkMURMR1qeSwDLEaInCQLYsOGLRJW17XgHzb1RXY6ycV9GG6Z32rCPZxL+cjr3+O5snbw==
+
+typescript-generic-types@^1.0.0, typescript-generic-types@^1.0.2:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/typescript-generic-types/-/typescript-generic-types-1.0.9.tgz#82717840e5e19f4d04400dd7dc03daebedf75e27"
   integrity sha512-DPTHXrF2r8O6So9UhalpHFzV4tChi8E5ddWFnzRd/2Btx8A5OyKOvSxYaxFeZctR/ry2jOSB3PqEI3AdSgI32w==

@@ -2,13 +2,13 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import glob from 'fast-glob'
-import { C } from 'topkat-utils'
+import { C, DescriptiveError } from 'topkat-utils'
 
 export type GDpathConfig = { path: string, folderPath: string }
 export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string, generatedFolderPath: string, folderPathRelative: string }
 
 export const greenDotCacheModuleFolder = Path.resolve(__dirname, '../cache')
-if (!fs.existsSync(greenDotCacheModuleFolder)) throw C.error(false, `ERROR: green_dot local cache folder for DB is not existing. __dirname:${__dirname} greenDotCacheModuleFolder:${greenDotCacheModuleFolder} `)
+if (!fs.existsSync(greenDotCacheModuleFolder)) throw new DescriptiveError(`ERROR: green_dot local cache folder for DB is not existing. __dirname:${__dirname} greenDotCacheModuleFolder:${greenDotCacheModuleFolder} `)
 
 export type AppConfigPaths = Array<GDpathConfigWithIndex & { testConfigPath?: string, testIndexPath?: string }>
 

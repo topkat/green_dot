@@ -1,6 +1,7 @@
 
 import { getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
 import { findByAddressAll, getId, isObject, asArray } from 'topkat-utils'
+import { MaybeArray } from 'typescript-generic-types'
 
 /** Transform populated fields into their respective _ids. Will modify the passed object */
 export async function unPopulate<ModelName extends string>(dbName: string, modelName: ModelName, fields: Record<string, any>) {

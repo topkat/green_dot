@@ -6,6 +6,7 @@ import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types'
 import { safeImport } from './safeImports'
 import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
 import { error } from '../error'
+import { initProjectAndDaosCache } from './getProjectModelsAndDaos'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
@@ -16,13 +17,21 @@ export async function initGreenDotConfigs(resetCache = false) {
   await initDbConfigCache(resetCache)
 }
 
-export function registerMainConfig(conf: GreenDotConfig) {
+export async function initClientApp(conf: GreenDotConfig) {
+
+  process.env.IS_PROD_ENV = conf.isProdEnv.toString()
+  process.env.IS_TEST_ENV = conf.isTestEnv.toString()
+
   greenDotConfigsCache = computeMainConfigAdditionalFields({
     ...mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf),
   } as any)
-  getProjectPaths().then(({ mainConfig: mainConfigPaths }) => {
-    Object.assign(greenDotConfigsCache, mainConfigPaths)
-  })
+  const { mainConfig: mainConfigPaths } = await getProjectPaths()
+
+  Object.assign(greenDotConfigsCache, mainConfigPaths)
+
+  await initGreenDotConfigs()
+
+  await initProjectAndDaosCache()
 }
 
 //  ╦╗╔╦ ╔══╗ ═╦═ ╦╗ ╔   ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
@@ -41,6 +50,8 @@ export async function initMainConfigCache(resetCache = false) {
   if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
     const { mainConfig: mainConfigPaths } = await getProjectPaths()
     const conf = (await safeImport(mainConfigPaths.path))?.default as GreenDotConfig
+    process.env.IS_PROD_ENV = conf.isProdEnv.toString()
+    process.env.IS_TEST_ENV = conf.isTestEnv.toString()
     const confWithDefaults = mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf)
     greenDotConfigsCache = computeMainConfigAdditionalFields({ ...confWithDefaults, ...mainConfigPaths })
   }
@@ -98,10 +109,15 @@ export function getAppConfigs() {
 
 }
 
-export async function getActiveAppConfig() {
+export async function getActiveAppConfig<T extends boolean>(
+  silent: T = false as T
+): Promise<T extends true ? (GreenDotAppConfig & GDpathConfigWithIndex) | undefined : GreenDotAppConfig & GDpathConfigWithIndex> {
   const { activeApp } = await getProjectPaths()
-  if (!activeApp) throw error.serverError('Trying to call getActiveAppConfig() but not active Db is to be found')
-  return greenDotAppConfigsCache.find(c => c.folderPath === activeApp.folderPath) as GreenDotAppConfig & GDpathConfigWithIndex
+  if (activeApp && greenDotAppConfigsCache) {
+    return greenDotAppConfigsCache.find(c => c.folderPath === activeApp.folderPath)
+  } else if (!silent) {
+    throw error.serverError('Trying to call getActiveAppConfig() but not active Db is to be found')
+  }
 }
 
 async function initAppConfigCache(resetCache = false) {

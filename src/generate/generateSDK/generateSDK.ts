@@ -13,34 +13,33 @@ import { generateSDKconfigForDaos } from './generateSDKconfigForDao'
 import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs'
 import { getAppConfigs } from '../../helpers/getGreenDotConfigs'
 import { findProjectPath } from '../../helpers/getProjectPaths'
-import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbCachedFiles'
+import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
+
+const sdkFolderName = 'SDKs'
 
 
 export async function generateSdk(onlyDefaults = false) {
 
-    let mainConfig: ReturnType<typeof getMainConfig>
-    try {
-        mainConfig = getMainConfig()
-    } catch (err) {
-        // SAFE MODE (mainly one of the greenDot config is requiring a SDK 🙃)
-        return SAFEmode(err)
-    }
+    const mainConfig = getMainConfig(true)
+
+    // SAFE MODE (mainly one of the greenDot config is requiring a SDK 🙃)
+    if (!mainConfig) return SAFEmode()
 
     const { isProdEnv, generateSdkConfig, platforms } = mainConfig
 
     if (!generateSdkConfig?.enable) return
 
     const repoRoot = mainConfig.folderPath
-    const sdkRoot = Path.resolve(repoRoot, './SDKs')
+    const allSdksRoot = Path.resolve(repoRoot, './' + sdkFolderName)
     const appConfigs = getAppConfigs()
 
     // REBUILD DEFAULT FOLDER
     for (const platform of platforms) {
-        const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
-        await generateSdkFolderFromTemplates(platform, sdkRootPath, repoRoot, platforms, generateSdkConfig)
+        const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
+        await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
         await generateIndexForDbTypeFiles({
             outputFolder: sdkRootPath,
-            outputFileNameWithoutExtension: 'modelTypes.generated.ts'
+            outputFileNameWithoutExtension: 'modelTypes.generated'
         })
     }
 
@@ -79,6 +78,8 @@ export async function generateSdk(onlyDefaults = false) {
         //  ╩  ╩ ╚══╝ ╩ ╚  ╚══╝ ╚══╝   ╚══╝ ╩  ╩   ╩   ╩  ╩
 
         for (const platform of platforms) {
+
+            const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
 
             const objectTsMerged = {} as { [method: string]: string }
             const servicesMethodsMerged = {} as { [method: string]: [serverKey: string, serviceName: string] }
@@ -120,7 +121,7 @@ export async function generateSdk(onlyDefaults = false) {
             //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ═══╝ ╚══╝ ╩  ╚
 
             await generateSdkFiles(
-                sdkRoot,
+                sdkRootPath,
                 platform,
                 methodConfigAll,
                 servicesMethodsMerged,
@@ -134,7 +135,7 @@ export async function generateSdk(onlyDefaults = false) {
 
     const { npmPublishPromptConfig, notifyOnTelegramPrompt } = generateSdkConfig
 
-    if (!isProdEnv && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
+    if (isProdEnv && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
 
         //  ╔═╗  ╦  ╦ ╦╗╔╦ ╔══╗   ╔═══ ╔═╗  ╦ ╔  ╔═══
         //  ╠═╩╗ ║  ║ ║╚╝║ ╠══╝   ╚══╗ ║  ║ ╠═╩╗ ╚══╗
@@ -143,7 +144,7 @@ export async function generateSdk(onlyDefaults = false) {
         const sizeAfter = {} as Record<string, SizePerFolders>
 
         for (const platform of platforms) {
-            const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
+            const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
             sizeAfter[platform] = await folderJsFileSizes(sdkRootPath)
         }
 
@@ -156,7 +157,7 @@ export async function generateSdk(onlyDefaults = false) {
 
         for (const platform of platforms) {
 
-            const sdkRootPath = Path.join(sdkRoot, `${platform}Sdk`)
+            const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
             const packageJsonPath = Path.join(sdkRootPath, 'package.json')
             if (!fs.existsSync(packageJsonPath)) continue
 
@@ -292,13 +293,13 @@ export async function generateSdk(onlyDefaults = false) {
 // This mode helps generating defaults generic SDKs to avoid type error
 // on intermediate build, the it reconstruct everything with right types
 
-async function SAFEmode(err) {
-    C.error(false, err)
-    C.info('Error: trying generating SDKs in SAFE mode')
+async function SAFEmode() {
+
+    C.warning(false, 'Error: trying generating SDKs. Will retry now in safe mode.')
 
     const { rootPath } = await findProjectPath()
 
-    const sdkRoot = Path.resolve(rootPath, './SDKs')
+    const sdkRoot = Path.resolve(rootPath, './' + sdkFolderName)
 
     if (await fs.exists(sdkRoot)) {
 
@@ -309,11 +310,12 @@ async function SAFEmode(err) {
 
         for (const sdkPath of sdkPaths) {
             const platform = getPlatformFromPath(sdkPath)
+            const sdkAbsPath = Path.join(sdkRoot, sdkPath)
 
-            await generateSdkFolderFromTemplates(platform, sdkPath, rootPath, platforms)
+            await generateSdkFolderFromTemplates(platform, sdkAbsPath, platforms)
             await generateIndexForDbTypeFiles({
-                outputFolder: sdkPath,
-                outputFileNameWithoutExtension: 'modelTypes.generated.ts'
+                outputFolder: sdkAbsPath,
+                outputFileNameWithoutExtension: 'modelTypes.generated'
             })
         }
 

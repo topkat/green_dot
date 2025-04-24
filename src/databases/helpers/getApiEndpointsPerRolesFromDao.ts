@@ -7,7 +7,7 @@ type RoleAndPublic = Exclude<Ctx['role'], 'system'>
 
 export function getApiEndpointsPerRolesFromDao(
   exposes: DaoSharedParsed['expose'] = [],
-  allRoles: readonly Exclude<Ctx['role'], 'system' | 'public'>[], ///!\ Do not use severConfig here since it's used in test env
+  allRoles: readonly Exclude<Ctx['role'], 'system' | 'public'>[] | Exclude<Ctx['role'], 'system' | 'public'>[], ///!\ Do not use severConfig here since it's used in test env
 ) {
 
   const genericMethodsPerRole = {} as { [role in RoleAndPublic]: DaoGenericMethods[] }

@@ -14,8 +14,7 @@ import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 
 export async function generateSdkFolderFromTemplates(
   platform: string,
-  sdkRoot: string,
-  repoRoot: string,
+  sdkFolder: string,
   // <DO_NOT> get MAIN CONFIG in this file because we may be in safe mode
   platforms: string[],
   generateSdkConfig = {} as GreenDotConfig['generateSdkConfig'],
@@ -32,8 +31,8 @@ export async function generateSdkFolderFromTemplates(
 
   const isDefaultSdk = tsApiTypes === ''
 
-  const packageJsonPath = Path.join(sdkRoot, 'package.json')
-  const fileSizesPath = Path.join(sdkRoot, 'fileSizes.json')
+  const packageJsonPath = Path.join(sdkFolder, 'package.json')
+  const fileSizesPath = Path.join(sdkFolder, 'fileSizes.json')
   let packageVersion = '1.0.0'
   if (await fs.exists(packageJsonPath)) {
     try {
@@ -49,7 +48,7 @@ export async function generateSdkFolderFromTemplates(
     fileSizeContent = await fs.readFile(fileSizesPath, 'utf-8')
   }
 
-  await fs.remove(sdkRoot)
+  await fs.remove(sdkFolder)
 
   // allow to store filesize between resets and thus detect changes in SDK
   if (fileSizeContent) await fs.outputFile(fileSizesPath, fileSizeContent)
@@ -80,7 +79,7 @@ export async function generateSdkFolderFromTemplates(
 
   await templater(
     Path.resolve(__dirname, '../../../templates/sdkTemplate'),
-    sdkRoot,
+    sdkFolder,
     [
       ...replaceInFiles,
     ],
@@ -92,7 +91,7 @@ export async function generateSdkFolderFromTemplates(
   // COMMON JS MODULES
   await templater(
     Path.resolve(__dirname, '../../../templates/sdkTemplate'),
-    sdkRoot,
+    sdkFolder,
     [
       ...replaceInFiles,
       // ESM => COMMON JS
@@ -137,7 +136,7 @@ export async function generateSdkFolderFromTemplates(
   }
 
   // COPY
-  const sdkHelperPath = Path.join(sdkRoot, 'sdkHelpers')
+  const sdkHelperPath = Path.join(sdkFolder, 'sdkHelpers')
   if (await fs.exists(sdkHelperPath)) await fs.remove(sdkHelperPath)
   await fs.copy(sdkHelperDistPath, sdkHelperPath)
 

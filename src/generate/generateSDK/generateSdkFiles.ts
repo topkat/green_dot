@@ -5,8 +5,7 @@ import { displayObjectClean } from '../helpers/displayObjectClean'
 import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbCachedFiles'
-import { getProjectPaths } from '../../helpers/getProjectPaths'
+import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
 
 
 export async function generateSdkFiles(
@@ -21,7 +20,6 @@ export async function generateSdkFiles(
 ) {
 
     const { platforms, generateSdkConfig } = getMainConfig()
-    const { mainConfig } = await getProjectPaths()
 
     const allMethodsObjectForSdk = { service: servicesMethods, ...daoMethods } satisfies AllMethodsObjectForSdk
 
@@ -36,14 +34,14 @@ export async function generateSdkFiles(
     //----------------------------------------
     // POPULATE SDK FOLDER
     //----------------------------------------
-    await generateSdkFolderFromTemplates(platform, sdkRoot, mainConfig.folderPath, platforms, generateSdkConfig, allMethodsObjectForSdk, tsApiTypes, allMethodNames, backendProjectForSdk, queriesToInvalidate)
+    await generateSdkFolderFromTemplates(platform, sdkRoot, platforms, generateSdkConfig, allMethodsObjectForSdk, tsApiTypes, allMethodNames, backendProjectForSdk, queriesToInvalidate)
 
     //----------------------------------------
     // DATABASE TYPES EMBEDDED IN SDK
     //----------------------------------------
     await generateIndexForDbTypeFiles({
         outputFolder: sdkRoot,
-        outputFileNameWithoutExtension: 'modelTypes.generated.ts'
+        outputFileNameWithoutExtension: 'modelTypes.generated'
     })
 
     // mongodbBaseTypes.generated.ts
@@ -64,7 +62,7 @@ async function copyFile(
     from: string,
     to = from.replace(/^.*\/([^/]+$)/, '$1'),
     isEs6Import: boolean,
-    apiServicePackagePath: string,
+    sdkFolderPath: string,
     replaceInFileStr = (str: string) => str
 ) {
     let fileAsStr = await fs.readFile(from, 'utf-8')
@@ -73,9 +71,9 @@ async function copyFile(
     } else {
         let fileAsStrMjs = fileAsStr.replace(/%%%!isEs6Import .*/g, '').replace(/%%%isEs6Import /g, '')
         fileAsStrMjs = replaceInFileStr(fileAsStrMjs)
-        await fs.writeFile(Path.join(apiServicePackagePath, to.replace('.js', '.mjs')), fileAsStrMjs)
+        await fs.writeFile(Path.join(sdkFolderPath, to.replace('.js', '.mjs')), fileAsStrMjs)
         fileAsStr = fileAsStr.replace(/%%%isEs6Import .*/g, '').replace(/%%%!isEs6Import /g, '')
     }
     fileAsStr = replaceInFileStr(fileAsStr)
-    await fs.writeFile(Path.join(apiServicePackagePath, to), fileAsStr)
+    await fs.writeFile(Path.join(sdkFolderPath, to), fileAsStr)
 }

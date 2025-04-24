@@ -13,6 +13,7 @@ import { generateSwaggerDoc } from './generateSwaggerDoc'
 import { getActiveAppConfig, getMainConfig } from '../helpers/getGreenDotConfigs'
 import { createDaoRouteConfigPerPlatformForSdk, createServiceRouteConfigPerPlatformForSdk } from './generateSDK/generateSDKgetRouteConfigs'
 import { getActiveAppServices } from '../helpers/getProjectServices'
+import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
 
 export async function generateMainBackendFiles() {
 
@@ -58,7 +59,7 @@ export async function generateMainBackendFiles() {
             }
         }
     }
-
+    await initProjectAndDaosCache()
     const serviceRouteObject = await createServiceRouteConfigPerPlatformForSdk(serviceRouteConfig)
     const daoRoutesObject = await createDaoRouteConfigPerPlatformForSdk()
 
