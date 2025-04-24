@@ -57,10 +57,10 @@ export async function generateIndexForProjectApp() {
       }
 
       const fileContent = `
-import { RegisterErrorType, registerMainConfig } from 'green_dot'
+import { RegisterErrorType, initClientApp } from 'green_dot'
 import mainConfig from '${mainPathRelative}/green_dot.config'
 
-registerMainConfig(mainConfig)
+export const initApp = async () => initClientApp(mainConfig)
 
 ${indexContent.imports}
 
@@ -69,8 +69,10 @@ declare global {
 }
 `
 
-      const testFileContent = `${testIndexContent.imports}
-export const allTests = {\n${testIndexContent.exports.map(ti => `    ${ti}`).join(',\n')}\n}
+      const testFileContent = `
+import { type TestSuite } from 'green_dot'
+${testIndexContent.imports}
+export const allTests = {\n${testIndexContent.exports.map(ti => `    ${ti}`).join(',\n')}\n} as Record<string, TestSuite> // explicit type to avoid "The inferred type of this node exceeds the maximum length the compiler will serialize" error
 `
 
       await fs.outputFile(generatedIndexPath, fileContent, 'utf-8')

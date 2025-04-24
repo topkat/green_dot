@@ -32,16 +32,12 @@ export async function startServerAsyncTasks(app: Express) {
 
     app.use(getExpressErrHandlerMW())
 
-    //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═══ ╔═╗  ╦ ╔
-    //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ╚══╗ ║  ║ ╠═╩╗
-    //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ═══╝ ╚══╝ ╩  ╚
+    // GENERATE SDK
     if (!mainConfig.isProdEnv) {
       try {
         await generateMainBackendFiles()
 
-        //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═══ ╦  ╦ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╔═╗  ╔══╗ ╔══╗
-        //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ╚══╗ ║╔╗║ ╠══╣ ║ ═╦ ║ ═╦ ╠═   ╠═╦╝   ║  ║ ║  ║ ║
-        //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ═══╝ ╩╝╚╩ ╩  ╩ ╚══╝ ╚══╝ ╚══╝ ╩ ╚    ╚══╝ ╚══╝ ╚══╝
+        // GENERATE SWAGGER DOC
         const swaggerDoc = await import(Path.resolve(__dirname, `./cache/${appConfig.name}.swaggerDoc.generated.json`))
 
         app.use('/doc/*', swaggerUi.serve, swaggerUi.setup(swaggerDoc))

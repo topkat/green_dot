@@ -1,9 +1,10 @@
 
-import { C } from 'topkat-utils'
+import { C, runAsync } from 'topkat-utils'
 import { clearCli, cliBadge, cliIntro, userInputConfirmLog, userInputKeyHandler } from './helpers/cli'
 import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './fileWatcher'
+import { generateSdk } from '../generate/generateSDK/generateSDK'
 
 
 let watcherOn = true
@@ -69,6 +70,14 @@ export async function startDevProdCommand() {
     // a local version
 
     await startServer()
+
+    runAsync(async () => {
+      try {
+        await generateSdk(false)
+      } catch (err) {
+        C.error(err)
+      }
+    })
 
   } catch (err) {
     errorHandler(err)

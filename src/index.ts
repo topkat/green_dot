@@ -33,7 +33,7 @@ export { _ } from './validator'
 export { db, dbs, getUserPermissionFields, Db, Dbs } from './db'
 export { ModelTypes, ModelNames, ModelNamesForDb, MainDbName, ModelsWithDbNamesAndReadWrite as AllModelsWithReadWrite } from './cache/dbs/index.generated'
 
-export { getActiveAppConfig, getActiveDbConfig, getMainConfig, initMainConfigCache, registerMainConfig } from './helpers/getGreenDotConfigs'
+export { getActiveAppConfig, getActiveDbConfig, getMainConfig, initMainConfigCache, initClientApp } from './helpers/getGreenDotConfigs'
 
 export { env } from './helpers/getEnv'
 
@@ -41,10 +41,13 @@ export { sendEmail } from './services/sendEmail'
 
 export { generateUniqueToken } from './services/generateUniqueToken'
 
-export { init } from './init'
+// export { init } from './init'
 export { initDbs } from './db'
 
 export { startServer, stopServer } from './startServer'
 
 export { assert } from './restTest/rest-test'
 export { GreenDotApiTestsConfig, TestSuite, TestItem } from './restTest/rest-test-types'
+
+export * from './sdkHelpersModule/src/types'
+export { InitBackendConfig } from './sdkHelpersModule/src/initBackend'

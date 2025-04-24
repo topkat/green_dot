@@ -7,7 +7,7 @@ import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
 import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-import { generateIndexForDbTypeFiles, getNewIndexForDbCacheFileStructure } from './generateIndexForDbCachedFiles'
+import { generateIndexForDbTypeFiles, getNewIndexForDbCacheFileStructure } from './generateIndexForDbTypeFiles'
 
 
 

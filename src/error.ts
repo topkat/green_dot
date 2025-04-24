@@ -1,7 +1,7 @@
 
-
 import { sendErrorViaTelegram } from './services/sendViaTelegram'
 import { sendErrorOnTeams } from './services/sendViaTeams'
+import { HasKeys } from 'typescript-generic-types'
 
 import { isset, DescriptiveError, ErrorOptions, C, createProxy } from 'topkat-utils'
 

@@ -35,7 +35,7 @@ const commands = {
   dev: {
     description: 'Start a server in dev mode with hot reloading',
     steps: [
-      'build',
+      'buildDev',
       'startServer'
     ],
     exitAfter: true,

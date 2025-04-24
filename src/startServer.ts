@@ -14,14 +14,13 @@ import { initTelegramBot } from './services/sendViaTelegram'
 import { generateLoginMw } from './security/login.middleware'
 import { rateLimiterMiddleware } from './security/serviceRouteRateLimiter'
 import { logRouteInfos } from './registerModules/apiMiddlewares/logRouteInfo.middleware'
-import { getMainConfig, getActiveAppConfig } from './helpers/getGreenDotConfigs'
+import { getMainConfig, getActiveAppConfig, initGreenDotConfigs } from './helpers/getGreenDotConfigs'
 import { registerDaoApi } from './registerModules/registerDaoApi'
 import { registerServiceApi } from './registerModules/registerServicesApi'
 import { registerServices } from './registerModules/registerServices'
 import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
 import { env } from './helpers/getEnv'
 import { startServerAsyncTasks } from './startServerAsyncTasks'
-import { init } from './init'
 import { newSystemCtx } from './ctx'
 
 dotenv.config()
@@ -36,7 +35,8 @@ declare global {
 
 export async function startServer(isMaster = true) {
 
-    await init()
+    await initGreenDotConfigs()
+    await initProjectAndDaosCache()
 
     const mainConfig = getMainConfig()
     const appConfig = await getActiveAppConfig()
@@ -58,9 +58,7 @@ export async function startServer(isMaster = true) {
         await event.emit('server.start', newSystemCtx(), isMaster, app)
     })
 
-    // INIT DBS
-    await initProjectAndDaosCache()
-    // await initDbs(false, 'local')
+
     const { initDbs: initDbModule } = await import('green_dot' as any)
     await initDbModule(false, 'module')
 
@@ -92,6 +90,7 @@ export async function startServer(isMaster = true) {
     })
 
     app.use(cookieParser())
+    // CORS
     app.use(cors({
         credentials: true,
         origin: function (origin, callback) {
@@ -107,6 +106,7 @@ export async function startServer(isMaster = true) {
             else err()
         },
     }))
+    // MULTIPART
     app.use((req, res, next) => {
         const initialBody = { ...req.body }
 

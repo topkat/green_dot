@@ -1,7 +1,7 @@
 
 import { C, JSONstringyParse, noDuplicateFilter, removeCircularJSONstringify } from 'topkat-utils'
 import { clearCli, cliBadge, cliIntro, getServerConfigFromEnv, userInputConfirmLog, userInputKeyHandler } from './helpers/cli'
-import { AppConfigPaths, autoFindAndInitActiveAppAndDbPaths, getProjectPaths, greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
+import { getProjectPaths, greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './fileWatcher'
 import { intro as testCliIntro } from '../restTest/rest-test-ascii-display'

@@ -2,7 +2,7 @@
 
 import { C } from 'topkat-utils'
 import { createNewTask } from './createNewTask'
-import { generateIndexForDbTypeFiles } from './build/generateIndexForDbCachedFiles'
+import { generateIndexForDbTypeFiles } from './build/generateIndexForDbTypeFiles'
 
 
 export async function cleanCommand() {

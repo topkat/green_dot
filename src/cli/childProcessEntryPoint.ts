@@ -24,6 +24,10 @@ const commands = {
     execute: buildCommand,
     exitAfter: true,
   },
+  buildDev: {
+    execute: () => buildCommand({ doNotGenerateSdk: true }),
+    exitAfter: true,
+  },
   clean: {
     execute: cleanCommand,
     exitAfter: true,
