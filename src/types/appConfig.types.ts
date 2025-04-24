@@ -3,6 +3,7 @@
 import { TopkatUtilConfig } from 'topkat-utils/src/config'
 import { ServiceClean } from './services.types'
 import { Request, Response } from 'express'
+import { MaybeArray } from 'typescript-generic-types'
 
 //----------------------------------------
 // GENERAL CONFIG

@@ -82,8 +82,7 @@
     "sib-api-v3-typescript": "^2.2.2",
     "topkat-utils": "^1.3.14",
     "typescript": "^5.3.3",
-    "typescript-generic-types": "1.0.8",
-    "viem": "^2.23.11"
+    "typescript-generic-types": "1.0.12"
   },
   "devDependencies": {
     "@types/jest": "^29.5.3",

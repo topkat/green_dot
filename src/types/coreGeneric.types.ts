@@ -1,4 +1,4 @@
-
+import { MaybeArray } from 'typescript-generic-types'
 
 export const allString = 'ALL'
 export type AllString = typeof allString

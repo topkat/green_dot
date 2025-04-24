@@ -3,6 +3,7 @@ import 'typescript-generic-types'
 import { GenerateSdkConfig } from './generateSdk.types'
 import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
 import { RateLimiterConfig, RateLimiterStr } from '../security/serviceRouteRateLimiter'
+import { AutoIndexFileConfig } from '../services/autoIndex'
 
 export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: string }
 
@@ -127,6 +128,8 @@ export type GreenDotConfig = {
       displayApiMethodField: boolean
     }
   }>
+  /** Auto generated index files for a given folder and a give file match. Will be generated at build time. */
+  autoIndexes?: AutoIndexFileConfig[]
 }
 
 

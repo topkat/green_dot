@@ -1,6 +1,6 @@
 import { MongoDao, MongoDaoMethodsFull } from '../databases/mongo/types/mongoDbTypes'
 import { allString, ForClauseWithAllAndSystem, ForClauseParsed } from './coreGeneric.types'
-
+import { MaybeArray } from 'typescript-generic-types'
 
 //----------------------------------------
 // DAO

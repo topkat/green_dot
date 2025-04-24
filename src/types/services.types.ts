@@ -7,7 +7,7 @@ import { DaoGenericMethods } from './daoGeneric.types'
 import { ForClauseParsed, ForClauseWithAll } from './coreGeneric.types'
 import { ModelReadWrite } from './models.types'
 import { AuthenticationMethod } from '../ctx'
-
+import { MaybeArray } from 'typescript-generic-types'
 
 
 //----------------------------------------
@@ -291,4 +291,4 @@ export type AllServicesKeys = keyof DaoEventService<any, any, any, any, any> | k
 
 export type ServiceGeneric = DaoEventService<any, any, any, any> | ServiceClean | ScheduleService
 
-export type ServicesObj = { [serviceName: string]: ServiceGeneric }
+export type ServicesObj = { [serviceName: string]: ServiceGeneric } & { initApp: () => Promise<any> }

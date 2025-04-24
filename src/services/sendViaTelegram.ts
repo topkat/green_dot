@@ -15,7 +15,7 @@ let appNameGlob: string
 
 export async function initTelegramBot() {
 
-    const { alerts, name } = await getActiveAppConfig()
+    const { alerts, name } = await getActiveAppConfig(true) || {}
 
     if (alerts && alerts.telegram && alerts.telegram.enable) {
         const { botId, chatId, sendOnErrorCode } = alerts.telegram

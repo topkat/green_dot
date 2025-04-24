@@ -1,8 +1,8 @@
 
-import { RegisterErrorType, registerMainConfig } from 'green_dot'
+import { RegisterErrorType, initClientApp } from 'green_dot'
 import mainConfig from '../green_dot.config'
 
-registerMainConfig(mainConfig)
+initClientApp(mainConfig)
 
 import sharedErrors from './1_shared/shared.error'
 import s3Errors from './aws/s3.error'
