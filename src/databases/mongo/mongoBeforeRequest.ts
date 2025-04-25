@@ -23,7 +23,7 @@ export async function mongoBeforeRequest(
     const hasFields = localConfig.inputFields && Object.keys(localConfig.inputFields).length
 
     const errExtraInfos = { modelName, dbName, dbId, method }
-
+    console.log('hooks', JSON.stringify(hooks, null, 2))
     await hookInterpreterExpose(ctx, hooks.expose, dbId, dbName, method, modelName) // may throw
 
     await mongoSanitizeFilter(ctx, localConfig)

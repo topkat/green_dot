@@ -1,13 +1,12 @@
 import { C, getId } from 'topkat-utils'
 import { db } from '../../db'
-import { GD_serverBlacklistModel } from './GD_serverBlackList.model'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { GreenDotConfigRateLimiterInfos } from '../../types/mainConfig.types'
+import { GD_serverBlacklistModel } from './GD_serverBlackList.model'
 
+type GD_serverBlackList = typeof GD_serverBlacklistModel.tsType
 
-type ServerBlacklist = typeof GD_serverBlacklistModel.tsType
-
-let blackListCache = [] as ServerBlacklist[]
+let blackListCache = [] as GD_serverBlackList[]
 let blacklistLastCacheCheck = 0
 
 //  ╔══╗ ╦  ╦ ╔══╗ ╔══╗ ╦ ╔  ╔═══
@@ -23,13 +22,13 @@ export async function checkUserBlacklistCache(ctx, { discriminator }) {
     const now = Date.now()
 
     if (blacklistLastCacheCheck < now - blackListCheckInterval) {
-      const allBlackList = await db.GD_serverBlacklistModel.getAll(ctx.GM)
-      const blackListed = [] as ServerBlacklist[]
+      const allBlackList = await db.GD_serverBlackList.getAll(ctx.GM) as any as GD_serverBlackList[]
+      const blackListed = [] as GD_serverBlackList[]
       for (const b of allBlackList) {
         if (b.lockUntil) {
           if (new Date(b.lockUntil) <= new Date()) {
             // REMOVE LOCKUNTIL FIELD
-            await db.GD_serverBlacklistModel.update(ctx.GM, getId(b), { lockUntil: null })
+            await db.GD_serverBlackList.update(ctx.GM, getId(b), { lockUntil: null })
           } else {
             blackListed.push(b)
           }
@@ -70,12 +69,12 @@ export async function addUserWarning(ctx, { discriminator, route }: GreenDotConf
       let userInBlacklist = blackListCache.find(b => b.discriminator === discriminator)
       if (!userInBlacklist) {
         // CREATE DB ITEM
-        userInBlacklist = await db.GD_serverBlacklistModel.create(ctx.GM, { discriminator }, { returnDoc: true })
+        userInBlacklist = await db.GD_serverBlackList.create(ctx.GM, { discriminator }, { returnDoc: true }) as any as GD_serverBlackList
         blackListCache.push(userInBlacklist)
       } else {
         // UPDATE NB WARNINGS
         userInBlacklist.nbWarning++
-        await db.GD_serverBlacklistModel.update(ctx.GM, getId(userInBlacklist), { $inc: { nbWarning: 1 } })
+        await db.GD_serverBlackList.update(ctx.GM, getId(userInBlacklist), { $inc: { nbWarning: 1 } })
       }
 
       return {
@@ -105,14 +104,14 @@ export async function banUser(ctx, { discriminator, route }: GreenDotConfigRateL
       let blackListItem = blackListCache.find(b => b.discriminator === discriminator)
       if (!blackListItem) {
         // CREATE ITEM
-        blackListItem = await db.GD_serverBlacklistModel.create(ctx.GM, { discriminator }, { returnDoc: true })
+        blackListItem = await db.GD_serverBlackList.create(ctx.GM, { discriminator }, { returnDoc: true }) as any as GD_serverBlackList
         blackListCache.push(blackListItem)
       }
       const banDurationMin = blackListBanMinutes[blackListItem.nbBan] || blackListBanMinutes.at(-1)
-      const fields = { lockUntil: new Date(Date.now() + banDurationMin * 60 * 1000), nbWarning: 0 } satisfies Partial<ServerBlacklist>
+      const fields = { lockUntil: new Date(Date.now() + banDurationMin * 60 * 1000), nbWarning: 0 } satisfies Partial<GD_serverBlackList>
       Object.assign(blackListItem, fields)
       blackListItem.nbBan++
-      await db.GD_serverBlacklistModel.update(ctx.GM, getId(blackListItem), { $inc: { nbBan: 1 }, ...fields })
+      await db.GD_serverBlackList.update(ctx.GM, getId(blackListItem), { $inc: { nbBan: 1 }, ...fields })
     }
 
   } else {

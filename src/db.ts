@@ -41,7 +41,7 @@ export type Dbs = {
 } & {
   [k in MainDbName]: {
     // we also inject models created by green_dot
-    GD_serverBlacklistModel: DaoMethodsMongo<{ Read: typeof GD_serverBlacklistModel.tsTypeRead, Write: typeof GD_serverBlacklistModel.tsTypeWrite }>
+    GD_serverBlackList: DaoMethodsMongo<{ Read: typeof GD_serverBlacklistModel.tsTypeRead, Write: typeof GD_serverBlacklistModel.tsTypeWrite }>
   }
 }
 
@@ -155,7 +155,8 @@ export const db = new Proxy({} as Db, {
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
     const { defaultDatabaseName } = getMainConfig()
-    if (!dbCache[defaultDatabaseName]?.db?.[prop]) throw C.error('DB not initialized, run "await initDb()" once before calling getDb()')
+    if (!dbCache[defaultDatabaseName]?.db) throw C.error('DB not initialized, run "await initDb()" once before calling getDb()')
+    if (!dbCache[defaultDatabaseName]?.db?.[prop]) throw C.error(`Model ${prop} doesn't seem to be properly initialized and is not defined in modelsCache`)
     return dbCache[defaultDatabaseName].db[prop]
   },
 })
