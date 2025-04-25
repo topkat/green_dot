@@ -42,7 +42,6 @@ export async function testCommand() {
   process.on('uncaughtException', errorHandler)
 
   try {
-
     await testRunner.runScenario(allTests, {
       ...testConfig,
       onError: async (actualTestNb, rsState) => {
@@ -51,7 +50,7 @@ export async function testCommand() {
         await saveEnvToFile()
       },
       startAtTestNb,
-      env: { ...testConfig.env, ...getEnvAtTest(startAtTestNb) },
+      env: { ...(testConfig.env || {}), ...getEnvAtTest(startAtTestNb) },
       afterTest,
       displayIntroTimeout: startAtTestNb > 0 ? 0 : testConfig.displayIntroTimeout,
       filter,
@@ -60,7 +59,7 @@ export async function testCommand() {
     })
 
   } catch (err) {
-    errorHandler(err)
+    await errorHandler(err)
   }
 }
 
@@ -77,11 +76,6 @@ async function errorHandler(err) {
   else {
     watcherOn = true
 
-    const choice = await luigi.askSelection(
-      `Hey, it seems everything didn't happens as expected...\n * Tips: save a file to trigger hot reload and restart tests\n * press ${cliBadge('W')} to disable watcher\n\nWhat should we do next?`,
-      ['Replay last', 'Ignore', 'Replay all', 'Exit'] as const
-    )
-
     // HOT RELOAD
     onFileChange(async path => {
       if (path.includes('generated')) return
@@ -92,6 +86,13 @@ async function errorHandler(err) {
       }
     })
 
+    await saveEnvToFile()
+
+    const choice = await luigi.askSelection(
+      `Hey, it seems everything didn't happens as expected...\n * Tips: save a file to trigger hot reload and restart tests\n * press ${cliBadge('W')} to disable watcher\n\nWhat should we do next?`,
+      ['Replay last', 'Ignore', 'Replay all', 'Exit'] as const
+    )
+
     if (choice === 'Exit') process.exit(0)
     else if (choice === 'Replay all') {
       startAtTestNb = 0
@@ -99,7 +100,7 @@ async function errorHandler(err) {
       startAtTestNb += 1
     }
 
-    await saveEnvToFile()
+    await saveEnvToFile() // save with new updates
   }
 }
 
@@ -139,7 +140,6 @@ type RestTestSave = {
 const testEnvFilePath = Path.join(greenDotCacheModuleFolder, '/.testenv')
 
 async function saveEnvToFile() {
-  console.log(`CHECK IF SAVED TWICE ON ERR`)
   await fs.outputFile(testEnvFilePath, removeCircularJSONstringify({
     env: envCache,
     restTestState,
@@ -148,9 +148,11 @@ async function saveEnvToFile() {
 }
 
 async function retrieveEnvFromFile() {
-  const fileAsStr = await fs.readFile(testEnvFilePath, 'utf-8')
-  const saveObj = (fileAsStr ? JSON.parse(fileAsStr) : { env: [], restTestState: {} }) as RestTestSave
-  return saveObj
+  if (await fs.exists(testEnvFilePath)) {
+    const fileAsStr = await fs.readFile(testEnvFilePath, 'utf-8')
+    const saveObj = (fileAsStr ? JSON.parse(fileAsStr) : { env: [], restTestState: {} }) as RestTestSave
+    return saveObj
+  }
 }
 
 
@@ -209,11 +211,24 @@ async function findTestPaths() {
 
   const testIndexPath = appConfigs.find(appConf => appConf.testConfigPath === testConfigPath).testIndexPath
 
-  const mainConfig2 = await import(mainConfig.path) as GreenDotConfig // IMPORT GLOBAL TYPES
+  if (!fs.exists(testConfigPath)) {
+    throw new Error('Test config file do not exist. Make sure there is a green_dot.apiTests.config.ts in one of your app folder')
+  }
 
-  const testConfig = await import(testConfigPath) as GreenDotApiTestsConfig
+  if (!fs.exists(testIndexPath)) {
+    throw new Error('Test config file do not exist. Make sure there is a testIndex.generated.ts in one of your app folder')
+  }
 
-  const tests = await import(testIndexPath) as { allTests: { [fileName: string]: TestSuite } }
+  const { default: mainConfig2 } = await import(mainConfig.path) as { default: GreenDotConfig } // IMPORT GLOBAL TYPES
+
+  process.env.IS_PROD_ENV = mainConfig2.isProdEnv?.toString()
+  process.env.IS_TEST_ENV = mainConfig2.isTestEnv?.toString()
+
+  const { testConfig } = await import(testConfigPath) as { testConfig: GreenDotApiTestsConfig }
+
+  const tests = await import(testIndexPath) as { initApp: () => any, allTests: { [fileName: string]: TestSuite } }
+
+  await tests.initApp()
 
   return { testConfig, allTests: tests.allTests, mainConfig: mainConfig2 }
 }

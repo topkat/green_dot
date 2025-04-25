@@ -131,8 +131,9 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
                 queriesToInvalidateShared,
             )
 
-            if (!await fs.exists(Path.join('sdkRootPath', 'node_modules'))) {
-                C.info(`Installing node_modules for SDK: ${sdkRootPath}`)
+            const nodeModulePath = Path.join(sdkRootPath, 'node_modules')
+            if (!await fs.exists(nodeModulePath)) {
+                C.info(`Installing node_modules for SDK: ${Path.relative(repoRoot, nodeModulePath)}`)
                 await execWaitForOutput(`cd ${sdkRootPath} && npm i`, { stringOrRegexpToSearchForConsideringDone: /added.*packages/ })
             }
         }

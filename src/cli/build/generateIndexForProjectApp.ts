@@ -72,8 +72,12 @@ declare global {
 `
 
       const testFileContent = `
-import { type TestSuite } from 'green_dot'
+import { type TestSuite, initClientApp } from 'green_dot'
+import mainConfig from '${mainPathRelative}/green_dot.config'
 ${testIndexContent.imports}
+
+export const initApp = async () => initClientApp(mainConfig)
+
 export const allTests = {\n${testIndexContent.exports.map(ti => `    ${ti}`).join(',\n')}\n} as Record<string, TestSuite> // explicit type to avoid "The inferred type of this node exceeds the maximum length the compiler will serialize" error
 `
 

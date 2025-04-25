@@ -55,9 +55,7 @@ export type Db = Dbs[MainDbName]
 let isRunning = false
 let userPermissionFields = [] as (keyof UserPermissionFields)[]
 
-export async function initDbs(resetCache: boolean = false, id: string) {
-
-  (cache as any).ENV = id
+export async function initDbs(resetCache: boolean = false) {
 
   if (isRunning) {
     await timeout(2000)
@@ -146,7 +144,6 @@ export const dbs = new Proxy({} as Dbs, {
   // on server start, we need to await initDb to ensure the cache always has a value and can
   // be called anywhere in the app
   get(_, prop: string) {
-    // console.log(`cache`, (cache as any).ENV)
     if (!cache[prop]?.db) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
     return cache[prop].db
   },
@@ -158,7 +155,6 @@ export const db = new Proxy({} as Db, {
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
     const { defaultDatabaseName } = getMainConfig()
-    // console.log(`cache`, (cache as any).ENV)
     if (!cache[defaultDatabaseName]?.db?.[prop]) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
     return cache[defaultDatabaseName].db[prop]
   },

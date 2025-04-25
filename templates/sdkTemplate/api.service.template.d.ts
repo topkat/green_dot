@@ -4,7 +4,6 @@ import { SdkError, ServerUrls, SdkInitOptions, Breakpoints } from './apiCall'
 import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query'
 import { ModelNames } from './modelTypes.generated'
 import { InitBackendConfig } from './sdkHelpers/initBackend'
-import { ImgData } from './img'
 
 export * from './sdkHelpers'
 
@@ -25,8 +24,6 @@ export type ApiType = {
   invalidateQueries(queries: (`${ModelNames}*` | MethodNames)[]): void
   /** This is used in case the SDK is used for image urls to optimize urls for app size */
   setBreakpoint(breakpoints: Breakpoints): void
-  /** Take an imageId and return the full url, in the responsive breakpoint size set by `$.setBreakpoint()` if possible */
-  img(img: ImgData, overrideBreakpoint: Breakpoints): string
   auth: {
     pinCode(pinCode: number | string): void,
     biometricAuthToken(biometricAuthToken: string): void,

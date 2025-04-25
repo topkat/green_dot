@@ -20,8 +20,8 @@ export async function initGreenDotConfigs(resetCache = false) {
 
 export async function initClientApp(conf: GreenDotConfig) {
 
-  process.env.IS_PROD_ENV = conf.isProdEnv.toString()
-  process.env.IS_TEST_ENV = conf.isTestEnv.toString()
+  process.env.IS_PROD_ENV = conf.isProdEnv?.toString()
+  process.env.IS_TEST_ENV = conf.isTestEnv?.toString()
 
   greenDotConfigsCache = computeMainConfigAdditionalFields({
     ...mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf),

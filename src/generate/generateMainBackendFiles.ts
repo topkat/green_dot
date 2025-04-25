@@ -15,7 +15,7 @@ import { createDaoRouteConfigPerPlatformForSdk, createServiceRouteConfigPerPlatf
 import { getActiveAppServices } from '../helpers/getProjectServices'
 import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
 
-export async function generateMainBackendFiles() {
+export async function generateMainBackendFiles({ generateSdk = true, doGenerateSwaggerDoc = true } = {}) {
 
     const time = perfTimer()
 
@@ -63,23 +63,27 @@ export async function generateMainBackendFiles() {
     const serviceRouteObject = await createServiceRouteConfigPerPlatformForSdk(serviceRouteConfig)
     const daoRoutesObject = await createDaoRouteConfigPerPlatformForSdk()
 
-    //----------------------------------------
-    // GENERATE ALL ROUTES FILE for tests
-    //----------------------------------------
-    await generateAllRouteFile(allRoutes)
-    C.log(C.primary(`✓ All route files generated`))
-
-    //----------------------------------------
-    // GENERATE SDK CONFIG FILES
-    //----------------------------------------
-
-    await generateSDKconfigForServices(serviceRouteObject)
-
-    C.log(C.primary(`✓ SDK files generated`))
 
     //----------------------------------------
     // GENERATE SWAGGER DOC
     //----------------------------------------
-    await generateSwaggerDoc(daoRoutesObject, serviceRouteObject)
-    C.log(C.primary(`✓ Swagger doc generated`) + C.dim('-> ' + time.end()))
+    if (doGenerateSwaggerDoc) {
+        await generateSwaggerDoc(daoRoutesObject, serviceRouteObject)
+        C.log(C.primary(`✓ Swagger doc generated`) + C.dim('-> ' + time.end()))
+    }
+
+    if (generateSdk) {
+        //----------------------------------------
+        // GENERATE ALL ROUTES FILE for tests
+        //----------------------------------------
+        await generateAllRouteFile(allRoutes)
+        C.log(C.primary(`✓ All route files generated`))
+
+        //----------------------------------------
+        // GENERATE SDK CONFIG FILES
+        //----------------------------------------
+        await generateSDKconfigForServices(serviceRouteObject)
+
+        C.log(C.primary(`✓ SDK files generated`))
+    }
 }

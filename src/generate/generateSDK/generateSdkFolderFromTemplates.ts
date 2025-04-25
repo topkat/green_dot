@@ -32,7 +32,7 @@ export async function generateSdkFolderFromTemplates(
   const isDefaultSdk = tsApiTypes === ''
 
   const packageJsonPath = Path.join(sdkFolder, 'package.json')
-  const fileSizesPath = Path.join(sdkFolder, 'fileSizes.json')
+
   let packageVersion = '1.0.0'
   if (await fs.exists(packageJsonPath)) {
     try {
@@ -43,22 +43,13 @@ export async function generateSdkFolderFromTemplates(
     }
   }
 
-  let fileSizeContent: string
-  if (await fs.exists(fileSizesPath)) {
-    fileSizeContent = await fs.readFile(fileSizesPath, 'utf-8')
-  }
-
   const files = await fs.readdir(sdkFolder)
   for (const file of files) {
     // keeps node_modules for perf
-    console.log(`file`, file)
-    if (file !== 'node_modules' && file !== 'fileSizes.json') {
+    if (file !== 'node_modules') {
       await fs.remove(Path.join(sdkFolder, file))
     }
   }
-
-  // allow to store filesize between resets and thus detect changes in SDK
-  if (fileSizeContent) await fs.outputFile(fileSizesPath, fileSizeContent)
 
   const queriesToInvalidateString = objEntries(queriesToInvalidate).map(([q, strs]) => {
     return strs.length ? `$.addQueriesToInvalidate.${q}(['${strs.join(`', '`)}'])` : ''
@@ -76,7 +67,7 @@ export async function generateSdkFolderFromTemplates(
     [`'%%tsApiTypes%%'`, tsApiTypes],
     [`'%%allAppNamesTypeString%%'`, arrOrAny(platforms)],
     [`'%%AllMethodNameTypeString%%'`, arrOrAny(allMethodNames)],
-    [`'%%allBackendFoldersForSdk%%'`, arrOrAny(backendProjectForSdk)],
+    [`'%%allBackendFoldersForSdk%%'`, arrOrAny(backendProjectForSdk.map(s => s.split(Path.sep).pop()))],
     [`'%%queriesToInvalidate%%'`, queriesToInvalidateString],
   ]
 

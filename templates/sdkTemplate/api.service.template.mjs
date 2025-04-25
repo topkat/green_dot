@@ -4,7 +4,6 @@ import { apiCall, init, onError, getServerState, setHeaders, beforeApiCall, regi
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { ensureAccessToken, getActualScreen, getHandleErrorTyped, initTrackerData, sendDataToServer, trackerEvent, handleError, initErrorHandler, log, initHelpers, logout, setAccessToken } from './sdkHelpers'
 import { initBackend, isBackendInitialized } from './sdkHelpers/initBackend'
-import { imgData } from './img'
 
 /** Used to store the timeouts of deferred requests */
 const deferTimeout = {}
@@ -23,10 +22,6 @@ const $ = new Proxy({
     beforeApiCall: (...params) => beforeApiCall(...params),
     invalidateQueries: queries => invalidateQueries(queries),
     setBreakpoint: breakpoint => setBreakpoint(breakpoint),
-    img(img, overrideBreakpoint) {
-        const breakpoint = overrideBreakpoint || actualBreakpoint
-        return imgData[`${img}-${breakpoint}`] || imgData[img] || 'https://media.tenor.com/nsNAI7AW4awAAAAM/cock-cockblock.gif'
-    },
     auth: {
         pinCode: pinCode => setHeaders({ pinCode: pinCode.toString() }),
         biometricAuthToken: biometricAuthToken => setHeaders({ biometricAuthToken }),

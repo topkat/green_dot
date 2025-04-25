@@ -28,7 +28,7 @@ function getEnv(prop: keyof EnvType) {
 
     if (typeof isProdEnv !== 'boolean') {
       throw error.serverError(`Env variable not found please report the issue`, {
-        processEnvIsProd: process.env.IS_PROD_ENV, processEnvIsTest: process.env.IS_TEST_ENV, mainConfEnv: mainConf.env
+        processEnvIsProd: process.env?.IS_PROD_ENV, processEnvIsTest: process.env?.IS_TEST_ENV, mainConfEnv: mainConf?.env
       })
     }
     return ({

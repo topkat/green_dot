@@ -21,6 +21,8 @@ export async function checkUserBlacklistCache(ctx, { discriminator }) {
 
     // CLEAN DB CACHE AND REFRESH CACHE
     const now = Date.now()
+    console.log(`defaultDatabaseName`, defaultDatabaseName)
+    console.log(`Object;keys(dbs)`, Object.keys(dbs))
     if (blacklistLastCacheCheck < now - blackListCheckInterval) {
       const allBlackList = await dbs[defaultDatabaseName].GD_serverBlacklistModel.getAll(ctx.GM)
       const blackListed = [] as ServerBlacklist[]

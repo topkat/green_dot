@@ -169,6 +169,7 @@ export const testRunner = {
         }
 
         const { env, actualTestNb, displayTitleCache, config } = testRunner
+
         const { onAfterTest, onBeforeTest } = config
 
         if (waitSecBefore) await waiter(waitSecBefore)

@@ -34,7 +34,7 @@ export async function getProjectPaths(resetCache = false) {
     // FIND ALL GREEN DOT CONFIGS
     const allFiles = await glob.async('**/green_dot.*.config.*', {
       cwd: rootPath,
-      ignore: ['node_modules/**', '**/.*/**'],
+      ignore: ['node_modules/**', '**/.*/**', '**/dist/**'],
       onlyFiles: true,
       absolute: true,
     })
@@ -102,7 +102,7 @@ function configFilePathMapper(mainConfigFolderPath: string, includesTestConfig =
     }
     if (includesTestConfig) {
       const yoTsBullshit = paths as any
-      yoTsBullshit.testConfigPath = path.replace(/\.[/\\]app[^/\\]\./, `.apiTests.`)
+      yoTsBullshit.testConfigPath = path.replace(/\.app\./, `.apiTests.`)
       yoTsBullshit.testIndexPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'testIndex.generated.ts')
     }
     return paths

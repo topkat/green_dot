@@ -52,7 +52,7 @@ export async function buildCommand({ publishSdks = false } = {}) {
   await build.step(`Generating SDKs`, async () => {
     await initProjectAndDaosCache()
     C.success(`Successfully initialized Dao and Models`)
-    await generateMainBackendFiles()
+    await generateMainBackendFiles({ doGenerateSwaggerDoc: false })
     C.success(`Successfully generated backend output files`)
     await generateSdk(false, publishSdks)
   })

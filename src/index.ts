@@ -9,7 +9,7 @@ export { svc, schedule } from './service'
 export { error, type RegisterErrorType, registerErrors } from './error'
 export { unPopulate } from './databases/mongo/services/populateService'
 export * from './startServer'
-export { generateMainBackendFiles } from './generate/generateMainBackendFiles'
+
 export { newSystemCtx, newPublicCtx, CtxClass, isAnonymousUser, systemUserId, publicUserId, technicalRoles, systemRole, publicRole, authenticationMethod, ctx } from './ctx'
 export * from './types/core.types'
 export * as CoreTypes from './types/core.types'
