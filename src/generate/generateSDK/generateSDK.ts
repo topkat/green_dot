@@ -18,7 +18,7 @@ import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbT
 const sdkFolderName = 'SDKs'
 
 
-export async function generateSdk(onlyDefaults = false) {
+export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
     const mainConfig = getMainConfig(true)
 
@@ -130,12 +130,17 @@ export async function generateSdk(onlyDefaults = false) {
                 backendProjectPerSdk,
                 queriesToInvalidateShared,
             )
+
+            if (!await fs.exists(Path.join('sdkRootPath', 'node_modules'))) {
+                C.info(`Installing node_modules for SDK: ${sdkRootPath}`)
+                await execWaitForOutput(`cd ${sdkRootPath} && npm i`, { stringOrRegexpToSearchForConsideringDone: /added.*packages/ })
+            }
         }
     }
 
     const { npmPublishPromptConfig, notifyOnTelegramPrompt } = generateSdkConfig
 
-    if (isProdEnv && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
+    if (!isProdEnv && publishSdk && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
 
         //  ╔═╗  ╦  ╦ ╦╗╔╦ ╔══╗   ╔═══ ╔═╗  ╦ ╔  ╔═══
         //  ╠═╩╗ ║  ║ ║╚╝║ ╠══╝   ╚══╗ ║  ║ ╠═╩╗ ╚══╗

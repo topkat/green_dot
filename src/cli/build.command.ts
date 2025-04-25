@@ -15,7 +15,7 @@ import { getProjectPaths } from '../helpers/getProjectPaths'
 
 const env = getServerConfigFromEnv()
 
-export async function buildCommand() {
+export async function buildCommand({ publishSdks = false } = {}) {
 
   process.env.SAFE_IMPORT_VERBOSE = '1'
 
@@ -54,7 +54,7 @@ export async function buildCommand() {
     C.success(`Successfully initialized Dao and Models`)
     await generateMainBackendFiles()
     C.success(`Successfully generated backend output files`)
-    await generateSdk(false)
+    await generateSdk(false, publishSdks)
   })
 
   C.log('\n\n' + C.dim('='.repeat(50) + '\n'))

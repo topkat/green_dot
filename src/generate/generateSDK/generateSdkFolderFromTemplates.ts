@@ -48,7 +48,14 @@ export async function generateSdkFolderFromTemplates(
     fileSizeContent = await fs.readFile(fileSizesPath, 'utf-8')
   }
 
-  await fs.remove(sdkFolder)
+  const files = await fs.readdir(sdkFolder)
+  for (const file of files) {
+    // keeps node_modules for perf
+    console.log(`file`, file)
+    if (file !== 'node_modules' && file !== 'fileSizes.json') {
+      await fs.remove(Path.join(sdkFolder, file))
+    }
+  }
 
   // allow to store filesize between resets and thus detect changes in SDK
   if (fileSizeContent) await fs.outputFile(fileSizesPath, fileSizeContent)

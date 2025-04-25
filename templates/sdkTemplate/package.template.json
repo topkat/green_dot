@@ -36,12 +36,11 @@
     },
     "dependencies": {
         "@tanstack/react-query": "5.28.6",
-        "axios": "^1.7.4",
-        "typescript-generic-types": "1.0.12"
+        "axios": "^1.7.4"
     },
     "devDependencies": {
         "bump-simple": "1.0.29",
-        "eslint-config-root": "*"
+        "typescript-generic-types": "1.0.12"
     },
     "files": [
         "*.ts",

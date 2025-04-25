@@ -48,7 +48,7 @@
     "simple-cli-prompt": "^1.0.5",
     "simple-file-templater": "^1.0.5",
     "swagger-ui-express": "^5.0.1",
-    "topkat-utils": "^1.3.14",
+    "topkat-utils": "1.3.17",
     "uuid": "^11.1.0",
     "typescript": "^5.8.3"
   },

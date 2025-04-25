@@ -23,6 +23,10 @@ const commands = {
     execute: buildCommand,
     exitAfter: true,
   },
+  publishSdks: {
+    execute: () => buildCommand({ publishSdks: true }),
+    exitAfter: true,
+  },
   clean: {
     execute: cleanCommand,
     exitAfter: true,

@@ -51,6 +51,13 @@ const commands = {
     ],
     exitAfter: true,
   },
+  publishSdks: {
+    description: 'Publish the SDKs to NPM (interactive prompt)',
+    steps: [
+      'publishSdks'
+    ],
+    exitAfter: true,
+  },
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
     // executeWith: 'bun',
