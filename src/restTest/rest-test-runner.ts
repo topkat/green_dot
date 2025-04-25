@@ -69,10 +69,10 @@ export const testRunner = {
 
         if (config.onBeforeAllTests) {
             try {
-                await offlineRetryer(() => config.onBeforeAllTests({ env: testRunner.env, isReload }))
+                await offlineRetryer(async () => await config.onBeforeAllTests({ env: testRunner.env, isReload }))
             } catch (err) {
                 C.error(false, 'Error in onBeforeAllTests callback')
-                C.error(err)
+                C.error(false, err)
                 process.exit(1)
             }
         }
@@ -370,7 +370,7 @@ async function offlineRetryer(callback) {
             await callback()
             hasConnexionErr = false
         } catch (err) {
-            if (err.name === 'ConnectionRefused' || err?.msg?.includes('onBeforeAllTests') || err?.message?.includes('onBeforeAllTests') || err?.toString().includes('onBeforeAllTests')) {
+            if (err.name === 'ConnectionRefused' || err?.msg?.includes('onBeforeAllTests') || err?.message?.includes('onBeforeAllTests') || err?.toString().includes('onBeforeAllTests') || err?.stack?.toString().includes('onBeforeAllTests')) {
                 const time = 2000
                 C.warning(false, `CONNEXION REFUSED: waiting ${round(time / 1000, 2)} seconds before retry`)
                 await timeout(time)

@@ -1,5 +1,5 @@
 import { C, getId } from 'topkat-utils'
-import { dbs } from '../../db'
+import { db } from '../../db'
 import { GD_serverBlacklistModel } from './GD_serverBlackList.model'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { GreenDotConfigRateLimiterInfos } from '../../types/mainConfig.types'
@@ -15,22 +15,21 @@ let blacklistLastCacheCheck = 0
 //  ╚══╝ ╩  ╩ ╚══╝ ╚══╝ ╩  ╚ ═══╝
 export async function checkUserBlacklistCache(ctx, { discriminator }) {
 
-  const { enableUserBan, enableUserWarnings, blackListCheckInterval, defaultDatabaseName, customWarningAndBanUserFunctions } = getMainConfig()
+  const { enableUserBan, enableUserWarnings, blackListCheckInterval, customWarningAndBanUserFunctions } = getMainConfig()
 
   if ((enableUserBan || enableUserWarnings) && !customWarningAndBanUserFunctions) {
 
     // CLEAN DB CACHE AND REFRESH CACHE
     const now = Date.now()
-    console.log(`defaultDatabaseName`, defaultDatabaseName)
-    console.log(`Object;keys(dbs)`, Object.keys(dbs))
+
     if (blacklistLastCacheCheck < now - blackListCheckInterval) {
-      const allBlackList = await dbs[defaultDatabaseName].GD_serverBlacklistModel.getAll(ctx.GM)
+      const allBlackList = await db.GD_serverBlacklistModel.getAll(ctx.GM)
       const blackListed = [] as ServerBlacklist[]
       for (const b of allBlackList) {
         if (b.lockUntil) {
           if (new Date(b.lockUntil) <= new Date()) {
             // REMOVE LOCKUNTIL FIELD
-            await dbs[defaultDatabaseName].GD_serverBlacklistModel.update(ctx.GM, getId(b), { lockUntil: null })
+            await db.GD_serverBlacklistModel.update(ctx.GM, getId(b), { lockUntil: null })
           } else {
             blackListed.push(b)
           }
@@ -60,7 +59,7 @@ export async function checkUserBlacklistCache(ctx, { discriminator }) {
 //  ╩╝╚╩ ╩  ╩ ╩ ╚  ╩ ╚╩
 export async function addUserWarning(ctx, { discriminator, route }: GreenDotConfigRateLimiterInfos) {
 
-  const { enableUserWarnings, defaultDatabaseName, customWarningAndBanUserFunctions } = getMainConfig()
+  const { enableUserWarnings, customWarningAndBanUserFunctions } = getMainConfig()
 
   if (enableUserWarnings) {
 
@@ -71,12 +70,12 @@ export async function addUserWarning(ctx, { discriminator, route }: GreenDotConf
       let userInBlacklist = blackListCache.find(b => b.discriminator === discriminator)
       if (!userInBlacklist) {
         // CREATE DB ITEM
-        userInBlacklist = await dbs[defaultDatabaseName].GD_serverBlacklistModel.create(ctx.GM, { discriminator }, { returnDoc: true })
+        userInBlacklist = await db.GD_serverBlacklistModel.create(ctx.GM, { discriminator }, { returnDoc: true })
         blackListCache.push(userInBlacklist)
       } else {
         // UPDATE NB WARNINGS
         userInBlacklist.nbWarning++
-        await dbs[defaultDatabaseName].GD_serverBlacklistModel.update(ctx.GM, getId(userInBlacklist), { $inc: { nbWarning: 1 } })
+        await db.GD_serverBlacklistModel.update(ctx.GM, getId(userInBlacklist), { $inc: { nbWarning: 1 } })
       }
 
       return {
@@ -94,7 +93,7 @@ export async function addUserWarning(ctx, { discriminator, route }: GreenDotConf
 //  ╚══╝ ╩  ╩ ╩ ╚╩
 export async function banUser(ctx, { discriminator, route }: GreenDotConfigRateLimiterInfos) {
 
-  const { enableUserBan, defaultDatabaseName, blackListBanMinutes, customWarningAndBanUserFunctions } = getMainConfig()
+  const { enableUserBan, blackListBanMinutes, customWarningAndBanUserFunctions } = getMainConfig()
 
   if (enableUserBan) {
 
@@ -106,14 +105,14 @@ export async function banUser(ctx, { discriminator, route }: GreenDotConfigRateL
       let blackListItem = blackListCache.find(b => b.discriminator === discriminator)
       if (!blackListItem) {
         // CREATE ITEM
-        blackListItem = await dbs[defaultDatabaseName].GD_serverBlacklistModel.create(ctx.GM, { discriminator }, { returnDoc: true })
+        blackListItem = await db.GD_serverBlacklistModel.create(ctx.GM, { discriminator }, { returnDoc: true })
         blackListCache.push(blackListItem)
       }
       const banDurationMin = blackListBanMinutes[blackListItem.nbBan] || blackListBanMinutes.at(-1)
       const fields = { lockUntil: new Date(Date.now() + banDurationMin * 60 * 1000), nbWarning: 0 } satisfies Partial<ServerBlacklist>
       Object.assign(blackListItem, fields)
       blackListItem.nbBan++
-      await dbs[defaultDatabaseName].GD_serverBlacklistModel.update(ctx.GM, getId(blackListItem), { $inc: { nbBan: 1 }, ...fields })
+      await db.GD_serverBlacklistModel.update(ctx.GM, getId(blackListItem), { $inc: { nbBan: 1 }, ...fields })
     }
 
   } else {

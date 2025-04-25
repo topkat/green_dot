@@ -8,6 +8,7 @@ import { rateLimiter } from './security/serviceRouteRateLimiter'
 import swaggerUi from 'swagger-ui-express'
 import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
 import { generateMainBackendFiles } from './generate/generateMainBackendFiles'
+import { greenDotCacheModuleFolder } from './helpers/getProjectPaths'
 
 
 
@@ -36,10 +37,10 @@ export async function startServerAsyncTasks(app: Express) {
     if (!mainConfig.isProdEnv) {
       try {
 
-        await generateMainBackendFiles({ generateSdk: false })
+        await generateMainBackendFiles({ generateSdk: false, doGenerateSwaggerDoc: true })
 
         // GENERATE SWAGGER DOC
-        const swaggerDoc = await import(Path.resolve(__dirname, `./cache/${appConfig.name}.swaggerDoc.generated.json`))
+        const swaggerDoc = await import(Path.join(greenDotCacheModuleFolder, `${appConfig.name}.swaggerDoc.generated.json`))
 
         app.use('/doc/*', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
         C.log(C.primary(`✓ Swagger doc served at ${urlPathJoin(appConfig.serverLiveUrl, '/doc')}`))
