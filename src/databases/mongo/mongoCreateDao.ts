@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 import { mongoBeforeRequest } from './mongoBeforeRequest'
 import { mongoAfterRequest, catchMongoDbDuplicateError } from './mongoAfterRequest'
 
-import { MongoDaoParsed, DaoMethodsBaseMongo, DaoMethodsMongo, RequestConfigRead } from './types/mongoDbTypes'
+import { DaoMethodsBaseMongo, DaoMethodsMongo, RequestConfigRead } from './types/mongoDbTypes'
 import { LocalConfigParsed } from './types/mongoDbTypes'
 import { DaoGenericMethods, ModelReadWrite } from '../../types/core.types'
 
@@ -16,8 +16,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
     MongooseModel: mongoose.Model<any>,
     dbId: AllDbIds,
     dbName: keyof DbIds,
-    modelName: ModelNames,
-    daoConf: MongoDaoParsed<any>
+    modelName: ModelNames
 ) {
 
     type ModelRead = ModelTypes['Read']
@@ -34,9 +33,9 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
         async getOne(ctx, filter?, config?) {
             const localConfig = getLocalConfigForRead('getOne', config, filter)
-            await mongoBeforeRequest(ctx, daoConf, localConfig)
+            await mongoBeforeRequest(ctx, localConfig)
             const promise = MongooseModel.findOne(localConfig.filter, null, { session: ctx.transactionSession })
-            const result = await mongoAfterRequest<ModelRead, 'getOne', typeof localConfig>(ctx, daoConf, promise, localConfig)
+            const result = await mongoAfterRequest<ModelRead, 'getOne', typeof localConfig>(ctx, promise, localConfig)
             if (config?.triggerErrorIfNotSet === true && !result) throw ctx.error.ressourceDoesNotExists({
                 triggerErrorIfNotSetOption: true,
                 filter,
@@ -49,9 +48,9 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
         async getAll(ctx, filter?, config?) {
             const localConfig = getLocalConfigForRead('getAll', config, filter)
-            await mongoBeforeRequest(ctx, daoConf, localConfig)
+            await mongoBeforeRequest(ctx, localConfig)
             const promise = MongooseModel.find(localConfig.filter, null, { session: ctx.transactionSession })
-            const result = await mongoAfterRequest<ModelRead, 'getAll', typeof localConfig>(ctx, daoConf, promise, localConfig, MongooseModel)
+            const result = await mongoAfterRequest<ModelRead, 'getAll', typeof localConfig>(ctx, promise, localConfig, MongooseModel)
             return result as any
         },
 
@@ -65,7 +64,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
         async count(ctx, filter = {}) {
             const localConfig = getLocalConfigForRead('getAll', {}, filter)
-            await mongoBeforeRequest(ctx, daoConf, localConfig)
+            await mongoBeforeRequest(ctx, localConfig)
             return await MongooseModel.countDocuments(localConfig.filter, { session: ctx.transactionSession })
         },
 
@@ -77,7 +76,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             const results: string[] | ModelRead[] = []
             for (const fields of arrOfFields) {
                 const localConfig = getLocalConfigForWrite('create', 'getOne', config, {}, fields) // we shall recreate each time for ref
-                await mongoBeforeRequest(ctx, daoConf, localConfig)
+                await mongoBeforeRequest(ctx, localConfig)
                 if (!ctx.simulateRequest) {
                     let item
                     try {
@@ -91,7 +90,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
                         } else throw err
                     }
                     const result = await getRessourceAfterUpdateIfReturnDocIsTrue(ctx, { _id: item._id }, localConfig, item._id.toString())
-                    await mongoAfterRequest<ModelRead, 'create'>(ctx, daoConf, result, localConfig)
+                    await mongoAfterRequest<ModelRead, 'create'>(ctx, result, localConfig)
                     results.push(result)
                 }
             }
@@ -115,11 +114,11 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
                 const originalId = getId(fields)
                 const localConfig = getLocalConfigForWrite('update', 'getAll', config, { _id: originalId }, fields)
                 delete fields._id
-                await mongoBeforeRequest(ctx, daoConf, localConfig)
+                await mongoBeforeRequest(ctx, localConfig)
                 if (localConfig.filter?._id !== originalId) throw ctx.error[403]({ originalId, allowedId: localConfig.filter?._id })
                 if (!ctx.simulateRequest) {
                     const promise = MongooseModel.updateOne(localConfig.filter, localConfig.inputFields, { session: ctx.transactionSession })
-                    await mongoAfterRequest<ModelRead, 'update'>(ctx, daoConf, promise, localConfig)
+                    await mongoAfterRequest<ModelRead, 'update'>(ctx, promise, localConfig)
                     if (localConfig.returnDoc) {
                         const updatedRessource = await getRessourceAfterUpdateIfReturnDocIsTrue(ctx, localConfig.filter, localConfig)
                         results.push(updatedRessource)
@@ -140,13 +139,13 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
         async updateWithFilter(ctx, filter, fields, config?) {
             const localConfig = getLocalConfigForWrite('update', 'getAll', config, filter, fields)
-            await mongoBeforeRequest(ctx, daoConf, localConfig)
+            await mongoBeforeRequest(ctx, localConfig)
             if (!ctx.isSystem && localConfig?.filter?._id) { // forcing _id filter since updateWithFilter is too powerful
                 throw ctx.error[403]({ message: 'updateWithFilterNotAllowed', allowedId: localConfig.filter?._id })
             }
             if (!ctx.simulateRequest) {
                 const returnVal = await MongooseModel.updateMany(filter, localConfig.inputFields, { session: ctx.transactionSession })
-                await mongoAfterRequest<ModelRead, 'update'>(ctx, daoConf, undefined, localConfig)
+                await mongoAfterRequest<ModelRead, 'update'>(ctx, undefined, localConfig)
                 return await getRessourceAfterUpdateIfReturnDocIsTrue(ctx, filter, localConfig, returnVal) as any // TODO
             }
         },
@@ -170,7 +169,7 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
             //     resp.hardDeleted = false
             //     return resp
             // } else {
-            await mongoBeforeRequest(ctx, daoConf, localConfig)
+            await mongoBeforeRequest(ctx, localConfig)
             if (!ctx.simulateRequest) {
                 const resp = await MongooseModel.deleteMany(localConfig.filter, { session: ctx.transactionSession })
                 return { success: true, deletedCount: resp.deletedCount, hardDeleted: true }
@@ -266,12 +265,12 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
 
     async function getLastOrFirst(ctx: Ctx, limit, config: Config, getFirst: boolean) {
         const localConfig = getLocalConfigForRead('getAll', config)
-        await mongoBeforeRequest(ctx, daoConf, localConfig)
+        await mongoBeforeRequest(ctx, localConfig)
         const promise = MongooseModel.find(localConfig.filter || {}, null, { session: ctx.transactionSession })
             .sort({ $natural: getFirst ? 1 : -1 })
             .skip((localConfig.page || 0) * limit)
             .limit(limit)
-        const result = await mongoAfterRequest<ModelRead, 'getAll', typeof localConfig>(ctx, daoConf, promise, localConfig, MongooseModel)
+        const result = await mongoAfterRequest<ModelRead, 'getAll', typeof localConfig>(ctx, promise, localConfig, MongooseModel)
         return result
     }
 }

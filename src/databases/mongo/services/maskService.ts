@@ -4,7 +4,7 @@ import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
 import { forEachPopulateFieldRecursive } from './populateService'
 import { PopulateConfig, PopulateConfigWithoutStringSyntax } from '../types/mongoDbTypes'
 import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types/core.types'
-import { getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
+import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
 
 import { getId, objForceWrite, escapeRegexp, flattenObject, unflattenObject } from 'topkat-utils'
 import { getProjectDatabaseDaos } from '../../../helpers/getProjectModelsAndDaos'
@@ -42,8 +42,8 @@ export async function applyMaskOnObjectForUser<T extends Record<string, any>>(
     method: DaoGenericMethods,
     obj: T
 ): Promise<T> {
-    const daos = await getProjectDatabaseDaos()
-    const maskHooksForModel = daos[dbName][modelName].mask || []
+    const dao = await getProjectDatabaseDaosForModel(dbName, modelName)
+    const maskHooksForModel = dao.mask || []
     const maskFromCache = retrieveMaskFromCacheOrDelete(ctx, modelName, method)
     if (maskFromCache) return applyMaskFlatToModel(maskFromCache.mask, obj)
     const maskHooksForUser = await appliableHooksForUser(ctx, maskHooksForModel, method, 'alwaysReturnFalse', hook => hook.select ? 'alwaysReturnFalse' : 'alwaysReturnTrue')
@@ -227,11 +227,12 @@ export async function getMongoMaskForUser(
     dbName: string,
     modelName: string
 ) {
-    const daos = await getProjectDatabaseDaos()
-    const maskHooksForModel = daos[dbName][modelName].mask || []
+
+    const dao = await getProjectDatabaseDaosForModel(dbName, modelName)
+
     const maskHooksForUser = await appliableHooksForUser(
         ctx,
-        maskHooksForModel,
+        dao.mask || [],
         method,
         'alwaysReturnFalse',
         hook => hook.select ? 'alwaysReturnFalse' : 'alwaysReturnTrue',

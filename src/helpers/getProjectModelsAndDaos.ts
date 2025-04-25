@@ -3,10 +3,11 @@
 import { getDbConfigs } from './getGreenDotConfigs'
 import { Definition } from 'good-cop'
 import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
-import { objEntries } from 'topkat-utils'
+import { C, objEntries } from 'topkat-utils'
 import { safeImport } from './safeImports'
 import { parseDaos } from '../databases/parseDaos'
 import { error } from '../error'
+import defaultDaoConfigMongo from '../databases/mongo/defaultDaoConfigMongo'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
@@ -73,6 +74,14 @@ export async function getProjectDatabaseDaosForDbName(dbName: string, resetCache
   const daos = daosCache[dbName]
   if (!daos) throw error.serverError(`No Dao model with name ${dbName} found in configs. Available names: ${Object.keys(daosCache)}`)
   return daos
+}
+
+export async function getProjectDatabaseDaosForModel(dbName: string, modelName: string, resetCache = false) {
+  await initProjectAndDaosCache(resetCache)
+  const daos = daosCache[dbName]
+  if (!daos) throw error.serverError(`No Dao model with name ${dbName} found in configs. Available names: ${Object.keys(daosCache)}`)
+  if (!daos[modelName] && !modelName.startsWith('GD_')) C.warning(false, `No Dao file set for model ${modelName}. Using default Dao.`)
+  return daos[modelName] || defaultDaoConfigMongo
 }
 
 //  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══

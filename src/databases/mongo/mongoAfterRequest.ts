@@ -2,7 +2,6 @@
 import mongoose from 'mongoose'
 import event from '../../event'
 import { applyMaskToPopulateConfig, getMongoMaskForUser } from './services/maskService'
-import { MongoDaoParsed } from './types/mongoDbTypes'
 
 import { DaoGenericMethods } from '../../types/core.types'
 import { PaginationData, MaybePaginated } from './types/mongoDaoTypes'
@@ -10,6 +9,7 @@ import { LocalConfigParsed } from './types/mongoDbTypes'
 
 import { firstMatch } from 'topkat-utils'
 import { getActiveAppConfig } from '../../helpers/getGreenDotConfigs'
+import { getProjectDatabaseDaosForModel } from '../../helpers/getProjectModelsAndDaos'
 
 type MongooseReqRead = mongoose.Query<any[], any, {}, any, 'find'> | mongoose.Query<any, any, {}, any, 'findOne'>
 type MongooseReqDel = mongoose.Query<mongoose.mongo.DeleteResult, any, {}, any, 'deleteMany'>
@@ -20,7 +20,6 @@ export async function mongoAfterRequest<
     Config extends LocalConfigParsed = any
 >(
     ctx,
-    hooks: MongoDaoParsed<any>,
     promise: Method extends 'delete' ? MongooseReqDel : Method extends 'create' | 'update' ? string | ModelRead | void | mongoose.Query<any, any, {}, any, 'findOneAndUpdate'> : MongooseReqRead,
     localConfig: Config,
     ...[model]: Method extends 'getAll' ? [mongoose.Model<any>] : [] // => if method === 'getAll' parameter is required. Unreadable but type safe https://stackoverflow.com/questions/52318011/optional-parameters-based-on-conditional-types
@@ -35,13 +34,15 @@ export async function mongoAfterRequest<
         const isMongooseQuery = promise instanceof mongoose.Query
         let paginationData: PaginationData
 
+        const dao = await getProjectDatabaseDaosForModel(localConfig.dbName, localConfig.modelName)
+
         if (isRead && isMongooseQuery) {
             // MASK FIRST LEVEL FIELDS
             const maskArr = await getMongoMaskForUser(ctx, method, dbName, modelName)
             if (maskArr.length) promise.select(maskArr.join(' '))
 
             // POPULATE
-            if (hooks.populate) populate.unshift(...hooks.populate)
+            if (dao.populate) populate.unshift(...dao.populate)
             if (populate?.length && !populateAsAdmin) {
                 await applyMaskToPopulateConfig(ctx, populate, dbName, modelName, method)
             }
@@ -50,7 +51,7 @@ export async function mongoAfterRequest<
             if (method === 'getAll') {
                 // SORTING
                 if (typeof (promise as any)?.options?.sort?.$natural !== 'number') { // if getFirst / Last is used, sorting is disabled and also leads to a bug
-                    if (hooks.sort) promise.sort(hooks.sort)
+                    if (dao.sort) promise.sort(dao.sort)
                     if ('sort' in localConfig && Object.keys(localConfig.sort).length > 0) promise.sort(localConfig.sort)
                 }
 

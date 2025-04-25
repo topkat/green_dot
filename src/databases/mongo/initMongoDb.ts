@@ -128,8 +128,7 @@ export async function mongoInitDb(
         //----------------------------------------
         // BUILD DAO
         //----------------------------------------
-        const daoConf = daoConfigsParsed[modelName]
-        typedDatabase[modelName] = await mongoCreateDao(mongooseModels[modelName], dbId, dbName, modelName as any, daoConf)
+        typedDatabase[modelName] = await mongoCreateDao(mongooseModels[modelName], dbId, dbName, modelName as any)
 
         //----------------------------------------
         // BUILD DB CONFIGS

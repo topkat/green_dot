@@ -11,8 +11,7 @@ import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDbTypes'
 import { isset } from 'topkat-utils'
 import { rateLimiterMiddleware } from '../security/serviceRouteRateLimiter'
 import { getApiEndpointsPerRolesFromDao } from '../databases/helpers/getApiEndpointsPerRolesFromDao'
-import { getProjectDatabaseModels } from '../helpers/getProjectModelsAndDaos'
-import { getProjectDatabaseDaos } from '../helpers/getProjectModelsAndDaos'
+import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../helpers/getProjectModelsAndDaos'
 import { getMainConfig } from '../helpers/getGreenDotConfigs'
 import { dbIdsToDbNames } from '../databases/dbIdsToDbNames'
 
@@ -34,7 +33,6 @@ export async function registerDaoApi(
 
             const { allRoles } = getMainConfig()
             const models = await getProjectDatabaseModels()
-            const daos = await getProjectDatabaseDaos()
 
             try {
 
@@ -52,12 +50,13 @@ export async function registerDaoApi(
                 const params: any[] = req?.body?.params || []
 
                 const model = models[dbId]?.[modelName]
-                const dao = daos[dbId]?.[modelName]
 
                 if (typeof model === 'undefined') throw ctx.error.modelDoNotExist(errExtraInfos)
 
                 const dbName = dbIdsToDbNames[dbId]
                 if (!dbName) throw ctx.error.serverError('dbIdsToDbNames should be instanciated with all db names')
+
+                const dao = await getProjectDatabaseDaosForModel(dbName, modelName)
 
                 if (!isset(daoValidators[daoFunction as any])) throw ctx.error.functionDoNotExistInModel({ ...errExtraInfos, daoFunction })
 
@@ -73,12 +72,12 @@ export async function registerDaoApi(
                 //----------------------------------------
                 // IS EXPOSED TO PERM
                 //----------------------------------------
-                if (dao.expose) await hookInterpreterExpose(ctx, dao.expose, dbId, 'bangk', method, modelName)
+                if (dao.expose) await hookInterpreterExpose(ctx, dbId, 'bangk', method, modelName)
 
                 //----------------------------------------
                 // VALIDATE FUNCTION PARAMS
                 //----------------------------------------
-                await paramsValidator.formatAndValidate(params, { user: ctx.getUserMinimal(), dbName, dbId: dbId, errorExtraInfos: errExtraInfos, disableFormatting: true, modelName })
+                await paramsValidator.formatAndValidate(params, { user: ctx.getUserMinimal(), dbName, dbId, errorExtraInfos: errExtraInfos, disableFormatting: true, modelName })
 
                 //----------------------------------------
                 // CALL DAO

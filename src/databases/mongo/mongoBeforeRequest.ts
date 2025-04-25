@@ -1,5 +1,5 @@
 
-import { LocalConfigParsed, MongoDaoParsed } from './types/mongoDbTypes'
+import { LocalConfigParsed } from './types/mongoDbTypes'
 import { hookInterpreterExpose } from '../0_hooks/hookInterpreterExpose'
 import { mongoFilterHookInterpreter } from './hooks/mongoFilterHookInterpreter'
 import { mongoSanitizeFilter } from './services/mongoSanitizeFilter'
@@ -13,7 +13,6 @@ import { getProjectDatabaseModels } from '../../helpers/getProjectModelsAndDaos'
 
 export async function mongoBeforeRequest(
     ctx: Ctx,
-    hooks: MongoDaoParsed<any>,
     localConfig: LocalConfigParsed,
 ): Promise<void> {
     localConfig.ressourceId = getId(localConfig.inputFields) || getId(localConfig?.filter)
@@ -23,13 +22,13 @@ export async function mongoBeforeRequest(
     const hasFields = localConfig.inputFields && Object.keys(localConfig.inputFields).length
 
     const errExtraInfos = { modelName, dbName, dbId, method }
-    console.log('hooks', JSON.stringify(hooks, null, 2))
-    await hookInterpreterExpose(ctx, hooks.expose, dbId, dbName, method, modelName) // may throw
+
+    await hookInterpreterExpose(ctx, dbId, dbName, method, modelName) // may throw
 
     await mongoSanitizeFilter(ctx, localConfig)
 
     // APPLY SECURITY FILTERS
-    await mongoFilterHookInterpreter(ctx, localConfig, hooks.filter)
+    await mongoFilterHookInterpreter(ctx, localConfig)
 
     // EMIT "BEFORE" EVENTS
     // they are applied after security so that every changes that are made by an event is made as a system eventhough the ctx used is a normal one
