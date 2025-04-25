@@ -10,7 +10,7 @@ import fs from 'fs-extra'
 import Path from 'path'
 import { testRunner } from '../restTest/rest-test-runner'
 import { GreenDotConfig } from '../types/mainConfig.types'
-import { parentProcessExitCodes } from './cliEntryPoint'
+import { parentProcessExitCodes } from '../constants'
 
 
 let watcherOn = false

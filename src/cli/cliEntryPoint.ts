@@ -9,16 +9,12 @@ import type { ChildProcessCommands } from './childProcessEntryPoint' // is not i
 import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
 import { onFileChange } from './helpers/fileWatcher'
+import { parentProcessExitCodes } from '../constants'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
 const [tsNodePath] = process.argv
 
-export const parentProcessExitCodes = {
-  waitForFileChange: 201,
-  restartServer: 202,
-  error: 1,
-  exit: 0,
-} as const satisfies Record<string, number>
+
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗

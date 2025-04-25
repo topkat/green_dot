@@ -15,7 +15,7 @@ import { getProjectPaths } from '../helpers/getProjectPaths'
 
 const env = getServerConfigFromEnv()
 
-export async function buildCommand({ doNotGenerateSdk = false } = {}) {
+export async function buildCommand() {
 
   process.env.SAFE_IMPORT_VERBOSE = '1'
 
@@ -49,7 +49,6 @@ export async function buildCommand({ doNotGenerateSdk = false } = {}) {
     await build.step(`Generating types for databases`, generateDbCachedFiles, { watch: true, cleanOnError: true })
   }
 
-  // if (!doNotGenerateSdk) { // will be generated after server start to gain perf
   await build.step(`Generating SDKs`, async () => {
     await initProjectAndDaosCache()
     C.success(`Successfully initialized Dao and Models`)
@@ -57,7 +56,6 @@ export async function buildCommand({ doNotGenerateSdk = false } = {}) {
     C.success(`Successfully generated backend output files`)
     await generateSdk(false)
   })
-  // }
 
   C.log('\n\n' + C.dim('='.repeat(50) + '\n'))
 

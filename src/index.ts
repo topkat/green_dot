@@ -51,3 +51,5 @@ export { GreenDotApiTestsConfig, TestSuite, TestItem } from './restTest/rest-tes
 
 export * from './sdkHelpersModule/src/types'
 export { InitBackendConfig } from './sdkHelpersModule/src/initBackend'
+
+export { parentProcessExitCodes } from './constants'

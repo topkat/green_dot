@@ -4,7 +4,7 @@ import '../types/global.types'
 import { buildCommand } from './build.command'
 import { cleanCommand } from './clean.command'
 import { generateCommand } from './generate.command'
-import { startDevProdCommand } from './startDevProdServer.command'
+import { startDevServerCommand, startProdServerCommand } from './startDevProdServer.command'
 import { testCommand } from './test.command'
 
 
@@ -27,14 +27,17 @@ const commands = {
     execute: cleanCommand,
     exitAfter: true,
   },
+  /** Starts a server with hot reload */
   startServerDev: {
-    execute: startDevProdCommand,
+    execute: startDevServerCommand,
     exitAfter: true,
   },
+  /** Starts a server with restart on error (max 10 times per 5 minutes) */
   startServer: {
-    execute: startDevProdCommand,
+    execute: startProdServerCommand,
     exitAfter: true,
   },
+  /** Generate project files from templates */
   generate: {
     execute: generateCommand,
     exitAfter: true,

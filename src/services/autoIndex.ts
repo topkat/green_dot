@@ -19,31 +19,27 @@ export type AutoIndexFileConfig = { path: string, match: RegExp, indexFileName: 
 const start = Date.now()
 
 export async function autoIndex(fileConfigs: AutoIndexFileConfig[], basePath: string) {
-  try {
+  for (const { path: relativePath, match, indexFileName: indexFileNameRaw } of fileConfigs) {
 
-    for (const { path: relativePath, match, indexFileName: indexFileNameRaw } of fileConfigs) {
+    const indexFileName = indexFileNameRaw.replace(/\.(t|j)sx?$/, '')
 
-      const indexFileName = indexFileNameRaw.replace(/\.(t|j)sx?$/, '')
+    const indexBasePath = Path.resolve(basePath, relativePath)
 
-      const indexBasePath = Path.resolve(basePath, relativePath)
+    if (await fs.pathExists(indexBasePath)) {
 
-      if (await fs.pathExists(indexBasePath)) {
+      const urls = await findAllInDirRecursive(indexBasePath, match)
+      const indexFileData = urls
+        .filter(url => !url.endsWith(indexFileName + '.ts'))
+        .map(url => `export * from './${Path.relative(indexBasePath, url).replace(/.ts$/, '')}'`)
 
-        const urls = await findAllInDirRecursive(indexBasePath, match)
-        const indexFileData = urls
-          .filter(url => !url.endsWith(indexFileName + '.ts'))
-          .map(url => `export * from './${Path.relative(indexBasePath, url).replace(/.ts$/, '')}'`)
+      await fs.outputFile(`${indexBasePath}/${indexFileName}.ts`, indexFileData.join('\n'))
 
-        await fs.outputFile(`${indexBasePath}/${indexFileName}.ts`, indexFileData.join('\n'))
+    } else C.warning(false, `Path ${indexBasePath} do not exist. Please check your autoIndex config in green_dot.config.ts`)
+  }
 
-      } else C.warning(false, `Path ${indexBasePath} do not exist. Please check your autoIndex config in green_dot.config.ts`)
-    }
+  C.success('Indexes files generated for client:\n' + fileConfigs.map(c => '    * ' + c.path.replace(/^\.\//, '')).join('\n'))
 
-    C.success('Indexes files generated for client:\n' + fileConfigs.map(c => '    * ' + c.path.replace(/^\.\//, '')).join('\n'))
-
-    C.success(`Finished in ${round2((Date.now() - start) / 1000)}s`)
-  } catch (e) { C.error(e) }
-  process.exit()
+  C.success(`Finished in ${round2((Date.now() - start) / 1000)}s`)
 }
 
 

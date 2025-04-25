@@ -7,7 +7,7 @@ import { safeImport } from './safeImports'
 import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
 import { error } from '../error'
 import { initProjectAndDaosCache } from './getProjectModelsAndDaos'
-import { parentProcessExitCodes } from '../cli/cliEntryPoint'
+import { parentProcessExitCodes } from '../constants'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
