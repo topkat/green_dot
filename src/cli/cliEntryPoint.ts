@@ -8,7 +8,7 @@ import { clearCli, cliIntro, cliArgsToEnv } from './helpers/cli'
 import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
-import { onFileChange } from './fileWatcher'
+import { onFileChange } from './helpers/fileWatcher'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
 const [tsNodePath] = process.argv

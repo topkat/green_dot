@@ -10,7 +10,7 @@ import { compileTypeScriptProject } from '../../helpers/tsCompiler'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 
 
-
+const dirNameBase = __dirname.replace(Path.sep + 'dist' + Path.sep, Path.sep)
 
 export async function generateSdkFolderFromTemplates(
   platform: string,
@@ -78,7 +78,7 @@ export async function generateSdkFolderFromTemplates(
   }
 
   await templater(
-    Path.resolve(__dirname, '../../../templates/sdkTemplate'),
+    Path.resolve(dirNameBase, '../../../templates/sdkTemplate'),
     sdkFolder,
     [
       ...replaceInFiles,
@@ -90,7 +90,7 @@ export async function generateSdkFolderFromTemplates(
 
   // COMMON JS MODULES
   await templater(
-    Path.resolve(__dirname, '../../../templates/sdkTemplate'),
+    Path.resolve(dirNameBase, '../../../templates/sdkTemplate'),
     sdkFolder,
     [
       ...replaceInFiles,
@@ -127,7 +127,7 @@ export async function generateSdkFolderFromTemplates(
   const sdkHelperDistPath = Path.join(greenDotCacheModuleFolder, '/sdkHelperDist')
 
   if (!await fs.exists(sdkHelperDistPath)) {
-    const sdkHelperFolderPath = Path.resolve(__dirname, '../../../templates/sdkHelpersModule')
+    const sdkHelperFolderPath = Path.resolve(__dirname, '../../sdkHelpersModule')
     if (! await fs.exists(sdkHelperFolderPath)) throw new Error('sdkHelperFolderPath not existing in green_dot: ' + sdkHelperFolderPath)
     await compileTypeScriptProject({
       projectPath: sdkHelperFolderPath,

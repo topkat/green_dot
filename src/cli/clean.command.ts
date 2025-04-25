@@ -1,7 +1,7 @@
 
 
 import { C } from 'topkat-utils'
-import { createNewTask } from './createNewTask'
+import { createNewTask } from './helpers/createNewTask'
 import { generateIndexForDbTypeFiles } from './build/generateIndexForDbTypeFiles'
 
 

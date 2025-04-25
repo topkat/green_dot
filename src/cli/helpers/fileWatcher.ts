@@ -1,7 +1,7 @@
 
 // /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 import chokidar from 'chokidar'
-import { getProjectPaths } from '../helpers/getProjectPaths'
+import { getProjectPaths } from '../../helpers/getProjectPaths'
 
 
 export async function onFileChange(
@@ -23,7 +23,8 @@ export async function onFileChange(
         /node_modules/,
         /\/dist\//,
         /(^|[/\\])\../, // dot files
-        /\.generated\.[a-zA-Z0-9_]{1,5}$/
+        /\.generated\.[a-zA-Z0-9_]{1,5}$/,
+        /SDKs/,
       ],
       ignoreInitial: true,
     })

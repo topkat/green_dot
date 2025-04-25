@@ -3,7 +3,7 @@ import { C, runAsync } from 'topkat-utils'
 import { clearCli, cliBadge, cliIntro, userInputConfirmLog, userInputKeyHandler } from './helpers/cli'
 import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
-import { onFileChange } from './fileWatcher'
+import { onFileChange } from './helpers/fileWatcher'
 import { generateSdk } from '../generate/generateSDK/generateSDK'
 
 
@@ -71,13 +71,13 @@ export async function startDevProdCommand() {
 
     await startServer()
 
-    runAsync(async () => {
-      try {
-        await generateSdk(false)
-      } catch (err) {
-        C.error(err)
-      }
-    })
+    // runAsync(async () => {
+    //   try {
+    //     await generateSdk(false)
+    //   } catch (err) {
+    //     C.error(err)
+    //   }
+    // })
 
   } catch (err) {
     errorHandler(err)

@@ -27,6 +27,8 @@ export async function generateIndexForProjectApp() {
         absolute: true,
       })
 
+      allFiles.sort((a, b) => a.localeCompare(b))
+
       const indexContent = {
         imports: ``,
         errorType: [] as string[],

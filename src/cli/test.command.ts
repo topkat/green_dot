@@ -3,7 +3,7 @@ import { C, JSONstringyParse, noDuplicateFilter, removeCircularJSONstringify } f
 import { clearCli, cliBadge, cliIntro, getServerConfigFromEnv, userInputConfirmLog, userInputKeyHandler } from './helpers/cli'
 import { getProjectPaths, greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
-import { onFileChange } from './fileWatcher'
+import { onFileChange } from './helpers/fileWatcher'
 import { intro as testCliIntro } from '../restTest/rest-test-ascii-display'
 import { GreenDotApiTestsConfig, TestSuite } from '../restTest/rest-test-types'
 import fs from 'fs-extra'

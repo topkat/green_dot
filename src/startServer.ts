@@ -51,7 +51,10 @@ export async function startServer(isMaster = true) {
 
     // SERVER START EVENT
     event.on('database.connected', async () => {
-        if (isMaster) C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
+        if (isMaster) {
+            C.log(C.primary(`✓ SERVER STARTED: ${appConfig.serverLiveUrl}`))
+            C.log(C.dim('Async tasks:'))
+        }
 
         // seed and server.start events shall be triggered before exposing routes.
         // This avoid accidentally hitting a route without seeded content

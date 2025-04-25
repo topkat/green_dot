@@ -1,8 +1,8 @@
 
 import { C, cliLoadingSpinner, perfTimer } from 'topkat-utils'
-import { cleanCommand } from './clean.command'
-import { onFileChange } from './fileWatcher'
-import { terminalCharSize } from './helpers/cli'
+import { cleanCommand } from '../clean.command'
+import { onFileChange } from '../helpers/fileWatcher'
+import { terminalCharSize } from '../helpers/cli'
 
 
 /** This will start a task, measure performances as well as cut build into steps for easier debugging, performance tracking and better user logs

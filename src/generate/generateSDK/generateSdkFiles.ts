@@ -7,6 +7,7 @@ import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/gen
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
 
+const dirNameBase = __dirname.replace(Path.sep + 'dist' + Path.sep, Path.sep)
 
 export async function generateSdkFiles(
     sdkRoot: string,
@@ -45,7 +46,7 @@ export async function generateSdkFiles(
     })
 
     // mongodbBaseTypes.generated.ts
-    const databaseFilePath = Path.resolve(__dirname, '../../databases/mongo/types/mongoDbBaseTypes.ts')
+    const databaseFilePath = Path.resolve(dirNameBase, '../../databases/mongo/types/mongoDbBaseTypes.ts')
     await copyFile(databaseFilePath, 'mongodbBaseTypes.generated.ts', false, sdkRoot, str => str.replace(/.*\/\/ rmv.*/g, ''))
 
     // TODO add ability to embbed custom files in SDK (compiled at build time dynamically ?)

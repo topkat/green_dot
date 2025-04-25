@@ -1,8 +1,8 @@
 
-import Path from 'path'
+
 import { generateDbCachedFiles } from './build/generateDbCachedFiles'
 import { initGreenDotConfigs, getMainConfig } from '../helpers/getGreenDotConfigs'
-import { createNewTask } from './createNewTask'
+import { createNewTask } from './helpers/createNewTask'
 import { generateIndexForProjectDb } from './build/generateIndexForProjectDb'
 import { generateIndexForProjectApp } from './build/generateIndexForProjectApp'
 import { C } from 'topkat-utils'
