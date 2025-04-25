@@ -10,6 +10,7 @@ import fs from 'fs-extra'
 import Path from 'path'
 import { testRunner } from '../restTest/rest-test-runner'
 import { GreenDotConfig } from '../types/mainConfig.types'
+import { parentProcessExitCodes } from './cliEntryPoint'
 
 
 let watcherOn = false
@@ -61,16 +62,6 @@ export async function testCommand() {
   } catch (err) {
     errorHandler(err)
   }
-
-  // HOT RELOAD
-  await onFileChange(async path => {
-    if (path.includes('generated')) return
-    if (watcherOn) {
-      C.info(`File change detected for ${path}, restarting (hr)...`)
-      C.log(`\n\n`)
-      process.exit(202)
-    }
-  })
 }
 
 
@@ -91,6 +82,16 @@ async function errorHandler(err) {
       ['Replay last', 'Ignore', 'Replay all', 'Exit'] as const
     )
 
+    // HOT RELOAD
+    onFileChange(async path => {
+      if (path.includes('generated')) return
+      if (watcherOn) {
+        C.info(`File change detected for ${path}, restarting (t)...`)
+        C.log(`\n\n`)
+        process.exit(parentProcessExitCodes.restartServer)
+      }
+    })
+
     if (choice === 'Exit') process.exit(0)
     else if (choice === 'Replay all') {
       startAtTestNb = 0
@@ -99,21 +100,8 @@ async function errorHandler(err) {
     }
 
     await saveEnvToFile()
-
-    process.exit(201) // simple reload
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -131,22 +119,12 @@ async function afterTest(actualTestNb: number, env: Record<string, any>) {
   envCache[actualTestNb] = actualEnv
 }
 
+
+
+
 function getEnvAtTest(testNb: number) {
   return Object.assign({}, ...envCache.slice(0, testNb + 1))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //  ╔══╗ ╦╗ ╔ ╦  ╦   ╔══╗ ═╦═ ╦    ╔══╗
 //  ╠═   ║╚╗║ ╚╗ ║   ╠═    ║  ║    ╠═
@@ -193,7 +171,7 @@ function handleUserInputInCli() {
         userInputConfirmLog('WATCHER: ' + (watcherOn ? 'ON' : 'OFF'))
       } else if (char === 'r') {
         userInputConfirmLog('RESTARTING TESTS')
-        process.exit(202)
+        process.exit(parentProcessExitCodes.restartServer)
       } else return { wasHandled: false }
       return { wasHandled: true }
     }

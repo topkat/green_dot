@@ -39,7 +39,7 @@ export const event = {
         // TODO try catch in all events and message like plz use try catch in your events handlers
         const metadata = {}
         event.registeredEvents[eventName] ??= []
-        for (const [, callback] of event.registeredEvents[eventName]) await callback(newSystemCtx(), ...params, metadata)
+        for (const [, callback] of event.registeredEvents[eventName]) await callback(...params, metadata)
         return metadata
     },
     /** SYNCHRONOUS

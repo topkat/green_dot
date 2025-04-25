@@ -13,6 +13,13 @@ import { onFileChange } from './helpers/fileWatcher'
 
 const [tsNodePath] = process.argv
 
+export const parentProcessExitCodes = {
+  waitForFileChange: 201,
+  restartServer: 202,
+  error: 1,
+  exit: 0,
+} as const satisfies Record<string, number>
+
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
@@ -35,7 +42,15 @@ const commands = {
   dev: {
     description: 'Start a server in dev mode with hot reloading',
     steps: [
-      'buildDev',
+      'build',
+      'startServerDev'
+    ],
+    exitAfter: true,
+  },
+  start: {
+    description: 'Start a server in dev mode with hot reloading',
+    steps: [
+      'build',
       'startServer'
     ],
     exitAfter: true,
@@ -86,11 +101,14 @@ async function start() {
       error: 'throw'
     }) as { _command: keyof typeof commands }
 
-    cliArgsToEnv(args, false)
 
     const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
 
+    cliArgsToEnv(args, false)
+
     let next: 'reload' | 'continue' = 'continue'
+    let restartTimes = 0
+    let restartTimeout
 
     do {
       for (const step of c.steps) {
@@ -99,10 +117,10 @@ async function start() {
           const programPath = c?.executeWith === 'bun' ? 'bun' : tsNodePath
 
           startChildProcess(programPath, [__dirname + '/childProcessEntryPoint.ts', step], code => {
-            if (!code || code === 0) {
+            if (!code || code === parentProcessExitCodes.exit) {
               // SUCCESS EXIT
               resolve('continue')
-            } else if (code === 201) {
+            } else if (code === parentProcessExitCodes.waitForFileChange) {
               // HOT RELOAD
               C.log('\n\n')
               C.warning(false, `Waiting for file change before restarting process...\n\n`)
@@ -113,11 +131,17 @@ async function start() {
                 C.log(`\n\n`)
                 resolve('reload')
               })
-            } else if (code === 202) {
+            } else if (code === parentProcessExitCodes.restartServer) {
               // SIMPLE RESTART
+              clearTimeout(restartTimeout)
+              restartTimeout = setTimeout(() => {
+                restartTimes = 0 // reset restartTimes after a certain amount of time
+              }, 5 * 60 * 1000)
+              if (restartTimes > 10) throw new Error('Process restarted more than 10 times in the last 3 minutes. Stopping process...')
               C.log('\n\n')
               C.warning(false, `Restarting server...\n\n`)
               resolve('reload')
+              restartTimes++
             } else {
               // ERROR EXIT RESTART PROCESS
               // clearCli()

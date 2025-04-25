@@ -7,6 +7,7 @@ import { safeImport } from './safeImports'
 import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
 import { error } from '../error'
 import { initProjectAndDaosCache } from './getProjectModelsAndDaos'
+import { parentProcessExitCodes } from '../cli/cliEntryPoint'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
@@ -135,7 +136,7 @@ async function initAppConfigCache(resetCache = false) {
     } catch (err) {
       C.error(err)
       C.error(false, `ERROR in .${pathNameErrExtraInfos}/green_dot.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`)
-      process.exit(201) // hot reload
+      process.exit(parentProcessExitCodes.waitForFileChange)
     }
   }
 }

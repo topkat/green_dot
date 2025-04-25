@@ -28,10 +28,6 @@ export async function mongoBeforeRequest(
 
     await mongoSanitizeFilter(ctx, localConfig)
 
-
-
-
-
     // APPLY SECURITY FILTERS
     await mongoFilterHookInterpreter(ctx, localConfig, hooks.filter)
 
@@ -42,7 +38,7 @@ export async function mongoBeforeRequest(
 
         // all that mess to keep type safe on ctx, ctx has different type depending on the method (getOne, update...)
         if (method === 'create') {
-            event.emit(
+            await event.emit(
                 `${modelName}.create.before`,
                 ctx.clone({ ...localConfig, method, inputFields: localConfig.inputFields, createdId: localConfig.inputFields._id })
             )
@@ -50,22 +46,22 @@ export async function mongoBeforeRequest(
             if (!localConfig.ressourceId && event.registeredEvents[eventName] && event.registeredEvents[eventName].length) {
                 throw ctx.error.serverError(`An event is registered on this request. When updating all, please use 'disableEmittingEvents' in request config, so that you make sure event emitting is bypassed. Actually updating all is not compatible with event emitting, because you wont get the id of the updated field`)
             }
-            event.emit(
+            await event.emit(
                 `${modelName}.update.before`,
                 ctx.clone({ ...localConfig, method, updatedId: ressourceId, inputFields: localConfig.inputFields })
             )
         } else if (method === 'getOne') {
-            event.emit(
+            await event.emit(
                 `${modelName}.getOne.before`,
                 ctx.clone({ ...localConfig, method })
             )
         } else if (method === 'getAll') {
-            event.emit(
+            await event.emit(
                 `${modelName}.getAll.before`,
                 ctx.clone({ ...localConfig, method })
             )
         } else if (method === 'delete') {
-            event.emit(
+            await event.emit(
                 `${modelName}.delete.before`,
                 ctx.clone({ ...localConfig, method, deletedId: ressourceId })
             )

@@ -6,9 +6,7 @@ import { generateLoginMw } from './security/login.middleware'
 import { C, DescriptiveError, urlPathJoin } from 'topkat-utils'
 import { rateLimiter } from './security/serviceRouteRateLimiter'
 import swaggerUi from 'swagger-ui-express'
-import { generateMainBackendFiles } from './generate/generateMainBackendFiles'
 import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
-import { generateSdk } from './generate/generateSDK/generateSDK'
 
 
 
@@ -36,9 +34,6 @@ export async function startServerAsyncTasks(app: Express) {
     // GENERATE SDK
     if (!mainConfig.isProdEnv) {
       try {
-        await generateMainBackendFiles()
-
-        await generateSdk(false)
 
         // GENERATE SWAGGER DOC
         const swaggerDoc = await import(Path.resolve(__dirname, `./cache/${appConfig.name}.swaggerDoc.generated.json`))

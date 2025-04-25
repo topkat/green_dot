@@ -8,7 +8,6 @@ import { startDevProdCommand } from './startDevProdServer.command'
 import { testCommand } from './test.command'
 
 
-
 export type ChildProcessCommands = keyof typeof commands
 
 const [, , command] = process.argv as [string, string, ChildProcessCommands]
@@ -24,12 +23,12 @@ const commands = {
     execute: buildCommand,
     exitAfter: true,
   },
-  buildDev: {
-    execute: () => buildCommand({ doNotGenerateSdk: true }),
-    exitAfter: true,
-  },
   clean: {
     execute: cleanCommand,
+    exitAfter: true,
+  },
+  startServerDev: {
+    execute: startDevProdCommand,
     exitAfter: true,
   },
   startServer: {
