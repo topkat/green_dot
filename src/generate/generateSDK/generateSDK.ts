@@ -1,7 +1,7 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import { cliPrompt } from 'simple-cli-prompt'
-import { C, objEntries, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
+import { C, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
 import { execWaitForOutput } from 'topkat-utils/backend'
 import axios from 'axios'
 
@@ -155,7 +155,6 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
         const changedSdks = [] as [platform: string, oldVersion: string, newVersion: string][]
 
-        let noToAll = false
         let packageHasBeenPublished = false
         let yesToAll = false
         let commitWarning = false
@@ -166,92 +165,74 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
             const packageJsonPath = Path.join(sdkRootPath, 'package.json')
             if (!fs.existsSync(packageJsonPath)) continue
 
-            const fileSizePath = Path.join(sdkRootPath, 'fileSizes.json')
-            const fileSizeContent = fs.existsSync(fileSizePath) ? await fs.readFile(fileSizePath, 'utf-8') : '{}'
-            const sizeBefore = JSON.parse(fileSizeContent)
+            let resp = yesToAll ? 'YES to ONE' : await cliPrompt({
+                message: `A change in the ${platform} SDK has been detected. Would you like to publish the package ?`,
+                choices: ['NO to ALL', 'YES to ALL', 'NO to ONE', 'YES to ONE', 'Ask shouldIpublishMyPackage-Gpt'],
+            })
 
-            for (const [fileName, size] of objEntries(sizeAfter[platform])) {
-                const after = size
-                const before = sizeBefore?.[fileName]
+            if (resp === 'NO to ALL') {
+                break
+            } else if (resp === 'Ask shouldIpublishMyPackage-Gpt') {
+                const shouldPublish = randomItemInArray(['Yes', 'No'] as const)
 
-                if (before !== after) {
+                C.info('Searching the web...')
+                await timeout(1500)
+                C.info('The response is...')
+                await timeout(800)
+                C.log(`${shouldPublish === 'Yes' ? C.green('"YES"') : C.red('"NO"')} Your package should ${shouldPublish === 'Yes' ? '' : 'NOT '}be published!\n\n`)
 
-                    let resp = yesToAll ? 'YES to ONE' : await cliPrompt({
-                        message: `A change in the ${platform} SDK has been detected. Would you like to publish the package ?`,
-                        choices: ['NO to ALL', 'YES to ALL', 'NO to ONE', 'YES to ONE', 'Ask shouldIpublishMyPackage-Gpt'],
-                    })
+                const resp2 = await cliPrompt({
+                    message: `Would you like to follow shouldIpublishMyPackage-Gpt recomandations?`,
+                    choices: ['Yes', 'No'],
+                })
 
-                    if (resp === 'NO to ALL') {
-                        noToAll = true
-                    } else if (resp === 'Ask shouldIpublishMyPackage-Gpt') {
-                        const shouldPublish = randomItemInArray(['Yes', 'No'] as const)
-
-                        C.info('Searching the web...')
-                        await timeout(1500)
-                        C.info('The response is...')
-                        await timeout(800)
-                        C.log(`${shouldPublish === 'Yes' ? C.green('"YES"') : C.red('"NO"')} Your package should ${shouldPublish === 'Yes' ? '' : 'NOT '}be published!\n\n`)
-
-                        const resp2 = await cliPrompt({
-                            message: `Would you like to follow shouldIpublishMyPackage-Gpt recomandations?`,
-                            choices: ['Yes', 'No'],
-                        })
-
-                        if (resp2 === 'No') {
-                            C.error(false, `ARE YOU KIDDING ME?? I fried my processors to answer your fucking question, consuming the yearly electricity of 5 people, and you don’t follow my genius recommendation...\n\n`)
-                            await timeout(900)
-                            C.error(false, 'Good....\n\n\n')
-                            await timeout(1000)
-                            C.error(false, 'BYE....\n\n\n')
-                            process.exit()
-                        } else resp = shouldPublish === 'Yes' ? 'YES to ONE' : 'NO to ONE'
-                    }
-
-                    if (resp === 'YES to ONE' || resp === 'YES to ALL') {
-                        if (resp === 'YES to ALL') yesToAll = true
-
-                        const packageJsonAsString = await fs.readFile(Path.join(sdkRootPath, 'package.json'), 'utf-8')
-                        const packageJson = JSON.parse(packageJsonAsString)
-                        const realNpmVersion = await getLatestVersion(packageJson.name)
-
-                        const newVersion = realNpmVersion
-                            .split('.')
-                            .map((n, i) => i === 2 ? parseInt(n) + 1 : n) // PATCH VERSION
-                            .join('.')
-
-                        C.info(`Ready to bump "${platform}Sdk" from ${packageJson.version} to ${newVersion} 🚀`)
-
-                        if (!commitWarning) {
-                            await cliPrompt({
-                                message: `Please COMMIT your changes so a special commit with the new changes can be done`,
-                                confirm: true,
-                            })
-                            commitWarning = true
-                        }
-
-                        const sdkPathRelative = Path.relative(repoRoot, sdkRootPath)
-
-                        await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
-
-                        const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishPromptConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
-
-                        await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish`, {
-                            nbSecondsBeforeKillingProcess: 300,
-                            stringOrRegexpToSearchForConsideringDone: 'npm notice Publishing to https://registry.npmjs.org/',
-                        })
-
-                        changedSdks.push([platform, packageJson.version, newVersion])
-
-                        // WRITE NEW FILE SIZES
-                        await fs.outputFile(fileSizePath, JSON.stringify(sizeAfter[platform]))
-
-                        packageHasBeenPublished = true
-                    }
-                    break
-                }
+                if (resp2 === 'No') {
+                    C.error(false, `ARE YOU KIDDING ME?? I fried my processors to answer your fucking question, consuming the yearly electricity of 5 people, and you don’t follow my genius recommendation...\n\n`)
+                    await timeout(900)
+                    C.error(false, 'Good....\n\n\n')
+                    await timeout(1000)
+                    C.error(false, 'BYE....\n\n\n')
+                    process.exit()
+                } else resp = shouldPublish === 'Yes' ? 'YES to ONE' : 'NO to ONE'
             }
 
-            if (noToAll) break
+            if (resp === 'YES to ONE' || resp === 'YES to ALL') {
+                if (resp === 'YES to ALL') yesToAll = true
+
+                const packageJsonAsString = await fs.readFile(Path.join(sdkRootPath, 'package.json'), 'utf-8')
+                const packageJson = JSON.parse(packageJsonAsString)
+                const realNpmVersion = await getLatestVersion(packageJson.name)
+
+                const newVersion = realNpmVersion
+                    .split('.')
+                    .map((n, i) => i === 2 ? parseInt(n) + 1 : n) // PATCH VERSION
+                    .join('.')
+
+                C.info(`Ready to bump "${platform}Sdk" from ${packageJson.version} to ${newVersion} 🚀`)
+
+                if (!commitWarning) {
+                    await cliPrompt({
+                        message: `Please COMMIT your changes so a special commit with the new changes can be done`,
+                        confirm: true,
+                    })
+                    commitWarning = true
+                }
+
+                const sdkPathRelative = Path.relative(repoRoot, sdkRootPath)
+
+                await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
+
+                const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishPromptConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
+
+                await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish`, {
+                    nbSecondsBeforeKillingProcess: 300,
+                    stringOrRegexpToSearchForConsideringDone: 'npm notice Publishing to https://registry.npmjs.org/',
+                })
+
+                changedSdks.push([platform, packageJson.version, newVersion])
+
+                packageHasBeenPublished = true
+            }
         }
 
         if (changedSdks.length && packageHasBeenPublished) {
