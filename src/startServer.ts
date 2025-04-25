@@ -22,6 +22,7 @@ import { initProjectAndDaosCache } from './helpers/getProjectModelsAndDaos'
 import { env } from './helpers/getEnv'
 import { startServerAsyncTasks } from './startServerAsyncTasks'
 import { newSystemCtx } from './ctx'
+import { updateCacheFromOutside } from './db'
 
 dotenv.config()
 
@@ -62,8 +63,9 @@ export async function startServer(isMaster = true) {
     })
 
 
-    const { initDbs: initDbModule } = await import('green_dot' as any)
+    const { initDbs: initDbModule, dbCache } = await import('green_dot' as any)
     await initDbModule(false, 'module')
+    updateCacheFromOutside(dbCache)
 
     registerConfig(appConfig.dataValidationConfig)
 

@@ -26,7 +26,7 @@ import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
 // to take in account new DBs that may have been created since last
 // server start
 //----------------------------------------
-const cache = {} as ModelsConfigCache
+export const dbCache = {} as ModelsConfigCache
 
 //  ══╦══ ╦   ╦ ╔══╗ ╔══╗ ╔═══
 //    ║   ╚═╦═╝ ╠══╝ ╠═   ╚══╗
@@ -108,12 +108,12 @@ export async function initDbs(resetCache: boolean = false) {
 
         dbIdsToDbNames[dbId] = dbName
 
-        if (cache?.[dbId]?.dbConfigs) continue // even when clearing cache, you don't want to reinit projects
+        if (dbCache?.[dbId]?.dbConfigs) continue // even when clearing cache, you don't want to reinit projects
 
         await mongoInitDb(
           dbName as keyof DbIds,
           dbId as AllDbIds,
-          cache,
+          dbCache,
           { ...conf, connexionString: mongoConStr },
           daos,
           models
@@ -144,8 +144,8 @@ export const dbs = new Proxy({} as Dbs, {
   // on server start, we need to await initDb to ensure the cache always has a value and can
   // be called anywhere in the app
   get(_, prop: string) {
-    if (!cache[prop]?.db) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
-    return cache[prop].db
+    if (!dbCache[prop]?.db) throw C.error('DBs not initialized, run "await initDb()" once before calling getDb()')
+    return dbCache[prop].db
   },
 })
 
@@ -155,11 +155,16 @@ export const db = new Proxy({} as Db, {
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
     const { defaultDatabaseName } = getMainConfig()
-    if (!cache[defaultDatabaseName]?.db?.[prop]) throw C.error(false, 'DB not initialized, run "await initDb()" once before calling getDb()')
-    return cache[defaultDatabaseName].db[prop]
+    if (!dbCache[defaultDatabaseName]?.db?.[prop]) throw C.error('DB not initialized, run "await initDb()" once before calling getDb()')
+    return dbCache[defaultDatabaseName].db[prop]
   },
 })
 
 export function getUserPermissionFields() {
   return userPermissionFields
+}
+
+/** This mean to exist for performances reason to avoid initiating two databases when there is two execution contexts (the client app / the green_dot module), TODO In Progress not fully tested / implemented */
+export function updateCacheFromOutside(cache2: ModelsConfigCache) {
+  Object.assign(dbCache, cache2)
 }

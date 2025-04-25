@@ -11,6 +11,7 @@ import Path from 'path'
 import { testRunner } from '../restTest/rest-test-runner'
 import { GreenDotConfig } from '../types/mainConfig.types'
 import { parentProcessExitCodes } from '../constants'
+import { updateCacheFromOutside } from '../db'
 
 
 let watcherOn = false
@@ -226,7 +227,9 @@ async function findTestPaths() {
 
   const { testConfig } = await import(testConfigPath) as { testConfig: GreenDotApiTestsConfig }
 
-  const tests = await import(testIndexPath) as { initApp: () => any, allTests: { [fileName: string]: TestSuite } }
+  const tests = await import(testIndexPath) as { dbCache: any, initApp: () => any, allTests: { [fileName: string]: TestSuite } }
+  console.log('tests.dbCache', JSON.stringify(tests.dbCache, null, 2))
+  updateCacheFromOutside(tests.dbCache)
 
   await tests.initApp()
 
