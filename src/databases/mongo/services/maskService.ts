@@ -7,7 +7,6 @@ import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types
 import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
 
 import { getId, objForceWrite, escapeRegexp, flattenObject, unflattenObject } from 'topkat-utils'
-import { getProjectDatabaseDaos } from '../../../helpers/getProjectModelsAndDaos'
 
 export type Mask<T = any> = DaoHookSharedParsed & MaskHook<T>
 
