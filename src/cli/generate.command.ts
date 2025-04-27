@@ -52,7 +52,7 @@ export async function generateCommand() {
       luigi.separator(`-- PROJECT -----------`),
       { value: 'db', name: 'New Database', description: 'Generate a new database' },
       { value: 'app', name: 'New Backend App', description: 'Generate a new backend app' },
-      { value: 'frontend', name: 'New frontend', description: 'TODO ??' },
+      { value: 'frontend', name: 'New Frontend', description: 'TODO ??' },
     ] as const)
 
 
