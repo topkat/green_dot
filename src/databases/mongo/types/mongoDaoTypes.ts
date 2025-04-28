@@ -104,8 +104,8 @@ export type DaoMethodsBaseMongo<ModelTypes extends ModelReadWrite> = {
         config?: Config
     ): Promise<
         Config['returnDoc'] extends true ?
-        Body extends any[] ? ModelTypes['Read'][] : ModelTypes['Read'] :
-        Body extends any[] ? string[] : string
+        ModelTypes['Read'] :
+        string
     >
     // *TMPLT
     /** return nothing by default. You can return the updated object by setting `returnDoc: true` option */
