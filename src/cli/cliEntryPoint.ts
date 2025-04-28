@@ -23,23 +23,18 @@ const [tsNodePath] = process.argv
 const commands = {
   build: {
     description: 'Build SDKs and project',
-    exitAfter: true,
   },
   clean: {
     description: 'Clean files. Use this if you have problem with build',
-    exitAfter: true,
   },
   dev: {
     description: 'Start a server in dev mode with hot reloading',
-    exitAfter: true,
   },
   start: {
     description: 'Start a server in dev mode with hot reloading',
-    exitAfter: true,
   },
   publishSdks: {
     description: 'Publish the SDKs to NPM (interactive prompt)',
-    exitAfter: true,
   },
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
@@ -81,7 +76,7 @@ async function start() {
     }) as { _command: keyof typeof commands }
 
 
-    const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
+    // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
 
     cliArgsToEnv(args, false)
 
@@ -91,7 +86,7 @@ async function start() {
     do {
       next = await new Promise(resolve => {
 
-        const programPath = c?.executeWith === 'bun' ? 'bun' : tsNodePath
+        const programPath = tsNodePath
 
         startChildProcess(
           programPath,
@@ -131,7 +126,7 @@ async function start() {
       cliArgsToEnv(args, true)
     } while (next === 'reload')
 
-    if (c.exitAfter) process.exit(0)
+    process.exit(0)
 
   } catch (err) {
     const message = err && err.message
@@ -152,7 +147,4 @@ start()
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-type CommandPlus = Record<ChildProcessCommands, Omit<Command, 'name'> & {
-  exitAfter?: boolean,
-  executeWith?: 'bun' | 'ts-node'
-}>
+type CommandPlus = Record<ChildProcessCommands, Omit<Command, 'name'>>

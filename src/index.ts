@@ -46,7 +46,7 @@ export { initDbs } from './db'
 
 export { startServer, stopServer } from './startServer'
 
-export { assert } from './restTest/rest-test'
+export { assert, testRunner } from './restTest/rest-test'
 export { GreenDotApiTestsConfig, TestSuite, TestItem } from './restTest/rest-test-types'
 
 export * from './sdkHelpersModule/src/types'

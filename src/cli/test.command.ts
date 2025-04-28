@@ -8,7 +8,7 @@ import { intro as testCliIntro } from '../restTest/rest-test-ascii-display'
 import { GreenDotApiTestsConfig, TestSuite } from '../restTest/rest-test-types'
 import fs from 'fs-extra'
 import Path from 'path'
-import { testRunner } from '../restTest/rest-test-runner'
+// import { testRunner } from '../restTest/rest-test-runner'
 import { GreenDotConfig } from '../types/mainConfig.types'
 import { parentProcessExitCodes } from '../constants'
 
@@ -42,6 +42,9 @@ export async function testCommand() {
   process.on('uncaughtException', errorHandler)
 
   try {
+
+    const { testRunner } = await import('green_dot' as any) // we need to import from same module that client app
+
     await testRunner.runScenario(allTests, {
       ...testConfig,
       onError: async (actualTestNb, rsState) => {
