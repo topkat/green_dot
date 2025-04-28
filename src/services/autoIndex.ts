@@ -19,8 +19,7 @@ export type AutoIndexFileConfig = { path: string, match: RegExp, indexFileName: 
 const start = Date.now()
 
 export async function autoIndex(fileConfigs: AutoIndexFileConfig[], basePath: string) {
-  for (const { path: relativePath, match, indexFileName: indexFileNameRaw } of fileConfigs) {
-
+  await Promise.all(fileConfigs.map(async ({ path: relativePath, match, indexFileName: indexFileNameRaw }) => {
     const indexFileName = indexFileNameRaw.replace(/\.(t|j)sx?$/, '')
 
     const indexBasePath = Path.resolve(basePath, relativePath)
@@ -35,7 +34,7 @@ export async function autoIndex(fileConfigs: AutoIndexFileConfig[], basePath: st
       await fs.outputFile(`${indexBasePath}/${indexFileName}.ts`, indexFileData.join('\n'))
 
     } else C.warning(false, `Path ${indexBasePath} do not exist. Please check your autoIndex config in green_dot.config.ts`)
-  }
+  }))
 
   C.success('Indexes files generated for client:\n' + fileConfigs.map(c => '    * ' + c.path.replace(/^\.\//, '')).join('\n'))
 

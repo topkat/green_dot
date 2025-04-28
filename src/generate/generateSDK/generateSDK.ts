@@ -14,261 +14,256 @@ import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConf
 import { getAppConfigs } from '../../helpers/getGreenDotConfigs'
 import { findProjectPath } from '../../helpers/getProjectPaths'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
+import { generateMainBackendFiles } from '../generateMainBackendFiles'
 
 const sdkFolderName = 'SDKs'
 
-
 export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
-    const mainConfig = getMainConfig(true)
+    try {
+        const mainConfig = getMainConfig(true)
 
-    // SAFE MODE (mainly one of the greenDot config is requiring a SDK 🙃)
-    if (!mainConfig) return SAFEmode()
+        // SAFE MODE (mainly one of the greenDot config is requiring a SDK 🙃)
+        if (!mainConfig) return SAFEmode()
 
-    const { isProdEnv, generateSdkConfig, platforms } = mainConfig
+        const { isProdEnv, generateSdkConfig, platforms } = mainConfig
 
-    if (!generateSdkConfig?.enable) return
+        if (!generateSdkConfig?.enable) return
 
-    const repoRoot = mainConfig.folderPath
-    const allSdksRoot = Path.resolve(repoRoot, './' + sdkFolderName)
-    const appConfigs = getAppConfigs()
+        const repoRoot = mainConfig.folderPath
+        const allSdksRoot = Path.resolve(repoRoot, './' + sdkFolderName)
+        const appConfigs = getAppConfigs()
 
-    // REBUILD DEFAULT FOLDER
-    for (const platform of platforms) {
-        const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
-        await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
-        await generateIndexForDbTypeFiles({
-            outputFolder: sdkRootPath,
-            outputFileNameWithoutExtension: 'modelTypes.generated'
-        })
-    }
+        // REBUILD DEFAULT FOLDER
+        await Promise.all(platforms.map(async platform => {
+            const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
+            await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
+            await generateIndexForDbTypeFiles({
+                outputFolder: sdkRootPath,
+                outputFileNameWithoutExtension: 'modelTypes.generated'
+            })
+        }))
 
-    if (onlyDefaults) {
-        return C.success(`Generated SDK defaults`)
-    }
-
-    if (!onlyDefaults) {
-
-        //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗ ╔═══   ╔═╗  ╔══╗ ══╦══ ╔══╗
-        //  ╚══╗ ╠═   ╠═╦╝ ╚╗ ║  ║  ║    ╠═   ╚══╗   ║  ║ ╠══╣   ║   ╠══╣
-        //  ═══╝ ╚══╝ ╩ ╚   ╚═╝ ═╩═ ╚══╝ ╚══╝ ═══╝   ╚═╝  ╩  ╩   ╩   ╩  ╩
-
-        const allSdkConfigs = [] as { folder: string, sdkConfig: GenerateSDKparamsForService }[]
-
-        for (const { folderPath, generatedFolderPath } of appConfigs) {
-
-            const sdkConfigFilePath = Path.join(generatedFolderPath, `sdkConfig.generated.json`)
-            const sdkConfigFileFound = fs.existsSync(sdkConfigFilePath)
-
-            if (sdkConfigFileFound) {
-                const sdkConfig = JSON.parse(await fs.readFile(sdkConfigFilePath, 'utf-8')) as GenerateSDKparamsForService
-                allSdkConfigs.push({ folder: folderPath, sdkConfig })
-            }
+        if (onlyDefaults) {
+            return C.success(`Generated SDK defaults`)
         }
 
-        //  ╔═╗  ╔══╗ ╔══╗   ╔═╗  ╔══╗ ══╦══ ╔══╗
-        //  ║  ║ ╠══╣ ║  ║   ║  ║ ╠══╣   ║   ╠══╣
-        //  ╚═╝  ╩  ╩ ╚══╝   ╚═╝  ╩  ╩   ╩   ╩  ╩
+        if (!onlyDefaults) {
 
-        const daoRoutesObject = await createDaoRouteConfigPerPlatformForSdk()
-        const daoSdkParamsForPlatform = await generateSDKconfigForDaos(daoRoutesObject)
+            //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗ ╔═══   ╔═╗  ╔══╗ ══╦══ ╔══╗
+            //  ╚══╗ ╠═   ╠═╦╝ ╚╗ ║  ║  ║    ╠═   ╚══╗   ║  ║ ╠══╣   ║   ╠══╣
+            //  ═══╝ ╚══╝ ╩ ╚   ╚═╝ ═╩═ ╚══╝ ╚══╝ ═══╝   ╚═╝  ╩  ╩   ╩   ╩  ╩
 
-        //  ╦╗╔╦ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╔═╗  ╔══╗ ══╦══ ╔══╗
-        //  ║╚╝║ ╠═   ╠═╦╝ ║ ═╦ ╠═     ║  ║ ╠══╣   ║   ╠══╣
-        //  ╩  ╩ ╚══╝ ╩ ╚  ╚══╝ ╚══╝   ╚══╝ ╩  ╩   ╩   ╩  ╩
+            const allSdkConfigs = [] as { folder: string, sdkConfig: GenerateSDKparamsForService }[]
 
-        for (const platform of platforms) {
+            await Promise.all(appConfigs.map(async appConfig => {
 
-            const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
+                const { folderPath } = appConfig
 
-            const objectTsMerged = {} as { [method: string]: string }
-            const servicesMethodsMerged = {} as { [serviceName: string]: { server: string, route: string } }
-            const allMethodNamesMerged = [] as string[]
-            /** Stores how much different backends are exposed in a single SDK */
-            const backendProjectPerSdk = [] as string[]
+                const sdkConfig = await generateMainBackendFiles(appConfig, { doGenerateSwaggerDoc: false })
+                allSdkConfigs.push({ folder: folderPath, sdkConfig })
+            }))
 
-            const queriesToInvalidateShared = {} as { [query: string]: string[] }
+            //  ╔═╗  ╔══╗ ╔══╗   ╔═╗  ╔══╗ ══╦══ ╔══╗
+            //  ║  ║ ╠══╣ ║  ║   ║  ║ ╠══╣   ║   ╠══╣
+            //  ╚═╝  ╩  ╩ ╚══╝   ╚═╝  ╩  ╩   ╩   ╩  ╩
 
-            // SERVICES
-            for (const { folder, sdkConfig } of allSdkConfigs) {
+            const daoRoutesObject = await createDaoRouteConfigPerPlatformForSdk()
+            const daoSdkParamsForPlatform = await generateSDKconfigForDaos(daoRoutesObject)
 
-                if (!sdkConfig[platform]) continue
+            //  ╦╗╔╦ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╔═╗  ╔══╗ ══╦══ ╔══╗
+            //  ║╚╝║ ╠═   ╠═╦╝ ║ ═╦ ╠═     ║  ║ ╠══╣   ║   ╠══╣
+            //  ╩  ╩ ╚══╝ ╩ ╚  ╚══╝ ╚══╝   ╚══╝ ╩  ╩   ╩   ╩  ╩
+            await Promise.all(platforms.map(async platform => {
 
-                const { objectTs, methodConfigService, serviceMethods, sharedServiceMethods, queriesToInvalidate } = sdkConfig[platform]
+                const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
 
-                Object.assign(queriesToInvalidateShared, queriesToInvalidate)
+                const objectTsMerged = {} as { [method: string]: string }
+                const servicesMethodsMerged = {} as { [serviceName: string]: { server: string, route: string } }
+                const allMethodNamesMerged = [] as string[]
+                /** Stores how much different backends are exposed in a single SDK */
+                const backendProjectPerSdk = [] as string[]
 
-                if (serviceMethods.length) backendProjectPerSdk.push(folder)
+                const queriesToInvalidateShared = {} as { [query: string]: string[] }
 
-                const allMethodNames = [...serviceMethods, ...sharedServiceMethods]
+                // SERVICES
+                for (const { folder, sdkConfig } of allSdkConfigs) {
+
+                    if (!sdkConfig[platform]) continue
+
+                    const { objectTs, methodConfigService, serviceMethods, sharedServiceMethods, queriesToInvalidate } = sdkConfig[platform]
+
+                    Object.assign(queriesToInvalidateShared, queriesToInvalidate)
+
+                    if (serviceMethods.length) backendProjectPerSdk.push(folder)
+
+                    const allMethodNames = [...serviceMethods, ...sharedServiceMethods]
+
+                    Object.assign(objectTsMerged, objectTs)
+                    for (const [serviceName, route] of Object.entries(methodConfigService)) {
+                        servicesMethodsMerged[serviceName] = { server: folder.split(Path.sep).pop(), route }
+                    }
+                    pushIfNotExist(allMethodNamesMerged, allMethodNames)
+
+                }
+
+                // DAO
+                const { allMethodNames, methodConfigAll, objectTs } = daoSdkParamsForPlatform[platform]
 
                 Object.assign(objectTsMerged, objectTs)
-                for (const [serviceName, route] of Object.entries(methodConfigService)) {
-                    servicesMethodsMerged[serviceName] = { server: folder.split(Path.sep).pop(), route }
-                }
                 pushIfNotExist(allMethodNamesMerged, allMethodNames)
 
-            }
+                //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═══ ╔═╗  ╦ ╔
+                //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ╚══╗ ║  ║ ╠═╩╗
+                //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ═══╝ ╚══╝ ╩  ╚
 
-            // DAO
-            const { allMethodNames, methodConfigAll, objectTs } = daoSdkParamsForPlatform[platform]
+                await generateSdkFiles(
+                    sdkRootPath,
+                    platform,
+                    methodConfigAll,
+                    servicesMethodsMerged,
+                    objectTsMerged,
+                    allMethodNamesMerged,
+                    backendProjectPerSdk,
+                    queriesToInvalidateShared,
+                )
 
-            Object.assign(objectTsMerged, objectTs)
-            pushIfNotExist(allMethodNamesMerged, allMethodNames)
-
-            //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═══ ╔═╗  ╦ ╔
-            //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ╚══╗ ║  ║ ╠═╩╗
-            //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ═══╝ ╚══╝ ╩  ╚
-
-            await generateSdkFiles(
-                sdkRootPath,
-                platform,
-                methodConfigAll,
-                servicesMethodsMerged,
-                objectTsMerged,
-                allMethodNamesMerged,
-                backendProjectPerSdk,
-                queriesToInvalidateShared,
-            )
-
-            const nodeModulePath = Path.join(sdkRootPath, 'node_modules')
-            if (!await fs.exists(nodeModulePath)) {
-                C.info(`Installing node_modules for SDK: ${Path.relative(repoRoot, nodeModulePath)}`)
-                await execWaitForOutput(`cd ${sdkRootPath} && npm i`, { stringOrRegexpToSearchForConsideringDone: /added.*packages/ })
-            }
-        }
-    }
-
-    const { npmPublishPromptConfig, notifyOnTelegramPrompt } = generateSdkConfig
-
-    if (!isProdEnv && publishSdk && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
-
-        //  ╔═╗  ╦  ╦ ╦╗╔╦ ╔══╗   ╔═══ ╔═╗  ╦ ╔  ╔═══
-        //  ╠═╩╗ ║  ║ ║╚╝║ ╠══╝   ╚══╗ ║  ║ ╠═╩╗ ╚══╗
-        //  ╚══╝ ╚══╝ ╩  ╩ ╩      ═══╝ ╚══╝ ╩  ╚ ═══╝
-
-        const sizeAfter = {} as Record<string, SizePerFolders>
-
-        for (const platform of platforms) {
-            const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
-            sizeAfter[platform] = await folderJsFileSizes(sdkRootPath)
+                const nodeModulePath = Path.join(sdkRootPath, 'node_modules')
+                if (!await fs.exists(nodeModulePath)) {
+                    C.info(`Installing node_modules for SDK: ${Path.relative(repoRoot, nodeModulePath)}`)
+                    await execWaitForOutput(`cd ${sdkRootPath} && npm i`, { stringOrRegexpToSearchForConsideringDone: /added.*packages/ })
+                }
+            }))
         }
 
-        const changedSdks = [] as [platform: string, oldVersion: string, newVersion: string][]
+        const { npmPublishPromptConfig, notifyOnTelegramPrompt } = generateSdkConfig
 
-        let packageHasBeenPublished = false
-        let yesToAll = false
-        let commitWarning = false
+        if (!isProdEnv && publishSdk && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
 
-        for (const platform of platforms) {
+            //  ╔═╗  ╦  ╦ ╦╗╔╦ ╔══╗   ╔═══ ╔═╗  ╦ ╔  ╔═══
+            //  ╠═╩╗ ║  ║ ║╚╝║ ╠══╝   ╚══╗ ║  ║ ╠═╩╗ ╚══╗
+            //  ╚══╝ ╚══╝ ╩  ╩ ╩      ═══╝ ╚══╝ ╩  ╚ ═══╝
 
-            const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
-            const packageJsonPath = Path.join(sdkRootPath, 'package.json')
-            if (!fs.existsSync(packageJsonPath)) continue
+            const changedSdks = [] as [platform: string, oldVersion: string, newVersion: string][]
 
-            let resp = yesToAll ? 'YES to ONE' : await cliPrompt({
-                message: `A change in the ${platform} SDK has been detected. Would you like to publish the package ?`,
-                choices: ['NO to ALL', 'YES to ALL', 'NO to ONE', 'YES to ONE', 'Ask shouldIpublishMyPackage-Gpt'],
-            })
+            let packageHasBeenPublished = false
+            let yesToAll = false
+            let commitWarning = false
 
-            if (resp === 'NO to ALL') {
-                break
-            } else if (resp === 'Ask shouldIpublishMyPackage-Gpt') {
-                const shouldPublish = randomItemInArray(['Yes', 'No'] as const)
+            for (const platform of platforms) {
 
-                C.info('Searching the web...')
-                await timeout(1500)
-                C.info('The response is...')
-                await timeout(800)
-                C.log(`${shouldPublish === 'Yes' ? C.green('"YES"') : C.red('"NO"')} Your package should ${shouldPublish === 'Yes' ? '' : 'NOT '}be published!\n\n`)
+                const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
+                const packageJsonPath = Path.join(sdkRootPath, 'package.json')
+                if (!fs.existsSync(packageJsonPath)) continue
 
-                const resp2 = await cliPrompt({
-                    message: `Would you like to follow shouldIpublishMyPackage-Gpt recomandations?`,
-                    choices: ['Yes', 'No'],
+                let resp = yesToAll ? 'YES to ONE' : await cliPrompt({
+                    message: `A change in the ${platform} SDK has been detected. Would you like to publish the package ?`,
+                    choices: ['NO to ALL', 'YES to ALL', 'NO to ONE', 'YES to ONE', 'Ask shouldIpublishMyPackage-Gpt'],
                 })
 
-                if (resp2 === 'No') {
-                    C.error(false, `ARE YOU KIDDING ME?? I fried my processors to answer your fucking question, consuming the yearly electricity of 5 people, and you don’t follow my genius recommendation...\n\n`)
-                    await timeout(900)
-                    C.error(false, 'Good....\n\n\n')
-                    await timeout(1000)
-                    C.error(false, 'BYE....\n\n\n')
-                    process.exit()
-                } else resp = shouldPublish === 'Yes' ? 'YES to ONE' : 'NO to ONE'
-            }
+                if (resp === 'NO to ALL') {
+                    break
+                } else if (resp === 'Ask shouldIpublishMyPackage-Gpt') {
+                    const shouldPublish = randomItemInArray(['Yes', 'No'] as const)
 
-            if (resp === 'YES to ONE' || resp === 'YES to ALL') {
-                if (resp === 'YES to ALL') yesToAll = true
+                    C.info('Searching the web...')
+                    await timeout(1500)
+                    C.info('The response is...')
+                    await timeout(800)
+                    C.log(`${shouldPublish === 'Yes' ? C.green('"YES"') : C.red('"NO"')} Your package should ${shouldPublish === 'Yes' ? '' : 'NOT '}be published!\n\n`)
 
-                const packageJsonAsString = await fs.readFile(Path.join(sdkRootPath, 'package.json'), 'utf-8')
-                const packageJson = JSON.parse(packageJsonAsString)
-                const realNpmVersion = await getLatestVersion(packageJson.name)
-
-                const newVersion = realNpmVersion
-                    .split('.')
-                    .map((n, i) => i === 2 ? parseInt(n) + 1 : n) // PATCH VERSION
-                    .join('.')
-
-                C.info(`Ready to bump "${platform}Sdk" from ${packageJson.version} to ${newVersion} 🚀`)
-
-                if (!commitWarning) {
-                    await cliPrompt({
-                        message: `Please COMMIT your changes so a special commit with the new changes can be done`,
-                        confirm: true,
+                    const resp2 = await cliPrompt({
+                        message: `Would you like to follow shouldIpublishMyPackage-Gpt recomandations?`,
+                        choices: ['Yes', 'No'],
                     })
-                    commitWarning = true
+
+                    if (resp2 === 'No') {
+                        C.error(false, `ARE YOU KIDDING ME?? I fried my processors to answer your fucking question, consuming the yearly electricity of 5 people, and you don’t follow my genius recommendation...\n\n`)
+                        await timeout(900)
+                        C.error(false, 'Good....\n\n\n')
+                        await timeout(1000)
+                        C.error(false, 'BYE....\n\n\n')
+                        process.exit()
+                    } else resp = shouldPublish === 'Yes' ? 'YES to ONE' : 'NO to ONE'
                 }
 
-                const sdkPathRelative = Path.relative(repoRoot, sdkRootPath)
+                if (resp === 'YES to ONE' || resp === 'YES to ALL') {
+                    if (resp === 'YES to ALL') yesToAll = true
 
-                await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
+                    const packageJsonAsString = await fs.readFile(Path.join(sdkRootPath, 'package.json'), 'utf-8')
+                    const packageJson = JSON.parse(packageJsonAsString)
+                    const realNpmVersion = await getLatestVersion(packageJson.name)
 
-                const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishPromptConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
+                    const newVersion = realNpmVersion
+                        .split('.')
+                        .map((n, i) => i === 2 ? parseInt(n) + 1 : n) // PATCH VERSION
+                        .join('.')
 
-                await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish`, {
+                    C.info(`Ready to bump "${platform}Sdk" from ${packageJson.version} to ${newVersion} 🚀`)
+
+                    if (!commitWarning) {
+                        await cliPrompt({
+                            message: `Please COMMIT your changes so a special commit with the new changes can be done`,
+                            confirm: true,
+                        })
+                        commitWarning = true
+                    }
+
+                    const sdkPathRelative = Path.relative(repoRoot, sdkRootPath)
+
+                    await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
+
+                    const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishPromptConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
+
+                    await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish`, {
+                        nbSecondsBeforeKillingProcess: 300,
+                        stringOrRegexpToSearchForConsideringDone: 'npm notice Publishing to https://registry.npmjs.org/',
+                    })
+
+                    changedSdks.push([platform, packageJson.version, newVersion])
+
+                    packageHasBeenPublished = true
+                }
+            }
+
+            if (changedSdks.length && packageHasBeenPublished) {
+
+                const changedSdkMessage = changedSdks.map(([platform, oldVersion, newVersion]) => `\n * ${platform}Sdk: ${oldVersion} => ${newVersion}`)
+
+                await execWaitForOutput(`git add -A`)
+
+                await execWaitForOutput(`cd ${repoRoot || '.'} && git commit -m "New SDKs versions: ${changedSdkMessage}"`, {
                     nbSecondsBeforeKillingProcess: 300,
-                    stringOrRegexpToSearchForConsideringDone: 'npm notice Publishing to https://registry.npmjs.org/',
+                    stringOrRegexpToSearchForConsideringDone: 'file changed',
                 })
 
-                changedSdks.push([platform, packageJson.version, newVersion])
+                await timeout(2000) // avoid log mess
 
-                packageHasBeenPublished = true
-            }
-        }
+                if (notifyOnTelegramPrompt) {
 
-        if (changedSdks.length && packageHasBeenPublished) {
-
-            const changedSdkMessage = changedSdks.map(([platform, oldVersion, newVersion]) => `\n * ${platform}Sdk: ${oldVersion} => ${newVersion}`)
-
-            await execWaitForOutput(`git add -A`)
-
-            await execWaitForOutput(`cd ${repoRoot || '.'} && git commit -m "New SDKs versions: ${changedSdkMessage}"`, {
-                nbSecondsBeforeKillingProcess: 300,
-                stringOrRegexpToSearchForConsideringDone: 'file changed',
-            })
-
-            await timeout(2000) // avoid log mess
-
-            if (notifyOnTelegramPrompt) {
-
-                const resp = await cliPrompt({
-                    message: `Would you like to notify the team about the new packages published ?`,
-                    choices: ['Yes', 'No'],
-                })
-
-                if (resp === 'Yes') {
-                    await makeApiCall(null, `https://api.telegram.org/${notifyOnTelegramPrompt.botId}/sendMessage`, {
-                        body: { chat_id: notifyOnTelegramPrompt.chatId, text: `Hi! Some packages have been updated to new version: ${changedSdkMessage}` }
+                    const resp = await cliPrompt({
+                        message: `Would you like to notify the team about the new packages published ?`,
+                        choices: ['Yes', 'No'],
                     })
+
+                    if (resp === 'Yes') {
+                        await makeApiCall(null, `https://api.telegram.org/${notifyOnTelegramPrompt.botId}/sendMessage`, {
+                            body: { chat_id: notifyOnTelegramPrompt.chatId, text: `Hi! Some packages have been updated to new version: ${changedSdkMessage}` }
+                        })
+                    }
                 }
+
+                C.info(changedSdkMessage)
             }
-
-            C.info(changedSdkMessage)
         }
+
+        C.success(`Generated SDK defaults`)
+
+    } catch (err) {
+        C.error(err)
+        C.error(false, 'Error while generating the SDK, please see above log')
+        process.exit(1)
     }
-
-    C.success(`Generated SDK defaults`)
-
 }
 
 
@@ -314,32 +309,6 @@ async function SAFEmode() {
 //  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
-
-
-type SizePerFolders = { [fileName: string]: number }
-
-async function folderJsFileSizes(
-    baseDir: string
-) {
-    const fileSizes: SizePerFolders = {}
-
-    if (await fs.exists(baseDir)) {
-        const items = await fs.readdir(baseDir, { recursive: true })
-        const jsFiles = items.filter(e => typeof e === 'string' && isJsFile(e)) as string[]
-
-        for (const path of jsFiles) {
-            const fullPath = Path.join(baseDir, path)
-            const stats = await fs.stat(fullPath)
-            fileSizes[fullPath] = stats.size
-        }
-    }
-
-    return fileSizes
-}
-
-function isJsFile(fileName: string) {
-    return /\.([m|c]?js|ts)$/.test(fileName)
-}
 
 
 async function getLatestVersion(packageName) {

@@ -40,14 +40,18 @@ export async function generateSdkFiles(
     //----------------------------------------
     // DATABASE TYPES EMBEDDED IN SDK
     //----------------------------------------
-    await generateIndexForDbTypeFiles({
-        outputFolder: sdkRoot,
-        outputFileNameWithoutExtension: 'modelTypes.generated'
-    })
 
-    // mongodbBaseTypes.generated.ts
     const databaseFilePath = Path.resolve(dirNameBase, '../../databases/mongo/types/mongoDbBaseTypes.ts')
-    await copyFile(databaseFilePath, 'mongodbBaseTypes.generated.ts', false, sdkRoot, str => str.replace(/.*\/\/ rmv.*/g, ''))
+
+    await Promise.all([
+        generateIndexForDbTypeFiles({
+            outputFolder: sdkRoot,
+            outputFileNameWithoutExtension: 'modelTypes.generated'
+        }),
+        // mongodbBaseTypes.generated.ts
+        copyFile(databaseFilePath, 'mongodbBaseTypes.generated.ts', false, sdkRoot, str => str.replace(/.*\/\/ rmv.*/g, ''))
+    ])
+
 
     // TODO add ability to embbed custom files in SDK (compiled at build time dynamically ?)
 
@@ -72,9 +76,9 @@ async function copyFile(
     } else {
         let fileAsStrMjs = fileAsStr.replace(/%%%!isEs6Import .*/g, '').replace(/%%%isEs6Import /g, '')
         fileAsStrMjs = replaceInFileStr(fileAsStrMjs)
-        await fs.writeFile(Path.join(sdkFolderPath, to.replace('.js', '.mjs')), fileAsStrMjs)
+        await fs.outputFile(Path.join(sdkFolderPath, to.replace('.js', '.mjs')), fileAsStrMjs)
         fileAsStr = fileAsStr.replace(/%%%isEs6Import .*/g, '').replace(/%%%!isEs6Import /g, '')
     }
     fileAsStr = replaceInFileStr(fileAsStr)
-    await fs.writeFile(Path.join(sdkFolderPath, to), fileAsStr)
+    await fs.outputFile(Path.join(sdkFolderPath, to), fileAsStr)
 }

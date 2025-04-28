@@ -1,13 +1,12 @@
 
-import fs from 'fs-extra'
-import Path from 'path'
+
 import { GenerateSDKparamsForService } from '../../types/core.types'
 import { RouteConfigPerPlatforms } from './generateSDKgetRouteConfigs'
 import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator'
 import { SDKprefetchGenerator } from './generators/SDKprefetch.generator'
 import { SDKdeferGenerator } from './generators/SDKdefer.generator'
 import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
-import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 
 //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗ ╔═══
@@ -21,7 +20,6 @@ export async function generateSDKconfigForServices(
     if (env === 'production' || env === 'preprod') return
 
     const mainConfig = getMainConfig()
-    const appConfig = await getActiveAppConfig()
 
     const { generateSdkConfig, platforms } = mainConfig
 
@@ -76,11 +74,6 @@ export async function generateSDKconfigForServices(
         } //</for routeConfig>
 
     } // </for (const platform of platforms)>
-
-    const fileContent = JSON.stringify(sdkParams)
-    const path = Path.join(appConfig.generatedFolderPath, 'sdkConfig.generated.json')
-
-    await fs.writeFile(path, fileContent)
 
     return sdkParams
 }

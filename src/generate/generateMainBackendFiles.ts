@@ -3,19 +3,27 @@
 import 'typescript-generic-types' // imported here because this file is required independently in a build context
 import { C, urlPathJoin, kebabCase, camelCaseToWords, perfTimer } from 'topkat-utils'
 
-import { RouteFromSevicesConfigForGenerateSdk } from '../types/core.types'
+import { GenerateSDKparamsForService, GreenDotAppConfig, RouteFromSevicesConfigForGenerateSdk } from '../types/core.types'
 import generateAllRouteFile from './generateAllRoutesFile'
 import { generateSDKconfigForServices } from './generateSDK/generateSDKconfigForServices'
 import { getDaoRouteDescriptionFromDaoConfigs } from './helpers/getDaoRouteDescriptionFromDaoConfigs'
 import { getAllTargetRolesForService } from './helpers/getAllTargetRolesForService'
 import { parseForClause } from '../security/helpers/parseForClause'
 import { generateSwaggerDoc } from './generateSwaggerDoc'
-import { getActiveAppConfig, getMainConfig } from '../helpers/getGreenDotConfigs'
+import { getMainConfig } from '../helpers/getGreenDotConfigs'
 import { createDaoRouteConfigPerPlatformForSdk, createServiceRouteConfigPerPlatformForSdk } from './generateSDK/generateSDKgetRouteConfigs'
 import { getActiveAppServices } from '../helpers/getProjectServices'
 import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
+import { GDpathConfig } from '../helpers/getProjectPaths'
 
-export async function generateMainBackendFiles({ generateSdk = true, doGenerateSwaggerDoc = true } = {}) {
+export async function generateMainBackendFiles(
+    appConfig: GreenDotAppConfig & GDpathConfig & {
+        generatedIndexPath: string;
+        generatedFolderPath: string;
+        folderPathRelative: string;
+    },
+    { generateSdk = true, doGenerateSwaggerDoc = true } = {}
+) {
 
     const time = perfTimer()
 
@@ -26,8 +34,7 @@ export async function generateMainBackendFiles({ generateSdk = true, doGenerateS
     allRoutes.push(...Object.values(allDaoRoutes).flat())
 
     const mainConfig = getMainConfig()
-    const appConfig = await getActiveAppConfig()
-    const allServicesFromApp = await getActiveAppServices()
+    const allServicesFromApp = await getActiveAppServices(appConfig)
 
     //----------------------------------------
     // SERVICES API
@@ -64,15 +71,8 @@ export async function generateMainBackendFiles({ generateSdk = true, doGenerateS
     const daoRoutesObject = await createDaoRouteConfigPerPlatformForSdk()
 
 
-    //----------------------------------------
-    // GENERATE SWAGGER DOC
-    //----------------------------------------
-    if (doGenerateSwaggerDoc) {
-        await generateSwaggerDoc(daoRoutesObject, serviceRouteObject)
-        C.log(C.primary(`✓ Swagger doc generated`) + C.dim('-> ' + time.end()))
-    }
 
-    if (generateSdk) {
+    if (doGenerateSwaggerDoc) { // TODO naming is not relevant here
         //----------------------------------------
         // GENERATE ALL ROUTES FILE for tests
         //----------------------------------------
@@ -80,10 +80,22 @@ export async function generateMainBackendFiles({ generateSdk = true, doGenerateS
         C.log(C.primary(`✓ All route files generated`))
 
         //----------------------------------------
+        // GENERATE SWAGGER DOC
+        //----------------------------------------
+        await generateSwaggerDoc(daoRoutesObject, serviceRouteObject)
+        C.log(C.primary(`✓ Swagger doc generated`) + C.dim('-> ' + time.end()))
+    }
+
+    let sdkParams: GenerateSDKparamsForService = {}
+    if (generateSdk) {
+
+        //----------------------------------------
         // GENERATE SDK CONFIG FILES
         //----------------------------------------
-        await generateSDKconfigForServices(serviceRouteObject)
+        sdkParams = await generateSDKconfigForServices(serviceRouteObject)
 
         C.log(C.primary(`✓ SDK files generated`))
     }
+
+    return sdkParams
 }

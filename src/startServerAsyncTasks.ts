@@ -37,7 +37,7 @@ export async function startServerAsyncTasks(app: Express) {
     if (!mainConfig.isProdEnv) {
       try {
 
-        await generateMainBackendFiles({ generateSdk: false, doGenerateSwaggerDoc: true })
+        await generateMainBackendFiles(appConfig, { generateSdk: false, doGenerateSwaggerDoc: true })
 
         // GENERATE SWAGGER DOC
         const swaggerDoc = await import(Path.join(greenDotCacheModuleFolder, `${appConfig.name}.swaggerDoc.generated.json`))

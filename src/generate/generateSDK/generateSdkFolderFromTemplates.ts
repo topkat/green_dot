@@ -43,16 +43,18 @@ export async function generateSdkFolderFromTemplates(
     }
   }
 
-  const files = await fs.readdir(sdkFolder)
-  for (const file of files) {
-    // keeps node_modules for perf
-    if (file !== 'node_modules') {
-      await fs.remove(Path.join(sdkFolder, file))
+  if (await fs.exists(sdkFolder)) {
+    const files = await fs.readdir(sdkFolder)
+    for (const file of files) {
+      // keeps node_modules for perf
+      if (file !== 'node_modules' && !file.includes('.lock.')) {
+        await fs.remove(Path.join(sdkFolder, file))
+      }
     }
   }
 
   const queriesToInvalidateString = objEntries(queriesToInvalidate).map(([q, strs]) => {
-    return strs.length ? `$.addQueriesToInvalidate.${q}(['${strs.join(`', '`)}'])` : ''
+    return strs?.length ? `$.addQueriesToInvalidate.${q}(['${strs.join(`', '`)}'])` : ''
   }).join('\n')
 
   const packageNamePrefix = generateSdkConfig?.npmPublishPromptConfig?.packageNamePrefix ? generateSdkConfig.npmPublishPromptConfig.packageNamePrefix.replace(/\/$/, '') + '/' : ''
@@ -74,6 +76,8 @@ export async function generateSdkFolderFromTemplates(
   if (!isDefaultSdk) {
     replaceInFiles.push([/%%toDeleteRealSdk .* toDeleteRealSdk%%/, ''])
   }
+
+  await fs.mkdir(sdkFolder, { recursive: true })
 
   await templater(
     Path.resolve(dirNameBase, '../../../templates/sdkTemplate'),
