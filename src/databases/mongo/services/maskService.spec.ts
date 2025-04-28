@@ -1,25 +1,35 @@
 
 import { applyMaskIncludingOnPopulatedFieldsRecursive, applyMaskToPopulateConfig, combineMaskHooksAndReturnMaskOrSelectAddrArray, getMongoMaskForUser, getMaskFromSelect } from './maskService'
-import { models } from '../../__mocks__/models'
+import { models } from '../../../tests/models'
 import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
 
 import { getCtx, createUser, createOrg, orgId1 } from '../../../tests/jestHelpers'
 
 import { nbOccurenceInString, C } from 'topkat-utils'
 
-jest.mock('../../models')
+jest.mock('../../../helpers/getGreenDotConfigs', () => ({
+    getMainConfig: () => ({
+        allPermissions: ['user', 'admin']
+    })
+}))
+
+jest.mock('../../../helpers/getProjectModelsAndDaos', () => ({
+    getProjectDatabaseModels: () => models.validation,
+    getProjectDatabaseDaosForModel: (dbName, modelName) => models.daos[dbName][modelName],
+}))
+
 
 describe('getMaskFromSelect', () => {
     it('COUCOU it je ne sais pas quoi mettre ici c est deja describe la haut j aime pas les test unitaires', async () => {
         const mask = await getMaskFromSelect(['adminField1', 'adminField2'], 'main', 'organization')
-        it('mask', () => expect(mask).toEqual([
+        expect(mask).toEqual([
             'name',
             'anotherFieldUserHaveNoAccess',
             'teams',
             'teams.users',
             'teams.name',
             'teams.adminAuth',
-        ]))
+        ])
     })
 })
 
@@ -39,6 +49,8 @@ describe('combineAndParseMaskHooks', () => {
     it(`Check CACHING works`, async () => {
         const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
         const { validUntil } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne') as any
+
+        console.log(`validUntil`, validUntil)
 
         C.info('validUntil should be set so coming from CACHE')
         expect(validUntil).toBeDefined()

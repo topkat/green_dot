@@ -1,4 +1,13 @@
 import { newPublicCtx } from '../ctx'
+import { models } from './models'
+
+jest.mock('../helpers/getGreenDotConfigs', () => ({
+    getMainConfig: () => ({
+        allPermissions: ['user', 'admin']
+    })
+}))
+
+
 
 export type UserModels = {
     Write: User<string>

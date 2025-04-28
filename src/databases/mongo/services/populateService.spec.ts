@@ -1,9 +1,21 @@
 import { unPopulate, forEachPopulateFieldRecursive } from './populateService'
 import { createUser, createOrg, userId1, userId2, orgId1 } from '../../../tests/jestHelpers'
+import { models } from '../../../tests/models'
 
 import { C } from 'topkat-utils'
 
-jest.mock('../../models')
+
+jest.mock('../../../helpers/getGreenDotConfigs', () => ({
+    getMainConfig: () => ({
+        allPermissions: ['user', 'admin']
+    })
+}))
+
+
+jest.mock('../../../helpers/getProjectModelsAndDaos', () => ({
+    getProjectDatabaseModels: () => models.validation,
+    getProjectDatabaseDaosForModel: (dbName, modelName) => models.daos[dbName][modelName],
+}))
 
 describe('populateService', () => {
     describe('unPopulate', () => {

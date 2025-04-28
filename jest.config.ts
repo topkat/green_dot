@@ -10,10 +10,10 @@ const config: Config = {
     collectCoverage: true,
     coverageDirectory: 'coverage',
     coverageProvider: 'v8',
-    testPathIgnorePatterns: ['**/dist/**/*'],
+    testPathIgnorePatterns: ['/dist/'],
     transform: {
         '^.+\\.tsx?$': 'ts-jest',
-        '^.+\\.js$': '../../node_modules/babel-jest',
+        '^.+\\.js$': './node_modules/babel-jest',
     },
     testRegex: ['.*\\.spec\\.[jt]sx?$'],
 }

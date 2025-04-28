@@ -1,8 +1,9 @@
-import { Mask } from '../mongo/services/maskService'
+import { type Mask } from '../databases/mongo/services/maskService'
 
-import { MongoDaoParsed } from '../mongo/types/mongoDbTypes'
-import { UserModels, OrgModels, Organization, User } from '../../tests/jestHelpers'
+import { type MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
+import { UserModels, OrgModels, Organization, User } from './jestHelpers'
 import { _, Definition } from 'good-cop'
+
 
 const validationAddr = () => ({
     user: _.object({

@@ -14,7 +14,7 @@ export async function generateIndexForDbTypeFiles({
   indexFile = undefined as ReturnType<typeof getNewIndexForDbCacheFileStructure> | undefined,
   outputFolder = Path.join(greenDotCacheModuleFolder, 'dbs'),
   outputFileNameWithoutExtension = 'index.generated',
-}) {
+} = {}) {
 
   let indexFileContent = ''
 
