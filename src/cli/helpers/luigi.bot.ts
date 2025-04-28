@@ -77,7 +77,7 @@ export const luigi = {
       loop: false,
       pageSize: 15,
       ...config,
-    }) as any
+    } as any) as any
   },
   async autoComplete<T extends Parameters<typeof search>[0]['source']>(
     msg: string | string[],
@@ -90,7 +90,7 @@ export const luigi = {
       source: searchFn,
       pageSize: 15,
       ...config,
-    }) as any
+    } as any) as any
   },
   say(
     sentence: string[] | string,
