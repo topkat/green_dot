@@ -35,7 +35,6 @@ export function cliArgsToEnv(args: Record<string, any>, isReload: boolean) {
 
   const argsParsed = { env: 'dev', isReload } as ConfigFromCli
 
-  // TODO test and take in account
   if (args.production === true) argsParsed.env = 'prod'
 
   process.env.GREEN_DOT_CLI_PARAMS = JSON.stringify(argsParsed)

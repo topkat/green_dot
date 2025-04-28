@@ -11,7 +11,6 @@ import Path from 'path'
 import { testRunner } from '../restTest/rest-test-runner'
 import { GreenDotConfig } from '../types/mainConfig.types'
 import { parentProcessExitCodes } from '../constants'
-import { updateCacheFromOutside } from '../db'
 
 
 let watcherOn = false
@@ -49,6 +48,7 @@ export async function testCommand() {
         startAtTestNb = actualTestNb
         restTestState = rsState
         await saveEnvToFile()
+        await errorHandler()
       },
       startAtTestNb,
       env: { ...(testConfig.env || {}), ...getEnvAtTest(startAtTestNb) },
@@ -70,8 +70,9 @@ export async function testCommand() {
 
 
 
-async function errorHandler(err) {
-  C.error(err)
+async function errorHandler(err?) {
+
+  if (err) C.error(err)
 
   if (ci) process.exit(1)
   else {
@@ -83,6 +84,7 @@ async function errorHandler(err) {
       if (watcherOn) {
         C.info(`File change detected for ${path}, restarting (t)...`)
         C.log(`\n\n`)
+        await saveEnvToFile() // save with new updates
         process.exit(parentProcessExitCodes.restartServer)
       }
     })
@@ -102,6 +104,8 @@ async function errorHandler(err) {
     }
 
     await saveEnvToFile() // save with new updates
+
+    process.exit(parentProcessExitCodes.restartServer)
   }
 }
 

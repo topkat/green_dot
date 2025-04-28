@@ -87,7 +87,6 @@ async function start() {
 
     let next: 'reload' | 'continue' = 'continue'
     let restartTimes = 0
-    let restartTimeout
 
     do {
       next = await new Promise(resolve => {
@@ -114,9 +113,8 @@ async function start() {
               })
             } else if (code === parentProcessExitCodes.restartServer) {
               // SIMPLE RESTART
-              clearTimeout(restartTimeout)
-              restartTimeout = setTimeout(() => {
-                restartTimes = 0 // reset restartTimes after a certain amount of time
+              setTimeout(() => {
+                restartTimes-- // reset restartTimes after a certain amount of time
               }, 5 * 60 * 1000)
               if (restartTimes > 10) throw new Error('Process restarted more than 10 times in the last 3 minutes. Stopping process...')
               C.log('\n\n')
@@ -130,6 +128,7 @@ async function start() {
             }
           })
       })
+      cliArgsToEnv(args, true)
     } while (next === 'reload')
 
     if (c.exitAfter) process.exit(0)

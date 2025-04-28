@@ -68,13 +68,14 @@ function doPermAndRoleMatch(
 ) {
     const roleMatch = expectedRole ? asArray(inputRole).includes(expectedRole) : true
     let permissionMatch = true
-    for (const [permName, expectedPermValue] of Object.entries(expectedPermissions)) {
-        const userPerm = typeof inputPermissions[permName] !== 'undefined' ? inputPermissions[permName] : false
-        if (userPerm !== expectedPermValue) {
-            permissionMatch = false
+    if (roleMatch) {
+        for (const [permName, expectedPermValue] of Object.entries(expectedPermissions)) {
+            const userPerm = typeof inputPermissions[permName] !== 'undefined' ? inputPermissions[permName] : false
+            if (userPerm !== expectedPermValue) {
+                permissionMatch = false
+            }
         }
     }
-    /** Every permissions should match here */
-    // const permMatch = permissions.length ? permissions.every(p => p ) : true
+
     return roleMatch && permissionMatch
 }

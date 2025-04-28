@@ -311,7 +311,7 @@ export const testRunner = {
         if (await parseTestConfigValue(shallRun, env) !== false) {
             if (runInParallel) runTestAsync(true)
             else {
-                await offlineRetryer(() => runTestAsync())
+                await offlineRetryer(async () => await runTestAsync())
             }
         }
     },
@@ -363,7 +363,7 @@ async function offlineRetryer(callback) {
     while (hasConnexionErr) {
         // /!\ Duplicate code, see above TODO
         if (i > maxN) {
-            C.error(false, `CONNEXION REFUSED: tryed ${maxN} times. Aborting...`)
+            C.error(false, `CONNEXION REFUSED: tried ${maxN} times. Aborting...`)
             throw 'backend not connected'
         }
         try {
@@ -371,12 +371,12 @@ async function offlineRetryer(callback) {
             hasConnexionErr = false
         } catch (err) {
             if (err.name !== 'ConnectionRefused') C.error(err)
+
             if (err.name === 'ConnectionRefused' || err?.msg?.includes('onBeforeAllTests') || err?.message?.includes('onBeforeAllTests') || err?.toString().includes('onBeforeAllTests') || err?.stack?.toString().includes('onBeforeAllTests')) {
                 const time = 2000
                 C.warning(false, `CONNEXION REFUSED: waiting ${round(time / 1000, 2)} seconds before retry`)
                 await timeout(time)
             } else {
-                C.error(err)
                 throw err
             }
         }

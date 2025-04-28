@@ -66,6 +66,8 @@ export const initApp = async () => initClientApp(mainConfig)
 
 ${indexContent.imports}
 
+export const allErrors = {...${indexContent.errorType.map(e => e.replace('typeof ', '')).join(', ...') || '{}'}}
+
 declare global {
   interface GreenDotErrors extends RegisterErrorType<${indexContent.errorType.join(' & ') || '{}'}> { }
 }
