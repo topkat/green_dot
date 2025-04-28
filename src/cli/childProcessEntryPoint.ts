@@ -16,38 +16,38 @@ const [, , command] = process.argv as [string, string, ChildProcessCommands]
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
 
-type CommandPlus = Record<string, { execute: Function, exitAfter?: boolean }>
+type CommandPlus = Record<string, { execute: Array<Function>, exitAfter?: boolean }>
 
 const commands = {
   build: {
-    execute: buildCommand,
-    exitAfter: true,
-  },
-  publishSdks: {
-    execute: () => buildCommand({ publishSdks: true }),
+    execute: [buildCommand],
     exitAfter: true,
   },
   clean: {
-    execute: cleanCommand,
+    execute: [cleanCommand],
     exitAfter: true,
   },
   /** Starts a server with hot reload */
-  startServerDev: {
-    execute: startDevServerCommand,
+  dev: {
+    execute: [buildCommand, startDevServerCommand],
     exitAfter: true,
   },
   /** Starts a server with restart on error (max 10 times per 5 minutes) */
-  startServer: {
-    execute: startProdServerCommand,
+  start: {
+    execute: [buildCommand, startProdServerCommand],
     exitAfter: true,
   },
   /** Generate project files from templates */
   generate: {
-    execute: generateCommand,
+    execute: [generateCommand],
+    exitAfter: true,
+  },
+  publishSdks: {
+    execute: [() => buildCommand({ publishSdks: true })],
     exitAfter: true,
   },
   test: {
-    execute: testCommand,
+    execute: [testCommand],
     exitAfter: true,
   },
 } satisfies CommandPlus
@@ -62,7 +62,10 @@ async function startTask() {
 
   const { execute, exitAfter } = commands[command]
 
-  await execute()
+  do {
+    const next = execute.shift()
+    await next()
+  } while (execute.length)
 
   if (exitAfter) process.exit(0)
 

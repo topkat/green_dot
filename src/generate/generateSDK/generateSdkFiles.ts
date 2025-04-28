@@ -13,7 +13,7 @@ export async function generateSdkFiles(
     sdkRoot: string,
     platform: string,
     daoMethods: GenerateSDKparamsForDao[string]['methodConfigAll'],
-    servicesMethods: Record<string, [serverKey: string, serviceName: string]>,
+    servicesMethods: { [serviceName: string]: { server: string, route: string } },
     objectTs: Record<string, string>,
     allMethodNames: string[],
     backendProjectForSdk: string[],

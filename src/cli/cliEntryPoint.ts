@@ -23,47 +23,26 @@ const [tsNodePath] = process.argv
 const commands = {
   build: {
     description: 'Build SDKs and project',
-    steps: [
-      'build'
-    ],
     exitAfter: true,
   },
   clean: {
     description: 'Clean files. Use this if you have problem with build',
-    steps: [
-      'clean'
-    ],
     exitAfter: true,
   },
   dev: {
     description: 'Start a server in dev mode with hot reloading',
-    steps: [
-      'build',
-      'startServerDev'
-    ],
     exitAfter: true,
   },
   start: {
     description: 'Start a server in dev mode with hot reloading',
-    steps: [
-      'build',
-      'startServer'
-    ],
     exitAfter: true,
   },
   publishSdks: {
     description: 'Publish the SDKs to NPM (interactive prompt)',
-    steps: [
-      'publishSdks'
-    ],
     exitAfter: true,
   },
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
-    // executeWith: 'bun',
-    steps: [
-      'generate'
-    ],
   },
   test: {
     description: 'Launch tests',
@@ -76,9 +55,6 @@ const commands = {
       type: Boolean,
       description: `Run tests in CI mode: will fail and quit process with code 1 on the first error`,
     }],
-    steps: [
-      'test'
-    ],
   },
 } satisfies CommandPlus
 
@@ -99,7 +75,7 @@ async function start() {
         name: 'dot',
         description: 'dot CLI from green_dot backend framework',
         examples: Object.entries(commands).map(([name, command]) => `dot ${name} # ${command.description}`),
-        commands: Object.entries(commands).map(([name, command]) => ({ name, ...command, steps: undefined })),
+        commands: Object.entries(commands).map(([name, command]) => ({ name, ...command })),
       }, {
       error: 'throw'
     }) as { _command: keyof typeof commands }
@@ -114,12 +90,14 @@ async function start() {
     let restartTimeout
 
     do {
-      for (const step of c.steps) {
-        next = await new Promise(resolve => {
+      next = await new Promise(resolve => {
 
-          const programPath = c?.executeWith === 'bun' ? 'bun' : tsNodePath
+        const programPath = c?.executeWith === 'bun' ? 'bun' : tsNodePath
 
-          startChildProcess(programPath, [__dirname + '/childProcessEntryPoint.ts', step], code => {
+        startChildProcess(
+          programPath,
+          [__dirname + '/childProcessEntryPoint.ts', _command],
+          code => {
             if (!code || code === parentProcessExitCodes.exit) {
               // SUCCESS EXIT
               resolve('continue')
@@ -151,13 +129,7 @@ async function start() {
               resolve('continue')
             }
           })
-        })
-
-        if (next === 'reload') {
-          cliArgsToEnv(args, true)
-          break
-        }
-      }
+      })
     } while (next === 'reload')
 
     if (c.exitAfter) process.exit(0)
@@ -181,8 +153,7 @@ start()
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-type CommandPlus = Record<string, Omit<Command, 'name'> & {
-  steps: ChildProcessCommands[]
+type CommandPlus = Record<ChildProcessCommands, Omit<Command, 'name'> & {
   exitAfter?: boolean,
   executeWith?: 'bun' | 'ts-node'
 }>

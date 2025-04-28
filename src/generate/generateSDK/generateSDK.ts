@@ -82,7 +82,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
             const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
 
             const objectTsMerged = {} as { [method: string]: string }
-            const servicesMethodsMerged = {} as { [method: string]: [serverKey: string, serviceName: string] }
+            const servicesMethodsMerged = {} as { [serviceName: string]: { server: string, route: string } }
             const allMethodNamesMerged = [] as string[]
             /** Stores how much different backends are exposed in a single SDK */
             const backendProjectPerSdk = [] as string[]
@@ -104,7 +104,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
                 Object.assign(objectTsMerged, objectTs)
                 for (const [serviceName, route] of Object.entries(methodConfigService)) {
-                    servicesMethodsMerged[serviceName] = [folder, route]
+                    servicesMethodsMerged[serviceName] = { server: folder.split(Path.sep).pop(), route }
                 }
                 pushIfNotExist(allMethodNamesMerged, allMethodNames)
 

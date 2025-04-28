@@ -227,9 +227,7 @@ async function findTestPaths() {
 
   const { testConfig } = await import(testConfigPath) as { testConfig: GreenDotApiTestsConfig }
 
-  const tests = await import(testIndexPath) as { dbCache: any, initApp: () => any, allTests: { [fileName: string]: TestSuite } }
-  console.log('tests.dbCache', JSON.stringify(tests.dbCache, null, 2))
-  updateCacheFromOutside(tests.dbCache)
+  const tests = await import(testIndexPath) as { initApp: () => any, allTests: { [fileName: string]: TestSuite } }
 
   await tests.initApp()
 

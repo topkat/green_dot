@@ -73,7 +73,7 @@ export type GenerateSDKparamsForDao = {
 }
 
 export type AllMethodsObjectForSdk = GenerateSDKparamsForDao[string]['methodConfigAll'] & {
-  service: Record<string, [serverKey: string, serviceName: string]>,
+  service: { [serviceName: string]: { server: string, route: string } },
 }
 
 export type DbReadWriteStr = 'dbRead' | 'dbWrite'

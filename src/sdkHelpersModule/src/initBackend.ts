@@ -57,7 +57,7 @@ export function initBackend<ServerConfig>(config: InitBackendConfig<ServerConfig
 
   if (!apiUrl) C.error(false, 'API URL NOT SET FOR BACKEND', JSON.stringify(backendConfig, null, 2))
 
-  C.info(`apiUrl ` + JSON.stringify(apiUrl))
+  C.log(`ⓘ apiUrl ` + JSON.stringify(apiUrl))
   get$().init(backendConfig)
 
   isInitialized = true

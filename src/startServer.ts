@@ -159,9 +159,15 @@ export async function startServer(isMaster = true) {
 
 export async function stopServer() {
     return new Promise(resolve => {
-        server?.close?.(() => {
-            C.info('Server stopped gracefully...')
-            resolve(1)
-        })
+        if (server && server.close) {
+            setTimeout(() => {
+                C.warning(false, 'Server could not be stopped within 3 seconds. Killing it with no mercy ⚔️💀...')
+                resolve(1)
+            }, 3000)
+            server.close(() => {
+                C.info('Server stopped gracefully...')
+                resolve(1)
+            })
+        } else resolve(1)
     })
 }

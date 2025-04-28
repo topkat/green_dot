@@ -90,14 +90,14 @@ function invalidateQueries(queries) {
 }
 
 /**
- * @param {string | [string, string]} route
+ * @param {string | { server: string, route: string }} route
  */
 function getServerAndRoute(route) {
-    const [server, rte] = Array.isArray(route) ? route : ['default', route || '/']
+    const { server, route: rte } = route && typeof route === 'object' && 'server' in route ? route : { server: 'default', route: route || '/' }
     return { server, route: rte }
 }
 
-/** BREAKPOINTS */
+/** CSS BREAKPOINTS TODO feature: the app automatically serve optimized images depending on the css breakpoint */
 let actualBreakpoint
 const setBreakpoint = breakpoint => actualBreakpoint = breakpoint
 
