@@ -37,7 +37,6 @@ const backendConfig: InitBackendConfig<any> = {
   serverUrls: { default: 'backend', backend: 'http://localhost:9086' },
   projectName: 'undefined',
   getDeviceId: () => notImplementedErrMsg('getDeviceId'),
-  getQueryClient: () => notImplementedErrMsg('getQueryClient'),
   localStorageSet: cacheLocalStorage.set,
   localStorageGet: cacheLocalStorage.get,
   localStorageRemove: cacheLocalStorage.remove,

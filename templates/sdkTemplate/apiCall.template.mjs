@@ -10,6 +10,7 @@ let platform = 'undefined'
 
 const serverState = {
     hasBeenInitialised: false,
+    hasQueryClient: false,
     serverUrl: {},
     headers: {},
 }
@@ -66,7 +67,10 @@ function init({
     if (localStorageSetRaw) setCsrf = csrf => localStorageSet('csrfToken', csrf)
 
     serverState.headers = headers
-    if (getQueryClient) serverState.getQueryClient = getQueryClient
+    if (getQueryClient) {
+        serverState.getQueryClient = getQueryClient
+        serverState.hasQueryClient = true
+    }
     serverState.hasBeenInitialised = true
 }
 
@@ -117,7 +121,7 @@ async function apiCall(
             )
 
             if (status === 200) {
-                if (sideEffects[queryName]) {
+                if (sideEffects[queryName] && serverState.hasQueryClient) {
                     for (const queryToInvalidate of sideEffects[queryName]) {
                         const queries = []
                         if (queryToInvalidate.endsWith('*')) {
@@ -132,7 +136,7 @@ async function apiCall(
 
                 const isWrite = readMethods.every(method => !route.includes(method))
 
-                if (isWrite && serverState.getQueryClient?.()) {
+                if (isWrite && serverState.hasQueryClient) {
                     // invalidate cache for read queries
                     // route    => api/bangkDb/testCard/getOne
                     // queryKey => testCardGetOne
