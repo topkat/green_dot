@@ -133,7 +133,7 @@ export interface GreenDotApiTestsConfig<
     /** triggered BEFORE every tests */
     onBeforeTest?(conf: {
         env: GD['testEnvType'],
-        as?: GD['testUserNames'],
+        as?: GD['testUserNames'] | { email: string, password: string },
         apiKey?: GD['apiKeys'],
         headers: Record<string, any>
     }): any

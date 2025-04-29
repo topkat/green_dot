@@ -69,7 +69,7 @@ export type GreenDotConfig = {
   */
   enableRateLimiter: boolean
 
-  /** Default is '30/30s' => 30 apiCall for a 30 sec time window */
+  /** Default is '50/30s' => 30 apiCall for a 30 sec time window OR '200/30sec' for isTest env */
   defaultRateLimit?: RateLimiterConfig
 
   /** Warnings are set manually via ctx.addWarning() or by the system

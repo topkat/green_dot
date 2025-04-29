@@ -106,12 +106,12 @@ async function cleanRouteCache(discriminator: string, route: string, rateLimiter
 
     if (!rateLimiterCache?.[discriminator]?.[route]) return
 
-    const env: Env = process.env.NODE_ENV === 'ci' ? 'test' : (process.env.NODE_ENV as Env || 'development')
+    const env2: Env = env.env === 'ci' ? 'test' : (env.env || 'development')
     const now = Date.now()
 
-    const config = await getRateLimiterConfigFromStr(env, rateLimiterConfig)
+    const config = await getRateLimiterConfigFromStr(env2, rateLimiterConfig)
 
-    const timeWindowInSecondsForNbAttempts = typeof config.timeWindowInSecondsForNbAttempts === 'number' ? config.timeWindowInSecondsForNbAttempts : (config.timeWindowInSecondsForNbAttempts[env] || config.timeWindowInSecondsForNbAttempts.main)
+    const timeWindowInSecondsForNbAttempts = typeof config.timeWindowInSecondsForNbAttempts === 'number' ? config.timeWindowInSecondsForNbAttempts : (config.timeWindowInSecondsForNbAttempts[env2] || config.timeWindowInSecondsForNbAttempts.main)
 
     const timeInMs = timeWindowInSecondsForNbAttempts * 1000
     const noMoreValidTime = now - timeInMs
@@ -148,16 +148,18 @@ export function rateLimiterMiddleware(ipWhitelist?: string[], config?: RateLimit
 
 setInterval(() => rateLimiter.cleanup(), 60 * 60 * 1000) // once each hour
 
-const defaultRateLimit: RateLimiterConfig = '50/30s'
 
-async function getRateLimiterConfigFromStr(env: Env, conf?: RateLimiterConfig) {
+
+async function getRateLimiterConfigFromStr(env2: Env, conf?: RateLimiterConfig) {
 
     const mainConfig = getMainConfig()
+
+    const defaultRateLimit: RateLimiterConfig = env.isTest ? '200/30s' : '50/30s'
 
     if (!conf) conf = mainConfig.defaultRateLimit || defaultRateLimit
 
     if (typeof conf !== 'string') {
-        if (conf[env]) conf = conf[env]
+        if (conf[env2]) conf = conf[env2]
         else if ('default' in conf) conf = conf.default
     }
 

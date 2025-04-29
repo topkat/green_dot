@@ -67,6 +67,24 @@ export const testRunner = {
         testRunner.testArray = testArray
         testRunner.env = env
 
+        // CHECK SERVER ALIVE
+        let alive = false
+        const aliveUrl = urlPathJoin(config.servers.default, 'alive')
+        const waitAndRetry = async (status) => {
+            C.warning(false, `Server is not alive (hit route ${aliveUrl} ang got status ${status}). Waiting 2 seconds before retry`)
+            await timeout(2000)
+        }
+        do {
+            try {
+                const { status } = await axios({ url: aliveUrl })
+                if (status === 200) alive = true
+                else await waitAndRetry(status)
+            } catch (err) {
+                await waitAndRetry(404)
+            }
+
+        } while (!alive)
+
         if (config.onBeforeAllTests) {
             try {
                 await offlineRetryer(async () => await config.onBeforeAllTests({ env: testRunner.env, isReload }))
@@ -186,7 +204,7 @@ export const testRunner = {
 
         if (auth) headers.Authorization = await parseTestConfigValue(auth, env)
         let stringApiKey: string
-        let realAs: string
+        let parsedAs: string
         if (apiKey) {
             const realApiKey = await parseTestConfigValue(apiKey, env) as string
             stringApiKey = testRunner.config.apiKeys[realApiKey]?.token ?? realApiKey
@@ -194,12 +212,12 @@ export const testRunner = {
         }
         if (as && as !== 'public' && as !== 'system') {
             if (!env.users) env.users = {}
-            realAs = await parseTestConfigValue(as, env)
+            parsedAs = await parseTestConfigValue(as, env)
         }
 
         try {
             const newHeader = headers ? { ...headers } : {}
-            await onBeforeTest({ as: realAs, env, apiKey: stringApiKey, headers: newHeader })
+            await onBeforeTest({ as: parsedAs, env, apiKey: stringApiKey, headers: newHeader })
             headers = Object.assign({}, newHeader, headers) // override with test values
         } catch (err) {
             C.error(false, 'Error in before test callback')
@@ -286,7 +304,7 @@ export const testRunner = {
 
                 if (testRunner.config.afterTest) await testRunner.config.afterTest(actualTestNb, env)
 
-                await onAfterTest({ as: realAs, env, apiKey: stringApiKey, headers: headers || {} })
+                await onAfterTest({ as: parsedAs, env, apiKey: stringApiKey, headers: headers || {} })
 
                 return 'ok' as const
 
