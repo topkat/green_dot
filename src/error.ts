@@ -41,7 +41,7 @@ function createErrorProxy(addCtxFnInParams: boolean) {
                     options = params[0]
                 }
 
-                if (!isset(options.code)) options.code = 422 // default
+                if (typeof options.code === 'undefined') options.code = 422 // default
 
                 const extraInfos = { userId: ctx ? ctx._id : undefined, ...options }
 
