@@ -6,7 +6,7 @@ import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
-import { compileTypeScriptProject } from '../../helpers/tsCompiler'
+import { commonJsTsConfig, compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler'
 
 const dirNameBase = __dirname.replace(Path.sep + 'dist' + Path.sep, Path.sep)
 
@@ -68,9 +68,15 @@ export async function generateSdkFiles(
             const lastBit = absolute.split(Path.sep).pop()
 
             await compileTypeScriptProject({
-                tsConfigPath: rootPath,
+                tsConfig: commonJsTsConfig,
                 projectPath: absolute,
-                outputPath: Path.join(sdkRoot, lastBit),
+                outputPath: Path.join(sdkRoot, lastBit, 'cjs'),
+            })
+
+            await compileTypeScriptProject({
+                tsConfig: esmModuleTsConfig,
+                projectPath: absolute,
+                outputPath: Path.join(sdkRoot, lastBit, 'mjs'),
             })
         }
     }

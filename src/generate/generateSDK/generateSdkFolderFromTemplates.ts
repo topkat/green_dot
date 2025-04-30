@@ -61,7 +61,7 @@ export async function generateSdkFolderFromTemplates(
 
   const generatedSdkFolders = [...(generateSdkConfig.exportFolderInSdk.all || []), ...(generateSdkConfig.exportFolderInSdk[platform] || [])]
 
-  const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}'`).join('\n') : ''
+  const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}/mjs'`).join('\n') : ''
 
   const replaceInFiles: [string: string | RegExp, replacement: string][] = [
     ['%%packageVersion%%', packageVersion],
@@ -120,7 +120,7 @@ export async function generateSdkFolderFromTemplates(
       // extensions in imports (avoid targetting package.json "exports")
       [/(import .*)\.mjs/g, `$1.cjs`],
       [/(require.*)\.mjs/g, `$1.cjs`],
-      [`/**%%export_all*/`, generatedSdkFolders.length ? `Object.assign(\n  module.exports, \n  ${generatedSdkFolders.map(f => `require('./${f.split(Path.sep).pop()}'),`).join('\n  ')}\n)` : '']
+      [`/**%%export_all*/`, generatedSdkFolders.length ? `Object.assign(\n  module.exports, \n  ${generatedSdkFolders.map(f => `require('./${f.split(Path.sep).pop()}/cjs'),`).join('\n  ')}\n)` : '']
     ],
     [
       ['.template', ''],

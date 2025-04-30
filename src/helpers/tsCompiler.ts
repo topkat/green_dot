@@ -3,37 +3,53 @@ import fs from 'fs-extra'
 import Path from 'path'
 
 interface CompileOptions {
-  tsConfigPath?: string
+  tsConfig?: string | ts.ParsedCommandLine
   projectPath: string
   outputPath?: string
   customOptions?: ts.CompilerOptions
 }
 
 export async function compileTypeScriptProject(options: CompileOptions): Promise<string> {
+  const { tsConfig, projectPath, outputPath, customOptions } = options
 
-  const { tsConfigPath: tsConfigPath2, projectPath, outputPath, customOptions } = options
+  let parsedConfig: ts.ParsedCommandLine
 
-  // Read and parse tsconfig.json
-  const tsConfigPath = Path.join(tsConfigPath2 || projectPath, 'tsconfig.json')
-  const tsConfigExists = await fs.pathExists(tsConfigPath)
+  if (typeof tsConfig === 'string') {
+    // If tsConfig is already a ParsedCommandLine object, use it directly
 
-  if (!tsConfigExists) {
-    throw new Error(`tsconfig.json not found in ${projectPath}`)
+    const tsConfigJson = ts.parseConfigFileTextToJson('', tsConfig)
+
+    if (tsConfigJson.error) {
+      throw new Error(`Error parsing tsconfig.json: ${tsConfigJson.error.messageText}`)
+    }
+
+    parsedConfig = ts.parseJsonConfigFileContent(
+      tsConfigJson.config,
+      ts.sys,
+      projectPath
+    )
+  } else {
+    // Fallback to projectPath if no tsConfig is provided
+    const tsConfigPath = Path.join(projectPath, 'tsconfig.json')
+    const tsConfigExists = await fs.pathExists(tsConfigPath)
+
+    if (!tsConfigExists) {
+      throw new Error(`tsconfig.json not found in ${projectPath}`)
+    }
+
+    const tsConfigContent = await fs.readFile(tsConfigPath, 'utf-8')
+    const tsConfigJson = ts.parseConfigFileTextToJson(tsConfigPath, tsConfigContent)
+
+    if (tsConfigJson.error) {
+      throw new Error(`Error parsing tsconfig.json: ${tsConfigJson.error.messageText}`)
+    }
+
+    parsedConfig = ts.parseJsonConfigFileContent(
+      tsConfigJson.config,
+      ts.sys,
+      projectPath
+    )
   }
-
-  const tsConfigContent = await fs.readFile(tsConfigPath, 'utf-8')
-  const tsConfig = ts.parseConfigFileTextToJson(tsConfigPath, tsConfigContent)
-
-  if (tsConfig.error) {
-    throw new Error(`Error parsing tsconfig.json: ${tsConfig.error.messageText}`)
-  }
-
-  // Parse compiler options
-  const parsedConfig = ts.parseJsonConfigFileContent(
-    tsConfig.config,
-    ts.sys,
-    projectPath
-  )
 
   // Merge custom options if provided
   const compilerOptions: ts.CompilerOptions = {
@@ -67,3 +83,37 @@ export async function compileTypeScriptProject(options: CompileOptions): Promise
   // Return the output directory path
   return compilerOptions.outDir || projectPath
 }
+
+
+
+const toMergeTsConfig = {
+  'rootDir': '.',
+  'declaration': true,
+  'noImplicitAny': false,
+  'noImplicitThis': true,
+  'moduleResolution': 'node',
+  'esModuleInterop': true,
+  'resolveJsonModule': true,
+  'allowSyntheticDefaultImports': true,
+  'forceConsistentCasingInFileNames': true,
+  'strict': false,
+  'skipLibCheck': true,
+}
+
+export const commonJsTsConfig = JSON.stringify({
+  'compilerOptions': {
+    'module': 'CommonJS',
+    'target': 'ES2020',
+    ...toMergeTsConfig
+  },
+  'include': ['.']
+}, null, 2)
+
+export const esmModuleTsConfig = JSON.stringify({
+  'compilerOptions': {
+    'module': 'ESNext',
+    'target': 'ES2020',
+    ...toMergeTsConfig,
+  },
+  'include': ['.']
+})
