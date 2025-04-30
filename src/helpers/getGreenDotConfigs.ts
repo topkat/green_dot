@@ -13,11 +13,11 @@ import { parentProcessExitCodes } from '../constants'
 //   ║  ║╚╗║  ║    ║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩
 export async function initGreenDotConfigs(resetCache = false) {
-  await Promise.all([
-    initMainConfigCache(resetCache),
-    initAppConfigCache(resetCache),
-    initDbConfigCache(resetCache),
-  ])
+  await initMainConfigCache(resetCache),
+    await Promise.all([
+      initAppConfigCache(resetCache),
+      initDbConfigCache(resetCache),
+    ])
 }
 
 export async function initClientApp(conf: GreenDotConfig) {
