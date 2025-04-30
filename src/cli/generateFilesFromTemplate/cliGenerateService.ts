@@ -80,7 +80,7 @@ ${method ? `    route: ['${method}', '${route || camelCaseToWords(fileName).join
 ${!method && route ? `    route: '${route}',\n` : ''}\
 ${inputParameters ? inputParametersTemplate(inputParameters) + '\n' : ''}\
     output: _.string(), // TODO valid types are _.string(), _.model('myDb', 'modelName'), _.object({ a: _.number() })...etc.
-${rateLimiter === 'disable' ? '' : `    rateLimiter: '${rateLimiter}',\n`}\
+${rateLimiter === 'disable' || !rateLimiter ? '' : `    rateLimiter: '${rateLimiter}',\n`}\
     async main(ctx${inputParameters ? `, {${inputParameters.join(', ')}}` : ''}) {
         return 'TODO'
     },

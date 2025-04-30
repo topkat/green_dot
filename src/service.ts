@@ -33,7 +33,7 @@ export function svc<
 
   // remove notFor and assign to for
   if (svc.notFor) {
-    svcClean.for = notForToFor(asArray(svc.notFor))
+    svcClean.for = notForToFor(asArray(svc.notFor)) as any
     delete (svcClean as any).notFor
   }
 
