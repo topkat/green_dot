@@ -1,4 +1,3 @@
-
 import Path from 'path'
 import { Express } from 'express'
 import { getActiveAppConfig, getMainConfig } from './helpers/getGreenDotConfigs'
@@ -17,22 +16,6 @@ export async function startServerAsyncTasks(app: Express) {
     const mainConfig = getMainConfig()
     const appConfig = await getActiveAppConfig()
 
-    // 404 catch all routes, make sure they are declared after everything (even custom user declared routes)
-    app.use(
-      generateLoginMw(),
-      async (req, res, next) => {
-        try {
-          C.error(false, `Route not found: ${req.method} ${req.originalUrl}`)
-          await rateLimiter.recordAttemptAndThrowIfNeeded((req as any)?.ctx, '404')
-          return res.status(404).end()
-        } catch (err) {
-          next(err)
-        }
-      }
-    )
-
-    app.use(getExpressErrHandlerMW())
-
     // GENERATE SDK
     if (!mainConfig.isProdEnv) {
       try {
@@ -42,7 +25,22 @@ export async function startServerAsyncTasks(app: Express) {
         // GENERATE SWAGGER DOC
         const swaggerDoc = await import(Path.join(greenDotCacheModuleFolder, `${appConfig.name}.swaggerDoc.generated.json`))
 
-        app.use('/doc/*', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+        // Serve the Swagger JSON
+        app.get('/doc/swagger.json', (req, res) => {
+          res.json(swaggerDoc)
+        })
+
+        const swaggerOptions = {
+          swaggerOptions: {
+            urls: [{
+              url: urlPathJoin(appConfig.serverLiveUrl, `/doc/swagger.json`),
+              name: 'API Documentation'
+            }]
+          }
+        }
+
+        app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerOptions))
+
         C.log(C.primary(`✓ Swagger doc served at ${urlPathJoin(appConfig.serverLiveUrl, '/doc')}`))
 
       } catch (err) {
@@ -50,6 +48,27 @@ export async function startServerAsyncTasks(app: Express) {
         C.warning(false, `Swagger doc could not be generated and initiated`)
       }
     }
+
+
+    app.use(getExpressErrHandlerMW())
+
+
+    setTimeout(() => {
+      // 404 catch all routes, make sure they are declared after everything (even custom user declared routes)
+      app.use(
+        generateLoginMw(),
+        async (req, res, next) => {
+          try {
+            C.error(false, `Route not found: ${req.method} ${req.originalUrl}`)
+            await rateLimiter.recordAttemptAndThrowIfNeeded((req as any)?.ctx, '404')
+            return res.status(404).end()
+          } catch (err) {
+            next(err)
+          }
+        }
+      )
+    }, 300)
+
   } catch (err) {
     const err2 = err as DescriptiveError
     if (err2 instanceof DescriptiveError) err2.hasBeenLogged = true

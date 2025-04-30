@@ -8,7 +8,7 @@ export async function cliGenerateModelAndDao(fileName: string, filePathWithoutEx
   await fs.outputFile(filePathWithoutExtension + '.dao.ts', daoFileTemplate(fileName), 'utf-8')
 
   await luigi.openFile(filePathWithoutExtension + '.model.ts')
-  await luigi.openFile(filePathWithoutExtension + '.dao.ts')
+  await luigi.openFile(filePathWithoutExtension + '.dao.ts', true)
 
   luigi.tips(`In .dao.ts file, start by typing gd_dao to see available snippets to autocomplete 'expose', 'mask' and 'filter' fields`)
 
@@ -30,7 +30,7 @@ export default ${modelName}Model
 
 const daoFileTemplate = modelName => `
 import { MongoDao } from 'green_dot'
-import { ${modelName}Model } from './myNewModule.model'
+import { ${modelName}Model } from './${modelName}.model'
 
 const dao = {
     type: 'mongo',

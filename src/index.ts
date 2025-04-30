@@ -24,14 +24,14 @@ export * from './databases/mongo/types/mongoDbTypes'
 
 export { type InferTypeRead, type InferTypeWrite, type InferType, Definition } from 'good-cop'
 
-export { RateLimiterConfig } from './security/serviceRouteRateLimiter'
+export type { RateLimiterConfig } from './security/serviceRouteRateLimiter'
 
 export { makeApiCall } from './services/makeApiCall'
 
 export { _ } from './validator'
 
-export { db, dbs, dbCache, getUserPermissionFields, Db, Dbs } from './db'
-export { ModelTypes, ModelNames, ModelNamesForDb, MainDbName, ModelsWithDbNamesAndReadWrite as AllModelsWithReadWrite } from './cache/dbs/index.generated'
+export { db, dbs, dbCache, getUserPermissionFields, type Db, type Dbs } from './db'
+export type { ModelTypes, ModelNames, ModelNamesForDb, MainDbName, ModelsWithDbNamesAndReadWrite as AllModelsWithReadWrite } from './cache/dbs/index.generated'
 
 export { getActiveAppConfig, getActiveDbConfig, getMainConfig, initMainConfigCache, initClientApp } from './helpers/getGreenDotConfigs'
 
@@ -47,9 +47,9 @@ export { initDbs } from './db'
 export { startServer, stopServer } from './startServer'
 
 export { assert, testRunner } from './restTest/rest-test'
-export { GreenDotApiTestsConfig, TestSuite, TestItem } from './restTest/rest-test-types'
+export type { GreenDotApiTestsConfig, TestSuite, TestItem } from './restTest/rest-test-types'
 
 export * from './sdkHelpersModule/src/types'
-export { InitBackendConfig } from './sdkHelpersModule/src/initBackend'
+export type { InitBackendConfig } from './sdkHelpersModule/src/initBackend'
 
 export { parentProcessExitCodes } from './constants'

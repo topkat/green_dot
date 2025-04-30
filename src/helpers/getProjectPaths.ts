@@ -97,7 +97,7 @@ function configFilePathMapper(mainConfigFolderPath: string, includesTestConfig =
       folderPath,
       folderPathRelative: Path.relative(mainConfigFolderPath, folderPath),
       generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
-      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'src' + Path.sep + '.generated'),
+      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + '.generated'),
     }
     if (includesTestConfig) {
       const yoTsBullshit = paths as any

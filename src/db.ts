@@ -1,6 +1,6 @@
 
 
-import { ModelsWithDbNamesAndReadWrite, MainDbName, AllDbIds, DbIds } from './cache/dbs/index.generated'
+import type { ModelsWithDbNamesAndReadWrite, MainDbName, AllDbIds, DbIds } from './cache/dbs/index.generated'
 import { error } from './error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'

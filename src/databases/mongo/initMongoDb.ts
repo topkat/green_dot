@@ -7,7 +7,7 @@ import { MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
 import { C, ENV, objEntries } from 'topkat-utils'
 import { luigi } from '../../cli/helpers/luigi.bot'
 import { event } from '../../event'
-import { AllDbIds, DbIds } from '../../cache/dbs/index.generated'
+import type { AllDbIds, DbIds } from '../../cache/dbs/index.generated'
 import { newSystemCtx } from '../../ctx'
 
 const { NODE_ENV } = ENV()

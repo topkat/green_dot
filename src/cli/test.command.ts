@@ -9,7 +9,7 @@ import { GreenDotApiTestsConfig, TestSuite } from '../restTest/rest-test-types'
 import fs from 'fs-extra'
 import Path from 'path'
 // import { testRunner } from '../restTest/rest-test-runner'
-import { GreenDotConfig } from '../types/mainConfig.types'
+import type { GreenDotConfig } from '../types/mainConfig.types'
 import { parentProcessExitCodes } from '../constants'
 
 

@@ -1,6 +1,6 @@
 
 
-import { ModelsWithReadWrite } from '../cache/dbs/index.generated'
+import type { ModelsWithReadWrite } from '../cache/dbs/index.generated'
 import { CreateEventAfterCtx, CreateEventBeforeCtx, DeleteEventCtx, GetAllEventAfterCtx, GetAllEventBeforeCtx, GetOneEventAfterCtx, GetOneEventBeforeCtx, UpdateEventCtx } from './core.types'
 
 

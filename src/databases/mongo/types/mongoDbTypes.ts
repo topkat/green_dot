@@ -1,7 +1,7 @@
 import { DaoHookShared, DaoHookSharedParsed, DaoShared, DaoSharedParsed, daoHookNamesShared, DaoGenericMethods, MaskHook } from '../../../types/core.types'
 import mongoose from 'mongoose'
 import { AsFilter, RequestConfigGetOne, RequestConfigRead, RequestConfigWrite, PopulateConfig, SortConfig } from './mongoDaoTypes'
-import { ModelNames, DbIds, AllDbIds } from '../../../cache/dbs/index.generated'
+import type { ModelNames, DbIds, AllDbIds } from '../../../cache/dbs/index.generated'
 
 export * from './mongoDaoTypes'
 

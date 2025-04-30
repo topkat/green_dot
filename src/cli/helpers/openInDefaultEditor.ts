@@ -8,14 +8,14 @@ import { C } from 'topkat-utils'
 /**
  * Opens a file in VS Code if available, otherwise in the system's default editor.
  */
-export function openInDefaultEditor(absolutePath: string): void {
+export function openInDefaultEditor(absolutePath: string, silent = false): void {
   try {
     spawn('code', ['--reuse-window', '--goto', absolutePath], {
       detached: true,
       stdio: 'ignore',
     }).unref()
 
-    luigi.warn(`Known issue:` + C.dim(` if the file is not openning in your main editor it may be because a program changed your path to the code command. If you are in VSCode or Cursor IDE, press F1 and search for "Install code command in path" `))
+    if (!silent) luigi.warn(`Known issue:` + C.dim(` if the file is not openning in your main editor it may be because a program changed your path to the code command. If you are in VSCode or Cursor IDE, press F1 and search for "Install code command in path" `))
 
     return
   } catch {

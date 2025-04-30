@@ -93,7 +93,6 @@ export async function generateCommand() {
 
       let baseFolder: string
       let additionalFolderPath = ''
-      let hasSrc = false
 
       if (isSvc || selection === 'testSuite') {
 
@@ -109,9 +108,6 @@ export async function generateCommand() {
           dbConfigs.map(c => ({ name: c.folderPathRelative, value: c.folderPath }))
         ))
       }
-
-      hasSrc = await fs.exists(Path.join(baseFolder, 'src'))
-      if (hasSrc) baseFolder = Path.join(baseFolder, 'src')
 
       if (isSvc || selection === 'testSuite') {
 
@@ -131,7 +127,11 @@ export async function generateCommand() {
         )
       }
 
-      const filePathWithoutExt = Path.join(baseFolder, Path.relative(baseFolder, additionalFolderPath), fileName)
+      const filePathWithoutExt = Path.join(
+        baseFolder,
+        additionalFolderPath ? Path.relative(baseFolder, additionalFolderPath) : '',
+        fileName
+      )
 
       const filePathWithExt = filePathWithoutExt + `.${selection}.ts`
 

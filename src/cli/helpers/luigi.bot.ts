@@ -127,7 +127,7 @@ export const luigi = {
   separator(txt?: string) {
     return new Separator(txt)
   },
-  async openFile(absolutePath: string) {
-    await openInDefaultEditor(absolutePath)
+  async openFile(absolutePath: string, silent = false) {
+    await openInDefaultEditor(absolutePath, silent)
   }
 }

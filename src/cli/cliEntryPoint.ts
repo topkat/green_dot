@@ -38,6 +38,7 @@ const commands = {
   },
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
+    executeWith: 'bun',
   },
   test: {
     description: 'Launch tests',
@@ -147,4 +148,6 @@ start()
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-type CommandPlus = Record<ChildProcessCommands, Omit<Command, 'name'>>
+type CommandPlus = Record<ChildProcessCommands, Omit<Command, 'name'> & {
+  executeWith?: 'bun' | 'ts-node'
+}>

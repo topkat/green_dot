@@ -1,7 +1,7 @@
 
 
 import { Definition } from 'good-cop'
-import { ModelsWithDbNamesAndReadWrite, MainDbName } from './cache/dbs/index.generated'
+import type { ModelsWithDbNamesAndReadWrite, MainDbName } from './cache/dbs/index.generated'
 import { getProjectDatabaseModelsSync } from './helpers/getProjectModelsAndDaos'
 
 
