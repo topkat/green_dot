@@ -148,7 +148,6 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
             let packageHasBeenPublished = false
             let yesToAll = false
-            let commitWarning = false
 
             for (const platform of platforms) {
 
@@ -158,7 +157,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
                 let resp = yesToAll ? 'YES to ONE' : await cliPrompt({
                     message: `A change in the ${platform} SDK has been detected. Would you like to publish the package ?`,
-                    choices: ['NO to ALL', 'YES to ALL', 'NO to ONE', 'YES to ONE', 'Ask shouldIpublishMyPackage-Gpt'],
+                    choices: ['YES to ALL', 'YES to ONE', 'NO to ALL', 'NO to ONE', 'Ask shouldIpublishMyPackage-Gpt'],
                 })
 
                 if (resp === 'NO to ALL') {
@@ -201,13 +200,6 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
                     C.info(`Ready to bump "${platform}Sdk" from ${packageJson.version} to ${newVersion} 🚀`)
 
-                    if (!commitWarning) {
-                        await cliPrompt({
-                            message: `Please COMMIT your changes so a special commit with the new changes can be done`,
-                            confirm: true,
-                        })
-                        commitWarning = true
-                    }
 
                     const sdkPathRelative = Path.relative(repoRoot, sdkRootPath)
 
@@ -215,9 +207,9 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
                     const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishPromptConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
 
-                    await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish`, {
+                    await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish --access public`, {
                         nbSecondsBeforeKillingProcess: 300,
-                        stringOrRegexpToSearchForConsideringDone: 'npm notice Publishing to https://registry.npmjs.org/',
+                        // stringOrRegexpToSearchForConsideringDone: 'npm notice Publishing to https://registry.npmjs.org/',
                     })
 
                     changedSdks.push([platform, packageJson.version, newVersion])
@@ -229,15 +221,6 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
             if (changedSdks.length && packageHasBeenPublished) {
 
                 const changedSdkMessage = changedSdks.map(([platform, oldVersion, newVersion]) => `\n * ${platform}Sdk: ${oldVersion} => ${newVersion}`)
-
-                await execWaitForOutput(`git add -A`)
-
-                await execWaitForOutput(`cd ${repoRoot || '.'} && git commit -m "New SDKs versions: ${changedSdkMessage}"`, {
-                    nbSecondsBeforeKillingProcess: 300,
-                    stringOrRegexpToSearchForConsideringDone: 'file changed',
-                })
-
-                await timeout(2000) // avoid log mess
 
                 if (notifyOnTelegramPrompt) {
 

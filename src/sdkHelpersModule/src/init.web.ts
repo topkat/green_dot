@@ -152,7 +152,7 @@ export function initTrackerListeners({ isDev = false }) {
     // THIS IS NOT 100% SAFE but document.visibilityState is also tracked
     // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon#sending_analytics_at_the_end_of_a_session
     trackerEvent('sessionEnd')
-    const url = urlPathJoin(get$().getServerUrl(), '/data-tracking-register-event')
+    const url = urlPathJoin(get$().getServerUrl()?.default, '/data-tracking-register-event')
     const data = JSON.stringify({ params: [getEventCache()] })
     navigator.sendBeacon(url, data)
   })
