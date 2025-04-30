@@ -16,6 +16,7 @@ import { cliGenerateApp } from './generateFilesFromTemplate/cliGenerateApp'
 import { cliGenerateProject } from './generateFilesFromTemplate/cliGenerateProject'
 
 
+
 export async function generateCommand() {
 
   const { exists } = await findProjectPath(true)
