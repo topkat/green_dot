@@ -3,16 +3,18 @@ import fs from 'fs-extra'
 import Path from 'path'
 
 interface CompileOptions {
+  tsConfigPath?: string
   projectPath: string
   outputPath?: string
   customOptions?: ts.CompilerOptions
 }
 
 export async function compileTypeScriptProject(options: CompileOptions): Promise<string> {
-  const { projectPath, outputPath, customOptions } = options
+
+  const { tsConfigPath: tsConfigPath2, projectPath, outputPath, customOptions } = options
 
   // Read and parse tsconfig.json
-  const tsConfigPath = Path.join(projectPath, 'tsconfig.json')
+  const tsConfigPath = Path.join(tsConfigPath2 || projectPath, 'tsconfig.json')
   const tsConfigExists = await fs.pathExists(tsConfigPath)
 
   if (!tsConfigExists) {
@@ -54,7 +56,7 @@ export async function compileTypeScriptProject(options: CompileOptions): Promise
       if (diagnostic.file) {
         const { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!)
         const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
-        return `Error ${line + 1},${character + 1}: ${message}`
+        return `Error in ${diagnostic.file.fileName} ${line + 1},${character + 1}: ${message}`
       } else {
         return ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
       }

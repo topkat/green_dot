@@ -33,7 +33,7 @@ export async function getProjectPaths(resetCache = false) {
     // FIND ALL GREEN DOT CONFIGS
     const allFiles = await glob.async('**/green_dot.*.config.*', {
       cwd: rootPath,
-      ignore: ['node_modules/**', '**/.*/**', '**/dist/**'],
+      ignore: ['node_modules/**', '**/.*/**', '**/dist/**', '**/coverage-jest/**'],
       onlyFiles: true,
       absolute: true,
     })

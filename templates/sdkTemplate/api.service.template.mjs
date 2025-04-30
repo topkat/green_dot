@@ -105,3 +105,5 @@ const setBreakpoint = breakpoint => actualBreakpoint = breakpoint
 
 /** /!\ Do not export individually (commonJs compatible) */
 export { $, methodNames, getActualScreen, initTrackerData, sendDataToServer, trackerEvent, log, getHandleErrorTyped, handleError, initErrorHandler, ensureAccessToken, initBackend, logout, setAccessToken, isBackendInitialized }
+
+/**%%export_all*/

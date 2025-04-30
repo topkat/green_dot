@@ -13,10 +13,10 @@ export type GenerateSdkConfig = NoExtraProperties<{
   enable: boolean
   /** In green_dot, every role represents a different UI (platform). So let's say you have a webapp and an admin dashboard, the object will be formatted as follow: `{ admin: 'adminSdk', user: 'appSdk' }`. */
   sdkNameForRole: { [role in Exclude<GD['role'], SystemRole | PublicRole>]: GD['platform'] }
-  /** by default, this will be `root_folder/SDKs/mySdk`, use a path relative to the root of your application */
-  parentFolder?: string
+  /** A root relative path to a folder that will be bundled within each SDKs. The folder should not import anything outsode this folder and will be copied and compiled as is. The variables will be exported directly in the main index from sdk  */
+  exportFolderInSdk: { [K in GD['platform'] | 'all']?: string[] }
   /** Publish SDKs on NPM via prompt that let's you choose what to publish. This can be useful to really separate back/front and be able to consume the SDK in another project */
-  npmPublishPromptConfig?: {
+  npmPublishConfig?: {
     enable: boolean
     /** This will be the package.json access */
     access: 'public' | 'private'

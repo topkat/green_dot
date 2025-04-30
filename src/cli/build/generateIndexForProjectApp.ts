@@ -59,8 +59,10 @@ export async function generateIndexForProjectApp() {
       }
 
       const fileContent = `
-import { RegisterErrorType, initClientApp } from 'green_dot'
+import { RegisterErrorType, initClientApp, initEnv } from 'green_dot'
 import mainConfig from '${mainPathRelative}/green_dot.config'
+
+initEnv(mainConfig)
 
 export const initApp = async () => initClientApp(mainConfig)
 

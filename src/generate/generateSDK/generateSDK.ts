@@ -136,9 +136,9 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
             }))
         }
 
-        const { npmPublishPromptConfig, notifyOnTelegramPrompt } = generateSdkConfig
+        const { npmPublishConfig, notifyOnTelegramPrompt } = generateSdkConfig
 
-        if (!isProdEnv && publishSdk && npmPublishPromptConfig && npmPublishPromptConfig.enable) {
+        if (!isProdEnv && publishSdk && npmPublishConfig && npmPublishConfig.enable) {
 
             //  ╔═╗  ╦  ╦ ╦╗╔╦ ╔══╗   ╔═══ ╔═╗  ╦ ╔  ╔═══
             //  ╠═╩╗ ║  ║ ║╚╝║ ╠══╝   ╚══╗ ║  ║ ╠═╩╗ ╚══╗
@@ -205,7 +205,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
 
                     await fs.writeFile(packageJsonPath, packageJsonAsString.replace(/"version": "[^"]+"/, `"version": "${newVersion}"`))
 
-                    const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishPromptConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
+                    const npmLoginCommand = `npm config set "//registry.npmjs.org/:_authToken=${npmPublishConfig.npmAccessTokenForPublish}" && npm config set registry "https://registry.npmjs.org"`
 
                     await execWaitForOutput(`${npmLoginCommand} && cd ${sdkPathRelative} && npm publish --access public`, {
                         nbSecondsBeforeKillingProcess: 300,

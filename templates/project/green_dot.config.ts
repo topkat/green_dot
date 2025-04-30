@@ -22,7 +22,7 @@ export default {
     enable: true,
     sdkNameForRole,
     notifyOnTelegramPrompt: { botId: 'bot7334406089:AAGCEBGafKfh6LdBikzcqV9hbMR-MBMdktQ', chatId: -4525765992 },
-    npmPublishPromptConfig: { enable: true, access: 'public', packageNamePrefix: '@bangk', npmAccessTokenForPublish: 'np' + 'm_teBRiPfh3dYXHFo' + 'hP4GW0XuWmlyjLf3TcBra' }
+    npmPublishConfig: { enable: true, access: 'public', packageNamePrefix: '@bangk', npmAccessTokenForPublish: 'np' + 'm_teBRiPfh3dYXHFo' + 'hP4GW0XuWmlyjLf3TcBra' }
   }
 } satisfies GreenDotConfig
 

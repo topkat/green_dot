@@ -39,3 +39,5 @@ export const methodNames: { dbRead: Record<string, string>, dbWrite: Record<stri
 export default $
 
 export declare function initBackend(serverConfig: InitBackendConfig<ServerUrls>)
+
+/**%%export_all_ts*/

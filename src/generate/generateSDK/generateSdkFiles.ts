@@ -6,6 +6,7 @@ import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
+import { compileTypeScriptProject } from '../../helpers/tsCompiler'
 
 const dirNameBase = __dirname.replace(Path.sep + 'dist' + Path.sep, Path.sep)
 
@@ -20,7 +21,7 @@ export async function generateSdkFiles(
     queriesToInvalidate: { [query: string]: string[] }
 ) {
 
-    const { platforms, generateSdkConfig } = getMainConfig()
+    const { platforms, generateSdkConfig, folderPath: rootPath } = getMainConfig()
 
     const allMethodsObjectForSdk = { service: servicesMethods, ...daoMethods } satisfies AllMethodsObjectForSdk
 
@@ -40,7 +41,6 @@ export async function generateSdkFiles(
     //----------------------------------------
     // DATABASE TYPES EMBEDDED IN SDK
     //----------------------------------------
-
     const databaseFilePath = Path.resolve(dirNameBase, '../../databases/mongo/types/mongoDbBaseTypes.ts')
 
     await Promise.all([
@@ -54,7 +54,26 @@ export async function generateSdkFiles(
 
 
     // TODO add ability to embbed custom files in SDK (compiled at build time dynamically ?)
+    if (generateSdkConfig.exportFolderInSdk) {
 
+        const folders = [...(generateSdkConfig.exportFolderInSdk.all || []), ...(generateSdkConfig.exportFolderInSdk[platform] || [])]
+
+        for (const folder of folders) {
+            const absolute = Path.join(rootPath, folder)
+
+            if (!await fs.exists(absolute)) {
+                throw new Error('Provided path in mainConfig.generateSdkConfig.exportFolderInSdk does not exist: ' + absolute)
+            }
+
+            const lastBit = absolute.split(Path.sep).pop()
+
+            await compileTypeScriptProject({
+                tsConfigPath: rootPath,
+                projectPath: absolute,
+                outputPath: Path.join(sdkRoot, lastBit),
+            })
+        }
+    }
 }
 
 

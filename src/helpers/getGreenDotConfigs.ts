@@ -20,10 +20,15 @@ export async function initGreenDotConfigs(resetCache = false) {
     ])
 }
 
-export async function initClientApp(conf: GreenDotConfig) {
-
+export function initEnv(conf: GreenDotConfig) {
   process.env.IS_PROD_ENV = conf.isProdEnv?.toString()
   process.env.IS_TEST_ENV = conf.isTestEnv?.toString()
+  if (!process.env.NODE_ENV) process.env.NODE_ENV = conf.env
+}
+
+export async function initClientApp(conf: GreenDotConfig) {
+
+  initEnv(conf)
 
   greenDotConfigsCache = computeMainConfigAdditionalFields({
     ...mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf),
@@ -52,9 +57,11 @@ export function getMainConfig(silent = false): typeof greenDotConfigsCache {
 export async function initMainConfigCache(resetCache = false) {
   if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
     const { mainConfig: mainConfigPaths } = await getProjectPaths()
+
     const conf = (await safeImport(mainConfigPaths.path))?.default as GreenDotConfig
     process.env.IS_PROD_ENV = conf.isProdEnv.toString()
     process.env.IS_TEST_ENV = conf.isTestEnv.toString()
+    if (!process.env.NODE_ENV) process.env.NODE_ENV = conf.env
     const confWithDefaults = mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf)
     greenDotConfigsCache = computeMainConfigAdditionalFields({ ...confWithDefaults, ...mainConfigPaths })
   }
@@ -138,7 +145,7 @@ async function initAppConfigCache(resetCache = false) {
     } catch (err) {
       C.error(err)
       C.error(false, `ERROR in .${pathNameErrExtraInfos}/green_dot.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`)
-      process.exit(parentProcessExitCodes.waitForFileChange)
+      setTimeout(() => process.exit(parentProcessExitCodes.waitForFileChange))
     }
   }
 }

@@ -55,22 +55,27 @@ export async function generateSdkFolderFromTemplates(
 
   const queriesToInvalidateString = objEntries(queriesToInvalidate).map(([q, strs]) => {
     return strs?.length ? `$.addQueriesToInvalidate.${q}(['${strs.join(`', '`)}'])` : ''
-  }).join('\n')
+  }).filter(str => !!str).join('\n')
 
-  const packageNamePrefix = generateSdkConfig?.npmPublishPromptConfig?.packageNamePrefix ? generateSdkConfig.npmPublishPromptConfig.packageNamePrefix.replace(/\/$/, '') + '/' : ''
+  const packageNamePrefix = generateSdkConfig?.npmPublishConfig?.packageNamePrefix ? generateSdkConfig.npmPublishConfig.packageNamePrefix.replace(/\/$/, '') + '/' : ''
+
+  const generatedSdkFolders = [...(generateSdkConfig.exportFolderInSdk.all || []), ...(generateSdkConfig.exportFolderInSdk[platform] || [])]
+
+  const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}'`).join('\n') : ''
 
   const replaceInFiles: [string: string | RegExp, replacement: string][] = [
     ['%%packageVersion%%', packageVersion],
     [`%%appName%%`, platform],
     [`%%app-name%%`, platform.replace(/([A-Z])/g, '-$1').toLocaleLowerCase()],
     [`%%packageNamePrefix%%`, packageNamePrefix],
-    [`%%packageNameAccess%%`, generateSdkConfig?.npmPublishPromptConfig?.access || 'public'],
+    [`%%packageNameAccess%%`, generateSdkConfig?.npmPublishConfig?.access || 'public'],
     [`'%%AllReadMethodsAndService%%'`, allMethodsString],
     [`'%%tsApiTypes%%'`, tsApiTypes],
     [`'%%allAppNamesTypeString%%'`, arrOrAny(platforms)],
     [`'%%AllMethodNameTypeString%%'`, arrOrAny(allMethodNames)],
     [`'%%allBackendFoldersForSdk%%'`, arrOrAny(backendProjectForSdk.map(s => s.split(Path.sep).pop()))],
     [`'%%queriesToInvalidate%%'`, queriesToInvalidateString],
+    [`/**%%export_all_ts*/`, exportAllTsCjs]
   ]
 
   if (!isDefaultSdk) {
@@ -84,6 +89,7 @@ export async function generateSdkFolderFromTemplates(
     sdkFolder,
     [
       ...replaceInFiles,
+      [`/**%%export_all*/`, exportAllTsCjs],
     ],
     [
       ['.template', '']
@@ -109,10 +115,12 @@ export async function generateSdkFolderFromTemplates(
       // Export named
       [/export (?:const|let|var|function) ([^\s(]+) ?=?/g, 'exports.$1 ='],
 
-      [/export \{/, 'module.exports = {'],
+      [/export \{/, 'module.exports = {'], // TODO this is not 100% safe because it imply export * from has to be used after that, using Object assign here is a too complex regexp though because can be multilines
+      [/export * from (.*)/, 'Object.assign(module.exports, require($1))'],
       // extensions in imports (avoid targetting package.json "exports")
       [/(import .*)\.mjs/g, `$1.cjs`],
       [/(require.*)\.mjs/g, `$1.cjs`],
+      [`/**%%export_all*/`, generatedSdkFolders.length ? `Object.assign(\n  module.exports, \n  ${generatedSdkFolders.map(f => `require('./${f.split(Path.sep).pop()}'),`).join('\n  ')}\n)` : '']
     ],
     [
       ['.template', ''],

@@ -33,7 +33,7 @@ export { _ } from './validator'
 export { db, dbs, dbCache, getUserPermissionFields, type Db, type Dbs } from './db'
 export type { ModelTypes, ModelNames, ModelNamesForDb, MainDbName, ModelsWithDbNamesAndReadWrite as AllModelsWithReadWrite } from './cache/dbs/index.generated'
 
-export { getActiveAppConfig, getActiveDbConfig, getMainConfig, initMainConfigCache, initClientApp } from './helpers/getGreenDotConfigs'
+export { getActiveAppConfig, getActiveDbConfig, getMainConfig, initMainConfigCache, initClientApp, initEnv } from './helpers/getGreenDotConfigs'
 
 export { env } from './helpers/getEnv'
 
