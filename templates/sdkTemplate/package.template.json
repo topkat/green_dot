@@ -14,11 +14,6 @@
             "import": "./api.service.mjs",
             "types": "./api.service.d.ts"
         },
-        "./constants": {
-            "require": "./constants.cjs",
-            "import": "./constants.mjs",
-            "types": "./constants/index.d.ts"
-        },
         "./web": {
             "require": "./init.web.cjs",
             "import": "./init.web.mjs",

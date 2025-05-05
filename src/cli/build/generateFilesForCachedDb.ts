@@ -7,13 +7,16 @@ import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
 import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-import { generateIndexForDbTypeFiles, getNewIndexForDbCacheFileStructure } from './generateIndexForDbTypeFiles'
+import { getNewIndexForDbCacheFileStructure } from './generateIndexForDbTypeFiles'
 
 
 
 
 /** This will generate a string representation of all db types in local green_dot module cache folder to be accessed in the project app with ```import { ModelTypes } from 'green_dot/db'``` */
-export async function generateDbCachedFiles(resetCache = false) {
+export async function generateFilesForCachedDb(
+  resetCache = false,
+  basePath = Path.join(greenDotCacheModuleFolder, 'dbs')
+) {
 
   const indexFile = getNewIndexForDbCacheFileStructure()
 
@@ -57,7 +60,7 @@ export async function generateDbCachedFiles(resetCache = false) {
 
     modelTypeFileContent += `export type ModelNames = keyof AllModels\n\n`
 
-    await fs.outputFile(Path.join(greenDotCacheModuleFolder, 'dbs', dbName + '.modelTypes.generated.ts'), modelTypeFileContent)
+    await fs.outputFile(Path.join(basePath, dbName + '.modelTypes.generated.ts'), modelTypeFileContent)
 
     C.success(`Successfully generated ${dbName + '.modelTypes.generated.ts'}`)
 
@@ -76,6 +79,6 @@ export async function generateDbCachedFiles(resetCache = false) {
 
   }
 
-  await generateIndexForDbTypeFiles({ indexFile })
+  return indexFile
 }
 

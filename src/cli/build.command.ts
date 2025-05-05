@@ -1,4 +1,4 @@
-import { generateDbCachedFiles } from './build/generateDbCachedFiles'
+import { generateFilesForCachedDb } from './build/generateFilesForCachedDb'
 import { initGreenDotConfigs, getMainConfig } from '../helpers/getGreenDotConfigs'
 import { createNewTask } from './helpers/createNewTask'
 import { generateIndexForProjectDb } from './build/generateIndexForProjectDb'
@@ -8,6 +8,7 @@ import { generateSdk } from '../generate/generateSDK/generateSDK'
 import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
 import { autoIndex } from '../services/autoIndex'
 import { getProjectPaths } from '../helpers/getProjectPaths'
+import { generateIndexForDbTypeFiles } from './build/generateIndexForDbTypeFiles'
 
 
 
@@ -41,7 +42,10 @@ export async function buildCommand({ publishSdks = false } = {}) {
 
   await build.step(`Generating SDKs defaults`, () => generateSdk(true))
 
-  await build.step(`Generating types for databases`, generateDbCachedFiles, { watch: true, cleanOnError: true })
+  await build.step(`Generating types for databases`, async () => {
+    const indexFile = await generateFilesForCachedDb()
+    await generateIndexForDbTypeFiles({ indexFile })
+  }, { watch: true, cleanOnError: true })
 
   await build.step(`Generating SDKs`, async () => {
     await initProjectAndDaosCache()

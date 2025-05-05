@@ -7,6 +7,7 @@ import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/gen
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
 import { commonJsTsConfig, compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler'
+import { generateFilesForCachedDb } from '../../cli/build/generateFilesForCachedDb'
 
 const dirNameBase = __dirname.replace(Path.sep + 'dist' + Path.sep, Path.sep)
 
@@ -43,8 +44,11 @@ export async function generateSdkFiles(
     //----------------------------------------
     const databaseFilePath = Path.resolve(dirNameBase, '../../databases/mongo/types/mongoDbBaseTypes.ts')
 
+    const indexFile = await generateFilesForCachedDb(false, Path.join(sdkRoot, ''))
+
     await Promise.all([
         generateIndexForDbTypeFiles({
+            indexFile,
             outputFolder: sdkRoot,
             outputFileNameWithoutExtension: 'modelTypes.generated'
         }),
