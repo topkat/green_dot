@@ -1,7 +1,9 @@
 
+import { MergeMultipleObjects } from 'typescript-generic-types'
 import { AllModels as AdminAllModels } from './admin.modelTypes.generated'
 import { AllModels as BangkAllModels } from './bangk.modelTypes.generated'
 import { AllModels as WebsiteAllModels } from './website.modelTypes.generated'
+
 
 
 export type ModelsWithDbNamesAndReadWrite = {

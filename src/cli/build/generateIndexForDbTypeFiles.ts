@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { C } from 'topkat-utils'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
+import { getUserPermissionFields } from '../../db'
 
 
 
@@ -14,6 +15,7 @@ export async function generateIndexForDbTypeFiles({
   indexFile = undefined as ReturnType<typeof getNewIndexForDbCacheFileStructure> | undefined,
   outputFolder = Path.join(greenDotCacheModuleFolder, 'dbs'),
   outputFileNameWithoutExtension = 'index.generated',
+  hardCodePermissionFields = false
 } = {}) {
 
   let indexFileContent = ''
@@ -45,8 +47,19 @@ export type ModelNamesForDb = Record<string, string>
     const mainConfig = getMainConfig()
     const dbConfigs = getDbConfigs()
 
+    const permFields = getUserPermissionFields()
+
+    const permType = `
+type UserPermissionFields = {
+${permFields.map(perm => `  ${perm}: boolean`).join('\n')}
+}
+`
+
     indexFileContent += `
+import { MergeMultipleObjects } from 'typescript-generic-types'
 ${indexFile.imports}
+
+${hardCodePermissionFields ? permType : ''}\
 
 export type ModelsWithDbNamesAndReadWrite = {
 ${indexFile.allModels}\

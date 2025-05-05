@@ -120,7 +120,7 @@ export async function generateSdkFolderFromTemplates(
       // extensions in imports (avoid targetting package.json "exports")
       [/(import .*)\.mjs/g, `$1.cjs`],
       [/(require.*)\.mjs/g, `$1.cjs`],
-      [`/**%%export_all*/`, generatedSdkFolders.length ? `Object.assign(\n  module.exports, \n  ${generatedSdkFolders.map(f => `require('./${f.split(Path.sep).pop()}/cjs'),`).join('\n  ')}\n)` : '']
+      [`/**%%export_all*/`, generatedSdkFolders.length ? `Object.assign(\n  module.exports, \n  ${generatedSdkFolders.map(f => `require('./${f.split(Path.sep).pop()}/cjs/index'),`).join('\n  ')}\n)` : '']
     ],
     [
       ['.template', ''],

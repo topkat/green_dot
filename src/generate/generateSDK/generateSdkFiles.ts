@@ -50,7 +50,8 @@ export async function generateSdkFiles(
         generateIndexForDbTypeFiles({
             indexFile,
             outputFolder: sdkRoot,
-            outputFileNameWithoutExtension: 'modelTypes.generated'
+            outputFileNameWithoutExtension: 'modelTypes.generated',
+            hardCodePermissionFields: true,
         }),
         // mongodbBaseTypes.generated.ts
         copyFile(databaseFilePath, 'mongodbBaseTypes.generated.ts', false, sdkRoot, str => str.replace(/.*\/\/ rmv.*/g, ''))

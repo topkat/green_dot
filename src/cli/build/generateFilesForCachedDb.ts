@@ -64,7 +64,6 @@ export async function generateFilesForCachedDb(
 
     C.success(`Successfully generated ${dbName + '.modelTypes.generated.ts'}`)
 
-
     //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗   ╔═╗  ╔═╗    ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗   ═╦═ ╦╗ ╔ ╔═╗  ╔══╗ ═╗╔═
     //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ║  ║ ╠═╩╗   ║    ╠══╣ ║    ╠══╣ ╠═      ║  ║╚╗║ ║  ║ ╠═    ╠╣
     //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ╚══╝ ╚══╝   ╚══╝ ╩  ╩ ╚══╝ ╩  ╩ ╚══╝   ═╩═ ╩ ╚╩ ╚══╝ ╚══╝ ═╝╚═

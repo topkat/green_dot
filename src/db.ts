@@ -63,7 +63,7 @@ export async function initDbs(resetCache: boolean = false) {
   } else isRunning = true
 
   const dbConfigs = getDbConfigs()
-  const mainConfigs = getMainConfig()
+  const mainConfig = getMainConfig()
   let hasDefaultDatabase = false
 
   for (const { dbs: connexionConfigs, name: dbName, type } of dbConfigs) {
@@ -71,15 +71,15 @@ export async function initDbs(resetCache: boolean = false) {
     const models = await getProjectDatabaseModelsForDbName(dbName, resetCache)
     const daos = await getProjectDatabaseDaosForDbName(dbName, resetCache)
 
-    if (mainConfigs.defaultDatabaseName === dbName) {
+    if (mainConfig.defaultDatabaseName === dbName) {
       // DEFAULT DATABASE
       // So we put all technical green_dot fields
       hasDefaultDatabase = true
 
       // inject permissions fields in user model
       const permissionsFields = {
-        ...mainConfigs.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
-        ...convertRoleToPermsToModelFields(mainConfigs.allRoles)
+        ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
+        ...convertRoleToPermsToModelFields(mainConfig.allRoles)
       }
       userPermissionFields = Object.keys(permissionsFields) as any
 
@@ -124,7 +124,7 @@ export async function initDbs(resetCache: boolean = false) {
     }
   }
 
-  if (!hasDefaultDatabase) throw error.serverError(`No default database found with name ${mainConfigs.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
+  if (!hasDefaultDatabase) throw error.serverError(`No default database found with name ${mainConfig.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
 
   isRunning = false
 
@@ -162,6 +162,14 @@ export const db = new Proxy({} as Db, {
 })
 
 export function getUserPermissionFields() {
+  if (userPermissionFields.length === 0) {
+    const mainConfig = getMainConfig()
+    const permissionsFields = {
+      ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
+      ...convertRoleToPermsToModelFields(mainConfig.allRoles)
+    }
+    userPermissionFields = Object.keys(permissionsFields) as any
+  }
   return userPermissionFields
 }
 

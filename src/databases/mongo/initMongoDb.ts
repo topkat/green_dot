@@ -173,6 +173,8 @@ export async function mongoInitDb(
         },
         endTransaction: async (ctx, status = 'success', ...params) => {
             if (!ctx.transactionSession) {
+                const [errMsg, errOptions = {}] = params as ErrParams
+                ctx.error.serverError(errMsg, errOptions)
                 throw ctx.error.serverError('mongooseTransactionNotStarted', { additionalInfos: `This can be because you ended transaction twice (if you are in a try catch check that you don't have ended in the body and in the catch clause` })
             }
             const session = ctx.transactionSession
