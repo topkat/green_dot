@@ -13,8 +13,10 @@ const modelOrDaoRegexp = /[/\\]([^/\\]+)\.(model|dao)\.ts$/
 export async function generateIndexForProjectDb() {
 
   const { dbConfigs, mainConfig } = await getProjectPaths()
-
+  console.log('dbConfigs', JSON.stringify(dbConfigs, null, 2))
+  console.log('mainConfig', JSON.stringify(mainConfig, null, 2))
   for (const { generatedIndexPath, folderPath } of dbConfigs) {
+    console.log(`generatedIndexPath`, generatedIndexPath, folderPath)
     const dbPathRelative = Path.relative(mainConfig.folderPath, folderPath)
     try {
       const allFiles = await glob.async('**/*.@(model|dao).ts', {
@@ -22,6 +24,8 @@ export async function generateIndexForProjectDb() {
         onlyFiles: true,
         absolute: true,
       })
+
+      console.log(`allFiles`)
 
       let topOfFile = ''
       let types = ''
