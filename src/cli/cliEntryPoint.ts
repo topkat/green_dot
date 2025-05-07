@@ -77,7 +77,7 @@ async function start() {
     }) as { _command: keyof typeof commands }
 
 
-    // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
+    const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
     console.log(`CLIAR`, args)
 
     console.log(`checkTsNodeInstallation()`, checkTsNodeInstallation())
@@ -89,50 +89,56 @@ async function start() {
 
     do {
       next = await new Promise(resolve => {
+        try {
+          const programPath = tsNodePath
 
-        const programPath = tsNodePath
+          console.log(`programPath`, programPath)
 
-        console.log(`programPath`, programPath)
+          startChildProcess(
+            programPath,
+            [__dirname + '/childProcessEntryPoint.ts', _command],
+            code => {
+              console.error(`EXITED WITH CODE `, code)
+              if (!code || code === parentProcessExitCodes.exit) {
+                // SUCCESS EXIT
+                resolve('continue')
+              } else if (code === parentProcessExitCodes.waitForFileChange) {
+                // HOT RELOAD
+                C.log('\n\n')
+                C.warning(false, `Waiting for file change before restarting process...\n\n`)
+                onFileChange(async path => {
+                  if (path.includes('generated')) return
 
-        startChildProcess(
-          programPath,
-          [__dirname + '/childProcessEntryPoint.ts', _command],
-          code => {
-            console.error(`EXITED WITH CODE `, code)
-            if (!code || code === parentProcessExitCodes.exit) {
-              // SUCCESS EXIT
-              resolve('continue')
-            } else if (code === parentProcessExitCodes.waitForFileChange) {
-              // HOT RELOAD
-              C.log('\n\n')
-              C.warning(false, `Waiting for file change before restarting process...\n\n`)
-              onFileChange(async path => {
-                if (path.includes('generated')) return
-
-                C.info(`File change detected for ${path}, restarting (cp)...`)
-                C.log(`\n\n`)
+                  C.info(`File change detected for ${path}, restarting (cp)...`)
+                  C.log(`\n\n`)
+                  resolve('reload')
+                })
+              } else if (code === parentProcessExitCodes.restartServer) {
+                // SIMPLE RESTART
+                setTimeout(() => {
+                  restartTimes-- // reset restartTimes after a certain amount of time
+                }, 5 * 60 * 1000)
+                if (restartTimes > 10) throw new Error('Process restarted more than 10 times in the last 3 minutes. Stopping process...')
+                C.log('\n\n')
+                C.warning(false, `Restarting server...\n\n`)
                 resolve('reload')
-              })
-            } else if (code === parentProcessExitCodes.restartServer) {
-              // SIMPLE RESTART
-              setTimeout(() => {
-                restartTimes-- // reset restartTimes after a certain amount of time
-              }, 5 * 60 * 1000)
-              if (restartTimes > 10) throw new Error('Process restarted more than 10 times in the last 3 minutes. Stopping process...')
-              C.log('\n\n')
-              C.warning(false, `Restarting server...\n\n`)
-              resolve('reload')
-              restartTimes++
-            } else {
-              // ERROR EXIT RESTART PROCESS
-              // clearCli()
-              resolve('continue')
-            }
-          })
+                restartTimes++
+              } else {
+                // ERROR EXIT RESTART PROCESS
+                // clearCli()
+                resolve('continue')
+              }
+            })
+          console.log(`AFTERSTART`)
+        } catch (err) {
+          C.error(false, 'Error in child Processs coucou')
+          C.error(err)
+        }
       })
       cliArgsToEnv(args, true)
+      console.log(`next`, next)
     } while (next === 'reload')
-
+    console.log(`ENDDDO`)
     process.exit(0)
 
   } catch (err) {

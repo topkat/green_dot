@@ -11,7 +11,7 @@ let childProcess: ChildProcess
 export function startChildProcess(programPath, args: string[], onExit: (code: number) => any) {
 
   if (childProcess) childProcess.kill()
-  console.log(`BEFORCP`)
+  console.log(`BEFORCP`, programPath, args)
   childProcess = spawn(programPath, args, {
     stdio: 'inherit', // Inherit main process I/O
   })
@@ -30,6 +30,7 @@ process.on('SIGINT', handleMainProcessExit)
 process.on('SIGTERM', handleMainProcessExit)
 
 function handleMainProcessExit() {
+  console.log(`EXITMAIN`)
   childProcess?.kill?.()
   process.exit()
 }
