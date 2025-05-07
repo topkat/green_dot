@@ -35,7 +35,7 @@ const commands = {
   /** Starts a server with restart on error (max 10 times per 5 minutes) */
   start: {
     execute: [buildCommand, startProdServerCommand],
-    exitAfter: true,
+    exitAfter: false,
   },
   /** Generate project files from templates */
   generate: {
