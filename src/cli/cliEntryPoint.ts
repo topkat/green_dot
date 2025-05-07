@@ -3,6 +3,7 @@
 // /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
+import fs from 'fs'
 import { app, Command } from 'command-line-application'
 import { clearCli, cliIntro, cliArgsToEnv, checkTsNodeInstallation } from './helpers/cli'
 import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
@@ -93,6 +94,9 @@ async function start() {
           const programPath = tsNodePath
 
           console.log(`programPath2`, programPath)
+          console.log(`CLI PATH`, __dirname + '/childProcessEntryPoint.ts')
+
+          console.log('EXISTS?', fs.existsSync(__dirname + '/childProcessEntryPoint.ts'))
 
           startChildProcess(
             programPath,
