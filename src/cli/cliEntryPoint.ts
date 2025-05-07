@@ -92,7 +92,7 @@ async function start() {
         try {
           const programPath = tsNodePath
 
-          console.log(`programPath`, programPath)
+          console.log(`programPath2`, programPath)
 
           startChildProcess(
             programPath,
