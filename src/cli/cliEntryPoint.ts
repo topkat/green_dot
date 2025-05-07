@@ -143,7 +143,7 @@ async function start() {
       console.log(`next`, next)
     } while (next === 'reload')
     console.log(`ENDDDO`)
-    process.exit(0)
+    // process.exit(0)
 
   } catch (err) {
     const message = err && err.message
