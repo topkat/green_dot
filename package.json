@@ -93,7 +93,8 @@
   "bin": {
     "dot": "src/cli/cliEntryPoint.ts",
     "green_dot": "src/cli/cliEntryPoint.ts",
-    "gd": "src/cli/cliEntryPoint.ts"
+    "gd": "src/cli/cliEntryPoint.ts",
+    "gdStartProd": "src/cli/startProdSpecialEntryPoint.ts"
   },
   "files": [
     "*.ts",
