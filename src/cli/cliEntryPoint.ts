@@ -83,9 +83,9 @@ async function start() {
     if (_command === 'start') {
       // When we simple start, we don't need a process manager
       try {
-        const { startTask } = await import('./childProcessEntryPoint')
-
-        await startTask('start')
+        const { startProdServerCommand } = await import('./startProdServer.command')
+        // MINIMALIST SETUP
+        await startProdServerCommand()
 
       } catch (err) {
         C.error(err)

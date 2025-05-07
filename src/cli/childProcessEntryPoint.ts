@@ -4,7 +4,8 @@ import '../types/global.types'
 import { buildCommand } from './build.command'
 import { cleanCommand } from './clean.command'
 import { generateCommand } from './generate.command'
-import { startDevServerCommand, startProdServerCommand } from './startDevProdServer.command'
+import { startDevServerCommand } from './startDevServer.command'
+import { startProdServerCommand } from './startProdServer.command'
 import { testCommand } from './test.command'
 
 
