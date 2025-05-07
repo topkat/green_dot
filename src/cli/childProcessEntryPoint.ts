@@ -64,6 +64,7 @@ export async function startTask(command = processCommand) {
 
   do {
     const next = execute.shift()
+    console.log(`next`, next, typeof next)
     await next()
   } while (execute.length)
 
