@@ -98,9 +98,11 @@ async function start() {
 
           console.log('EXISTS?', fs.existsSync(__dirname + '/childProcessEntryPoint.ts'))
 
+          const entry = _command === 'start' ? '/testEntry.ts' : '/childProcessEntryPoint.ts'
+
           startChildProcess(
             programPath,
-            [__dirname + '/childProcessEntryPoint.ts', _command],
+            [__dirname + entry, _command],
             code => {
               console.error(`EXITED WITH CODE `, code)
               if (!code || code === parentProcessExitCodes.exit) {
