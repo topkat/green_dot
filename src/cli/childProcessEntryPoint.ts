@@ -18,7 +18,7 @@ console.log(`CHILDPROCESS`)
 
 export type ChildProcessCommands = keyof typeof commands
 
-const [, , command] = process.argv as [string, string, ChildProcessCommands]
+const [, , processCommand] = process.argv as [string, string, ChildProcessCommands]
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
@@ -64,9 +64,9 @@ const commands = {
 //  ╠══╝ ╠═╦╝ ║  ║ ║ ═╦ ╠═╦╝ ╠══╣ ║╚╝║
 //  ╩    ╩ ╚  ╚══╝ ╚══╝ ╩ ╚  ╩  ╩ ╩  ╩
 
-if (!command || !Object.keys(commands).includes(command)) throw new Error('Command not found ' + command)
+export async function startTask(command = processCommand) {
 
-async function startTask() {
+  if (!command || !Object.keys(commands).includes(command)) throw new Error('Command not found ' + command)
 
   const { execute, exitAfter } = commands[command]
 
