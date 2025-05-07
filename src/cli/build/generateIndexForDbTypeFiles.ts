@@ -1,17 +1,13 @@
 
-console.log('KOUKOU 1')
+
 import Path from 'path'
-console.log('KOUKOU 2')
 import fs from 'fs-extra'
-console.log('KOUKOU 3')
 import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
-console.log('KOUKOU 4')
 import { C } from 'topkat-utils'
-console.log('KOUKOU 5')
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-console.log('KOUKOU 6')
 import { getUserPermissionFields } from '../../db'
-console.log('KOUKOU 7')
+
+
 
 
 /** If this function is called alone, it will generate a default index file that is typescript valid and safe */

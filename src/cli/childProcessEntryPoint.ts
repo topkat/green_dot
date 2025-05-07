@@ -1,20 +1,12 @@
 // #!/usr/bin/env ts-node
 
-console.log('ENTRY')
-
 import '../types/global.types'
-console.log('IMP1')
 import { buildCommand } from './build.command'
-console.log('IMP2')
 import { cleanCommand } from './clean.command'
-console.log('IMP3')
 import { generateCommand } from './generate.command'
-console.log('IMP4')
 import { startDevServerCommand, startProdServerCommand } from './startDevProdServer.command'
-console.log('IMP6')
 import { testCommand } from './test.command'
 
-console.log(`CHILDPROCESS`)
 
 export type ChildProcessCommands = keyof typeof commands
 

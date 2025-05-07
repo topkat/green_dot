@@ -1,26 +1,14 @@
-console.log('IMP1xx')
 import { generateFilesForCachedDb } from './build/generateFilesForCachedDb'
-console.log('IMP2xx')
 import { initGreenDotConfigs, getMainConfig } from '../helpers/getGreenDotConfigs'
-console.log('IMP3xx')
 import { createNewTask } from './helpers/createNewTask'
-console.log('IMP4xx')
 import { generateIndexForProjectDb } from './build/generateIndexForProjectDb'
-console.log('IMP5xx')
 import { generateIndexForProjectApp } from './build/generateIndexForProjectApp'
-console.log('IMP6xx')
 import { C } from 'topkat-utils'
-console.log('IMP7xx')
 import { generateSdk } from '../generate/generateSDK/generateSDK'
-console.log('IMP8xx')
 import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
-console.log('IMP9xx')
 import { autoIndex } from '../services/autoIndex'
-console.log('IMP10xx')
 import { getProjectPaths } from '../helpers/getProjectPaths'
-console.log('IMP11xx')
 import { generateIndexForDbTypeFiles } from './build/generateIndexForDbTypeFiles'
-console.log('IMP12xx')
 
 
 

@@ -1,22 +1,14 @@
 
 import Path from 'path'
-console.log('GFFCDB 1')
 import fs from 'fs-extra'
-console.log('GFFCDB 2')
 import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
-console.log('GFFCDB 3')
 import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectModelsAndDaos'
-console.log('GFFCDB 4')
 import { C, capitalize1st } from 'topkat-utils'
-console.log('GFFCDB 5')
 import { Definition } from 'good-cop'
-console.log('GFFCDB 6')
 import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
-console.log('GFFCDB 7')
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-console.log('GFFCDB 8')
 import { getNewIndexForDbCacheFileStructure } from './generateIndexForDbTypeFiles'
-console.log(`APOAPO`)
+
 
 
 

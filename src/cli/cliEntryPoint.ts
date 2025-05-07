@@ -3,9 +3,8 @@
 // /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
-import fs from 'fs'
 import { app, Command } from 'command-line-application'
-import { clearCli, cliIntro, cliArgsToEnv, checkTsNodeInstallation } from './helpers/cli'
+import { clearCli, cliIntro, cliArgsToEnv } from './helpers/cli'
 import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
@@ -78,21 +77,19 @@ async function start() {
     }) as { _command: keyof typeof commands }
 
 
-    const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
-
+    // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
 
 
     if (_command === 'start') {
-      // When we simple start, we don't need a process manager, this will not work for example on digital ocean
+      // When we simple start, we don't need a process manager
       try {
-        console.log(`STRT`)
         const { startTask } = await import('./childProcessEntryPoint')
-        console.log(`BEFOR`)
+
         await startTask('start')
-        console.log(`AFTER`)
+
       } catch (err) {
-        C.error(false, 'Error in child Processs coucou')
         C.error(err)
+        C.error(false, 'Error in child Processs')
       }
     } else {
 
@@ -140,7 +137,6 @@ async function start() {
                   resolve('continue')
                 }
               })
-            console.log(`AFTERSTART`)
           } catch (err) {
             C.error(false, 'Error in child processs start')
             C.error(err)
