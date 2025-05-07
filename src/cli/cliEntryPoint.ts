@@ -4,7 +4,7 @@
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
 import { app, Command } from 'command-line-application'
-import { clearCli, cliIntro, cliArgsToEnv } from './helpers/cli'
+import { clearCli, cliIntro, cliArgsToEnv, checkTsNodeInstallation } from './helpers/cli'
 import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
@@ -78,6 +78,9 @@ async function start() {
 
 
     // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
+    console.log(`CLIAR`, args)
+
+    console.log(`checkTsNodeInstallation()`, checkTsNodeInstallation())
 
     cliArgsToEnv(args, false)
 
@@ -89,10 +92,13 @@ async function start() {
 
         const programPath = tsNodePath
 
+        console.log(`programPath`, programPath)
+
         startChildProcess(
           programPath,
           [__dirname + '/childProcessEntryPoint.ts', _command],
           code => {
+            console.error(`EXITED WITH CODE `, code)
             if (!code || code === parentProcessExitCodes.exit) {
               // SUCCESS EXIT
               resolve('continue')

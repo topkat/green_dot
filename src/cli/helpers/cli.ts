@@ -1,7 +1,7 @@
-
 // /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 import { C, minMax } from 'topkat-utils'
 import pkg from '../../../package.json'
+import { execSync } from 'child_process'
 
 
 
@@ -91,4 +91,16 @@ export function userInputKeyHandler(buff, { customKeyHandler, onExit }: UserInpu
   }
 
   if (!customKeyHandler(char, hex).wasHandled) process.stdout.write(char)
+}
+
+/** Check if ts-node is installed and log its version */
+export function checkTsNodeInstallation() {
+  try {
+    const tsNodeVersion = execSync('ts-node -v', { encoding: 'utf-8' }).trim()
+    C.log(C.dim(`✓ ts-node ${tsNodeVersion} installed`))
+    return true
+  } catch (error) {
+    C.error(false, '✗ ts-node is not installed. Please install it with: npm install -g ts-node')
+    return false
+  }
 }

@@ -7,6 +7,7 @@ import { generateCommand } from './generate.command'
 import { startDevServerCommand, startProdServerCommand } from './startDevProdServer.command'
 import { testCommand } from './test.command'
 
+console.log(`CHILDPROCESS`)
 
 export type ChildProcessCommands = keyof typeof commands
 
