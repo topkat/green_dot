@@ -11,11 +11,15 @@ let childProcess: ChildProcess
 export function startChildProcess(programPath, args: string[], onExit: (code: number) => any) {
 
   if (childProcess) childProcess.kill()
-
+  console.log(`BEFORCP`)
   childProcess = spawn(programPath, args, {
     stdio: 'inherit', // Inherit main process I/O
   })
-
+  console.log(`AFTERCP`)
+  childProcess.on('close', () => console.log(`CLOSE`))
+  childProcess.on('disconnect', () => console.log(`DISCO`))
+  childProcess.on('message', (m) => console.log(`DISCO`, JSON.stringify(m, null, 2)))
+  childProcess.on('spawn', () => console.log(`SWN`))
   childProcess.on('exit', onExit)
 }
 
