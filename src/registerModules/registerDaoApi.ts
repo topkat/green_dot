@@ -12,7 +12,6 @@ import { isset } from 'topkat-utils'
 import { rateLimiterMiddleware } from '../security/serviceRouteRateLimiter'
 import { getApiEndpointsPerRolesFromDao } from '../databases/helpers/getApiEndpointsPerRolesFromDao'
 import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../helpers/getProjectModelsAndDaos'
-import { getMainConfig } from '../helpers/getGreenDotConfigs'
 import { dbIdsToDbNames } from '../databases/dbIdsToDbNames'
 
 import { dbs } from '../db'
@@ -31,7 +30,6 @@ export async function registerDaoApi(
         async (req, res, next) => {
             if (typeof req.body === 'string' && req.body.startsWith('{')) req.body = JSON.parse(req.body)
 
-            const { allRoles } = getMainConfig()
             const models = await getProjectDatabaseModels()
 
             try {
@@ -65,7 +63,7 @@ export async function registerDaoApi(
                 //----------------------------------------
                 // IS API EXPOSED
                 //----------------------------------------
-                const { authorizedApiEndpoint } = getApiEndpointsPerRolesFromDao(dao.expose, allRoles)
+                const { authorizedApiEndpoint } = getApiEndpointsPerRolesFromDao(dao.expose)
                 const isApiAuthorized = authorizedApiEndpoint.includes(daoFunction) || false
                 if (!isApiAuthorized) throw ctx.error[404]({ fn: 'registerDaoApi.daoConfig.isApiExposedGeneric' })
 

@@ -4,6 +4,9 @@ import fs from 'fs-extra'
 import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
+const isDist = __dirname.includes('dist')
+const extension = isDist ? 'js' : 'ts'
+
 export type GDpathConfig = { path: string, folderPath: string }
 export type GDpathConfigWithIndex = GDpathConfig & { generatedIndexPath: string, generatedFolderPath: string, folderPathRelative: string }
 
@@ -31,9 +34,10 @@ export async function getProjectPaths(resetCache = false) {
     const { mainConfigPath, rootPath } = await findProjectPath()
 
     // FIND ALL GREEN DOT CONFIGS
-    const allFiles = await glob.async('**/green_dot.*.config.*', {
+    const allFiles = await glob.async(
+      '**/green_dot.*.config.*', {
       cwd: rootPath,
-      ignore: ['node_modules/**', '**/.*/**', '**/dist/**', '**/coverage-jest/**'],
+      ignore: ['node_modules/**', '**/*.map', '**/*.d.ts', '**/.*/**', '**/coverage-jest/**', '**/dist/**'],
       onlyFiles: true,
       absolute: true,
     })
@@ -65,14 +69,16 @@ export async function getProjectPaths(resetCache = false) {
 export async function findProjectPath(silent = false) {
   const cwd = process.cwd()
   let isSubFolder = false
-  let mainConfigPath = Path.join(cwd, 'green_dot.config.ts')
+
+  let mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `green_dot.config.${extension}`)
+
   let exists = await fs.exists(mainConfigPath)
   if (!exists) {
     isSubFolder = true
-    mainConfigPath = Path.join(cwd, '../green_dot.config.ts')
+    mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `../green_dot.config.${extension}`)
     exists = await fs.exists(mainConfigPath)
     if (!exists) {
-      mainConfigPath = Path.join(cwd, '../../green_dot.config.ts')
+      mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `../../green_dot.config.${extension}`)
       exists = await fs.exists(mainConfigPath)
     }
   }
@@ -96,13 +102,13 @@ function configFilePathMapper(mainConfigFolderPath: string, includesTestConfig =
       path: path,
       folderPath,
       folderPathRelative: Path.relative(mainConfigFolderPath, folderPath),
-      generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'index.generated.ts'),
+      generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + `index.generated.${extension}`),
       generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + '.generated'),
     }
     if (includesTestConfig) {
       const yoTsBullshit = paths as any
       yoTsBullshit.testConfigPath = path.replace(/\.app\./, `.apiTests.`)
-      yoTsBullshit.testIndexPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + 'testIndex.generated.ts')
+      yoTsBullshit.testIndexPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + `testIndex.generated.${extension}`)
     }
     return paths
   }

@@ -95,7 +95,7 @@ export type GreenDotAppConfig = {
 
 
 interface ServerConfigGeneric {
-  apiKeys: never
+  apiKeys: string
   models: string
 }
 

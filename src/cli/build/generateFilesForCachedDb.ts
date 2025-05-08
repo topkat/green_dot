@@ -31,7 +31,7 @@ export async function generateFilesForCachedDb(
       models.GD_serverBlackList = GD_serverBlacklistModel as unknown as Definition
     }
 
-    let modelTypeFileContent = `\n\n`
+    let modelTypeFileContent = `import { TranslationObj } from '${basePath.includes(greenDotCacheModuleFolder) ? '../../index' : 'green_dot'}'\n\n`
     const modelNames = Object.keys(models)
     const dbNameCapital = capitalize1st(dbName)
 

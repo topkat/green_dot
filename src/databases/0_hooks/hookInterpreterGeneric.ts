@@ -94,4 +94,3 @@ export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>
         return hook as MongoDaoParsed<any>[HookName]
     }
 }
-

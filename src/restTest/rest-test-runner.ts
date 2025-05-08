@@ -1,5 +1,5 @@
 
-import { TestSuite, Test as TestRaw, TestType, RestMethod, GreenDotApiTestsConfig, TestElement, TestSuiteRaw, TestEnvBase } from './rest-test-types'
+import { TestSuite, Test as TestRaw, TestType, RestMethod, GreenDotApiTestsConfig, TestElement, TestSuiteRaw } from './rest-test-types'
 import { title } from './rest-test-ascii-display'
 import axios, { AxiosError } from 'axios'
 import { assert, restTest } from './rest-test'
@@ -33,7 +33,7 @@ export const testRunner = {
         // SORT BY PRIORITY
         testSuites.sort((testSuiteA, testSuiteB) => !isset(testSuiteA?.priority, testSuiteB?.priority) ? 0 : testSuiteA.priority - testSuiteB.priority)
 
-        const env = { ...config.env, ...(config.env || { users: {} }) } as TestEnvBase // TODO clean
+        const env = { ...config.env, ...(config.env || { users: {} }) } as GD['testEnvType'] // TODO clean
 
         const testArray: TestArray = []
         const msgs = []
@@ -211,13 +211,13 @@ export const testRunner = {
             headers.apiKey = stringApiKey
         }
         if (as && as !== 'public' && as !== 'system') {
-            if (!env.users) env.users = {}
+            if (!env.users) env.users = {} as any
             parsedAs = await parseTestConfigValue(as, env)
         }
 
         try {
             const newHeader = headers ? { ...headers } : {}
-            await onBeforeTest({ as: parsedAs, env, apiKey: stringApiKey, headers: newHeader })
+            await onBeforeTest({ as: parsedAs as any, env, apiKey: stringApiKey as any, headers: newHeader })
             headers = Object.assign({}, newHeader, headers) // override with test values
         } catch (err) {
             C.error(false, 'Error in before test callback')
@@ -304,7 +304,7 @@ export const testRunner = {
 
                 if (testRunner.config.afterTest) await testRunner.config.afterTest(actualTestNb, env)
 
-                await onAfterTest({ as: parsedAs, env, apiKey: stringApiKey, headers: headers || {} })
+                await onAfterTest({ as: parsedAs, env, apiKey: stringApiKey, headers: headers || {} } as any)
 
                 return 'ok' as const
 
@@ -342,13 +342,13 @@ export const testRunner = {
 
     actualTestNb: 0,
     testArray: [] as TestArray,
-    env: { users: {} } as TestEnvBase,
+    env: { users: {} } as GD['testEnvType'],
     config: {} as GreenDotApiTestsConfig,
     isStopped: false,
     displayTitleCache: '',
     reset() {
         testRunner.testArray = []
-        testRunner.env = { users: {} }
+        testRunner.env = { users: {} } as any
         testRunner.config = { onError: () => 0 } as any
         testRunner.isStopped = false
         testRunner.displayTitleCache = ''

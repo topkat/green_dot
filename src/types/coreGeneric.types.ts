@@ -18,3 +18,6 @@ export type ForClauseWithAllAndSystem<AdditionalRoles = never> = MaybeArray<Addi
 export type ForClauseParsedWithAll = Array<CtxPermsPlusAny & { role: Ctx['role'] | 'ALL' }>
 
 export type ApiOutputTypes = 'json' | 'xml' | 'file' | 'download' | 'raw' | 'docx' | 'bufferObject' | 'excel'
+
+export type CountryCodeIso = `${Letters}${Letters}`
+export type TranslationObj = { [countryIsoCode in CountryCodeIso]?: string }

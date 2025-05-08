@@ -31,7 +31,7 @@ const commands = {
     description: 'Start a server in dev mode with hot reloading',
   },
   start: {
-    description: 'Start a server in dev mode with hot reloading',
+    description: 'Start a server in in production mode, use this when you want to deploy and run the code',
   },
   publishSdks: {
     description: 'Publish the SDKs to NPM (interactive prompt)',
@@ -82,15 +82,15 @@ async function start() {
 
     if (_command === 'start') {
       // When we simple start, we don't need a process manager
-      try {
-        const { startProdServerCommand } = await import('./startProdServer.command')
-        // MINIMALIST SETUP
-        await startProdServerCommand()
+      // try {
+      //   const { startProdServerCommand } = await import('./startProdServer.command')
+      //   // MINIMALIST SETUP
+      //   await startProdServerCommand()
 
-      } catch (err) {
-        C.error(err)
-        C.error(false, 'Error in child Processs')
-      }
+      // } catch (err) {
+      //   C.error(err)
+      //   C.error(false, 'Error in child Processs')
+      // }
     } else {
 
       cliArgsToEnv(args, false)
@@ -167,6 +167,6 @@ start()
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-type CommandPlus = Record<ChildProcessCommands, Omit<Command, 'name'> & {
+type CommandPlus = Record<ChildProcessCommands | 'start', Omit<Command, 'name'> & {
   executeWith?: 'bun' | 'ts-node'
 }>

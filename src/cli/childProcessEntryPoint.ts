@@ -1,11 +1,10 @@
-// #!/usr/bin/env ts-node
+#!/usr/bin/env ts-node
 
 import '../types/global.types'
 import { buildCommand } from './build.command'
 import { cleanCommand } from './clean.command'
 import { generateCommand } from './generate.command'
 import { startDevServerCommand } from './startDevServer.command'
-import { startProdServerCommand } from './startProdServer.command'
 import { testCommand } from './test.command'
 
 
@@ -32,11 +31,6 @@ const commands = {
   dev: {
     execute: [buildCommand, startDevServerCommand],
     exitAfter: true,
-  },
-  /** Starts a server with restart on error (max 10 times per 5 minutes) */
-  start: {
-    execute: [startProdServerCommand],
-    exitAfter: false,
   },
   /** Generate project files from templates */
   generate: {

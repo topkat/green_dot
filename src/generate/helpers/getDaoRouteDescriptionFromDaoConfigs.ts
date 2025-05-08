@@ -16,7 +16,7 @@ export async function getDaoRouteDescriptionFromDaoConfigs() {
   const daoRoutesConfig = {} as RouteFromDaoConfigForGenerateSdk
 
   const mainConfig = getMainConfig()
-  const { allRoles, generateSdkConfig } = mainConfig
+  const { generateSdkConfig } = mainConfig
   const { sdkNameForRole } = generateSdkConfig
 
   const daos = await getProjectDatabaseDaos()
@@ -24,7 +24,7 @@ export async function getDaoRouteDescriptionFromDaoConfigs() {
   for (const [dbId, daoForModels] of objEntries(daos)) {
     for (const [modelName, dao] of objEntries(daoForModels)) {
 
-      const { fullMethodsPerRole } = getApiEndpointsPerRolesFromDao(dao.expose, allRoles)
+      const { fullMethodsPerRole } = getApiEndpointsPerRolesFromDao(dao.expose)
 
       for (const [role, allMethods] of objEntries(fullMethodsPerRole)) {
         if (role === 'public') continue

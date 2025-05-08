@@ -1,12 +1,37 @@
-// #!/usr/bin/env bun
+#!/usr/bin/env node
 
-import '../types/global.types'
-import { startProdServerCommand } from './startProdServer.command'
+import { C } from 'topkat-utils'
+import { getProjectPaths } from '../helpers/getProjectPaths'
 
-export async function startTask() {
+export async function startServerProd() {
+  //  ╔═══ ══╦══ ╔══╗ ╔══╗ ══╦══   ╔══╗ ╔══╗ ╔══╗ ╔═╗
+  //  ╚══╗   ║   ╠══╣ ╠═╦╝   ║     ╠══╝ ╠═╦╝ ║  ║ ║  ║
+  //  ═══╝   ╩   ╩  ╩ ╩ ╚    ╩     ╩    ╩ ╚  ╚══╝ ╚══╝
 
-  await startProdServerCommand()
+  const { activeApp } = await getProjectPaths()
 
+  if (!activeApp) {
+    throw new Error('Please start the process in a green_dot.app folder (folder containing green_dot.APP.config.ts)')
+  }
+
+  const { startServer, stopServer } = await import('green_dot' as any)
+
+  const errorHandler = async err => {
+    C.error(err)
+    await stopServer()
+
+    process.exit(1)
+  }
+
+  // Catch All App Errors, even the unhandled ones
+  process.on('unhandledRejection', errorHandler)
+  process.on('uncaughtException', errorHandler)
+
+  try {
+    await startServer()
+  } catch (err) {
+    errorHandler(err)
+  }
 }
 
-startTask()
+startServerProd()

@@ -1,3 +1,4 @@
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { DaoGenericMethods, DaoSharedParsed } from '../../types/daoGeneric.types'
 import { daoMethodsGenericToDaoMethodFull, MongoDaoMethodsFull } from '../mongo/types/mongoDaoTypes'
 
@@ -7,8 +8,10 @@ type RoleAndPublic = Exclude<Ctx['role'], 'system'>
 
 export function getApiEndpointsPerRolesFromDao(
   exposes: DaoSharedParsed['expose'] = [],
-  allRoles: readonly Exclude<Ctx['role'], 'system' | 'public'>[] | Exclude<Ctx['role'], 'system' | 'public'>[], ///!\ Do not use severConfig here since it's used in test env
 ) {
+
+  const mainConfig = getMainConfig()
+  const { allRoles } = mainConfig
 
   const genericMethodsPerRole = {} as { [role in RoleAndPublic]: DaoGenericMethods[] }
   const fullMethodsPerRole = {} as { [role in RoleAndPublic]: MongoDaoMethodsFull[] }
