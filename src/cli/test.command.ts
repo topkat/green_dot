@@ -79,7 +79,7 @@ async function errorHandler(err?) {
 
   if (ci) process.exit(1)
   else {
-    watcherOn = true
+    // watcherOn = true
 
     // HOT RELOAD
     onFileChange(async path => {
