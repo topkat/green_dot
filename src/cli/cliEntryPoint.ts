@@ -78,6 +78,7 @@ async function start() {
 
 
     // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
+    const runFromDist = false //_command === 'build'
 
 
     if (_command === 'start') {
@@ -93,6 +94,8 @@ async function start() {
       // }
     } else {
 
+      process.env.GREEN_DOT_INPUT_COMMAND = _command
+
       cliArgsToEnv(args, false)
 
       let next: 'reload' | 'continue' = 'continue'
@@ -101,11 +104,12 @@ async function start() {
       do {
         next = await new Promise(resolve => {
           try {
-            const programPath = tsNodePath
+            const programPath = runFromDist ? 'node' : tsNodePath
+            const baseDir = runFromDist ? __dirname.replace('src', 'dist/src') : __dirname
 
             startChildProcess(
               programPath,
-              [__dirname + '/childProcessEntryPoint.' + (isDist ? 'js' : 'ts'), _command],
+              [baseDir + '/childProcessEntryPoint.' + (isDist || runFromDist ? 'js' : 'ts'), _command],
               code => {
                 if (!code || code === parentProcessExitCodes.exit) {
                   // SUCCESS EXIT

@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
-const isDist = __dirname.includes('dist')
+const isDist = process.env.GREEN_DOT_INPUT_COMMAND !== 'build' && __dirname.includes('dist')
 const extension = isDist ? 'js' : 'ts'
 
 export type GDpathConfig = { path: string, folderPath: string }
@@ -34,13 +34,15 @@ export async function getProjectPaths(resetCache = false) {
     const { mainConfigPath, rootPath } = await findProjectPath()
 
     // FIND ALL GREEN DOT CONFIGS
-    const allFiles = await glob.async(
+    let allFiles = await glob.async(
       '**/green_dot.*.config.*', {
       cwd: rootPath,
       ignore: ['node_modules/**', '**/*.map', '**/*.d.ts', '**/.*/**', '**/coverage-jest/**', '**/dist/**'],
       onlyFiles: true,
       absolute: true,
     })
+
+    if (process.env.GREEN_DOT_INPUT_COMMAND) allFiles = allFiles.map(f => f.replace(/dist(\\|\/)/, ''))
 
     const dbConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.db.config'))

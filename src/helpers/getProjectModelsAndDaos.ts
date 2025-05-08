@@ -25,9 +25,11 @@ export async function initProjectAndDaosCache(resetCache = false) {
   cacheInitialized = true
   const dbConfigs = getDbConfigs()
   for (const { generatedIndexPath, name: dbName } of dbConfigs) {
+    console.log(`generatedIndexPath`, process.env.GREEN_DOT_INPUT_COMMAND)
     const fileContent = await safeImport(generatedIndexPath) as DatabaseIndexFileContent
+    console.log(`dbName`, dbName)
     modelsCache[dbName] = objEntries(fileContent.models).reduce((obj, [modelName, content]) => ({ ...obj, [modelName.replace(/Model$/, '')]: content }), {})
-
+    console.log(`Object.keys(modelsCache[dbName])`, Object.keys(modelsCache[dbName]))
     const { _defaultDao, ...regularDaos } = fileContent.daos
 
     daosCache[dbName] = await parseDaos(
@@ -50,6 +52,7 @@ export async function getProjectDatabaseModels(resetCache = false) {
 
 export function getProjectDatabaseModelsSync() {
   if (!modelsCache) throw error.serverError(`Cache for database has not been initialized, please make sure you run initProjectAndDaosCache() first`)
+  console.log('Object.keys(modelsCache)', JSON.stringify(Object.keys(modelsCache?.bangk), null, 2))
   return modelsCache
 }
 

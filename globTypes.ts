@@ -1,9 +1,9 @@
 
-declare global {
-  interface GD {
-    role: 'notImplemented'
-    permissions: 'notImplemented'
-  }
-}
+// declare global {
+//   interface GD {
+//     role: 'notImplemented'
+//     permissions: 'notImplemented'
+//   }
+// }
 
 export default {}

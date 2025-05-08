@@ -4,7 +4,12 @@ export const allString = 'ALL'
 export type AllString = typeof allString
 
 
-type CtxPermsPlusAny = Partial<Record<keyof UserPermissionsWithoutRolePerms, boolean | 'any'>>
+type CtxPermsPlusAny = Partial<
+  Record<
+    keyof UserPermissionsWithoutRolePerms & (`is${string}` | `has${string}`), // this is a hack, I have been having a lot of problems with that
+    boolean | 'any'
+  >
+>
 
 export type ForClauseParsed<AdditionalRoles = never> = CtxPermsPlusAny & { role: Ctx['role'] | AdditionalRoles }
 

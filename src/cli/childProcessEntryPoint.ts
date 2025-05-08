@@ -20,7 +20,7 @@ type CommandPlus = Record<string, { execute: Array<Function>, exitAfter?: boolea
 
 const commands = {
   build: {
-    execute: [buildCommand],
+    execute: [() => buildCommand({ tsc: true })],
     exitAfter: true,
   },
   clean: {
@@ -29,7 +29,7 @@ const commands = {
   },
   /** Starts a server with hot reload */
   dev: {
-    execute: [buildCommand, startDevServerCommand],
+    execute: [() => buildCommand({ tsc: false }), startDevServerCommand],
     exitAfter: true,
   },
   /** Generate project files from templates */

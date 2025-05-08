@@ -137,11 +137,12 @@ export async function generateSdkFolderFromTemplates(
   const sdkHelperDistPath = Path.join(greenDotCacheModuleFolder, '/sdkHelperDist')
 
   if (!await fs.exists(sdkHelperDistPath)) {
-    const sdkHelperFolderPath = Path.resolve(__dirname, '../../sdkHelpersModule')
-    if (! await fs.exists(sdkHelperFolderPath)) throw new Error('sdkHelperFolderPath not existing in green_dot: ' + sdkHelperFolderPath)
+    const sdkHelperFolderPath = Path.resolve(dirNameBase, '../../sdkHelpersModule')
+    if (!await fs.exists(sdkHelperFolderPath)) throw new Error('sdkHelperFolderPath not existing in green_dot: ' + sdkHelperFolderPath)
+
     await compileTypeScriptProject({
       projectPath: sdkHelperFolderPath,
-      outputPath: Path.join(greenDotCacheModuleFolder, '/sdkHelperDist'),
+      outputPath: sdkHelperDistPath,
     })
   }
 

@@ -29,15 +29,14 @@
     "./src/*": "./dist/*.js"
   },
   "scripts": {
-    "clean": "rm -rf ./dist || true && tsc && node ./dist/src/cli/cliEntryPoint.js clean",
+    "clean": "rm -rf ./dist || true && tscp && tsc && node ./dist/src/cli/cliEntryPoint.js clean",
     "build": "tscp && tsc",
-    "tsc": "tsc",
     "build:watch": "tscp & tsc -w --preserveWatchOutput",
     "test": "jest --watchAll",
     "// RELEASE": "",
-    "publish": "yarn clean && tsc && yarn test:ci && npm run bump:patch",
-    "bump": "yarn clean && tsc && yarn test:ci && bump --patch",
-    "bump:patch": "yarn clean && tsc && yarn test:ci && bump --patch",
+    "publish": "yarn clean && tscp && tsc && yarn test:ci && npm run bump:patch",
+    "bump": "yarn clean && tscp && tsc && yarn test:ci && bump --patch",
+    "bump:patch": "yarn clean && tscp && tsc && yarn test:ci && bump --patch",
     "test:ci": "jest --ci --runInBand --maxConcurrency=1 --silent"
   },
   "dependencies": {
