@@ -29,7 +29,7 @@
     "./src/*": "./dist/*.js"
   },
   "scripts": {
-    "clean": "rm -rf ./dist || true && ts-node ./src/cli/cliEntryPoint.ts clean",
+    "clean": "rm -rf ./dist || true && tsc && node ./dist/src/cli/cliEntryPoint.js clean",
     "build": "tscp && tsc",
     "tsc": "tsc",
     "build:watch": "tscp & tsc -w --preserveWatchOutput",

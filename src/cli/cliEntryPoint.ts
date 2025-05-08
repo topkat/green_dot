@@ -14,7 +14,7 @@ import { parentProcessExitCodes } from '../constants'
 
 const [tsNodePath] = process.argv
 
-
+const isDist = __dirname.includes('dist')
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
@@ -105,7 +105,7 @@ async function start() {
 
             startChildProcess(
               programPath,
-              [__dirname + '/childProcessEntryPoint.ts', _command],
+              [__dirname + '/childProcessEntryPoint.' + (isDist ? 'js' : 'ts'), _command],
               code => {
                 if (!code || code === parentProcessExitCodes.exit) {
                   // SUCCESS EXIT
