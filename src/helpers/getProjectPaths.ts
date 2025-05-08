@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import glob from 'fast-glob'
 import { C } from 'topkat-utils'
 
-const isDist = process.env.GREEN_DOT_INPUT_COMMAND !== 'build' && __dirname.includes('dist')
+const isDist = process.env.GREEN_DOT_INPUT_COMMAND === 'start' && __dirname.includes('dist')
 const extension = isDist ? 'js' : 'ts'
 
 export type GDpathConfig = { path: string, folderPath: string }

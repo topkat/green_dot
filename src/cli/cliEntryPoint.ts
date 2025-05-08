@@ -14,8 +14,6 @@ import { parentProcessExitCodes } from '../constants'
 
 const [tsNodePath] = process.argv
 
-const isDist = __dirname.includes('dist')
-
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
@@ -95,7 +93,7 @@ async function start() {
 
           const baseDir = runFromDist ? __dirname.replace('src', 'dist/src') : __dirname
 
-          const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : '/childProcessEntryPoint.') + (isDist || runFromDist ? 'js' : 'ts')
+          const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : '/childProcessEntryPoint.') + (runFromDist ? 'js' : 'ts')
 
           startChildProcess(
             programPath,
