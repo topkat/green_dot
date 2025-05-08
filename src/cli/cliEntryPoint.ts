@@ -78,79 +78,69 @@ async function start() {
 
 
     // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
-    const runFromDist = false //_command === 'build'
+    const runFromDist = _command === 'start' //_command === 'build'
 
 
-    if (_command === 'start') {
-      // When we simple start, we don't need a process manager
-      // try {
-      //   const { startProdServerCommand } = await import('./startProdServer.command')
-      //   // MINIMALIST SETUP
-      //   await startProdServerCommand()
+    process.env.GREEN_DOT_INPUT_COMMAND = _command
 
-      // } catch (err) {
-      //   C.error(err)
-      //   C.error(false, 'Error in child Processs')
-      // }
-    } else {
+    cliArgsToEnv(args, false)
 
-      process.env.GREEN_DOT_INPUT_COMMAND = _command
+    let next: 'reload' | 'continue' = 'continue'
+    let restartTimes = 0
 
-      cliArgsToEnv(args, false)
+    do {
+      next = await new Promise(resolve => {
+        try {
+          const programPath = runFromDist ? 'node' : tsNodePath
 
-      let next: 'reload' | 'continue' = 'continue'
-      let restartTimes = 0
+          const baseDir = runFromDist ? __dirname.replace('src', 'dist/src') : __dirname
 
-      do {
-        next = await new Promise(resolve => {
-          try {
-            const programPath = runFromDist ? 'node' : tsNodePath
-            const baseDir = runFromDist ? __dirname.replace('src', 'dist/src') : __dirname
+          const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : '/childProcessEntryPoint.') + (isDist || runFromDist ? 'js' : 'ts')
 
-            startChildProcess(
-              programPath,
-              [baseDir + '/childProcessEntryPoint.' + (isDist || runFromDist ? 'js' : 'ts'), _command],
-              code => {
-                if (!code || code === parentProcessExitCodes.exit) {
-                  // SUCCESS EXIT
-                  resolve('continue')
-                } else if (code === parentProcessExitCodes.waitForFileChange) {
-                  // HOT RELOAD
-                  C.log('\n\n')
-                  C.warning(false, `Waiting for file change before restarting process...\n\n`)
-                  onFileChange(async path => {
-                    if (path.includes('generated')) return
+          startChildProcess(
+            programPath,
+            [command, _command],
+            code => {
+              if (!code || code === parentProcessExitCodes.exit) {
+                // SUCCESS EXIT
+                resolve('continue')
+              } else if (code === parentProcessExitCodes.waitForFileChange) {
+                // HOT RELOAD
+                C.log('\n\n')
+                C.warning(false, `Waiting for file change before restarting process...\n\n`)
+                onFileChange(async path => {
+                  if (path.includes('generated')) return
 
-                    C.info(`File change detected for ${path}, restarting (cp)...`)
-                    C.log(`\n\n`)
-                    resolve('reload')
-                  })
-                } else if (code === parentProcessExitCodes.restartServer) {
-                  // SIMPLE RESTART
-                  setTimeout(() => {
-                    restartTimes-- // reset restartTimes after a certain amount of time
-                  }, 5 * 60 * 1000)
-                  if (restartTimes > 10) throw new Error('Process restarted more than 10 times in the last 3 minutes. Stopping process...')
-                  C.log('\n\n')
-                  C.warning(false, `Restarting server...\n\n`)
+                  C.info(`File change detected for ${path}, restarting (cp)...`)
+                  C.log(`\n\n`)
                   resolve('reload')
-                  restartTimes++
-                } else {
-                  // ERROR EXIT RESTART PROCESS
-                  // clearCli()
-                  resolve('continue')
-                }
-              })
-          } catch (err) {
-            C.error(false, 'Error in child processs start')
-            C.error(err)
-          }
-        })
-        cliArgsToEnv(args, true)
-      } while (next === 'reload')
+                })
+              } else if (code === parentProcessExitCodes.restartServer) {
+                // SIMPLE RESTART
+                setTimeout(() => {
+                  restartTimes-- // reset restartTimes after a certain amount of time
+                }, 5 * 60 * 1000)
+                if (restartTimes > 10) throw new Error('Process restarted more than 10 times in the last 3 minutes. Stopping process...')
+                C.log('\n\n')
+                C.warning(false, `Restarting server...\n\n`)
+                resolve('reload')
+                restartTimes++
+              } else {
+                // ERROR EXIT RESTART PROCESS
+                // clearCli()
+                resolve('continue')
+              }
+            })
+        } catch (err) {
+          C.error(false, 'Error in child processs start')
+          C.error(err)
+        }
+      })
+      cliArgsToEnv(args, true)
+    } while (next === 'reload')
 
-      process.exit(0)
-    }
+    process.exit(0)
+    // }
 
   } catch (err) {
     const message = err && err.message

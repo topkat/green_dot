@@ -42,7 +42,7 @@ export async function getProjectPaths(resetCache = false) {
       absolute: true,
     })
 
-    if (process.env.GREEN_DOT_INPUT_COMMAND) allFiles = allFiles.map(f => f.replace(/dist(\\|\/)/, ''))
+    if (process.env.GREEN_DOT_INPUT_COMMAND !== 'start') allFiles = allFiles.map(f => f.replace(/dist(\\|\/)/, ''))
 
     const dbConfigPaths = allFiles
       .filter(fileName => fileName.includes('green_dot.db.config'))
