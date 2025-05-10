@@ -5,14 +5,14 @@
   "types": "src/index.ts",
   "description": "A powerful TypeScript nodeJs framework for building DX friendly, secure and type-safe backend services with MongoDB integration",
   "license": "MIT",
-  "author": "https://github.com/top-kat",
+  "author": "https://github.com/topkat",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/top-kat/green_dot.git"
+    "url": "git+https://github.com/topkat/green_dot.git"
   },
-  "homepage": "https://github.com/top-kat/green_dot",
+  "homepage": "https://github.com/topkat/green_dot",
   "bugs": {
-    "url": "https://github.com/top-kat/green_dot/issues"
+    "url": "https://github.com/topkat/green_dot/issues"
   },
   "keywords": [
     "typescript",
