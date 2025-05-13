@@ -314,36 +314,6 @@
     tunnel-agent "^0.6.0"
     uuid "^8.3.2"
 
-"@deno/darwin-arm64@2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@deno/darwin-arm64/-/darwin-arm64-2.3.1.tgz#909e0860b0828a07205a93eb1ec52a2cb3c42cd2"
-  integrity sha512-lKUfHFvtygPNajIUY7QTjpGyIetOSRD+NCsZjiWlyXVPzZQLSXYtqRSDth31N9ORs5dP9tj0/rnho0yoF08lyg==
-
-"@deno/darwin-x64@2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@deno/darwin-x64/-/darwin-x64-2.3.1.tgz#ce7b679b3aa5000a511cd8d792c99691f6977caf"
-  integrity sha512-NoKA2HLnlCk/oVTE+YJr0zYtT0hGdLd9fM09RAXNHQmgn572NoK2Mbs+maZJxHRw30QOXqoheOwi+S8Z9turzQ==
-
-"@deno/linux-arm64-glibc@2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@deno/linux-arm64-glibc/-/linux-arm64-glibc-2.3.1.tgz#daba088763d94d3a1ff28622d801034088b8bbf0"
-  integrity sha512-/sc7tDVZHmjfNO5ghuIQINlHugyBhqMr6/tCtSdi/3rWA3lfP2OV3gh4myVjOurR0kaB5HjrLpxXVUq5hD5Vag==
-
-"@deno/linux-x64-glibc@2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@deno/linux-x64-glibc/-/linux-x64-glibc-2.3.1.tgz#c0e9728c268a15ac9a4bec143909cc3cbcebad69"
-  integrity sha512-ipQqXDtjc3Lln1q1TuPG7SygWrxJga1RODofP/pNwozc14wwZEeCNE4z7z4jDqes6eH5XL8ZH+qZa5beS7118Q==
-
-"@deno/win32-arm64@2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@deno/win32-arm64/-/win32-arm64-2.3.1.tgz#ae1db7c6161cbb42ddd9b66d9b28c773e9e3f48a"
-  integrity sha512-UKwl7uqmuP4qcTR210ZlwozFqH5eb7o3cgNgp5eXZSdFbejKxz+dTKsiSOMjoxTbbKZHofVdp/Dc7jVUvlwShQ==
-
-"@deno/win32-x64@2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@deno/win32-x64/-/win32-x64-2.3.1.tgz#4814a184c00d6bee3c06cbd56b13dbb213f32088"
-  integrity sha512-vbnSEXjL3+dz6EwvV8qUFrDvtluQQdYxEJo+FaSkUu9x2Hws5YpLln4l0tT/KS58RXI9DpWS9dxwMIPbe5kQQQ==
-
 "@eslint-community/eslint-utils@^4.2.0", "@eslint-community/eslint-utils@^4.4.0":
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/@eslint-community/eslint-utils/-/eslint-utils-4.5.1.tgz#b0fc7e06d0c94f801537fd4237edc2706d3b8e4c"
@@ -2287,18 +2257,6 @@ delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
-
-deno@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/deno/-/deno-2.3.1.tgz#8507826613e1e488857301067dec9d0740e49b7e"
-  integrity sha512-ZkXW3Th3BvfhSz2XjVdlFIQby8+jimiG1NdEOa5dadxMMNCPlvSgMzTwhFgFQIal7w12F5QQSf82i2ruHq0n6w==
-  optionalDependencies:
-    "@deno/darwin-arm64" "2.3.1"
-    "@deno/darwin-x64" "2.3.1"
-    "@deno/linux-arm64-glibc" "2.3.1"
-    "@deno/linux-x64-glibc" "2.3.1"
-    "@deno/win32-arm64" "2.3.1"
-    "@deno/win32-x64" "2.3.1"
 
 depd@2.0.0:
   version "2.0.0"
