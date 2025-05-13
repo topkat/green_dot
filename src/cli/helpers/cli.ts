@@ -32,7 +32,7 @@ const defaultEnv = { env: 'dev', isReload: false } satisfies ConfigFromCli
 
 export function cliArgsToEnv(args: Record<string, any>, isReload: boolean) {
 
-  const argsParsed = { env: 'dev', isReload } as ConfigFromCli
+  const argsParsed = { env: 'dev', isReload, ...args } as ConfigFromCli
 
   if (args.production === true) argsParsed.env = 'prod'
 
