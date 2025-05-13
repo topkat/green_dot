@@ -15,6 +15,7 @@ import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../hel
 import { dbIdsToDbNames } from '../databases/dbIdsToDbNames'
 
 import { dbs } from '../db'
+import { env } from '../helpers/getEnv'
 
 export async function registerDaoApi(
     app: Application,
@@ -36,16 +37,28 @@ export async function registerDaoApi(
 
                 type ReqParams = { dbId: string, modelName: string, daoFunction: MongoDaoMethodsFull }
 
-                const { modelName, daoFunction, dbId: dbId } = req.params as ReqParams
+                const { modelName, daoFunction } = req.params as ReqParams
+                let { dbId: dbId } = req.params as ReqParams
                 const { ctx } = req as typeof req & { ctx: Ctx }
+                const params: any[] = req?.body?.params || []
 
                 ctx.isFromGeneratedDbApi = true
 
                 if (typeof dbId === 'undefined') throw ctx.error.serverError('aCompanyMustBeProvidedInOrderToConnectWithDaoApi', { ctxUser: ctx.getUserMinimal(), dbIdUndefined: true })
 
 
-                const errExtraInfos = { ...req.params, fn: `registerDaoApi` }
-                const params: any[] = req?.body?.params || []
+                const errExtraInfos = {
+                    ...req.params, fn: `registerDaoApi`,
+                    dbIds: env.isProd ? undefined : Object.keys(models || {}).join(', '),
+                    models: env.isProd ? undefined : Object.keys(models[dbId] || {}).join(', '),
+                }
+
+
+                // FIX To keep retrocompatibility between different versions
+                // <TODO DELETEME after 06/25>
+                if (models[dbId.replace(/Db$/, '')]) dbId = dbId.replace(/Db$/, '')
+                else if (models[dbId + 'Db']) dbId = dbId + 'Db'
+                // </TODO DELETEME after 06/25>
 
                 const model = models[dbId]?.[modelName]
 
