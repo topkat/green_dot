@@ -125,7 +125,6 @@ async function start() {
                 restartTimes++
               } else {
                 // ERROR EXIT RESTART PROCESS
-                // clearCli()
                 resolve('continue')
               }
             })
@@ -136,9 +135,7 @@ async function start() {
       })
       cliArgsToEnv(args, true)
     } while (next === 'reload')
-
     process.exit(0)
-    // }
 
   } catch (err) {
     const message = err && err.message
