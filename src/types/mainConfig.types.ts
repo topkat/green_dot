@@ -4,6 +4,7 @@ import { GenerateSdkConfig } from './generateSdk.types'
 import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
 import { RateLimiterConfig, RateLimiterStr } from '../security/serviceRouteRateLimiter'
 import { AutoIndexFileConfig } from '../services/autoIndex'
+import { AuthenticationMethod } from './core.types'
 
 export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: string }
 
@@ -103,6 +104,12 @@ export type GreenDotConfig = {
   /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
   validationTokenTypes?: readonly string[] | string[]
 
+
+  /** Secure connexion is Double authentication via sms, fingerprint or pinCode. This will configure nb attemps before locking for a configurable time period. Default: 3 */
+  nbAttemptsForAuth?: Partial<Record<AuthenticationMethod, number>>
+  /** Secure connexion is Double authentication via sms, fingerprint or pinCode. This will configure the time before unlocking after "nbAttemptsForAuth" fails. Default: 15 */
+  resetTimeMinutesForSecureConnexion?: number
+
   // /!\ IMPORTANT, this is in a subObject since banUser and addWarning shoud be provided together
   /** Use this to override ban user and addUserWarning behavior. Warning and ban will happen when rate limiter is triggered or whan you call it manually with ctx.addUserWarning() or ctx.banUser(), so you have full control over it */
   customWarningAndBanUserFunctions?: {
@@ -115,6 +122,9 @@ export type GreenDotConfig = {
       nbWarningLeftBeforeBan: number
     }>
   }
+  //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ══╦══ ╔══╗
+  //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═
+  //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝
   /** Configure how the SDK are generated */
   generateSdkConfig: GenerateSdkConfig
 

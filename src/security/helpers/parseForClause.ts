@@ -43,6 +43,8 @@ export async function parseForClause<T extends ForClauseParsedWithAll | ForClaus
 async function getDefaultPerms(role: string, toMerge = {}) {
   const mainConfig = getMainConfig()
   return {
+    isLocked: false,
+    isDeleted: false,
     ...(mainConfig.defaultPermRestrictionForAll || {}),
     ...(mainConfig.defaultPermRestrictionForRole?.[role] || {}),
     ...toMerge,

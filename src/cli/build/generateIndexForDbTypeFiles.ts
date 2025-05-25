@@ -57,6 +57,7 @@ ${permFields.map(perm => `  ${perm}: boolean`).join('\n')}
 
     indexFileContent += `
 import { MergeMultipleObjects } from 'typescript-generic-types'
+import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from '../../security/userAndConnexion/userAdditionalFields'
 ${indexFile.imports}
 
 ${hardCodePermissionFields ? permType : ''}\

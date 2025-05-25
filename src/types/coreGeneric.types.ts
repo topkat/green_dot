@@ -26,3 +26,7 @@ export type ApiOutputTypes = 'json' | 'xml' | 'file' | 'download' | 'raw' | 'doc
 
 export type CountryCodeIso = `${Letters}${Letters}`
 export type TranslationObj = { [countryIsoCode in CountryCodeIso]?: string }
+
+
+export type DefaultPermissions = 'isEmailVerified' | 'isPhoneVerified' | 'isLocked' | 'isDeleted'
+export type DefaultRoles = 'public'

@@ -6,7 +6,8 @@ import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 // at least 1 upperCase, 1 lowerCase, 1 digit
 const emailRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/
 
-const userLockReasons = ['tooMuchPasswordAttempts', 'ban', 'tooManyAttempsForSecureAuthentication'] as const
+export const userLockReasons = ['tooMuchPasswordAttempts', 'ban', 'tooManyAttempsForSecureAuthentication'] as const
+export type UserLockReasonsDefault = typeof userLockReasons[number]
 
 const emailTypes = ['forgotPassword', 'emailValidation', 'changeEmail'] as const
 

@@ -1,12 +1,11 @@
 
 
 
-import { userConfig } from '../user.config'
-import { UserLockReasons } from '../../../shared/frontBackConstants'
 import { db } from '../../db'
 import { ModelTypes } from '../../cache/dbs/index.generated'
 
 import { getId, addMinutes } from 'topkat-utils'
+import { UserLockReasonsDefault } from './userAdditionalFields'
 
 
 export async function ensureUserIsNotLocked(ctx: Ctx, userOrId: ModelTypes['user'] | string) {
@@ -30,14 +29,14 @@ export async function ensureUserIsNotLocked(ctx: Ctx, userOrId: ModelTypes['user
 }
 
 
-export async function lockUserAndThrow(ctx: Ctx, userId: string, reason: UserLockReasons, conf: {
+export async function lockUserAndThrow(ctx: Ctx, userId: string, reason: UserLockReasonsDefault | (string & {}), conf: {
   errExtraInfos?: Record<string, any>,
   lockDurationMinutes?: number
 } = {}) {
   const lockUntil = addMinutes(new Date(), conf.lockDurationMinutes || 15, 'date')
   await db.user.update(ctx.GM, userId, {
     isLocked: true,
-    lockedReason: reason,
+    lockedReason: reason as any,
     lockUntil,
     refreshTokens: [],
   })

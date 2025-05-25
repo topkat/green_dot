@@ -1,9 +1,10 @@
+import { DefaultPermissions, DefaultRoles } from './coreGeneric.types'
 import './databaseEvents.types'
 
 interface GDbase {
   platform: 'notImplemented' // needs to be union since string will mess everything
-  role: 'notImplemented'
-  permissions: 'notImplemented'
+  role: DefaultRoles
+  permissions: DefaultPermissions
   // TESTS
   testUserNames: string
   apiKeys: string
@@ -20,7 +21,9 @@ declare global {
 
   type GreenDotErrorNames = keyof GreenDotErrors
 
-  interface GD extends GDbase { }
+  interface GD extends GDbase {
+
+  }
 
   type UserRolePermissionFields = { [K in GD['role']as `is${Capitalize<K>}`]: boolean }
   type UserPermissionFields = Record<GD['permissions'], boolean> & UserRolePermissionFields

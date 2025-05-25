@@ -6,9 +6,6 @@ import { decryptToken, encryptToken } from '../encryptAndDecryptSafe'
 import { generateUniqueToken } from '../../services/generateUniqueToken'
 import { db } from '../../db'
 import { ModelTypes } from '../../cache/dbs/index.generated'
-// import { allRoles, allPermissions } from '../../../shared/backendConstants/rolesAndPermission.constants'
-// import { db, ModelTypes, getActiveAppConfig, generateUniqueToken } from 'green_dot'
-// import { encryptToken, decryptToken } from '../../bangkUtils/encryptAndDecryptSafe'
 
 
 

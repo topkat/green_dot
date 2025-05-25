@@ -1,6 +1,6 @@
 
 import 'typescript-generic-types'
-import { GreenDotConfig } from 'green_dot'
+import { GreenDotConfig, DefaultPermissions, DefaultRoles } from 'green_dot'
 
 const env = (process.env.NODE_ENV || 'development') as Env
 
@@ -45,7 +45,7 @@ declare global {
   // UserPermissionFields and UserRolePermissionFields
   interface GD {
     platform: 'app'
-    role: AllRoles
-    // permissions: 'perm1'
+    role: DefaultRoles | AllRoles
+    permissions: DefaultPermissions
   }
 }

@@ -3,10 +3,6 @@ import 'typescript-generic-types'
 import './types/global.types'
 
 
-import { } from './security/userAndConnexion/banAndAddUserWarning'
-import { } from './security/userAndConnexion/userPasswordService'
-import * from './security/userAndConnexion/userLockService'
-export * from './security/userAndConnexion/userAuthenticationTokenService'
 
 export { coreTestSuite } from './tests/core.testSuite'
 
@@ -60,3 +56,9 @@ export * from './sdkHelpersModule/src/types'
 export type { InitBackendConfig } from './sdkHelpersModule/src/initBackend'
 
 export { parentProcessExitCodes } from './constants'
+
+
+export { addUserWarning, banUser } from './security/userAndConnexion/banAndAddUserWarning'
+export * from './security/userAndConnexion/userPasswordService'
+export * from './security/userAndConnexion/userLockService'
+export * from './security/userAndConnexion/userAuthenticationTokenService'
