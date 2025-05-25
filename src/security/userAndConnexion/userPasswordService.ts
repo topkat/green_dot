@@ -12,61 +12,61 @@ import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 const tooMuchPasswordMessages = 'tooMuchPasswordAttempts'
 
-export const passwordSvc = {
-  async compareAddAttemptAndLockIfNecessary(
-    ctx: Ctx,
-    password: string,
-    hash: string,
-    userOrId: ModelTypes['user'] | string,
-    conf: {
-      loginRetrialCountResetTimeMinutes?: number
-      maxPasswordRetry?: number
-    } = {}
-  ): Promise<boolean> {
 
-    const loginRetrialCountResetTimeMs = (conf.loginRetrialCountResetTimeMinutes || 30) * 60 * 1000
+export async function comparePasswordAddAttemptAndLockIfNecessary(
+  ctx: Ctx,
+  password: string,
+  hash: string,
+  userOrId: ModelTypes['user'] | string,
+  conf: {
+    loginRetrialCountResetTimeMinutes?: number
+    maxPasswordRetry?: number
+  } = {}
+): Promise<boolean> {
 
-    await timeout(random(1, 80)) // anti timer attack
+  const loginRetrialCountResetTimeMs = (conf.loginRetrialCountResetTimeMinutes || 30) * 60 * 1000
 
-    const user = typeof userOrId === 'string' ? await db.user.getById(ctx, userOrId, { triggerErrorIfNotSet: true }) : userOrId
+  await timeout(random(1, 80)) // anti timer attack
 
-    const isValid = await bcrypt.compare(password, hash)
+  const user = typeof userOrId === 'string' ? await db.user.getById(ctx, userOrId, { triggerErrorIfNotSet: true }) : userOrId
 
-    if (isValid) {
+  const isValid = await bcrypt.compare(password, hash)
+
+  if (isValid) {
+    await db.user.update(ctx.GM, getId(user), {
+      lastPasswordCompareTime: null,
+      passwordRetrialNb: 0,
+      ...(user.lockedReason?.includes(tooMuchPasswordMessages) ? {
+        isLocked: false,
+        lockUntil: null,
+      } : {}),
+    })
+    return true
+  } else {
+    if ((new Date(user.lastPasswordCompareTime)).getTime() < Date.now() - loginRetrialCountResetTimeMs) {
+      // THIS IS THE FIRST ATTEMPT IN A LONG TIME so we reset password attempts
       await db.user.update(ctx.GM, getId(user), {
-        lastPasswordCompareTime: null,
-        passwordRetrialNb: 0,
-        ...(user.lockedReason?.includes(tooMuchPasswordMessages) ? {
-          isLocked: false,
-          lockUntil: null,
-        } : {}),
+        lastPasswordCompareTime: new Date(),
+        passwordRetrialNb: 1,
       })
-      return true
     } else {
-      if ((new Date(user.lastPasswordCompareTime)).getTime() < Date.now() - loginRetrialCountResetTimeMs) {
-        // THIS IS THE FIRST ATTEMPT IN A LONG TIME so we reset password attempts
+      // MULTIPLE ATTEMPTS, increment attemps number and lock user is needed
+      if (user.passwordRetrialNb >= (conf.maxPasswordRetry || 4)) {
+        // TOO MUCH ATTEMPTS
+        await lockUserAndThrow(ctx, getId(user), tooMuchPasswordMessages)
+      } else {
+        // ACCEPTABLE NB OF ATTEMPTS
         await db.user.update(ctx.GM, getId(user), {
           lastPasswordCompareTime: new Date(),
-          passwordRetrialNb: 1,
+          $inc: { passwordRetrialNb: 1 }
         })
-      } else {
-        // MULTIPLE ATTEMPTS, increment attemps number and lock user is needed
-        if (user.passwordRetrialNb >= (conf.maxPasswordRetry || 4)) {
-          // TOO MUCH ATTEMPTS
-          await lockUserAndThrow(ctx, getId(user), tooMuchPasswordMessages)
-        } else {
-          // ACCEPTABLE NB OF ATTEMPTS
-          await db.user.update(ctx.GM, getId(user), {
-            lastPasswordCompareTime: new Date(),
-            $inc: { passwordRetrialNb: 1 }
-          })
-        }
       }
-
-      return false
     }
+
+    return false
   }
 }
+
 
 
 

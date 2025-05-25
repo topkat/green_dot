@@ -2,6 +2,12 @@
 import 'typescript-generic-types'
 import './types/global.types'
 
+
+import { } from './security/userAndConnexion/banAndAddUserWarning'
+import { } from './security/userAndConnexion/userPasswordService'
+import * from './security/userAndConnexion/userLockService'
+export * from './security/userAndConnexion/userAuthenticationTokenService'
+
 export { coreTestSuite } from './tests/core.testSuite'
 
 export { svc, schedule } from './service'

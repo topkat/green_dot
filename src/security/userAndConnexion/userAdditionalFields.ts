@@ -15,7 +15,7 @@ export function getUserAdditionalFields() {
 
   const mainConfig = getMainConfig()
 
-  return _.object({
+  return {
     phonePrefix: _.regexp(/^\+\d+$/),
     phoneWithPrefix: _.string().minLength(7).maxLength(15).unique().optional(),
 
@@ -61,7 +61,11 @@ export function getUserAdditionalFields() {
     _2FAcode: _.string().length(6),
     _2FAretrialNb: _.number().default(0),
     last2FACompareTime: _.date().default(new Date()),
-  })
+  }
 }
 
-export type UserAdditionalFields = ReturnType<typeof getUserAdditionalFields>['tsTypeRead']
+const typ = _.object(getUserAdditionalFields())
+
+
+export type UserAdditionalFieldsRead = typeof typ.tsTypeRead
+export type UserAdditionalFieldsWrite = typeof typ.tsTypeWrite
