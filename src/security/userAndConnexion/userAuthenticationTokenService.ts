@@ -1,18 +1,17 @@
 
 
 import jwt from 'jsonwebtoken'
-import { allRoles, allPermissions } from '../../../shared/backendConstants/rolesAndPermission.constants'
-import { db, ModelTypes, getActiveAppConfig, generateUniqueToken } from 'green_dot'
-import { encryptToken, decryptToken } from '../../bangkUtils/encryptAndDecryptSafe'
+import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { decryptToken, encryptToken } from '../encryptAndDecryptSafe'
+import { generateUniqueToken } from '../../services/generateUniqueToken'
+import { db } from '../../db'
+import { ModelTypes } from '../../cache/dbs/index.generated'
+// import { allRoles, allPermissions } from '../../../shared/backendConstants/rolesAndPermission.constants'
+// import { db, ModelTypes, getActiveAppConfig, generateUniqueToken } from 'green_dot'
+// import { encryptToken, decryptToken } from '../../bangkUtils/encryptAndDecryptSafe'
 
 
-const userMaxRefreshTokenListLengthPerApps = {
-    appUser: 2,
-    icoInvestor: 2,
-    support: 2,
-    projectAdmin: 2,
-    bangkAdmin: 2,
-}
+
 
 //----------------------------------------
 // USER AUTHENTICATION
@@ -112,6 +111,9 @@ export async function generateTokens(
     previousAccessTokenList: string[] = [],
     tokenData: JWTdataWrite,
 ) {
+
+    const { maxRefreshTokenPerRole } = getMainConfig()
+
     const { role } = tokenData
     // GENERATE TOKENS
     const { token: refreshToken, expirationDate } = await createToken(ctx, { ...tokenData, type: 'refresh' })
@@ -121,8 +123,8 @@ export async function generateTokens(
 
     //KEEP THE LATEST TOKENS
 
-    const refreshTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousRefreshTokenList, deviceId, role, userMaxRefreshTokenListLengthPerApps[role] || 3)
-    const accessTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousAccessTokenList, deviceId, role, userMaxRefreshTokenListLengthPerApps[role])
+    const refreshTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousRefreshTokenList, deviceId, role, maxRefreshTokenPerRole[role] || 3)
+    const accessTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousAccessTokenList, deviceId, role, maxRefreshTokenPerRole[role])
 
     await db.user.update(ctx.GM, ctx._id, {
         refreshTokens: [...refreshTokenListWithoutPrevious, refreshToken],
@@ -187,6 +189,8 @@ export async function revokeToken(ctx: Ctx, userId: string, token: string, token
 /** This one is to transform the actual user perms that will be carried along in the JWT for it to be compressed and obfuscated */
 function encryptPermsInJwt(_id: string, role: GD['role'], permissions: Partial<Ctx['permissions']>) {
 
+    const { allRoles, allPermissions = [] } = getMainConfig()
+
     let encodedStr = _id + '.' + allRoles.indexOf(role as any) + '.'
     for (const permName of allPermissions) {
         const permVal = permissions[permName]
@@ -196,6 +200,9 @@ function encryptPermsInJwt(_id: string, role: GD['role'], permissions: Partial<C
 }
 
 function decryptPermInJwt(jwt: string) {
+
+    const { allRoles, allPermissions = [] } = getMainConfig()
+
     const [_id, roleIndex, permStr] = jwt.split('.') || []
 
     const ctxUser: Partial<CtxUser> = {

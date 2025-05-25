@@ -1,9 +1,9 @@
 import './databaseEvents.types'
 
 interface GDbase {
-  platform: string // needs to be union since string will mess everything
-  role: string
-  permissions: string
+  platform: 'notImplemented' // needs to be union since string will mess everything
+  role: 'notImplemented'
+  permissions: 'notImplemented'
   // TESTS
   testUserNames: string
   apiKeys: string

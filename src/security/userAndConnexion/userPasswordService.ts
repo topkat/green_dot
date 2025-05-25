@@ -6,6 +6,7 @@ import { ModelTypes } from '../../cache/dbs/index.generated'
 import { lockUserAndThrow } from './userLockService'
 
 import { getId, timeout, random } from 'topkat-utils'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 
 
@@ -69,7 +70,8 @@ export const passwordSvc = {
 
 
 
-export async function encryptPassword(password: string, conf: { saltRounds: number }): Promise<string> {
-  const salt = bcrypt.genSaltSync(conf.saltRounds || 11)
+export async function encryptPassword(password: string): Promise<string> {
+  const { saltRoundsForPasswordEncryption } = getMainConfig()
+  const salt = bcrypt.genSaltSync(saltRoundsForPasswordEncryption || 11)
   return bcrypt.hashSync(password, salt)
 }

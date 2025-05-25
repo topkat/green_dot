@@ -12,6 +12,7 @@ import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } fr
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
 import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
+import { getUserAdditionalFields } from './security/userAndConnexion/userAdditionalFields'
 
 
 //  ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗
@@ -64,6 +65,7 @@ export async function initDbs(resetCache: boolean = false) {
 
   const dbConfigs = getDbConfigs()
   const mainConfig = getMainConfig()
+
   let hasDefaultDatabase = false
 
   for (const { dbs: connexionConfigs, name: dbName, type } of dbConfigs) {
@@ -78,6 +80,7 @@ export async function initDbs(resetCache: boolean = false) {
 
       // inject permissions fields in user model
       const permissionsFields = {
+        ...getUserAdditionalFields(),
         ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
         ...convertRoleToPermsToModelFields(mainConfig.allRoles)
       }

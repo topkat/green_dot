@@ -1,24 +1,21 @@
-import { _ } from '../../validator'
-import { encryptPassword } from './userPasswordService'
 
-const emailRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).*$/
+import { _ } from 'good-cop'
+import { encryptPassword } from './userPasswordService'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+
+// at least 1 upperCase, 1 lowerCase, 1 digit
+const emailRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/
 
 const userLockReasons = ['tooMuchPasswordAttempts', 'ban', 'tooManyAttempsForSecureAuthentication'] as const
 
 const emailTypes = ['forgotPassword', 'emailValidation', 'changeEmail'] as const
 
-type Conf = {
-  emailRegexp: RegExp,
-  saltRounds: number
-  pinCodeLength: number
-  userLockReasons: readonly string[] | string[]
-  validationTokenTypes: readonly string[] | string[]
-}
 
-export function getUserAdditionalFields(conf: Conf) {
+export function getUserAdditionalFields() {
+
+  const mainConfig = getMainConfig()
+
   return _.object({
-
-
     phonePrefix: _.regexp(/^\+\d+$/),
     phoneWithPrefix: _.string().minLength(7).maxLength(15).unique().optional(),
 
@@ -30,15 +27,15 @@ export function getUserAdditionalFields(conf: Conf) {
     password: _.password({
       minLength: 8,
       maxLength: 99, // FIX bug in seed when creating bcrypt password
-      regexp: conf.emailRegexp || emailRegexp,
-      encrypt: async password => await encryptPassword(password, { saltRounds: conf.saltRounds }),
+      regexp: mainConfig.emailRegexp || emailRegexp,
+      encrypt: async password => await encryptPassword(password),
     }),
     /** Used to validate phone or email */
     validationTokens: _.array({
       validUntil: _.date(),
       creationDate: _.date(),
       value: _.string(),
-      type: _.enum([...(conf.validationTokenTypes || []), ...emailTypes]),
+      type: _.enum([...(mainConfig.validationTokenTypes || []), ...emailTypes]),
     }),
     /** Those are used to request an access token. Access token changes every N minutes, while refresh tokens last for a session */
     refreshTokens: [_.string()],
@@ -47,14 +44,14 @@ export function getUserAdditionalFields(conf: Conf) {
     lastPasswordCompareTime: _.date().default(new Date()),
     passwordRetrialNb: _.number().default(0),
     /** Ability to lock a user for a time after nb of password retrial */
-    lockedReason: _.enum([...(conf.userLockReasons || []), ...userLockReasons] as const),
+    lockedReason: _.enum([...(mainConfig.userLockReasons || []), ...userLockReasons] as const),
     lockUntil: _.date(),
     // PIN CODE
     pinCode: _.password({
-      minLength: conf.pinCodeLength || 4,
-      maxLength: conf.pinCodeLength || 4, // FIX bug in seed when creating bcrypt password
+      minLength: mainConfig.pinCodeLength || 4,
+      maxLength: mainConfig.pinCodeLength || 4, // FIX bug in seed when creating bcrypt password
       regexp: /^\d+$/,
-      encrypt: async password => await encryptPassword(password, { saltRounds: conf.saltRounds }),
+      encrypt: async password => await encryptPassword(password),
     }),
     pinCodeRetrialNb: _.number().default(0),
     lastPincodeCompareTime: _.date().default(new Date()),
@@ -66,3 +63,5 @@ export function getUserAdditionalFields(conf: Conf) {
     last2FACompareTime: _.date().default(new Date()),
   })
 }
+
+export type UserAdditionalFields = ReturnType<typeof getUserAdditionalFields>['tsTypeRead']
