@@ -83,15 +83,14 @@ export type GreenDotConfig = {
   or by the system if configured (rateLimiter...)
   */
   enableUserBan: boolean
-
-
   /** Default: 3; Determines how much warnings it takes for a user to be banned */
   nbWarningsBeforeBan?: number
   /** interval in milliseconds to which the database should be checked to unblacklist users. Default: ```env === 'test' ? 1000 : 3 * 60 * 1000``` */
   blackListCheckInterval?: number,
   /** This is an array of user blacklist duration. Default: ```[15, 120, 12 * 60]```. In this case the user will be banned 15 minutes the first time he is banned, then 120 minutes the second time and 12h the third time. Timer will reset at a certian interval (which ? TODO) */
   blackListBanMinutes?: number[],
-
+  /** Green dot will expose a ensureUserIsNotLocked() and lockUserAndThrow() so you can lock the user if needed. This configure the time  */
+  lockDurationMinutes?: number
 
   // /!\ IMPORTANT, this is in a subObject since banUser and addWarning shoud be provided together
   /** Use this to override ban user and addUserWarning behavior. Warning and ban will happen when rate limiter is triggered or whan you call it manually with ctx.addUserWarning() or ctx.banUser(), so you have full control over it */

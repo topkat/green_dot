@@ -44,9 +44,9 @@ export type GreenDotAppConfig = {
     }
   }
   /** This is where you connect and give role and permissions to enter your app. This is usually where you read apiKeys or JWT Tokens to ensure users have the right to connect. Note: you can add props to Ctx (Eg: ctx.companyId...) and augment type to reflect your new field. See Ctx augmentation doc (TODO)
-  * @example
+  * @example TODO
   */
-  connexionFn(defaultCtx: CtxUser, req: Request, res: Response): MaybePromise<CtxUser>
+  onLoginCallback(defaultCtx: CtxUser, req: Request, res: Response): MaybePromise<CtxUser>
   publicFolder?: string
   corsOrigin: (RegExp | string)[] | ((origin: string) => boolean)
 

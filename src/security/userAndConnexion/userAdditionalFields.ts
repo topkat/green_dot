@@ -1,0 +1,68 @@
+import { _ } from '../../validator'
+import { encryptPassword } from './userPasswordService'
+
+const emailRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).*$/
+
+const userLockReasons = ['tooMuchPasswordAttempts', 'ban', 'tooManyAttempsForSecureAuthentication'] as const
+
+const emailTypes = ['forgotPassword', 'emailValidation', 'changeEmail'] as const
+
+type Conf = {
+  emailRegexp: RegExp,
+  saltRounds: number
+  pinCodeLength: number
+  userLockReasons: readonly string[] | string[]
+  validationTokenTypes: readonly string[] | string[]
+}
+
+export function getUserAdditionalFields(conf: Conf) {
+  return _.object({
+
+
+    phonePrefix: _.regexp(/^\+\d+$/),
+    phoneWithPrefix: _.string().minLength(7).maxLength(15).unique().optional(),
+
+    email: _.email().unique(),
+    /** this is when a request for updating the email is made */
+    newEmail: _.email(),
+
+    /** default encrypted */
+    password: _.password({
+      minLength: 8,
+      maxLength: 99, // FIX bug in seed when creating bcrypt password
+      regexp: conf.emailRegexp || emailRegexp,
+      encrypt: async password => await encryptPassword(password, { saltRounds: conf.saltRounds }),
+    }),
+    /** Used to validate phone or email */
+    validationTokens: _.array({
+      validUntil: _.date(),
+      creationDate: _.date(),
+      value: _.string(),
+      type: _.enum([...(conf.validationTokenTypes || []), ...emailTypes]),
+    }),
+    /** Those are used to request an access token. Access token changes every N minutes, while refresh tokens last for a session */
+    refreshTokens: [_.string()],
+    accessTokens: [_.string()],
+
+    lastPasswordCompareTime: _.date().default(new Date()),
+    passwordRetrialNb: _.number().default(0),
+    /** Ability to lock a user for a time after nb of password retrial */
+    lockedReason: _.enum([...(conf.userLockReasons || []), ...userLockReasons] as const),
+    lockUntil: _.date(),
+    // PIN CODE
+    pinCode: _.password({
+      minLength: conf.pinCodeLength || 4,
+      maxLength: conf.pinCodeLength || 4, // FIX bug in seed when creating bcrypt password
+      regexp: /^\d+$/,
+      encrypt: async password => await encryptPassword(password, { saltRounds: conf.saltRounds }),
+    }),
+    pinCodeRetrialNb: _.number().default(0),
+    lastPincodeCompareTime: _.date().default(new Date()),
+    biometricAuthToken: _.string(),
+    biometricAuthRetrialNb: _.number().default(0),
+    lastBiometricCompareTime: _.date().default(new Date()),
+    _2FAcode: _.string().length(6),
+    _2FAretrialNb: _.number().default(0),
+    last2FACompareTime: _.date().default(new Date()),
+  })
+}
