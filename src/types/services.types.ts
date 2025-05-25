@@ -8,6 +8,7 @@ import { ForClauseParsed, ForClauseWithAll } from './coreGeneric.types'
 import { ModelReadWrite } from './models.types'
 import { AuthenticationMethod } from '../ctx'
 import { MaybeArray } from 'typescript-generic-types'
+import { ModelNames } from '../cache/dbs/index.generated'
 
 
 //----------------------------------------
@@ -149,9 +150,9 @@ export interface Service<
 
 
   /** Determines which permissions can apply for this service. All not authorized will receive a 403/404 forbidden error and the service will not be executed. Can also be a name of an apiKey (You can configure your apiKeys in apiKeys.ts) */
-  for?: ForClauseWithAll<ServerConfigCustom['apiKeys']>
+  for?: ForClauseWithAll<GD['apiKeys']>
   /** See .for */
-  notFor?: MaybeArray<Ctx['role']> // cannot be a straight for clause
+  notFor?: MaybeArray<GD['role']> // cannot be a straight for clause
   /** If route is not set, it will take the name of the file */
   route?: string | [ApiMethod, string]
   /** In case this service can be reached via another route */
@@ -169,7 +170,7 @@ export interface Service<
   /** Determines which ip(s) can use this service */
   ipWhitelist?: string[]
   /** Invalidate cache of other requests when using this service in the SDK in frontend. For example if you create a service to create a transaction, you wish that that service can clear the cache for all DB transaction read request ? In this case, you just have to write ['transaction*'] to clear the cache for all queries starting with transaction or ['transactiongetAll'] for a specific one */
-  invalidateCacheFor?: Array<`${ServerConfigCustom['models']}*` | (string & {})>
+  invalidateCacheFor?: Array<`${ModelNames}*` | (string & {})>
   // authorizedAuthentications: AuthenticationMethod[]
   needsFingerprintOrPincode?: boolean
   needs2FA?: boolean

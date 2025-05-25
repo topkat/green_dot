@@ -92,15 +92,3 @@ export type GreenDotAppConfig = {
     }
   }
 }
-
-
-interface ServerConfigGeneric {
-  apiKeys: string
-  models: string
-}
-
-declare global {
-  interface ServerConfigCustom extends ServerConfigGeneric {
-    // To be augmented in backend application
-  }
-}

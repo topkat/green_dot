@@ -16,6 +16,7 @@ export * as CoreTypes from './types/core.types'
 export { loginHookDefault } from './databases/0_hooks/loginHookDefault'
 export { applyMaskOnObjectForUser } from './databases/mongo/services/maskService'
 
+export { cliIntro, clearCli, cliBadge } from './cli/helpers/cli'
 
 export { genericHookInterpreter } from './databases/0_hooks/hookInterpreterGeneric'
 export { getApiEndpointsPerRolesFromDao } from './databases/helpers/getApiEndpointsPerRolesFromDao'

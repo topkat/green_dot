@@ -1,20 +1,19 @@
 
-import { GreenDotAppConfig } from 'green_dot'
-import { RestTestConfig, TestSuite as TestSuiteRaw, TestItem as TestItemRaw, assert } from 'rest-test2'
-import { $ as icoSdk, initBackend as initBackendIcoDashboard } from '@bangk/ico-dashboard-sdk'
-import { ServerUrls } from '../shared/backend-sdk-helpers/src/types'
-import { $ as adminSdk, initBackend as initBackendAdmin } from '@bangk/admin-sdk'
-import { $ as mobileAppSdk, initBackend as initBackendMobile } from '@bangk/mobile-app-sdk'
+
+import { GreenDotApiTestsConfig, TestSuite as TestFlowRaw, TestItem as TestItemRaw, assert, InitBackendConfig } from 'green_dot'
+import { $ as icoSdk, initBackend as initBackendIcoDashboard, ServerUrls } from '../SDKs/icoDashboardSdk'
+import { $ as adminSdk, initBackend as initBackendAdmin } from '../SDKs/adminSdk'
+import { $ as mobileAppSdk, initBackend as initBackendMobile } from '../SDKs/mobileAppSdk'
+import { UserNames } from './1_shared/tests/testUsers'
+import { TestEnvUser } from './1_shared/tests/testEnv.type'
 import { objKeys, C } from 'topkat-utils'
 
 import { appConfig } from './green_dot.app.config'
 import { allRoutes } from './2_generated/all-routes-for-tests.generated'
 import { testUsers } from './1_shared/tests/testUsers'
-import { testApiKeys } from '../shared/constants'
+import { testApiKeys } from '../shared/backendConstants'
 import { logTestUser, logUserWithEmail } from './user/tests/logTestUser'
-import { InitBackendConfig } from '../shared/backend-sdk-helpers/src/initBackend'
 import { serverActionTypedForTests } from './1_shared/tests/serverActionTypedForTests'
-
 
 export const restTestEnv = {
     routes: allRoutes,
@@ -39,10 +38,10 @@ const initSdkConfig = (projectName: string) => ({
     onErrorCallback(err) { throw err },
 } as const satisfies InitBackendConfig<ServerUrls>)
 
-export const restTestConfig: RestTestConfig<ApiKeys, TestEnv, TestUserNames, ConnexionInfos, GreenDotAppConfig['apiKeys'][string]> = {
+export const testConfig: GreenDotApiTestsConfig = {
     disableSolo: process.env.NODE_ENV === 'ci',
     displayIntroTimeout: 800,
-    mode: 'jsonRpc' as 'jsonRpc' | 'rest',
+    mode: 'jsonRpc',
     servers,
     apiKeys: appConfig.apiKeys as any,
     env: restTestEnv,
@@ -129,9 +128,9 @@ export const restTestConfig: RestTestConfig<ApiKeys, TestEnv, TestUserNames, Con
     },
 }
 
-export type TestSuite<EnvFromUser> = TestSuiteRaw<TestUserNames, ConnexionInfos, typeof restTestConfig & { env: typeof restTestConfig['env'] & typeof restTestEnv & EnvFromUser }>
+export type TestFlow<EnvFromUser> = TestFlowRaw<TestUserNames, ConnexionInfos, typeof testConfig & { env: typeof testConfig['env'] & typeof restTestEnv & EnvFromUser }>
 
-export type TestItem<EnvFromUser> = TestItemRaw<TestUserNames, ConnexionInfos, typeof restTestConfig & { env: typeof restTestConfig['env'] & typeof restTestEnv & EnvFromUser }>
+export type TestItem<EnvFromUser> = TestItemRaw<TestUserNames, ConnexionInfos, typeof testConfig & { env: typeof testConfig['env'] & typeof restTestEnv & EnvFromUser }>
 
 
 
@@ -164,3 +163,27 @@ function overrideBackendAuthorization(env: TestEnv) {
 
 
 
+
+//----------------------------------------------------------
+//
+//            GLOBAL TYPES
+//
+// Those global types are exposed so you can override them
+// with your custom functions or props
+//----------------------------------------------------------
+
+declare global {
+    interface GD {
+        testUserNames: TestUserNames
+        apiKeys: ApiKeys
+        testEnvType: TestEnv
+    }
+
+    /** env variable type that is used in API tests ('.testFlow.ts' files). You can also override env type per test flow instead of globally in a type param (see generated file comments or documentation for advanced use cases TODO document me) */
+    interface TestEnv {
+        lastConnectedUser: string
+        /** Populated in sellOffer test flow */
+        investmentProjectId: string
+        users: Record<UserNames, TestEnvUser>
+    }
+}

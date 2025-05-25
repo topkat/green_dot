@@ -1,28 +1,26 @@
 
 import 'typescript-generic-types'
 import { GreenDotConfig } from 'green_dot'
-import { AllPermissions, allPermissions, allRoles, AllRoles, sdkNameForRole, Platforms, defaultPermRestrictionForAll, defaultPermRestrictionForRole } from './shared/constants/rolesAndPermission.constants'
 
 const env = (process.env.NODE_ENV || 'development') as Env
+
+export const allRoles = ['user', 'admin'] as const
+export type AllRoles = typeof allRoles[number]
 
 export default {
   env: env as Env,
   isProdEnv: env === 'production' || env === 'preprod',
   isTestEnv: env === 'test' || env === 'ci',
-  defaultDatabaseName: 'bangk',
-  allPermissions,
+  defaultDatabaseName: 'mainDb',
   allRoles,
-  defaultPermRestrictionForAll,
-  defaultPermRestrictionForRole,
+  allPermissions: [],
   // SECURITY FEATURES
   enableRateLimiter: true,
   enableUserBan: true,
   enableUserWarnings: true,
   generateSdkConfig: {
     enable: true,
-    sdkNameForRole,
-    notifyOnTelegramPrompt: { botId: 'bot7334406089:AAGCEBGafKfh6LdBikzcqV9hbMR-MBMdktQ', chatId: -4525765992 },
-    npmPublishConfig: { enable: true, access: 'public', packageNamePrefix: '@bangk', npmAccessTokenForPublish: 'np' + 'm_teBRiPfh3dYXHFo' + 'hP4GW0XuWmlyjLf3TcBra' }
+    sdkNameForRole: { user: 'app' },
   }
 } satisfies GreenDotConfig
 
@@ -46,8 +44,8 @@ declare global {
   // green_dot also offers other helpers global types like
   // UserPermissionFields and UserRolePermissionFields
   interface GD {
-    platform: Platforms
-    role: AllRoles | 'public'
-    permissions: AllPermissions
+    platform: 'app'
+    role: AllRoles
+    // permissions: 'perm1'
   }
 }
