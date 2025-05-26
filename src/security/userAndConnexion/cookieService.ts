@@ -1,6 +1,6 @@
 
 import { addMinutes } from 'topkat-utils'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getPluginConfig } from '../../plugins/pluginSystem'
 
 
 export function setRefreshTokenCookie(ctx: Ctx, refreshToken: string) {
@@ -21,7 +21,7 @@ export function setCsrfTokenCookie(ctx: Ctx, csrfToken: string) {
 
 function setCookie(ctx: Ctx, cookieName: string, cookieValue: string, path?: string) {
 
-  const { refreshTokenExpirationMinutes } = getMainConfig()
+  const { refreshTokenExpirationMinutes } = getPluginConfig('GDmanagedLogin')
 
   const expireDate = addMinutes(new Date(), refreshTokenExpirationMinutes + 2, 'date')
   const isProdLike = ctx.env === 'preprod' || ctx.env === 'production'

@@ -16,7 +16,7 @@ export function generateLoginMw() {
                 authenticationMethod: [],
             } satisfies CtxUser
 
-            const ctxUser = await appConfig.connexionFn(defaultCtx, req, res)
+            const ctxUser = await appConfig.onLoginCallback(defaultCtx, req, res)
 
             const ctx = new CtxClass(ctxUser, req, res, (req as any)?.ctx)
 

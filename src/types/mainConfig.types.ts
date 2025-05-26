@@ -4,7 +4,6 @@ import { GenerateSdkConfig } from './generateSdk.types'
 import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
 import { RateLimiterConfig, RateLimiterStr } from '../security/serviceRouteRateLimiter'
 import { AutoIndexFileConfig } from '../services/autoIndex'
-import { AuthenticationMethod } from './core.types'
 
 export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: string }
 
@@ -96,20 +95,7 @@ export type GreenDotConfig = {
 
   /** If you want to define your own custom regexp for email validation. Default at least 1 upperCase, 1 lowerCase, 1 digit => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).*$/. Leng */
   emailRegexp?: RegExp,
-  userLockReasons?: readonly string[] | string[]
-
-  /**  */
-  managedLogin?: {
-    enamble: boolean,
-    /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
-    validationTokenTypes?: readonly string[] | string[]
-    /** Configure the time before the refresh token gets expired. Default: 15 minutes */
-    refreshTokenExpirationMinutes?: number
-    /** Default 11 */
-    saltRoundsForPasswordEncryption?: number
-    /** How much connexion token is allowed per roles, in other words how much simultaneous devices a user is allowed to be connected on. Default: 2 */
-    maxRefreshTokenPerRole?: Record<GD['role'], number>
-  },
+  userLockReasons?: readonly string[] | string[],
 
   // /!\ IMPORTANT, this is in a subObject since banUser and addWarning shoud be provided together
   /** Use this to override ban user and addUserWarning behavior. Warning and ban will happen when rate limiter is triggered or whan you call it manually with ctx.addUserWarning() or ctx.banUser(), so you have full control over it */

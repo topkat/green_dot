@@ -40,7 +40,7 @@ export type PluginUserConfig = {
 }
 
 
-const defaultConfig: PluginUserConfig = {
+export const defaultConfig: PluginUserConfig = {
   enable: true,
   nbAttemptsForAuth: { '2FA': 3, biometricAuthToken: 3, pincode: 3 },
   pinCodeLength: 4,

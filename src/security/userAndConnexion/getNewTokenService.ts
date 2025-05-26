@@ -4,17 +4,17 @@
 
 
 import { db } from '../../db'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getPlugin, getPluginConfig } from '../../plugins/pluginSystem'
 import { svc } from '../../service'
 import { _ } from '../../validator'
-import { secureAuth } from './secureAuth'
 import { parseToken, revokeToken, setConnexionTokens } from './userAuthenticationTokenService'
 import { ensureUserIsNotLocked } from './userLockService'
 
 
 export const getNewTokenService = () => {
 
-    const mainConfig = getMainConfig()
+    const doubleAuth = getPlugin('GDdoubleAuthentication')
+    const { pinCodeLength } = getPluginConfig('GDdoubleAuthentication')
 
     return svc({
         doc: {
@@ -31,7 +31,7 @@ export const getNewTokenService = () => {
         for: ['public', 'ALL'],
         input: {
             deviceId: _.string().required(),
-            pinCode: _.regexp(/^\d+$/).length(mainConfig.secureAuth.pinCodeLength),
+            pinCode: _.regexp(/^\d+$/).length(pinCodeLength),
             biometricAuthToken: _.string(),
         },
         output: _.object({
@@ -71,7 +71,7 @@ export const getNewTokenService = () => {
             if (tokenData.expirationDate !== 'never' && tokenData.expirationDate < Date.now()) {
                 // EXPIRED but in case biometric auth or pincode is set we can still use the refresh token
                 if (pinCode || biometricAuthToken) {
-                    await secureAuth.compareAndAddAttempt(ctx, pinCode ? 'pincode' : 'biometricAuthToken', pinCode || biometricAuthToken, user)
+                    await doubleAuth.compareAndAddAttempt(ctx, pinCode ? 'pincode' : 'biometricAuthToken', pinCode || biometricAuthToken, user)
                 } else {
                     throw ctx.error.tokenExpired({ phase: 'expiredToken' })
                 }
