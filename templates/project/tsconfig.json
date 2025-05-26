@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "Node16",
     "lib": [
       "es2021",
       "dom"
@@ -14,7 +14,7 @@
     "noImplicitAny": false,
     "noImplicitThis": true,
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
@@ -33,6 +33,7 @@
   ],
   "exclude": [
     "./dist/**/*",
+    "./coverage-jest/**/*",
     "./build/**/*",
     "./ios/**/*",
     "./android/**/*",

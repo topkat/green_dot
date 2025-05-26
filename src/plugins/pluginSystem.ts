@@ -18,7 +18,7 @@ export type InstanciatedPlugin = InstanceType<(typeof allPlugins)[PluginNames]>
 const registeredPlugins = [] as InstanciatedPlugin[]
 
 export function registerPlugin(plugin: InstanciatedPlugin) {
-  registeredPlugins.push(plugin)
+  if (plugin.config.enable) registeredPlugins.push(plugin)
 }
 
 export function getPlugin<T extends PluginNames>(name: T) {

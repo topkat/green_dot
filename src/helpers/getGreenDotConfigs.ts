@@ -47,11 +47,13 @@ export async function initClientApp(conf: GreenDotConfig) {
 //  ║╚╝║ ╠══╣  ║  ║╚╗║   ║    ║  ║ ║╚╗║ ╠═    ║  ║ ═╦
 //  ╩  ╩ ╩  ╩ ═╩═ ╩ ╚╩   ╚══╝ ╚══╝ ╩ ╚╩ ╩    ═╩═ ╚══╝
 
-let greenDotConfigsCache: GreenDotConfigWithDefaults & GDpathConfig
+let greenDotConfigsCache: (GreenDotConfigWithDefaults & GDpathConfig)
+let isGreenDotConfigsCacheInitialized = false
 
 export function getMainConfig(silent = false): typeof greenDotConfigsCache {
-  if (!greenDotConfigsCache && !silent) throw error.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
-  return greenDotConfigsCache || ({} as typeof greenDotConfigsCache)
+  if (!isGreenDotConfigsCacheInitialized && !silent) throw error.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!isGreenDotConfigsCacheInitialized) return {} as typeof greenDotConfigsCache
+  else return greenDotConfigsCache
 }
 
 
@@ -65,6 +67,7 @@ export async function initMainConfigCache(resetCache = false) {
     if (!process.env.NODE_ENV) process.env.NODE_ENV = conf.env
     const confWithDefaults = mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf)
     greenDotConfigsCache = computeMainConfigAdditionalFields({ ...confWithDefaults, ...mainConfigPaths })
+    isGreenDotConfigsCacheInitialized = true
   }
 }
 

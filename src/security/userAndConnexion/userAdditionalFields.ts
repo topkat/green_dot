@@ -68,7 +68,9 @@ export function getUserAdditionalFields({ silent = false } = {}) {
   }
 }
 
-const typ = _.object(getUserAdditionalFields({ silent: true }))
+const typ = _.object<
+  ReturnType<typeof getUserAdditionalFields>
+>({} as any)
 
 
 export type UserAdditionalFieldsRead = typeof typ.tsTypeRead

@@ -24,12 +24,16 @@
     "security"
   ],
   "exports": {
-    ".": "./index.js",
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.js"
+    },
     "./types": "./src/core-types.ts",
     "./src/*": "./dist/*.js",
     "./plugins": {
       "types": "./src/plugins/index.ts",
-      "default": "./dist/src/plugins/index.js"
+      "import": "./dist/src/plugins/index.js",
+      "require": "./dist/src/plugins/index.js"
     }
   },
   "scripts": {

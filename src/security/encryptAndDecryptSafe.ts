@@ -1,16 +1,16 @@
 
 import CryptoJS from 'crypto-js'
 import { v4 as uuidv4 } from 'uuid'
-import { env } from '../helpers/getEnv'
 import { error } from '../error'
 
 import { ENV } from 'topkat-utils'
 
 const {
-  KEY_ENV
+  KEY_ENV,
+  NODE_ENV,
 } = ENV()
 
-if (!KEY_ENV && env.env === 'production') throw error.serverError('env.KEY_ENV environment variable is not set')
+if (!KEY_ENV && NODE_ENV === 'production') throw error.serverError('env.KEY_ENV environment variable is not set')
 const secretKey = KEY_ENV || 'MLGWeD3ZKlABbdZ2NumNLOo89RTsJeRO05N06Qs188'
 
 
