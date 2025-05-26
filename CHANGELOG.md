@@ -1,0 +1,44 @@
+### v0.0.42
+- Added modulePathIgnorePatterns to jest configuration to exclude dist directory.
+- Updated package.json to support new plugin export structure for managedLogin.
+- Refactored getNewTokenService import path to align with new plugin structure.
+- Enhanced userAdditionalFields and user authentication services to utilize plugin configurations.
+- Removed deprecated getNewTokenService file to streamline codebase.
+- Improved type definitions in appConfig.types.ts and mainConfig.types.ts to support plugin instantiation.
+
+- Added default configuration handling for managedLogin and secureAuth plugins.
+- Refactored plugin system to return default configurations when plugins are not registered.
+- Updated managedLogin plugin to include new configuration options and validation logic.
+- Modified secureAuth plugin to export its default configuration.
+- Adjusted cookie service and token generation logic to utilize plugin configurations for improved flexibility.
+- Updated package.json to include new plugin export path.
+- Refactored index.ts to streamline user authentication and connection service imports.
+- Simplified type definitions in index.generated.ts for better maintainability.
+- Improved CLI test suite generation logic for better user experience.
+- Enhanced API endpoint role handling in getApiEndpointsPerRolesFromDao.ts.
+- Adjusted token generation logic in userAuthenticationTokenService to include cookie management.
+- Updated userAdditionalFields to support dynamic configuration and improved error handling in userPasswordService.
+- Removed deprecated secureAuth.ts file to clean up the codebase.
+- Updated index.ts to include imports for user management services.
+- Modified generateFilesForCachedDb.ts to improve user permission fields handling.
+- Added UserAdditionalFields for better user data management in userAdditionalFields.ts.
+- Enhanced user lock service to utilize new user lock reasons and permissions.
+- Updated global types to incorporate default permissions and roles for better type safety.
+- Updated userPasswordService to improve password attempt handling and user locking logic.
+- Refactored userAdditionalFields to separate read and write types for better clarity.
+- Modified index.ts to include new imports for user authentication and connection services.
+- Removed deprecated on-login-hook.ts file to streamline project structure.
+- Added new dependencies: crypto-js and jsonwebtoken for improved security.
+- Updated userAdditionalFields to include dynamic configuration from mainConfig.
+- Refactored user authentication token service to utilize maxRefreshTokenPerRole from mainConfig.
+- Enhanced type definitions in mainConfig.types.ts to support new configuration options for user management.
+- Improved user model to incorporate additional fields for better data handling.
+- Added bcrypt package to package.json for password hashing.
+- Updated appConfig.types.ts to rename connexionFn to onLoginCallback for clarity.
+- Modified mainConfig.types.ts to include lockDurationMinutes for user management.
+- Adjusted green_dot.app.config.ts to reflect the new onLoginCallback import and usage.
+- Added CLI helper functions: cliIntro, clearCli, cliBadge.
+- Updated cliGenerateProject to utilize templater for project name input.
+- Refactored app configuration to include dynamic project name in server CLI intro.
+- Removed deprecated index.generated.ts file and adjusted related imports.
+- Cleaned up project configuration files and improved type definitions.
