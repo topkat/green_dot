@@ -24,17 +24,6 @@ export type GreenDotAppConfig = {
     /** If you want to have generated json doc version somewhere on your repo */
     copyDocJsonToFolder?: string
   }
-  apiKeys: {
-    [apiKey in (GD['role'] | (string & {}))]?: {
-      _id?: string
-      token: string
-      role?: GD['role'] // GD['role'] extends 'notImplemented' ? string : GD['role']
-      permissions?: Partial<Record<GD['permissions'], any>>
-      // TODO
-      /** Add IPs to whitelist, all other IPs will be non-authorized to authenticate with apiKey */
-      ipWhitelist?: MaybeArray<string>
-    } // /!\ Used in rest-test package
-  }
   smtp: {
     host?: string
     port?: number
@@ -47,7 +36,7 @@ export type GreenDotAppConfig = {
   /** This is where you connect and give role and permissions to enter your app. This is usually where you read apiKeys or JWT Tokens to ensure users have the right to connect. Note: you can add props to Ctx (Eg: ctx.companyId...) and augment type to reflect your new field. See Ctx augmentation doc (TODO)
   * @example TODO
   */
-  onLoginCallback(defaultCtx: CtxUser, req: Request, res: Response): MaybePromise<CtxUser>
+  onLoginCallback(defaultCtx: CtxUser, req: Request, res: Response)
   publicFolder?: string
   corsOrigin: (RegExp | string)[] | ((origin: string) => boolean)
 

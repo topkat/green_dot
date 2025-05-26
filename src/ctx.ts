@@ -231,7 +231,7 @@ declare global {
         role: Ctx['role']
         permissions: Partial<Ctx['permissions']>
         platform?: Ctx['platform']
-        _user?: Ctx['_user']
+        user?: Ctx['_user']
         authenticationMethod?: Ctx['authenticationMethod']
     }
     interface SystemCtx extends Ctx { isSystem: true, isPublic: false }

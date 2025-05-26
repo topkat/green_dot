@@ -2,12 +2,13 @@
 
 import jwt from 'jsonwebtoken'
 import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { decryptToken, encryptToken } from '../encryptAndDecryptSafe'
+
 import { generateUniqueToken } from '../../services/generateUniqueToken'
 import { db } from '../../db'
 import { ModelTypes } from '../../cache/dbs/index.generated'
 import { setCsrfTokenCookie, setRefreshTokenCookie } from './cookieService'
 import { getPluginConfig } from '../../plugins/pluginSystem'
+import { decryptToken, encryptToken } from '../../security/encryptAndDecryptSafe'
 
 
 

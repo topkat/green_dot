@@ -1,5 +1,6 @@
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { GDplugin } from '../GDplugin'
+import { getOnLogin } from './onLogin'
 
 import { getNewTokenService } from './getNewTokenService'
 
@@ -19,21 +20,20 @@ export type PluginUserConfig = {
   maxRefreshTokenPerRole?: Record<GD['role'], number>
 }
 
-export const defaultConfig: PluginUserConfig = {
+export const defaultConfig = {
   enable: true,
   refreshTokenExpirationMinutes: 15,
   saltRoundsForPasswordEncryption: 11,
   validationTokenTypes: [],
-}
+} satisfies Partial<PluginUserConfig>
 
 /** Managed Login will handle login end to end with SDK integration, password management, cookie and secure connexion via JWT with latest OWASP standards. */
 export class GDmanagedLogin extends GDplugin<Name> {
+
   name = 'GDmanagedLogin' as const
   version = '1.0.0'
 
   config: PluginUserConfig
-
-  serviceToRegister = [getNewTokenService]
 
   constructor(config: PluginUserConfig) {
     super()
@@ -44,6 +44,14 @@ export class GDmanagedLogin extends GDplugin<Name> {
         config.maxRefreshTokenPerRole[role] = 2
       }
     }
+    this.serviceToRegister = [
+      getNewTokenService()
+    ]
+    this.handlers = [{
+      priority: 10,
+      event: 'onLogin',
+      callback: getOnLogin()
+    }]
     this.config = { ...defaultConfig, ...config }
   }
 }

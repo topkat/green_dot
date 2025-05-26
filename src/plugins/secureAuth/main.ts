@@ -6,7 +6,7 @@ import { ModelTypes } from '../../cache/dbs/index.generated'
 import { db } from '../../db'
 import { AsMongooseBody } from '../../databases/mongo/types/mongoDbBaseTypes'
 import { GDplugin } from '../GDplugin'
-
+import { getOnLogin } from './onLogin'
 
 
 export type Name = 'GDdoubleAuthentication'
@@ -40,15 +40,17 @@ export type PluginUserConfig = {
 }
 
 
-export const defaultConfig: PluginUserConfig = {
+export const defaultConfig = {
   enable: true,
   nbAttemptsForAuth: { '2FA': 3, biometricAuthToken: 3, pincode: 3 },
   pinCodeLength: 4,
   resetTimeMinutesForSecureConnexion: 15,
-}
+} satisfies PluginUserConfig
 
 
-
+/** This handles 2FA, pinCode authentication or biometric authentication.
+Request headers must contain at least one of those fields to work: `biometricAuthToken`, `pincode`, `2FA`.
+*/
 export class GDdoubleAuthentication extends GDplugin<Name> {
   name = 'GDdoubleAuthentication' as const
   version = '1.0.0'
@@ -58,6 +60,11 @@ export class GDdoubleAuthentication extends GDplugin<Name> {
   constructor(config: PluginUserConfig) {
     super()
     this.config = { ...defaultConfig, ...config }
+    this.handlers = [{
+      priority: 20,
+      event: 'onLogin',
+      callback: getOnLogin(this)
+    }]
   }
 
   async compareAndAddAttempt(ctx: Ctx, type: AuthenticationMethod, token: string, userOrId: ModelTypes['user'] | string): Promise<void> {

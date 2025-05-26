@@ -7,8 +7,8 @@ import { db } from '../../db'
 import { getPlugin, getPluginConfig } from '../pluginSystem'
 import { svc } from '../../service'
 import { _ } from '../../validator'
-import { parseToken, revokeToken, setConnexionTokens } from '../../security/userAndConnexion/userAuthenticationTokenService'
 import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService'
+import { parseToken, revokeToken, setConnexionTokens } from './userAuthenticationTokenService'
 
 
 export const getNewTokenService = () => {
@@ -70,7 +70,7 @@ export const getNewTokenService = () => {
 
             if (tokenData.expirationDate !== 'never' && tokenData.expirationDate < Date.now()) {
                 // EXPIRED but in case biometric auth or pincode is set we can still use the refresh token
-                if (pinCode || biometricAuthToken) {
+                if ((pinCode || biometricAuthToken) && doubleAuth) {
                     await doubleAuth.compareAndAddAttempt(ctx, pinCode ? 'pincode' : 'biometricAuthToken', pinCode || biometricAuthToken, user)
                 } else {
                     throw ctx.error.tokenExpired({ phase: 'expiredToken' })

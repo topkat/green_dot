@@ -1,10 +1,24 @@
 import { svc } from '../service'
+import { GreenDotAppConfig } from '../types/appConfig.types'
 
 export class GDplugin<Name extends string> {
   protected readonly name: Name
   protected readonly version: string
 
-  serviceToRegister: (() => ReturnType<typeof svc>)[] = []
+  /** Will register those services into the app and SDK and eventually expose configured routes */
+  serviceToRegister: ReturnType<typeof svc>[] = []
+
   onInit?: () => any
 
+  handlers: GDpluginHandlers[] = []
+
 }
+
+export type GDpluginHandlers = {
+  priority?: number
+} & ({
+  event: 'onLogin'
+  callback: GreenDotAppConfig['onLoginCallback']
+})
+
+export type GDpluginHandlerEventNames = GDpluginHandlers['event']

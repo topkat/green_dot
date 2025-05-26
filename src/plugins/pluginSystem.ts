@@ -1,16 +1,22 @@
 
 
+import type { GDpluginHandlerEventNames } from './GDplugin'
 import { Name as ManagedLoginName, GDmanagedLogin, defaultConfig as managedLoginDefaultConfig } from './managedLogin/main'
 import { Name as SecureAuthName, GDdoubleAuthentication, defaultConfig as secureAuthDefaultConfig } from './secureAuth/main'
+import { Name as GDapiKeyAuthenticationName, GDapiKeyAuthentication, defaultConfig as GDapiKeyAuthenticationNameDefaultConfig } from './apiKeys/main'
 
 const allPlugins = {
   GDdoubleAuthentication,
   GDmanagedLogin,
+  GDapiKeyAuthentication,
 } as const satisfies Record<PluginNames, any>
+
+export type PluginNames = ManagedLoginName | SecureAuthName | GDapiKeyAuthenticationName
 
 const defaultConfigs = {
   GDdoubleAuthentication: secureAuthDefaultConfig,
   GDmanagedLogin: managedLoginDefaultConfig,
+  GDapiKeyAuthentication: GDapiKeyAuthenticationNameDefaultConfig,
 } as const satisfies Record<PluginNames, any>
 
 export type InstanciatedPlugin = InstanceType<(typeof allPlugins)[PluginNames]>
@@ -34,5 +40,8 @@ export function getServicesToRegister() {
   return registeredPlugins.map(p => p.serviceToRegister).flat()
 }
 
-export type PluginNames = ManagedLoginName | SecureAuthName
 
+
+export function getPluginHook(eventName: GDpluginHandlerEventNames) {
+  return registeredPlugins.map(p => p.handlers.filter(h => h.event === eventName)).flat()
+}
