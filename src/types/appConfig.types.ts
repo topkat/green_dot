@@ -4,6 +4,7 @@ import { TopkatUtilConfig } from 'topkat-utils/src/config'
 import { ServiceClean } from './services.types'
 import { Request, Response } from 'express'
 import { MaybeArray } from 'typescript-generic-types'
+import { InstanciatedPlugin } from '../plugins/pluginSystem'
 
 //----------------------------------------
 // GENERAL CONFIG
@@ -90,5 +91,18 @@ export type GreenDotAppConfig = {
       /** TODO see */
       teamsWebhookUrl: string
     }
-  }
+  },
+
+  /**
+  @example
+  * ```
+    import {MyPlugin} from 'green_dot/plugins'
+    const greenDotConfig = {
+        ...
+        plugins: [new MyPlugin({ enable: true, ...pluginConfig })]
+        ...
+    }
+  * ```
+   */
+  plugins?: InstanciatedPlugin[]
 }

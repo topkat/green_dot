@@ -4,11 +4,11 @@
 
 
 import { db } from '../../db'
-import { getPlugin, getPluginConfig } from '../../plugins/pluginSystem'
+import { getPlugin, getPluginConfig } from '../pluginSystem'
 import { svc } from '../../service'
 import { _ } from '../../validator'
-import { parseToken, revokeToken, setConnexionTokens } from './userAuthenticationTokenService'
-import { ensureUserIsNotLocked } from './userLockService'
+import { parseToken, revokeToken, setConnexionTokens } from '../../security/userAndConnexion/userAuthenticationTokenService'
+import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService'
 
 
 export const getNewTokenService = () => {

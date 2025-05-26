@@ -1,4 +1,5 @@
 
+
 import { Name as ManagedLoginName, GDmanagedLogin, defaultConfig as managedLoginDefaultConfig } from './managedLogin/main'
 import { Name as SecureAuthName, GDdoubleAuthentication, defaultConfig as secureAuthDefaultConfig } from './secureAuth/main'
 
@@ -12,7 +13,7 @@ const defaultConfigs = {
   GDmanagedLogin: managedLoginDefaultConfig,
 } as const satisfies Record<PluginNames, any>
 
-type InstanciatedPlugin = InstanceType<(typeof allPlugins)[PluginNames]>
+export type InstanciatedPlugin = InstanceType<(typeof allPlugins)[PluginNames]>
 
 const registeredPlugins = [] as InstanciatedPlugin[]
 
@@ -29,9 +30,9 @@ export function getPluginConfig<T extends PluginNames>(name: T) {
   return (registeredPlugins.find(p => p.name === name)?.config || defaultConfigs[name]) as InstanceType<(typeof allPlugins)[T]>['config']
 }
 
+export function getServicesToRegister() {
+  return registeredPlugins.map(p => p.serviceToRegister).flat()
+}
+
 export type PluginNames = ManagedLoginName | SecureAuthName
 
-export class GDplugin<Name extends string> {
-  protected readonly name: Name
-  protected readonly version: string
-}

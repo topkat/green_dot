@@ -2,6 +2,7 @@
 import { _ } from 'good-cop'
 import { encryptPassword } from './userPasswordService'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getPluginConfig } from '../../plugins/pluginSystem'
 
 // at least 1 upperCase, 1 lowerCase, 1 digit
 const emailRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/
@@ -15,6 +16,8 @@ const emailTypes = ['forgotPassword', 'emailValidation', 'changeEmail'] as const
 export function getUserAdditionalFields({ silent = false } = {}) {
 
   const mainConfig = getMainConfig(silent)
+  const { validationTokenTypes } = getPluginConfig('GDmanagedLogin')
+  const { pinCodeLength } = getPluginConfig('GDdoubleAuthentication')
 
   return {
     phonePrefix: _.regexp(/^\+\d+$/),
@@ -36,7 +39,7 @@ export function getUserAdditionalFields({ silent = false } = {}) {
       validUntil: _.date(),
       creationDate: _.date(),
       value: _.string(),
-      type: _.enum([...(mainConfig?.validationTokenTypes || []), ...emailTypes]),
+      type: _.enum([...(validationTokenTypes || []), ...emailTypes]),
     }),
     /** Those are used to request an access token. Access token changes every N minutes, while refresh tokens last for a session */
     refreshTokens: [_.string()],
@@ -49,8 +52,8 @@ export function getUserAdditionalFields({ silent = false } = {}) {
     lockUntil: _.date(),
     // PIN CODE
     pinCode: _.password({
-      minLength: mainConfig?.secureAuth?.pinCodeLength || 4,
-      maxLength: mainConfig?.secureAuth?.pinCodeLength || 4, // FIX bug in seed when creating bcrypt password
+      minLength: pinCodeLength,
+      maxLength: pinCodeLength, // FIX bug in seed when creating bcrypt password
       regexp: /^\d+$/,
       encrypt: async password => await encryptPassword(password),
     }),

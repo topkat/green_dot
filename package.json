@@ -27,7 +27,10 @@
     ".": "./index.js",
     "./types": "./src/core-types.ts",
     "./src/*": "./dist/*.js",
-    "./plugins": "./dist/src/plugins/index.js"
+    "./plugins": {
+      "types": "./src/plugins/index.ts",
+      "default": "./dist/src/plugins/index.js"
+    }
   },
   "scripts": {
     "clean": "rm -rf ./dist || true && tscp && tsc && node ./dist/src/cli/cliEntryPoint.js clean",

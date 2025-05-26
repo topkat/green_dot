@@ -1,5 +1,7 @@
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { GDplugin } from '../pluginSystem'
+import { GDplugin } from '../GDplugin'
+
+import { getNewTokenService } from './getNewTokenService'
 
 
 export type Name = 'GDmanagedLogin'
@@ -21,14 +23,17 @@ export const defaultConfig: PluginUserConfig = {
   enable: true,
   refreshTokenExpirationMinutes: 15,
   saltRoundsForPasswordEncryption: 11,
+  validationTokenTypes: [],
 }
 
-
+/** Managed Login will handle login end to end with SDK integration, password management, cookie and secure connexion via JWT with latest OWASP standards. */
 export class GDmanagedLogin extends GDplugin<Name> {
   name = 'GDmanagedLogin' as const
   version = '1.0.0'
 
   config: PluginUserConfig
+
+  serviceToRegister = [getNewTokenService]
 
   constructor(config: PluginUserConfig) {
     super()

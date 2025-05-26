@@ -8,6 +8,7 @@ import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } fr
 import { error } from '../error'
 import { initProjectAndDaosCache } from './getProjectModelsAndDaos'
 import { parentProcessExitCodes } from '../constants'
+import { registerPlugin } from '../plugins/pluginSystem'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
@@ -140,6 +141,12 @@ async function initAppConfigCache(resetCache = false) {
       for (const appConfigPath of appConfigPaths) {
         pathNameErrExtraInfos = appConfigPath.path
         const conf = (await safeImport(appConfigPath.path))?.default as GreenDotAppConfig
+        if (conf.plugins && conf.plugins.length) {
+          for (const p of conf.plugins) {
+            p?.onInit()
+            registerPlugin(p)
+          }
+        }
         greenDotAppConfigsCache.push({ ...conf, ...appConfigPath })
       }
     } catch (err) {

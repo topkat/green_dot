@@ -11,6 +11,7 @@ const config: Config = {
     coverageDirectory: 'coverage',
     coverageProvider: 'v8',
     testPathIgnorePatterns: ['/dist/'],
+    modulePathIgnorePatterns: ['<rootDir>/dist/'],
     transform: {
         '^.+\\.tsx?$': 'ts-jest',
         '^.+\\.js$': './node_modules/babel-jest',

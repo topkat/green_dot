@@ -50,8 +50,6 @@ describe('combineAndParseMaskHooks', () => {
         const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
         const { validUntil } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne') as any
 
-        console.log(`validUntil`, validUntil)
-
         C.info('validUntil should be set so coming from CACHE')
         expect(validUntil).toBeDefined()
     })

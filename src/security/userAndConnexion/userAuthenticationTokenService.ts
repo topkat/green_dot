@@ -7,6 +7,7 @@ import { generateUniqueToken } from '../../services/generateUniqueToken'
 import { db } from '../../db'
 import { ModelTypes } from '../../cache/dbs/index.generated'
 import { setCsrfTokenCookie, setRefreshTokenCookie } from './cookieService'
+import { getPluginConfig } from '../../plugins/pluginSystem'
 
 
 
@@ -114,7 +115,7 @@ export async function setConnexionTokens(
     const previousRefreshTokenList = user.refreshTokens
     const previousAccessTokenList = user.accessTokens
 
-    const { maxRefreshTokenPerRole } = getMainConfig()
+    const { maxRefreshTokenPerRole } = getPluginConfig('GDmanagedLogin')
 
     const { role } = tokenData
     // GENERATE TOKENS

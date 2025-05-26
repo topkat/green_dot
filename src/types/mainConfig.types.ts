@@ -4,6 +4,7 @@ import { GenerateSdkConfig } from './generateSdk.types'
 import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
 import { RateLimiterConfig, RateLimiterStr } from '../security/serviceRouteRateLimiter'
 import { AutoIndexFileConfig } from '../services/autoIndex'
+import { InstanciatedPlugin } from '../plugins/pluginSystem'
 
 export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: string }
 
