@@ -19,7 +19,7 @@ export async function generateSwaggerDoc(
 
   if (!generateSdkConfig) return C.error(false, 'No SDK config found')
 
-  const { sdkNameForRole } = generateSdkConfig
+  const { sdkNameForRole } = generateSdkConfig as { sdkNameForRole: Record<string, string> }
   const { name: appName, swaggerDoc, port, folderPath } = await getActiveAppConfig()
   const { copyDocJsonToFolder, descriptionText, enable, serversUrl } = swaggerDoc
 

@@ -50,7 +50,7 @@ let greenDotConfigsCache: GreenDotConfigWithDefaults & GDpathConfig
 
 export function getMainConfig(silent = false): typeof greenDotConfigsCache {
   if (!greenDotConfigsCache && !silent) throw error.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
-  return greenDotConfigsCache
+  return greenDotConfigsCache || ({} as typeof greenDotConfigsCache)
 }
 
 

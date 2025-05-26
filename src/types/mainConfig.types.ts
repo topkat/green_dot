@@ -93,22 +93,23 @@ export type GreenDotConfig = {
   /** Green dot will expose a ensureUserIsNotLocked() and lockUserAndThrow() so you can lock the user if needed. This configure the time  */
   lockDurationMinutes?: number
 
-  /** How much connexion token is allowed per roles, in other words how much simultaneous devices a user is allowed to be connected on. Default: 2 */
-  maxRefreshTokenPerRole?: Record<GD['role'], number>
+
   /** If you want to define your own custom regexp for email validation. Default at least 1 upperCase, 1 lowerCase, 1 digit => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).*$/. Leng */
   emailRegexp?: RegExp,
-  /** Default 11 */
-  saltRoundsForPasswordEncryption?: number
-  pinCodeLength?: number
   userLockReasons?: readonly string[] | string[]
-  /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
-  validationTokenTypes?: readonly string[] | string[]
 
-
-  /** Secure connexion is Double authentication via sms, fingerprint or pinCode. This will configure nb attemps before locking for a configurable time period. Default: 3 */
-  nbAttemptsForAuth?: Partial<Record<AuthenticationMethod, number>>
-  /** Secure connexion is Double authentication via sms, fingerprint or pinCode. This will configure the time before unlocking after "nbAttemptsForAuth" fails. Default: 15 */
-  resetTimeMinutesForSecureConnexion?: number
+  /**  */
+  managedLogin?: {
+    enamble: boolean,
+    /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
+    validationTokenTypes?: readonly string[] | string[]
+    /** Configure the time before the refresh token gets expired. Default: 15 minutes */
+    refreshTokenExpirationMinutes?: number
+    /** Default 11 */
+    saltRoundsForPasswordEncryption?: number
+    /** How much connexion token is allowed per roles, in other words how much simultaneous devices a user is allowed to be connected on. Default: 2 */
+    maxRefreshTokenPerRole?: Record<GD['role'], number>
+  },
 
   // /!\ IMPORTANT, this is in a subObject since banUser and addWarning shoud be provided together
   /** Use this to override ban user and addUserWarning behavior. Warning and ban will happen when rate limiter is triggered or whan you call it manually with ctx.addUserWarning() or ctx.banUser(), so you have full control over it */

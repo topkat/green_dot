@@ -31,7 +31,7 @@ export async function generateMainBackendFiles(
     const serviceRouteConfig = {} as RouteFromSevicesConfigForGenerateSdk
 
     const { allDaoRoutes } = await getDaoRouteDescriptionFromDaoConfigs()
-    allRoutes.push(...Object.values(allDaoRoutes).flat())
+    allRoutes.push(...allDaoRoutes)
 
     const mainConfig = getMainConfig()
     const allServicesFromApp = await getActiveAppServices(appConfig)

@@ -6,6 +6,7 @@ import { decryptToken, encryptToken } from '../encryptAndDecryptSafe'
 import { generateUniqueToken } from '../../services/generateUniqueToken'
 import { db } from '../../db'
 import { ModelTypes } from '../../cache/dbs/index.generated'
+import { setCsrfTokenCookie, setRefreshTokenCookie } from './cookieService'
 
 
 
@@ -100,14 +101,18 @@ export async function parseToken(
  * * GENERATE TOKENS
  * * DELETE PREVIOUS TOKEN ASSOCIATED WITH THIS DEVICEID
  * * CREATE AND UPDATE USER REFRESH TOKEN AND ACCESS TOKEN LIST
+ * * PUT TOKEN IN COOKIE
  */
-export async function generateTokens(
+export async function setConnexionTokens(
     ctx: Ctx,
     deviceId: string,
-    previousRefreshTokenList: string[] = [],
-    previousAccessTokenList: string[] = [],
     tokenData: JWTdataWrite,
 ) {
+
+    const user = await ctx.getUser()
+
+    const previousRefreshTokenList = user.refreshTokens
+    const previousAccessTokenList = user.accessTokens
 
     const { maxRefreshTokenPerRole } = getMainConfig()
 
@@ -129,6 +134,9 @@ export async function generateTokens(
         biometricAuthToken,
     })
 
+    setRefreshTokenCookie(ctx, refreshToken)
+    setCsrfTokenCookie(ctx, csrfToken)
+
     return {
         refreshToken,
         accessToken,
@@ -142,7 +150,7 @@ function getTokenListWithoutPrevious(
     ctx: Ctx,
     previousTokenList: Array<string>,
     deviceId: string,
-    role: Parameters<typeof generateTokens>[4]['role'],
+    role: Parameters<typeof setConnexionTokens>[2]['role'],
     maxTokenListLength: number
 ) {
 

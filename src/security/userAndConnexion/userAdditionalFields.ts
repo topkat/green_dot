@@ -12,9 +12,9 @@ export type UserLockReasonsDefault = typeof userLockReasons[number]
 const emailTypes = ['forgotPassword', 'emailValidation', 'changeEmail'] as const
 
 
-export function getUserAdditionalFields() {
+export function getUserAdditionalFields({ silent = false } = {}) {
 
-  const mainConfig = getMainConfig()
+  const mainConfig = getMainConfig(silent)
 
   return {
     phonePrefix: _.regexp(/^\+\d+$/),
@@ -28,7 +28,7 @@ export function getUserAdditionalFields() {
     password: _.password({
       minLength: 8,
       maxLength: 99, // FIX bug in seed when creating bcrypt password
-      regexp: mainConfig.emailRegexp || emailRegexp,
+      regexp: mainConfig?.emailRegexp || emailRegexp,
       encrypt: async password => await encryptPassword(password),
     }),
     /** Used to validate phone or email */
@@ -36,7 +36,7 @@ export function getUserAdditionalFields() {
       validUntil: _.date(),
       creationDate: _.date(),
       value: _.string(),
-      type: _.enum([...(mainConfig.validationTokenTypes || []), ...emailTypes]),
+      type: _.enum([...(mainConfig?.validationTokenTypes || []), ...emailTypes]),
     }),
     /** Those are used to request an access token. Access token changes every N minutes, while refresh tokens last for a session */
     refreshTokens: [_.string()],
@@ -45,12 +45,12 @@ export function getUserAdditionalFields() {
     lastPasswordCompareTime: _.date().default(new Date()),
     passwordRetrialNb: _.number().default(0),
     /** Ability to lock a user for a time after nb of password retrial */
-    lockedReason: _.enum([...(mainConfig.userLockReasons || []), ...userLockReasons] as const),
+    lockedReason: _.enum([...(mainConfig?.userLockReasons || []), ...userLockReasons] as const),
     lockUntil: _.date(),
     // PIN CODE
     pinCode: _.password({
-      minLength: mainConfig.pinCodeLength || 4,
-      maxLength: mainConfig.pinCodeLength || 4, // FIX bug in seed when creating bcrypt password
+      minLength: mainConfig?.secureAuth?.pinCodeLength || 4,
+      maxLength: mainConfig?.secureAuth?.pinCodeLength || 4, // FIX bug in seed when creating bcrypt password
       regexp: /^\d+$/,
       encrypt: async password => await encryptPassword(password),
     }),
@@ -65,7 +65,7 @@ export function getUserAdditionalFields() {
   }
 }
 
-const typ = _.object(getUserAdditionalFields())
+const typ = _.object(getUserAdditionalFields({ silent: true }))
 
 
 export type UserAdditionalFieldsRead = typeof typ.tsTypeRead

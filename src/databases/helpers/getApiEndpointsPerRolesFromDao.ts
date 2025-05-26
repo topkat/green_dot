@@ -27,7 +27,7 @@ export function getApiEndpointsPerRolesFromDao(
       const { expose, for: forClauses } = exposeConf
 
       for (const forClause of forClauses) {
-        if (role === forClause.role || forClause.role === 'public') {
+        if (role === forClause.role || (forClause.role as any) === 'public') {
           pushIfNotExist(genericMethodsPerRole[role], expose)
           for (const exps of expose) {
             pushIfNotExist(fullMethodsPerRole[role], daoMethodsGenericToDaoMethodFull[exps])

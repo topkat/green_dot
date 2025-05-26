@@ -26,7 +26,8 @@
   "exports": {
     ".": "./index.js",
     "./types": "./src/core-types.ts",
-    "./src/*": "./dist/*.js"
+    "./src/*": "./dist/*.js",
+    "./plugins": "./dist/src/plugins/index.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist || true && tscp && tsc && node ./dist/src/cli/cliEntryPoint.js clean",

@@ -21,6 +21,7 @@ export async function comparePasswordAddAttemptAndLockIfNecessary(
   conf: {
     loginRetrialCountResetTimeMinutes?: number
     maxPasswordRetry?: number
+    throwIfError?: boolean
   } = {}
 ): Promise<boolean> {
 
@@ -62,6 +63,8 @@ export async function comparePasswordAddAttemptAndLockIfNecessary(
         })
       }
     }
+
+    if (typeof conf.throwIfError === 'undefined' || conf.throwIfError === true) throw ctx.error.wrongPassword({ passwordRetrialNb: user.passwordRetrialNb })
 
     return false
   }

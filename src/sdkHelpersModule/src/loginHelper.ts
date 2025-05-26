@@ -90,7 +90,7 @@ export async function ensureAccessToken() {
 let getNewTokenTo
 /** This will get a new token periodically */
 function getNewTokenInterval() {
-  const tokenExirationMinutes = getBackendConfig().refreshTokenExpirationMinutes || 30
+  const tokenExirationMinutes = getBackendConfig().refreshTokenExpirationMinutes || 15
   clearTimeout(getNewTokenTo)
   getNewTokenTo = setTimeout(async () => {
     if (isBackendInitialized()) getNewToken() // includes setRefreshToken that calls again refreshTokenInterval

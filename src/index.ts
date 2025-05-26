@@ -62,3 +62,5 @@ export { addUserWarning, banUser } from './security/userAndConnexion/banAndAddUs
 export * from './security/userAndConnexion/userPasswordService'
 export * from './security/userAndConnexion/userLockService'
 export * from './security/userAndConnexion/userAuthenticationTokenService'
+export { setCsrfTokenCookie, setRefreshTokenCookie } from './security/userAndConnexion/cookieService'
+export { getNewTokenService } from './security/userAndConnexion/getNewTokenService'

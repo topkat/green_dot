@@ -11,11 +11,11 @@ export async function cliGenerateTestSuite(fileName: string, filePath: string) {
 
   const sdkNb = Object.keys(sdkNameForRole).length
 
-  const sdkToImport = sdkNb === 1 ? Object.values(sdkNameForRole)[0] : await luigi.askSelection(
+  const sdkToImport = (sdkNb === 1 ? Object.values(sdkNameForRole)[0] : await luigi.askSelection(
     `Which SDK should we import for testing ?\n${C.dim(`You can test with the SDK to benefit from types and autocomplete in your tests but you can always test with route and method as well`)}`,
     Object.values(sdkNameForRole),
     { multi: sdkNb > 1 }
-  )
+  )) as string[]
 
   const testSuiteTemplate = `
 /* SYNOPSIS

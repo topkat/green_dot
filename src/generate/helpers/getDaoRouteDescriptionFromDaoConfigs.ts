@@ -32,7 +32,6 @@ export async function getDaoRouteDescriptionFromDaoConfigs() {
 
           const route = `/${dbId}/${modelName}/${fnName}`
           const platform = sdkNameForRole[role]
-          allDaoRoutes[role] ??= []
           daoRoutesConfig[platform] ??= {}
 
           pushIfNotExist(allDaoRoutes, route)
