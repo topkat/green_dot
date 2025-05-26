@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import { db } from '../../db'
 import { ModelTypes } from '../../cache/dbs/index.generated'
 
-import { lockUserAndThrow } from './userLockService'
+import { lockUserAndThrow } from '../../security/userAndConnexion/userLockService'
 
 import { getId, timeout, random } from 'topkat-utils'
 import { getPluginConfig } from '../../plugins/pluginSystem'

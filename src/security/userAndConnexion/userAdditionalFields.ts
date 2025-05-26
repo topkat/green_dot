@@ -1,6 +1,6 @@
 
 import { _ } from 'good-cop'
-import { encryptPassword } from './userPasswordService'
+import { encryptPassword } from '../../plugins/managedLogin/userPasswordService' // TODO this don't belong here plugin code shouldn't be imported in main app
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { getPluginConfig } from '../../plugins/pluginSystem'
 

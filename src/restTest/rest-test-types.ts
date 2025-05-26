@@ -1,4 +1,4 @@
-import { GreenDotAppConfig } from '../types/appConfig.types'
+import { GDapiKey } from '../plugins'
 
 export type RestMethod = 'POST' | 'GET' | 'PATCH' | 'DELETE'
 
@@ -113,7 +113,7 @@ export interface GreenDotApiTestsConfig<
     displayIntroTimeout: number
     mode: 'jsonRpc' | 'rest'
     disableSolo?: boolean
-    apiKeys: GreenDotAppConfig['apiKeys']
+    apiKeys?: GDapiKey
     servers: {
         default: string // should be present, main server
         [serverNameShortcut: string]: string
