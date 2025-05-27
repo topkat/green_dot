@@ -7,9 +7,9 @@ import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockS
 import { db } from '../../db'
 import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
 import { PluginUserConfig } from './main'
-import { sendValidationEmail } from './apiServices/getSendValidationEmail'
 import { JWTdataWrite, setConnexionTokens } from './userAuthenticationTokenService'
 import { applyMaskOnObjectForUser } from '../../databases/mongo/services/maskService'
+import { credentialManagementMailing } from './credentialManagementMailing'
 
 
 
@@ -24,10 +24,11 @@ export async function userLogin(
   deviceType: 'mobile' | 'web',
   pluginConfig: PluginUserConfig,
   userOrId?: ModelTypes['user'] | string,
-  password?: string
+  password?: string,
+  additionalParamsIfSendValidationEmail?: Record<string, any>
 ) {
 
-  const { loginErrorIfEmailIsNotValidated, sendEmailToValidateEmailAddress } = pluginConfig
+  const { loginErrorIfEmailIsNotValidated } = pluginConfig
 
   const user = typeof userOrId === 'string' ? await db.user.getById(ctx.GM, userOrId) : userOrId
 
@@ -41,7 +42,7 @@ export async function userLogin(
 
   // EMAIL VERIFIED CHECK
   if (!user.isEmailVerified && loginErrorIfEmailIsNotValidated === true) {
-    await sendValidationEmail(sendEmailToValidateEmailAddress, ctx, user, {})
+    await credentialManagementMailing(ctx, user, getId(user), 'emailValidation', additionalParamsIfSendValidationEmail, pluginConfig)
     return {
       isEmailVerified: false,
       userEmail: user.email,

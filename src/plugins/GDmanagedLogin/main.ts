@@ -5,11 +5,13 @@ import { InferTypeRead, InferTypeWrite, _ } from 'good-cop'
 import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
 import { getCheckTokenIsValidService } from './apiServices/getCheckTokenIsValidService'
 import { ModelTypes } from '../../cache/dbs/index.generated'
-import { emailTypes } from './constants'
+import { EmailTypes, emailTypes } from './constants'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { getSendValidationEmail } from './apiServices/getSendValidationEmail'
 import { getValidateTokenAndLoginService } from './apiServices/getValidateTokenAndLoginService'
 import { getLogoutService } from './apiServices/getLogoutService'
+import { getUpdateNewPasswordWithOldPassword } from './apiServices/getUpdateNewPasswordWithOldPassword'
+import { getCredentialManagementServices } from './apiServices/getCredentialManagementServices'
+import { RegisterErrorType } from '../../error'
 
 
 export type Name = 'GDmanagedLogin'
@@ -17,19 +19,39 @@ export type Name = 'GDmanagedLogin'
 //  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
 //  ║    ║  ║ ║╚╗║ ╠═    ║  ║ ═╦
 //  ╚══╝ ╚══╝ ╩ ╚╩ ╩    ═╩═ ╚══╝
+
+export type GDmanagedLoginLoginConfig = {
+  emailLogin: boolean
+  loginOnValidateToken?: boolean
+  additionalChecks?(ctx: Ctx, user: ModelTypes['user'])
+  onLogin?(ctx: Ctx, requestedRole: GD['role'], user: ModelTypes['user'])
+}
+
 export type PluginUserConfig = {
   enable: boolean,
 
-  /** This function should take care of sending the validation email */
-  sendEmailToValidateEmailAddress: (
+  sendEmail(
     ctx: Ctx,
+    emailType: EmailTypes,
+    encodedToken: string,
     user: ModelTypes['user'],
     /** Thoses can be optionnaly passed in frontend in the SDK and will be forwarded to the function  */
-    additionalParams: Record<string, any>
-  ) => any
-  mainRoleForConnexion: GD['role']
+    additionalParams: Record<string, any>,
+    /** In case emailType is changeEmail, this is the updatedEmail */
+    updatedEmail?: string
+  ): any
+
+  sendPasswordUpdatedMailConfirmation: (ctx: Ctx, user: ModelTypes['user']) => any
+
+  /** This is the role that will be used upon subscription */
+  // defaultRoleForConnexion: GD['role']
+
+  loginConfigPerRole: Partial<Record<GD['role'], GDmanagedLoginLoginConfig>>
+
   // OPTIONAL TYPES
 
+  /** Default 30 minutes */
+  emailTokenTimeValidMinutes?: number
   /** Default: true */
   loginErrorIfEmailIsNotValidated?: boolean
   /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
@@ -49,6 +71,7 @@ export type PluginUserConfig = {
 export const defaultConfig = {
   enable: true,
   refreshTokenExpirationMinutes: 15,
+  emailTokenTimeValidMinutes: 30,
   validationTokenTypes: [],
   // at least 1 upperCase, 1 lowerCase, 1 digit
   passwordRegexp: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/,
@@ -85,10 +108,11 @@ export class GDmanagedLogin extends GDplugin<Name> {
     // SERVICES
     this.serviceToRegister = {
       ...getNewTokenService(),
-      ...getCheckTokenIsValidService(this.config.sendEmailToValidateEmailAddress),
-      ...getSendValidationEmail(this.config.sendEmailToValidateEmailAddress),
+      ...getCheckTokenIsValidService(this.config),
       ...getValidateTokenAndLoginService(this.config),
       ...getLogoutService(),
+      ...getUpdateNewPasswordWithOldPassword(this.config),
+      ...getCredentialManagementServices(this.config)
     }
     // HANDLERS
     this.handlers = [{
@@ -97,6 +121,13 @@ export class GDmanagedLogin extends GDplugin<Name> {
       callback: getOnLogin()
     }]
     //------------
+  }
+
+  errors = {
+    emailNotSet: { code: 400 },
+    newEmailSameAsOld: { code: 409 },
+    newPasswordSameAsOld: { code: 409 },
+    wrongNewEmail: { code: 403 },
   }
 
   //  ╦  ╦ ╔═══ ╔══╗ ╔══╗   ╔══╗ ╔═╗  ╔═╗  ═╦═ ══╦══ ═╦═ ╔══╗ ╦╗ ╔ ╔══╗ ╦      ╔══╗ ═╦═ ╔══╗ ╦    ╔═╗  ╔═══
@@ -136,8 +167,14 @@ export class GDmanagedLogin extends GDplugin<Name> {
   }
 }
 
-
+// DECLARE ADDITIONAL USER FIELDS TYPE
 declare module '../../security/userAndConnexion/userAdditionalFields' {
   interface UserAdditionalFieldsRead extends InferTypeRead<ReturnType<GDmanagedLogin['addUserAdditionalFields']>> { }
   interface UserAdditionalFieldsWrite extends InferTypeWrite<ReturnType<GDmanagedLogin['addUserAdditionalFields']>> { }
 }
+
+// DECLARE ERROR TYPE
+declare global {
+  interface GreenDotErrors extends RegisterErrorType<GDmanagedLogin['errors']> { }
+}
+

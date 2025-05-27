@@ -6,7 +6,7 @@ import { PluginUserConfig } from '../main'
 
 
 export function getCheckTokenIsValidService(
-  sendEmail: PluginUserConfig['sendEmailToValidateEmailAddress'],
+  pluginConfig: PluginUserConfig,
 ) {
   return {
     checkTokenIsValid: svc({
@@ -18,7 +18,7 @@ export function getCheckTokenIsValidService(
       output: _.object({ isValidToken: _.boolean() }),
       rateLimiter: checkOrChangeEmailOrPasswordRateLimiter,
       async main(ctx, { token, emailType }) {
-        await decryptValidationToken(ctx, token, emailType, sendEmail, true)
+        await decryptValidationToken(ctx, token, emailType, pluginConfig, true)
         return { isValidToken: true }
       },
     })

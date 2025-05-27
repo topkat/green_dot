@@ -5,15 +5,15 @@
 
 import { db } from '../../db'
 import { decryptToken } from '../../security/encryptAndDecryptSafe'
-import { sendValidationEmail } from './apiServices/getSendValidationEmail'
 import { EmailTypes } from './constants'
+import { credentialManagementMailing } from './credentialManagementMailing'
 import { PluginUserConfig } from './main'
 
 
 
 export async function decryptValidationToken(
   ctx, token: string, emailType: EmailTypes,
-  sendEmail: PluginUserConfig['sendEmailToValidateEmailAddress'],
+  pluginConfig: PluginUserConfig,
   isForVerification = false
 ) {
 
@@ -42,7 +42,7 @@ export async function decryptValidationToken(
       const allTokensTypeExceptEmailValidation = user.validationTokens.map(t => { if (t.type !== 'emailValidation') return t })
       await db.user.update(ctx.GM, userId, { validationTokens: allTokensTypeExceptEmailValidation })
 
-      await sendValidationEmail(sendEmail, ctx.GM, user, { userId })
+      await credentialManagementMailing(ctx, user, userId, 'emailValidation', {}, pluginConfig)
     }
     throw ctx.error.tokenExpired({ token, email: user.email, _id: userId })
   }

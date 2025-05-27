@@ -1,16 +1,15 @@
 
 import { sendErrorViaTelegram } from './services/sendViaTelegram'
 import { sendErrorOnTeams } from './services/sendViaTeams'
-import { HasKeys } from 'typescript-generic-types'
 
-import { isset, DescriptiveError, ErrorOptions, C, createProxy } from 'topkat-utils'
+import { DescriptiveError, ErrorOptions, C, createProxy } from 'topkat-utils'
 
 
 //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╔══╗ ╦  ╦ ╦╗ ╔ ╔══╗ ══╦══ ═╦═ ╔══╗ ╦╗ ╔ ╔═══
 //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝   ╠═   ║  ║ ║╚╗║ ║      ║    ║  ║  ║ ║╚╗║ ╚══╗
 //  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚    ╩    ╚══╝ ╩ ╚╩ ╚══╝   ╩   ═╩═ ╚══╝ ╩ ╚╩ ═══╝
 
-type ErrorObject = Record<string, ErrorOptions>
+export type ErrorObject = Record<string, ErrorOptions>
 
 const defaultErrors = {} as ErrorObject
 const defaultErrorsWithCustomMsg = {} as ErrorObject
@@ -106,6 +105,7 @@ const coreErrors = registerErrors({
     authenticationFailed: { code: 401 },
     wrongPassword: { code: 401 },
     wrongToken: { code: 401 },
+    userLocked: { code: 401 },
     noAccessToken: { code: 401 },
     userDoNotHaveThePermission: { code: 403 },
     tokenExpired: { code: 401 },
@@ -130,9 +130,11 @@ export type RegisterErrorType<T extends Record<string, any>> = Record<keyof T, (
 type CoreErrors = RegisterErrorType<typeof coreErrors>
 type CoreErrorWithCustomMessage = Record<keyof typeof serverErrors, (ctx: Ctx | null, message: string, extraInfosOrOptions?: ErrorOptions) => void>
 
-export type ThrowErrorTypeSafe = HasKeys<Omit<GreenDotErrors, keyof CoreErrors | keyof CoreErrorWithCustomMessage>> extends true // just in case environement is not application
-    ? { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }
-    : Record<string, (...params: [(string | ObjectGeneric)?, ObjectGeneric?]) => any>
+export type ThrowErrorTypeSafe = { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }
+
+// HasKeys<Omit<GreenDotErrors, keyof CoreErrors | keyof CoreErrorWithCustomMessage>> extends true // just in case environement is not application
+//     ? { [K in keyof GreenDotErrors]: (...params: RemoveFirstElementFromTuple<Parameters<GreenDotErrors[K]>>) => void }
+// : Record<string, (...params: [(string | ObjectGeneric)?, ObjectGeneric?]) => any>
 
 declare global {
     interface GreenDotErrors extends CoreErrors { }

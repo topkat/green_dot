@@ -1,3 +1,4 @@
+import { ErrorObject } from '../error'
 import { svc } from '../service'
 import { GreenDotAppConfig } from '../types/appConfig.types'
 import { GenericDef } from 'good-cop'
@@ -14,6 +15,16 @@ export class GDplugin<Name extends string> {
   handlers: GDpluginHandlers[] = []
 
   addUserAdditionalFields?(): Record<string, GenericDef | GenericDef[]>
+
+  /** Use this to register new errors to use via ctx.error.myCustomError
+  * * Don't forget to also put that code at the end of your plugin
+  * ```
+  * declare global {
+  *   interface GreenDotErrors extends RegisterErrorType<GDmanagedLogin['errors']> { }
+  * }
+  * ```
+  */
+  errors?: ErrorObject
 
 }
 

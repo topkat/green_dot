@@ -26,6 +26,19 @@ export async function ensureUserIsNotLocked(ctx: Ctx, userOrId: ModelTypes['user
       throw ctx.error.userLocked({ lockUntil: user.lockUntil, lockedReason: user.lockedReason, userId: getId(user) })
     }
   }
+
+  // May be blacklisted because rateLimiter doesn't always have access to user
+  const userInBlacklist = await db.GD_serverBlackList.getOne(ctx.GM, { discriminator: getId(user) })
+
+  if (userInBlacklist?.lockUntil) {
+    if (new Date(userInBlacklist.lockUntil) > new Date()) {
+      throw ctx.error.userLocked({ lockUntil: userInBlacklist.lockUntil })
+    } else {
+      await db.GD_serverBlackList.update(ctx.GM, getId(userInBlacklist), {
+        lockUntil: null
+      })
+    }
+  }
 }
 
 
