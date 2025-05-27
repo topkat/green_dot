@@ -32,10 +32,6 @@ declare global {
   interface GDeventNames extends GDeventNamesBase { }
 
   type NewEventType<EventName extends string, Params extends any[] = []> = { [k in EventName]: [systemCtx: Ctx, ...params: Params] }
-
-
-  // interface TestEnv { }
-
 }
 
 export default {} // avoid typescript bug

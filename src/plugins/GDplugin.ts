@@ -1,5 +1,6 @@
 import { svc } from '../service'
 import { GreenDotAppConfig } from '../types/appConfig.types'
+import { GenericDef } from 'good-cop'
 
 export class GDplugin<Name extends string> {
   protected readonly name: Name
@@ -11,6 +12,8 @@ export class GDplugin<Name extends string> {
   onInit?: () => any
 
   handlers: GDpluginHandlers[] = []
+
+  addUserAdditionalFields?(): Record<string, GenericDef | GenericDef[]>
 
 }
 

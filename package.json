@@ -29,7 +29,6 @@
       "default": "./index.js"
     },
     "./types": "./src/core-types.ts",
-    "./src/*": "./dist/*.js",
     "./plugins": {
       "types": "./src/plugins/index.ts",
       "import": "./dist/src/plugins/index.js",

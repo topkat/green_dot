@@ -3,7 +3,6 @@
 import { GreenDotAppConfig, cliIntro } from 'green_dot'
 import { errorSimulator, rolesAttributionForTestOnly } from '../shared/apiServices/apiServices'
 import { getApiKeys } from './1_shared/configs/api-keys'
-import { onLoginCallback } from './1_shared/hooks/on-login-hook'
 
 import { ENV } from 'topkat-utils'
 
@@ -41,7 +40,6 @@ export const appConfig: GreenDotAppConfig = {
   port,
   serverLiveUrl: liveUrl.includes('localhost') ? `${liveUrl}:${port}/` : liveUrl,
   emailFromAddress: 'no-reply@$$projectName.app',
-  onLoginCallback,
   smtp: env === 'test' ? {
     host: 'sandbox.smtp.mailtrap.io',
     port: 2525,

@@ -63,3 +63,5 @@ export { getNewTokenService } from './plugins/GDmanagedLogin/getNewTokenService'
 
 // TODO this should be a special /plugins exports
 export * from './plugins'
+
+export { UserAdditionalFields, UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from './security/userAndConnexion/userAdditionalFields'

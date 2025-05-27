@@ -114,4 +114,15 @@ export class GDdoubleAuthentication extends GDplugin<Name> {
     if (!success) throw ctx.error.wrongToken({ type })
 
   }
+
+  addUserAdditionalFields() {
+
+
+    return {
+
+
+    }
+  }
+
+
 }

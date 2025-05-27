@@ -5,6 +5,7 @@ import { Name as ManagedLoginName, GDmanagedLogin, defaultConfig as managedLogin
 import { Name as SecureAuthName, GDdoubleAuthentication, defaultConfig as secureAuthDefaultConfig } from './GDdoubleAuthentication/main'
 import { Name as GDapiKeyAuthenticationName, GDapiKeyAuthentication, defaultConfig as GDapiKeyAuthenticationNameDefaultConfig } from './GDapiKeyAuthentication/main'
 
+
 const allPlugins = {
   GDdoubleAuthentication,
   GDmanagedLogin,
@@ -40,8 +41,21 @@ export function getServicesToRegister() {
   return registeredPlugins.map(p => p.serviceToRegister).flat()
 }
 
-
-
 export function getPluginHook(eventName: GDpluginHandlerEventNames) {
   return registeredPlugins.map(p => p.handlers.filter(h => h.event === eventName)).flat()
 }
+
+// type AllPlugins = (typeof allPlugins)
+// type OO = {
+//   [K in PluginNames]: InstanceType<AllPlugins[K]> extends { addUserAdditionalFields: any } ? InstanceType<AllPlugins[K]>['addUserAdditionalFields'] : never
+// }
+
+
+
+// type TypeRead = InferTypeRead<ReturnType<OO[PluginNames]>>
+// type TypeWrite = InferTypeWrite<ReturnType<InstanciatedPlugin['addUserAdditionalFields']>>
+
+// declare module '../security/userAndConnexion/userAdditionalFields' {
+//   interface UserAdditionalFieldsRead extends TypeRead { }
+//   interface UserAdditionalFieldsWrite extends TypeWrite { }
+// }

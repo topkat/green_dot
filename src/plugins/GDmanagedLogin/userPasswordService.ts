@@ -6,7 +6,6 @@ import { ModelTypes } from '../../cache/dbs/index.generated'
 import { lockUserAndThrow } from '../../security/userAndConnexion/userLockService'
 
 import { getId, timeout, random } from 'topkat-utils'
-import { getPluginConfig } from '../pluginSystem'
 
 
 
@@ -73,8 +72,3 @@ export async function comparePasswordAddAttemptAndLockIfNecessary(
 
 
 
-export async function encryptPassword(password: string): Promise<string> {
-  const { saltRoundsForPasswordEncryption } = getPluginConfig('GDmanagedLogin')
-  const salt = bcrypt.genSaltSync(saltRoundsForPasswordEncryption || 11)
-  return bcrypt.hashSync(password, salt)
-}
