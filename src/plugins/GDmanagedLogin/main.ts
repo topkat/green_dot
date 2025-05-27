@@ -14,6 +14,7 @@ import { getCredentialManagementServices } from './apiServices/getCredentialMana
 import { RegisterErrorType } from '../../error'
 import { setConnexionTokens } from './userAuthenticationTokenService'
 import { getLoginServices } from './apiServices/getLoginServices'
+import { getUpdatePasswordService } from './apiServices/getUpdatePasswordService'
 
 
 export type Name = 'GDmanagedLogin'
@@ -120,6 +121,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
       ...getUpdateNewPasswordWithOldPassword(this.config),
       ...getCredentialManagementServices(this.config),
       ...getLoginServices(this.config),
+      ...getUpdatePasswordService(this.config)
     }
     // HANDLERS
     this.handlers = [{
