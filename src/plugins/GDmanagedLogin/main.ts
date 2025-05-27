@@ -12,7 +12,9 @@ import { getSendValidationEmail } from './apiServices/getSendValidationEmail'
 
 export type Name = 'GDmanagedLogin'
 
-
+//  ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
+//  ║    ║  ║ ║╚╗║ ╠═    ║  ║ ═╦
+//  ╚══╝ ╚══╝ ╩ ╚╩ ╩    ═╩═ ╚══╝
 export type PluginUserConfig = {
   enable: boolean,
 
@@ -49,6 +51,9 @@ export const defaultConfig = {
 } satisfies Partial<PluginUserConfig>
 
 
+//  ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ╔═╗    ╦    ╔══╗ ╔══╗ ═╦═ ╦╗ ╔
+//  ║╚╝║ ╠══╣ ║╚╗║ ╠══╣ ║ ═╦ ╠═   ║  ║   ║    ║  ║ ║ ═╦  ║  ║╚╗║
+//  ╩  ╩ ╩  ╩ ╩ ╚╩ ╩  ╩ ╚══╝ ╚══╝ ╚══╝   ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩
 
 /** Managed Login will handle login end to end with SDK integration, password management, cookie and secure connexion via JWT with latest OWASP standards. */
 export class GDmanagedLogin extends GDplugin<Name> {
@@ -69,11 +74,11 @@ export class GDmanagedLogin extends GDplugin<Name> {
       }
     }
     // SERVICES
-    this.serviceToRegister = [
-      getNewTokenService(),
-      getCheckTokenIsValidService(config.sendEmailToValidateEmailAddress),
-      getSendValidationEmail(config.sendEmailToValidateEmailAddress),
-    ]
+    this.serviceToRegister = {
+      ...getNewTokenService(),
+      ...getCheckTokenIsValidService(config.sendEmailToValidateEmailAddress),
+      ...getSendValidationEmail(config.sendEmailToValidateEmailAddress),
+    }
     // HANDLERS
     this.handlers = [{
       priority: 10,
@@ -84,6 +89,9 @@ export class GDmanagedLogin extends GDplugin<Name> {
     this.config = { ...defaultConfig, ...config }
   }
 
+  //  ╦  ╦ ╔═══ ╔══╗ ╔══╗   ╔══╗ ╔═╗  ╔═╗  ═╦═ ══╦══ ═╦═ ╔══╗ ╦╗ ╔ ╔══╗ ╦      ╔══╗ ═╦═ ╔══╗ ╦    ╔═╗  ╔═══
+  //  ║  ║ ╚══╗ ╠═   ╠═╦╝   ╠══╣ ║  ║ ║  ║  ║    ║    ║  ║  ║ ║╚╗║ ╠══╣ ║      ╠═    ║  ╠═   ║    ║  ║ ╚══╗
+  //  ╚══╝ ═══╝ ╚══╝ ╩ ╚    ╩  ╩ ╚══╝ ╚══╝ ═╩═   ╩   ═╩═ ╚══╝ ╩ ╚╩ ╩  ╩ ╚══╝   ╩    ═╩═ ╚══╝ ╚══╝ ╚══╝ ═══╝
   addUserAdditionalFields() {
 
     const { passwordRegexp, passwordMinLength, passwordMaxLength, validationTokenTypes } = this.config

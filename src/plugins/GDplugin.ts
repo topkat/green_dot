@@ -7,7 +7,7 @@ export class GDplugin<Name extends string> {
   protected readonly version: string
 
   /** Will register those services into the app and SDK and eventually expose configured routes */
-  serviceToRegister: ReturnType<typeof svc>[] = []
+  serviceToRegister: Record<string, ReturnType<typeof svc>> = {}
 
   onInit?: () => any
 

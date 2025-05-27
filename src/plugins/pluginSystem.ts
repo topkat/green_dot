@@ -4,6 +4,7 @@ import type { GDpluginHandlerEventNames } from './GDplugin'
 import { Name as ManagedLoginName, GDmanagedLogin, defaultConfig as managedLoginDefaultConfig } from './GDmanagedLogin/main'
 import { Name as SecureAuthName, GDdoubleAuthentication, defaultConfig as secureAuthDefaultConfig } from './GDdoubleAuthentication/main'
 import { Name as GDapiKeyAuthenticationName, GDapiKeyAuthentication, defaultConfig as GDapiKeyAuthenticationNameDefaultConfig } from './GDapiKeyAuthentication/main'
+import { ServiceGeneric } from '../types/services.types'
 
 
 const allPlugins = {
@@ -37,8 +38,8 @@ export function getPluginConfig<T extends PluginNames>(name: T) {
   return (registeredPlugins.find(p => p.name === name)?.config || defaultConfigs[name]) as InstanceType<(typeof allPlugins)[T]>['config']
 }
 
-export function getServicesToRegister() {
-  return registeredPlugins.map(p => p.serviceToRegister).flat()
+export function getAllPluginServices() {
+  return registeredPlugins.reduce((allServices, p) => ({ ...p.serviceToRegister, ...allServices }), {} as Record<string, ServiceGeneric>)
 }
 
 export function getPluginHook(eventName: GDpluginHandlerEventNames) {
