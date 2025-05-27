@@ -59,7 +59,6 @@ export { parentProcessExitCodes } from './constants'
 
 export { addUserWarning, banUser } from './security/userAndConnexion/banAndAddUserWarning'
 export * from './security/userAndConnexion/userLockService'
-export { getNewTokenService } from './plugins/GDmanagedLogin/apiServices/getNewTokenService'
 
 // TODO this should be a special /plugins exports
 export * from './plugins'

@@ -6,6 +6,7 @@ import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectModel
 import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
 import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
+import { GD_deviceModel } from '../../security/userAndConnexion/GD_device.model'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 import { getNewIndexForDbCacheFileStructure } from './generateIndexForDbTypeFiles'
 
@@ -29,6 +30,7 @@ export async function generateFilesForCachedDb(
 
     if (mainConfig.defaultDatabaseName === dbName) {
       models.GD_serverBlackList = GD_serverBlacklistModel as unknown as Definition
+      models.GD_deviceModel = GD_deviceModel as unknown as Definition
     }
 
     let modelTypeFileContent = `import { TranslationObj } from '${basePath.includes(greenDotCacheModuleFolder) ? '../../index' : 'green_dot'}'\n\n`

@@ -10,6 +10,7 @@ import { C, objEntries, timeout } from 'topkat-utils'
 import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos'
 
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
+import { GD_deviceModel } from './security/userAndConnexion/GD_device.model'
 import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
 import { getUserAdditionalFields } from './security/userAndConnexion/userAdditionalFields'
@@ -43,6 +44,7 @@ export type Dbs = {
   [k in MainDbName]: {
     // we also inject models created by green_dot
     GD_serverBlackList: DaoMethodsMongo<{ Read: typeof GD_serverBlacklistModel.tsTypeRead, Write: typeof GD_serverBlacklistModel.tsTypeWrite }>
+    GD_deviceModel: DaoMethodsMongo<{ Read: typeof GD_deviceModel.tsTypeRead, Write: typeof GD_deviceModel.tsTypeWrite }>
   }
 }
 

@@ -16,6 +16,8 @@ import { setConnexionTokens } from './userAuthenticationTokenService'
 import { getLoginServices } from './apiServices/getLoginServices'
 import { getUpdatePasswordService } from './apiServices/getUpdatePasswordService'
 import { getUpdateEmailService } from './apiServices/getUpdateEmailService'
+import { userLoginReturnValidator, userLogin } from './userLogin'
+import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
 
 export type Name = 'GDmanagedLogin'
 
@@ -129,6 +131,11 @@ export class GDmanagedLogin extends GDplugin<Name> {
       callback: getOnLogin()
     }]
   }
+
+  userLoginReturnValidator = userLoginReturnValidator
+  userLogin = userLogin
+  comparePasswordAddAttemptAndLockIfNecessary = comparePasswordAddAttemptAndLockIfNecessary
+  setConnexionTokens = setConnexionTokens
 
   //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔═══
   //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝ ╚══╗
