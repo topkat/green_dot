@@ -16,5 +16,5 @@ export async function updateEmailWithToken(ctx: Ctx, token: string, pluginConfig
   const { user, userId, newEmail } = await decryptValidationToken(ctx, token, 'changeEmail', pluginConfig)
   if (newEmail !== user.newEmail) throw ctx.error.wrongNewEmail({ expectedEmail: user.newEmail, providedEmail: newEmail })
   await db.user.update(ctx.GM, userId, { email: newEmail, newEmail: null })
-  return user
+  return { user, newEmail, oldEmail: user.email }
 }

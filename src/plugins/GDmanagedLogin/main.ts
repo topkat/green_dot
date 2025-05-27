@@ -15,7 +15,7 @@ import { RegisterErrorType } from '../../error'
 import { setConnexionTokens } from './userAuthenticationTokenService'
 import { getLoginServices } from './apiServices/getLoginServices'
 import { getUpdatePasswordService } from './apiServices/getUpdatePasswordService'
-
+import { getUpdateEmailService } from './apiServices/getUpdateEmailService'
 
 export type Name = 'GDmanagedLogin'
 
@@ -50,13 +50,11 @@ export type PluginUserConfig = {
 
   sendPasswordUpdatedMailConfirmation: (ctx: Ctx, user: ModelTypes['user']) => any
 
-  /** This is the role that will be used upon subscription */
-  // defaultRoleForConnexion: GD['role']
-
   loginConfigPerRole: Partial<Record<GD['role'], GDmanagedLoginLoginConfig>>
 
   // OPTIONAL TYPES
-
+  /** This email is sent when user update their email and when update has succeeded */
+  sendEmailUpdatedMailConfirmation?: (ctx: Ctx, props: { user: ModelTypes['user'], newEmail: string, oldEmail: string }) => any
   /** Default 30 minutes */
   emailTokenTimeValidMinutes?: number
   /** Default: true */
@@ -121,7 +119,8 @@ export class GDmanagedLogin extends GDplugin<Name> {
       ...getUpdateNewPasswordWithOldPassword(this.config),
       ...getCredentialManagementServices(this.config),
       ...getLoginServices(this.config),
-      ...getUpdatePasswordService(this.config)
+      ...getUpdatePasswordService(this.config),
+      ...getUpdateEmailService(this.config),
     }
     // HANDLERS
     this.handlers = [{

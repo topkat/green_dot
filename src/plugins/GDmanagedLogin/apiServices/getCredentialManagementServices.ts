@@ -17,7 +17,7 @@ export function getCredentialManagementServices(
     //----------------------------------------
     sendEmailToValidateEmailAddress: svc({
       doc: `Send an email to the user for validating their email. You can send additionalParams that will be forwarded directly to the sendEmail function`,
-      for: 'public',
+      for: ['ALL', 'public'],
       input: {
         userId: _.string().required(),
         additionalParams: _.genericObject('prop', _.any())
@@ -35,7 +35,7 @@ export function getCredentialManagementServices(
     //----------------------------------------
     sendForgotPasswordEmail: svc({
       doc: `Send an email to the user with a link to change his password with "Forgot Password" button in frontend`,
-      for: 'public',
+      for: ['ALL', 'public'],
       input: {
         email: _.email().required(),
         additionalParams: _.genericObject('prop', _.any())

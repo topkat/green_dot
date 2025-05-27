@@ -67,11 +67,13 @@ export async function userLogin(
     permissions: user, // extra fields will be removed in the token
   } satisfies JWTdataWrite
 
-  const { accessToken, refreshToken, csrfToken, biometricAuthToken } = await setConnexionTokens(userCtx, deviceId, toknData)
+  const tokens = await setConnexionTokens(userCtx, deviceId, toknData)
 
   const maskedUser = await applyMaskOnObjectForUser(userCtx, 'bangk', 'user', 'getOne', user)
 
-  await loginConfigPerRole[role]?.onAfterLogin?.(ctx, role, user, { accessToken, refreshToken, csrfToken, biometricAuthToken })
+  await loginConfigPerRole[role]?.onAfterLogin?.(ctx, role, user, tokens)
+
+  const { accessToken, csrfToken, biometricAuthToken, refreshToken } = tokens
 
   return {
     isEmailVerified: true,
