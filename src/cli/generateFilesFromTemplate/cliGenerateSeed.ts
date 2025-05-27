@@ -7,7 +7,7 @@ import { db, dbs, svc } from 'green_dot'
 
 export const ${fileName}Seed = svc({
     on: 'server.start',
-    priority: 50, // change that to a higher number to make this script execute prior to other seed scripts
+    priority: 50, // change that to a lower number to make this script execute prior to other seed scripts
     async main(ctx) {
         // TODO use one of your \`dbs\` here or your default database with \`db\`
     },

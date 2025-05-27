@@ -15,6 +15,7 @@ export class GDplugin<Name extends string> {
 }
 
 export type GDpluginHandlers = {
+  /** The lower, the prior. From 0 to 100 */
   priority?: number
 } & ({
   event: 'onLogin'

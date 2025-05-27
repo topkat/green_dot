@@ -8,7 +8,7 @@ export function generateLoginMw() {
         try {
             const appConfig = await getActiveAppConfig()
 
-            const defaultCtx = {
+            const ctxUser = {
                 _id: publicUserId,
                 role: 'public',
                 platform: req.headers.platform as string,
@@ -16,7 +16,7 @@ export function generateLoginMw() {
                 authenticationMethod: [],
             } satisfies CtxUser
 
-            const ctxUser = await appConfig.onLoginCallback(defaultCtx, req, res)
+            if (typeof appConfig.onLoginCallback === 'function') await appConfig.onLoginCallback(ctxUser, req, res)
 
             const ctx = new CtxClass(ctxUser, req, res, (req as any)?.ctx)
 

@@ -15,7 +15,6 @@ export * from './startServer'
 export { newSystemCtx, newPublicCtx, CtxClass, isAnonymousUser, systemUserId, publicUserId, technicalRoles, systemRole, publicRole, authenticationMethod, ctx } from './ctx'
 export * from './types/core.types'
 export * as CoreTypes from './types/core.types'
-export { loginHookDefault } from './databases/0_hooks/loginHookDefault'
 export { applyMaskOnObjectForUser } from './databases/mongo/services/maskService'
 
 export { cliIntro, clearCli, cliBadge } from './cli/helpers/cli'
@@ -60,7 +59,7 @@ export { parentProcessExitCodes } from './constants'
 
 export { addUserWarning, banUser } from './security/userAndConnexion/banAndAddUserWarning'
 export * from './security/userAndConnexion/userLockService'
-export { getNewTokenService } from './plugins/managedLogin/getNewTokenService'
+export { getNewTokenService } from './plugins/GDmanagedLogin/getNewTokenService'
 
 // TODO this should be a special /plugins exports
 export * from './plugins'

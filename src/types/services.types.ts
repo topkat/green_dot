@@ -21,7 +21,7 @@ export type BaseService = {
   doc?: string | ServiceDocObject
   /** Shall be this service be triggered on an event (`server.start`, `user.create`,...) */
   on?: MaybeArray<GenericEventTypes[]> | MaybeArray<string>
-  /** In case multiple services are triggered by an event, how this one should be prioritized. Higher number == more priority */
+  /** In case multiple services are triggered by an event, how this one should be prioritized. The lower, the prior. From 0 to 100 */
   priority?: number
   /** Determines in which env this service is meant to be executed. If in the wrong env, the service will not be executed */
   forEnv?: Env | Env[],
@@ -273,6 +273,7 @@ export type Schedule = {
 export interface ScheduleService extends BaseService {
   schedule: string | Schedule
   on?: GenericEventTypes | GenericEventTypes[] | string
+  /** The lower, the prior. From 0 to 100 */
   priority?: number
   main(ctx: Ctx): void
 }

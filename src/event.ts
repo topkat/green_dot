@@ -13,7 +13,7 @@ export const event = {
     ) {
         event.registeredEvents[eventName] ??= []
         event.registeredEvents[eventName].push([priority, callback])
-        event.registeredEvents[eventName].sort(([priorityA], [priorityB]) => priorityB - priorityA)
+        event.registeredEvents[eventName].sort(([priorityA], [priorityB]) => priorityA - priorityB)
     },
     /** unregister a callback from an event */
     off<EventName extends keyof GDeventNames>(

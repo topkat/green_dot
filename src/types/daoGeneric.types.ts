@@ -66,6 +66,7 @@ export type DaoHookShared = {
   doc?: string
   for?: ForClauseWithAllAndSystem
   notFor?: MaybeArray<Ctx['role']>
+  /** The lower, the prior. From 0 to 100 */
   priority?: number
   on?: MaybeArray<DaoMethodsGenericAndAll>
   notOn?: MaybeArray<DaoMethodsWithReadWrite>
@@ -74,6 +75,7 @@ export type DaoHookShared = {
 export type DaoHookSharedParsed = {
   doc?: string
   for: ForClauseParsed[]
+  /** The lower, the prior. From 0 to 100 */
   priority: number
   on: DaoGenericMethods[]
 }

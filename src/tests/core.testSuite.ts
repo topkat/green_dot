@@ -5,7 +5,7 @@
 
 export const coreTestSuite = {
     name: 'Core test suite',
-    priority: 0, // should be fiorst test
+    priority: 0, // should be first test
     mandatory: true,
     items: [{
         doc: `Check server is alive`,

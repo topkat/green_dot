@@ -69,7 +69,7 @@ export type TestItem<TestUserNames extends string = any, ConnexionInfos extends 
 export type TestSuiteRaw<TestUserNames extends string = any, ConnexionInfos extends Record<string, any> = any, RestTestConfigType extends GreenDotApiTestsConfig = any> = {
     name?: string
     defaults?: TestType<RestTestConfigType['env'], Partial<Test<TestUserNames, ConnexionInfos, RestTestConfigType>>>
-    /** The lesser the better priority */
+    /** The lower, the prior. From 0 to 100 */
     priority?: number
     /** This test will run even if a filter is passed or solo option is active on one test */
     mandatory?: boolean

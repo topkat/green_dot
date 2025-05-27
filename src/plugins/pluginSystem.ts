@@ -1,9 +1,9 @@
 
 
 import type { GDpluginHandlerEventNames } from './GDplugin'
-import { Name as ManagedLoginName, GDmanagedLogin, defaultConfig as managedLoginDefaultConfig } from './managedLogin/main'
-import { Name as SecureAuthName, GDdoubleAuthentication, defaultConfig as secureAuthDefaultConfig } from './secureAuth/main'
-import { Name as GDapiKeyAuthenticationName, GDapiKeyAuthentication, defaultConfig as GDapiKeyAuthenticationNameDefaultConfig } from './apiKeys/main'
+import { Name as ManagedLoginName, GDmanagedLogin, defaultConfig as managedLoginDefaultConfig } from './GDmanagedLogin/main'
+import { Name as SecureAuthName, GDdoubleAuthentication, defaultConfig as secureAuthDefaultConfig } from './GDdoubleAuthentication/main'
+import { Name as GDapiKeyAuthenticationName, GDapiKeyAuthentication, defaultConfig as GDapiKeyAuthenticationNameDefaultConfig } from './GDapiKeyAuthentication/main'
 
 const allPlugins = {
   GDdoubleAuthentication,
