@@ -1,7 +1,5 @@
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { GDplugin } from '../GDplugin'
 import { getOnLogin } from './onLogin'
-
 import { getNewTokenService } from './getNewTokenService'
 import { _ } from '../../validator'
 import { InferTypeRead } from 'good-cop'
@@ -13,6 +11,7 @@ export type Name = 'GDmanagedLogin'
 
 export type PluginUserConfig = {
   enable: boolean,
+  allRoles: readonly string[] // TODO we should import getMainConfig but unfortunately with /plugin syntax it's not considered the same module as green_dot
   /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
   validationTokenTypes?: readonly string[] | string[]
   /** Configure the time before the refresh token gets expired. Default: 15 minutes */
@@ -50,8 +49,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
   constructor(config: PluginUserConfig) {
     super()
     if (!config.maxRefreshTokenPerRole) {
-      const mainConfig = getMainConfig()
-      for (const role of mainConfig.allRoles) {
+      for (const role of config.allRoles) {
         config.maxRefreshTokenPerRole ??= { public: 2 }
         config.maxRefreshTokenPerRole[role] = 2
       }

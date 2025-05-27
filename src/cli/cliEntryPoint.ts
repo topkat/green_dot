@@ -80,6 +80,7 @@ async function start() {
 
 
     process.env.GREEN_DOT_INPUT_COMMAND = _command
+    process.env.RUN_FROM_DIST = runFromDist.toString()
 
     cliArgsToEnv(args, false)
 

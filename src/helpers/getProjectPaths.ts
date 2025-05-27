@@ -2,9 +2,9 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import glob from 'fast-glob'
-import { C } from 'topkat-utils'
+import { C, recursiveGenericFunctionSync } from 'topkat-utils'
 
-const isDist = process.env.GREEN_DOT_INPUT_COMMAND === 'start' && __dirname.includes('dist')
+const isDist = process.env.RUN_FROM_DIST === 'true' && __dirname.includes('dist')
 const extension = isDist ? 'js' : 'ts'
 
 export type GDpathConfig = { path: string, folderPath: string }

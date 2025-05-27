@@ -14,11 +14,11 @@ import { registerPlugin } from '../plugins/pluginSystem'
 //   ║  ║╚╗║  ║    ║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩
 export async function initGreenDotConfigs(resetCache = false) {
-  await initMainConfigCache(resetCache),
-    await Promise.all([
-      initAppConfigCache(resetCache),
-      initDbConfigCache(resetCache),
-    ])
+  await initMainConfigCache(resetCache)
+  await Promise.all([
+    initAppConfigCache(resetCache),
+    initDbConfigCache(resetCache),
+  ])
 }
 
 export function initEnv(conf: GreenDotConfig) {
@@ -48,11 +48,10 @@ export async function initClientApp(conf: GreenDotConfig) {
 //  ╩  ╩ ╩  ╩ ═╩═ ╩ ╚╩   ╚══╝ ╚══╝ ╩ ╚╩ ╩    ═╩═ ╚══╝
 
 let greenDotConfigsCache: (GreenDotConfigWithDefaults & GDpathConfig)
-let isGreenDotConfigsCacheInitialized = false
 
 export function getMainConfig(silent = false): typeof greenDotConfigsCache {
-  if (!isGreenDotConfigsCacheInitialized && !silent) throw error.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
-  if (!isGreenDotConfigsCacheInitialized) return {} as typeof greenDotConfigsCache
+  if (!greenDotConfigsCache && !silent) throw error.serverError('Trying to call getGreenDotConfig() but the cache has not been initialized. PLease call await initGreenDotConfigs() before all')
+  if (!greenDotConfigsCache) return {} as typeof greenDotConfigsCache
   else return greenDotConfigsCache
 }
 
@@ -60,14 +59,13 @@ export function getMainConfig(silent = false): typeof greenDotConfigsCache {
 export async function initMainConfigCache(resetCache = false) {
   if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
     const { mainConfig: mainConfigPaths } = await getProjectPaths()
-
+    // /Users/garcias/DEV/BANGK/bangk-app-backend/green_dot.config.ts
     const conf = (await safeImport(mainConfigPaths.path))?.default as GreenDotConfig
     process.env.IS_PROD_ENV = conf.isProdEnv.toString()
     process.env.IS_TEST_ENV = conf.isTestEnv.toString()
     if (!process.env.NODE_ENV) process.env.NODE_ENV = conf.env
     const confWithDefaults = mergeDeepOverrideArrays({} as GreenDotConfigWithDefaults, greenDotConfigDefaults, conf)
     greenDotConfigsCache = computeMainConfigAdditionalFields({ ...confWithDefaults, ...mainConfigPaths })
-    isGreenDotConfigsCacheInitialized = true
   }
 }
 

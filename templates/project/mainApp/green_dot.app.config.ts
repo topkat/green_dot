@@ -74,7 +74,11 @@ export const appConfig: GreenDotAppConfig = {
   enableSchedules: env === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
   enableSeed: env === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
   apiKeys: getApiKeys(),
-  additionalServices: { errorSimulator, rolesAttributionForTestOnly },
+  plugins: [
+    new GDmanagedLogin({ enable: true }),
+    new GDdoubleAuthentication({ enable: true }),
+    new GDapiKeyAuthentication({ enable: true, apiKeys: getApiKeys() })
+  ]
 }
 
 export default appConfig
