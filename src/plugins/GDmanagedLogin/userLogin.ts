@@ -28,9 +28,13 @@ export async function userLogin(
   additionalParamsIfSendValidationEmail?: Record<string, any>
 ) {
 
-  const { loginErrorIfEmailIsNotValidated } = pluginConfig
+  const { loginErrorIfEmailIsNotValidated, loginConfigPerRole } = pluginConfig
 
   const user = typeof userOrId === 'string' ? await db.user.getById(ctx.GM, userOrId) : userOrId
+
+  if (user && await loginConfigPerRole[role]?.additionalChecks?.(ctx, user)) {
+    throw ctx.error.accessDenied({ fn: 'loginConfigPerRole.additionalChecks' })
+  }
 
   // LOCK CHECKS
   await ensureUserIsNotLocked(ctx, user)
@@ -39,6 +43,8 @@ export async function userLogin(
   if (password) {
     await comparePasswordAddAttemptAndLockIfNecessary(ctx, password, user.password, user)
   }
+
+  await loginConfigPerRole[role]?.onBeforeLogin?.(ctx, role, user)
 
   // EMAIL VERIFIED CHECK
   if (!user.isEmailVerified && loginErrorIfEmailIsNotValidated === true) {
@@ -64,6 +70,8 @@ export async function userLogin(
   const { accessToken, refreshToken, csrfToken, biometricAuthToken } = await setConnexionTokens(userCtx, deviceId, toknData)
 
   const maskedUser = await applyMaskOnObjectForUser(userCtx, 'bangk', 'user', 'getOne', user)
+
+  await loginConfigPerRole[role]?.onAfterLogin?.(ctx, role, user, { accessToken, refreshToken, csrfToken, biometricAuthToken })
 
   return {
     isEmailVerified: true,

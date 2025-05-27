@@ -12,6 +12,8 @@ import { getLogoutService } from './apiServices/getLogoutService'
 import { getUpdateNewPasswordWithOldPassword } from './apiServices/getUpdateNewPasswordWithOldPassword'
 import { getCredentialManagementServices } from './apiServices/getCredentialManagementServices'
 import { RegisterErrorType } from '../../error'
+import { setConnexionTokens } from './userAuthenticationTokenService'
+import { getLoginServices } from './apiServices/getLoginServices'
 
 
 export type Name = 'GDmanagedLogin'
@@ -23,8 +25,12 @@ export type Name = 'GDmanagedLogin'
 export type GDmanagedLoginLoginConfig = {
   emailLogin: boolean
   loginOnValidateToken?: boolean
+  /** Returning false will throw an accessDenied error with no other infos. If you want more control over error thrown, extraInfos, alerts..etc, use onLogin  */
   additionalChecks?(ctx: Ctx, user: ModelTypes['user'])
-  onLogin?(ctx: Ctx, requestedRole: GD['role'], user: ModelTypes['user'])
+  /** This will be triggered before all other checks */
+  onBeforeLogin?(ctx: Ctx, requestedRole: GD['role'], user: ModelTypes['user'])
+  /** This will be triggered once login is successful */
+  onAfterLogin?(ctx: Ctx, requestedRole: GD['role'], user: ModelTypes['user'], loginTokens: Awaited<ReturnType<typeof setConnexionTokens>>)
 }
 
 export type PluginUserConfig = {
@@ -112,7 +118,8 @@ export class GDmanagedLogin extends GDplugin<Name> {
       ...getValidateTokenAndLoginService(this.config),
       ...getLogoutService(),
       ...getUpdateNewPasswordWithOldPassword(this.config),
-      ...getCredentialManagementServices(this.config)
+      ...getCredentialManagementServices(this.config),
+      ...getLoginServices(this.config),
     }
     // HANDLERS
     this.handlers = [{
@@ -120,9 +127,11 @@ export class GDmanagedLogin extends GDplugin<Name> {
       event: 'onLogin',
       callback: getOnLogin()
     }]
-    //------------
   }
 
+  //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔═══
+  //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝ ╚══╗
+  //  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚  ═══╝
   errors = {
     emailNotSet: { code: 400 },
     newEmailSameAsOld: { code: 409 },
@@ -166,6 +175,11 @@ export class GDmanagedLogin extends GDplugin<Name> {
     }
   }
 }
+
+
+//  ══╦══ ╦   ╦ ╔══╗ ╔══╗   ╔══╗ ═╗╔═ ══╦══ ╔══╗ ╦╗ ╔ ╔═══ ═╦═ ╔══╗ ╦╗ ╔ ╔═══
+//    ║   ╚═╦═╝ ╠══╝ ╠═     ╠═    ╠╣    ║   ╠═   ║╚╗║ ╚══╗  ║  ║  ║ ║╚╗║ ╚══╗
+//    ╩     ╩   ╩    ╚══╝   ╚══╝ ═╝╚═   ╩   ╚══╝ ╩ ╚╩ ═══╝ ═╩═ ╚══╝ ╩ ╚╩ ═══╝
 
 // DECLARE ADDITIONAL USER FIELDS TYPE
 declare module '../../security/userAndConnexion/userAdditionalFields' {
