@@ -3,12 +3,12 @@
 
 
 
-import { db } from '../../db'
-import { getPlugin, getPluginConfig } from '../pluginSystem'
-import { svc } from '../../service'
-import { _ } from '../../validator'
-import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService'
-import { parseToken, revokeToken, setConnexionTokens } from './userAuthenticationTokenService'
+import { db } from '../../../db'
+import { getPlugin, getPluginConfig } from '../../pluginSystem'
+import { svc } from '../../../service'
+import { _ } from '../../../validator'
+import { ensureUserIsNotLocked } from '../../../security/userAndConnexion/userLockService'
+import { parseToken, revokeToken, setConnexionTokens } from '../userAuthenticationTokenService'
 
 
 export const getNewTokenService = () => {

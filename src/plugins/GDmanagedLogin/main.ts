@@ -1,8 +1,13 @@
 import { GDplugin } from '../GDplugin'
 import { getOnLogin } from './onLogin'
-import { getNewTokenService } from './getNewTokenService'
+import { getNewTokenService } from './apiServices/getNewTokenService'
 import { InferTypeRead, InferTypeWrite, _ } from 'good-cop'
 import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
+import { getCheckTokenIsValidService } from './apiServices/getCheckTokenIsValidService'
+import { ModelTypes } from '../../cache/dbs/index.generated'
+import { emailTypes } from './constants'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getSendValidationEmail } from './apiServices/getSendValidationEmail'
 
 
 export type Name = 'GDmanagedLogin'
@@ -10,7 +15,15 @@ export type Name = 'GDmanagedLogin'
 
 export type PluginUserConfig = {
   enable: boolean,
-  allRoles: readonly string[] // TODO we should import getMainConfig but unfortunately with /plugin syntax it's not considered the same module as green_dot
+
+  /** This function should take care of sending the validation email */
+  sendEmailToValidateEmailAddress: (
+    ctx: Ctx,
+    user: ModelTypes['user'],
+    /** Thoses can be optionnaly passed in frontend in the SDK and will be forwarded to the function  */
+    additionalParams: Record<string, any>
+  ) => any
+
   /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
   validationTokenTypes?: readonly string[] | string[]
   /** Configure the time before the refresh token gets expired. Default: 15 minutes */
@@ -35,7 +48,7 @@ export const defaultConfig = {
   passwordMaxLength: 35,
 } satisfies Partial<PluginUserConfig>
 
-const emailTypes = ['forgotPassword', 'emailValidation', 'changeEmail'] as const
+
 
 /** Managed Login will handle login end to end with SDK integration, password management, cookie and secure connexion via JWT with latest OWASP standards. */
 export class GDmanagedLogin extends GDplugin<Name> {
@@ -47,20 +60,27 @@ export class GDmanagedLogin extends GDplugin<Name> {
 
   constructor(config: PluginUserConfig) {
     super()
+    // DEFAULT maxRefreshTokenPerRole
+    const mainConfig = getMainConfig()
     if (!config.maxRefreshTokenPerRole) {
-      for (const role of config.allRoles) {
+      for (const role of mainConfig.allRoles) {
         config.maxRefreshTokenPerRole ??= { public: 2 }
         config.maxRefreshTokenPerRole[role] = 2
       }
     }
+    // SERVICES
     this.serviceToRegister = [
-      getNewTokenService()
+      getNewTokenService(),
+      getCheckTokenIsValidService(config.sendEmailToValidateEmailAddress),
+      getSendValidationEmail(config.sendEmailToValidateEmailAddress),
     ]
+    // HANDLERS
     this.handlers = [{
       priority: 10,
       event: 'onLogin',
       callback: getOnLogin()
     }]
+    //------------
     this.config = { ...defaultConfig, ...config }
   }
 
