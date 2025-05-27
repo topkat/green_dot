@@ -18,6 +18,11 @@ import { getUpdatePasswordService } from './apiServices/getUpdatePasswordService
 import { getUpdateEmailService } from './apiServices/getUpdateEmailService'
 import { userLoginReturnValidator, userLogin } from './userLogin'
 import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
+import { getRegisterUserDeviceService } from './apiServices/getRegisterUserDeviceService'
+import { GenericDef } from 'good-cop'
+import { credentialManagementMailing } from './credentialManagementMailing'
+import { db } from '../../db'
+import { getId } from 'topkat-utils'
 
 export type Name = 'GDmanagedLogin'
 
@@ -27,6 +32,8 @@ export type Name = 'GDmanagedLogin'
 
 export type GDmanagedLoginLoginConfig = {
   emailLogin: boolean
+  canSignUp: boolean
+  signupExtraFields?: Record<string, GenericDef>
   loginOnValidateToken?: boolean
   /** Returning false will throw an accessDenied error with no other infos. If you want more control over error thrown, extraInfos, alerts..etc, use onLogin  */
   additionalChecks?(ctx: Ctx, user: ModelTypes['user'])
@@ -123,6 +130,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
       ...getLoginServices(this.config),
       ...getUpdatePasswordService(this.config),
       ...getUpdateEmailService(this.config),
+      ...getRegisterUserDeviceService(),
     }
     // HANDLERS
     this.handlers = [{
@@ -136,6 +144,10 @@ export class GDmanagedLogin extends GDplugin<Name> {
   userLogin = userLogin
   comparePasswordAddAttemptAndLockIfNecessary = comparePasswordAddAttemptAndLockIfNecessary
   setConnexionTokens = setConnexionTokens
+  async sendValidationEmail(ctx: Ctx, userOrId: ModelTypes['user'] | string, additionalParams?: Record<string, any>) {
+    const user = typeof userOrId === 'string' ? await db.user.getById(ctx, userOrId, { triggerErrorIfNotSet: true }) : userOrId
+    await credentialManagementMailing(ctx, user, getId(user), 'emailValidation', additionalParams, this.config)
+  }
 
   //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔═══
   //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝ ╚══╗

@@ -10,9 +10,7 @@ import { objKeys } from 'topkat-utils'
 
 
 
-export function getValidateTokenAndLoginService(
-  pluginConfig: PluginUserConfig,
-) {
+export function getValidateTokenAndLoginService(pluginConfig: PluginUserConfig) {
 
   const { loginConfigPerRole } = pluginConfig
 

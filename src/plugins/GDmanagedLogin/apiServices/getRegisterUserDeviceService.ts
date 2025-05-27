@@ -1,18 +1,19 @@
 import { _ } from 'good-cop'
 import { svc } from '../../../service'
-import { checkOrChangeEmailOrPasswordRateLimiter } from '../constants'
-import { updateEmailWithToken } from '../updatePasswordOrEmailWithToken'
-import { PluginUserConfig } from '../main'
 import { db } from '../../../db'
 import { getId } from 'topkat-utils'
+import { getMainConfig } from '../../../helpers/getGreenDotConfigs'
 
 
-export function getUpdateEmailService(pluginConfig: PluginUserConfig) {
+export function getRegisterUserDeviceService() {
+
+  const mainConfig = getMainConfig()
+
   return {
     registerUserDevice: svc({
       for: ['ALL', 'public'],
-      input: _.model('bangk', 'device').required(),
-      rateLimiter: '5/30s',
+      input: _.model(mainConfig.defaultDatabaseName, 'GD_deviceModel').required(),
+      rateLimiter: { default: '5/30s', test: '100/30s' },
       async main(ctx, { ...deviceInfos }) {
 
         const _id = await db.device.upsert(ctx.GM, {
