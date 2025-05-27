@@ -11,11 +11,10 @@ import { PluginUserConfig } from './main'
 
 
 
-
-
 export async function decryptValidationToken(
+  ctx, token: string, emailType: EmailTypes,
   sendEmail: PluginUserConfig['sendEmailToValidateEmailAddress'],
-  ctx, token: string, emailType: EmailTypes, isForVerification = false
+  isForVerification = false
 ) {
 
   const decryptedToken = decryptToken(ctx, token)

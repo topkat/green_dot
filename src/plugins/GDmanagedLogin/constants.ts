@@ -1,4 +1,5 @@
 import { RateLimiterConfig } from '../../security/serviceRouteRateLimiter'
+import { _ } from '../../validator'
 
 
 
@@ -10,3 +11,11 @@ export const checkOrChangeEmailOrPasswordRateLimiter = {
   test: '100/min',
 } satisfies RateLimiterConfig
 
+
+export const userLoginReturnValidatorRaw = () => ({
+  user: _.model('bangk', 'user'),
+  accessToken: _.string(),
+  deviceId: _.string(),
+  csrfToken: _.string(),
+  biometricAuthToken: _.string(),
+})

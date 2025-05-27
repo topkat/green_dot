@@ -8,6 +8,8 @@ import { ModelTypes } from '../../cache/dbs/index.generated'
 import { emailTypes } from './constants'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { getSendValidationEmail } from './apiServices/getSendValidationEmail'
+import { getValidateTokenAndLoginService } from './apiServices/getValidateTokenAndLoginService'
+import { getLogoutService } from './apiServices/getLogoutService'
 
 
 export type Name = 'GDmanagedLogin'
@@ -25,7 +27,11 @@ export type PluginUserConfig = {
     /** Thoses can be optionnaly passed in frontend in the SDK and will be forwarded to the function  */
     additionalParams: Record<string, any>
   ) => any
+  mainRoleForConnexion: GD['role']
+  // OPTIONAL TYPES
 
+  /** Default: true */
+  loginErrorIfEmailIsNotValidated?: boolean
   /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
   validationTokenTypes?: readonly string[] | string[]
   /** Configure the time before the refresh token gets expired. Default: 15 minutes */
@@ -48,6 +54,7 @@ export const defaultConfig = {
   passwordRegexp: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/,
   passwordMinLength: 8,
   passwordMaxLength: 35,
+  loginErrorIfEmailIsNotValidated: true,
 } satisfies Partial<PluginUserConfig>
 
 
@@ -73,11 +80,15 @@ export class GDmanagedLogin extends GDplugin<Name> {
         config.maxRefreshTokenPerRole[role] = 2
       }
     }
+    this.config = { ...defaultConfig, ...config }
+
     // SERVICES
     this.serviceToRegister = {
       ...getNewTokenService(),
-      ...getCheckTokenIsValidService(config.sendEmailToValidateEmailAddress),
-      ...getSendValidationEmail(config.sendEmailToValidateEmailAddress),
+      ...getCheckTokenIsValidService(this.config.sendEmailToValidateEmailAddress),
+      ...getSendValidationEmail(this.config.sendEmailToValidateEmailAddress),
+      ...getValidateTokenAndLoginService(this.config),
+      ...getLogoutService(),
     }
     // HANDLERS
     this.handlers = [{
@@ -86,7 +97,6 @@ export class GDmanagedLogin extends GDplugin<Name> {
       callback: getOnLogin()
     }]
     //------------
-    this.config = { ...defaultConfig, ...config }
   }
 
   //  ╦  ╦ ╔═══ ╔══╗ ╔══╗   ╔══╗ ╔═╗  ╔═╗  ═╦═ ══╦══ ═╦═ ╔══╗ ╦╗ ╔ ╔══╗ ╦      ╔══╗ ═╦═ ╔══╗ ╦    ╔═╗  ╔═══

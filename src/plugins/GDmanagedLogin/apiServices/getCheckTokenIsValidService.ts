@@ -18,7 +18,7 @@ export function getCheckTokenIsValidService(
       output: _.object({ isValidToken: _.boolean() }),
       rateLimiter: checkOrChangeEmailOrPasswordRateLimiter,
       async main(ctx, { token, emailType }) {
-        await decryptValidationToken(sendEmail, ctx, token, emailType, true)
+        await decryptValidationToken(ctx, token, emailType, sendEmail, true)
         return { isValidToken: true }
       },
     })
