@@ -2,7 +2,7 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import glob from 'fast-glob'
-import { C, recursiveGenericFunctionSync } from 'topkat-utils'
+import { C } from 'topkat-utils'
 
 const isDist = process.env.RUN_FROM_DIST === 'true' && __dirname.includes('dist')
 const extension = isDist ? 'js' : 'ts'

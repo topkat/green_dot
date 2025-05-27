@@ -144,7 +144,7 @@ async function initAppConfigCache(resetCache = false) {
         const conf = (await safeImport(appConfigPath.path))?.default as GreenDotAppConfig
         if (conf.plugins && conf.plugins.length) {
           for (const p of conf.plugins) {
-            p?.onInit()
+            p?.onInit?.()
             registerPlugin(p)
           }
         }

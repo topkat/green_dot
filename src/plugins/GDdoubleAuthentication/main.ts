@@ -7,6 +7,8 @@ import { db } from '../../db'
 import { AsMongooseBody } from '../../databases/mongo/types/mongoDbBaseTypes'
 import { GDplugin } from '../GDplugin'
 import { getOnLogin } from './onLogin'
+import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
+import { _ } from 'good-cop'
 
 
 export type Name = 'GDdoubleAuthentication'
@@ -117,12 +119,24 @@ export class GDdoubleAuthentication extends GDplugin<Name> {
 
   addUserAdditionalFields() {
 
+    const { pinCodeLength } = this.config
 
     return {
-
-
+      // PIN CODE
+      pinCode: _.password({
+        minLength: pinCodeLength,
+        maxLength: pinCodeLength, // FIX bug in seed when creating bcrypt password
+        regexp: /^\d+$/,
+        encrypt: async password => await encryptPassword(password),
+      }),
+      pinCodeRetrialNb: _.number().default(0),
+      lastPincodeCompareTime: _.date().default(new Date()),
+      biometricAuthToken: _.string(),
+      biometricAuthRetrialNb: _.number().default(0),
+      lastBiometricCompareTime: _.date().default(new Date()),
+      _2FAcode: _.string().length(6),
+      _2FAretrialNb: _.number().default(0),
+      last2FACompareTime: _.date().default(new Date()),
     }
   }
-
-
 }

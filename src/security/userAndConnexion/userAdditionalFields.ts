@@ -7,7 +7,6 @@ export const userLockReasons = ['tooMuchPasswordAttempts', 'ban', 'tooManyAttemp
 export type UserLockReasonsDefault = typeof userLockReasons[number]
 
 
-
 export function getUserAdditionalFields({ silent = false } = {}) {
 
   const mainConfig = getMainConfig(silent)

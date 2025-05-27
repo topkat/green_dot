@@ -1,8 +1,7 @@
 import { GDplugin } from '../GDplugin'
 import { getOnLogin } from './onLogin'
 import { getNewTokenService } from './getNewTokenService'
-import { _ } from '../../validator'
-import { InferTypeRead } from 'good-cop'
+import { InferTypeRead, InferTypeWrite, _ } from 'good-cop'
 import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
 
 
@@ -102,5 +101,5 @@ export class GDmanagedLogin extends GDplugin<Name> {
 
 declare module '../../security/userAndConnexion/userAdditionalFields' {
   interface UserAdditionalFieldsRead extends InferTypeRead<ReturnType<GDmanagedLogin['addUserAdditionalFields']>> { }
-  interface UserAdditionalFieldsWrite extends InferTypeRead<ReturnType<GDmanagedLogin['addUserAdditionalFields']>> { }
+  interface UserAdditionalFieldsWrite extends InferTypeWrite<ReturnType<GDmanagedLogin['addUserAdditionalFields']>> { }
 }
