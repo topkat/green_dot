@@ -9,11 +9,14 @@ import { newPlugin } from '../newPlugin'
 import { defaultConfig, PluginUserConfig } from './config'
 import { compareAndAddAttempt } from './compareAndAddAttempt'
 
+export type Name = 'GDdoubleAuthentication'
 
 /** This handles 2FA, pinCode authentication or biometric authentication.
 Request headers must contain at least one of those fields to work: `biometricAuthToken`, `pincode`, `2FA`.
 */
-export class GDdoubleAuthentication extends GDplugin {
+export class GDdoubleAuthentication extends GDplugin<Name> {
+
+  name = 'GDdoubleAuthentication' as const
 
   config: PluginUserConfig
 
@@ -68,7 +71,7 @@ declare module '../../security/userAndConnexion/userAdditionalFields' {
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══   ╔══╗ ╦    ╦  ╦ ╔══╗ ═╦═ ╦╗ ╔
 //   ║  ║╚╗║  ║    ║     ╠══╝ ║    ║  ║ ║ ═╦  ║  ║╚╗║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩     ╩    ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩
-export default newPlugin<'GDdoubleAuthentication', PluginUserConfig, typeof GDdoubleAuthentication>({
+export default newPlugin<Name, PluginUserConfig, typeof GDdoubleAuthentication>({
   name: 'GDdoubleAuthentication',
   version: '1.0.0',
   defaultConfig,

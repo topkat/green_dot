@@ -13,6 +13,7 @@ export function newPlugin<
     plugin: T
     documentation: string
     docOneLine: string
+    paramsAsStringForProjectGeneration?: (props: { roles: GD['role'][] }) => string
   }) {
   return props
 }

@@ -24,13 +24,16 @@ import { db } from '../../db'
 import { getId } from 'topkat-utils'
 import { defaultConfig, PluginUserConfig } from './config'
 
+export type Name = 'GDmanagedLogin'
 
 //  ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ╔═╗    ╦    ╔══╗ ╔══╗ ═╦═ ╦╗ ╔
 //  ║╚╝║ ╠══╣ ║╚╗║ ╠══╣ ║ ═╦ ╠═   ║  ║   ║    ║  ║ ║ ═╦  ║  ║╚╗║
 //  ╩  ╩ ╩  ╩ ╩ ╚╩ ╩  ╩ ╚══╝ ╚══╝ ╚══╝   ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩
 
 /** Managed Login will handle login end to end with SDK integration, password management, cookie and secure connexion via JWT with latest OWASP standards. */
-export class GDmanagedLogin extends GDplugin {
+export class GDmanagedLogin extends GDplugin<Name> {
+
+  name = 'GDmanagedLogin' as const
 
   config: PluginUserConfig
 

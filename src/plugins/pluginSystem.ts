@@ -27,12 +27,12 @@ export function registerPlugin(plugin: InstanciatedPlugin) {
 }
 
 export function getPlugin<T extends PluginNames>(name: T) {
-  return registeredPlugins.find(p => p.name === name) as InstanceType<(typeof allPluginConfigs)[T]> | null
+  return registeredPlugins.find(p => p.name === name) as InstanceType<(typeof allPluginConfigs)[T]['plugin']> | null
 }
 
-/** Will return plugon config if registered or default config otherwise */
+/** Will return plugin config if registered or default config otherwise */
 export function getPluginConfig<T extends PluginNames>(name: T) {
-  return (registeredPlugins.find(p => p.name === name)?.config || defaultConfigs[name]) as InstanceType<(typeof allPluginConfigs)[T]>['config']
+  return (registeredPlugins.find(p => p.name === name)?.config || Object.values(allPluginConfigs).find(p => p.name === name)?.defaultConfig) as InstanceType<(typeof allPluginConfigs)[T]['plugin']>['config']
 }
 
 export function getAllPluginServices() {
@@ -41,10 +41,6 @@ export function getAllPluginServices() {
 
 export function getPluginHook(eventName: GDpluginHandlerEventNames) {
   return registeredPlugins.map(p => p.handlers.filter(h => h.event === eventName)).flat()
-}
-
-export function getAllPluginsOneLineDoc(eventName: GDpluginHandlerEventNames) {
-  return Object.values(allPluginConfigs).map(p => p.)
 }
 
 // type AllPlugins = (typeof allPlugins)

@@ -75,9 +75,7 @@ export const appConfig: GreenDotAppConfig = {
   enableSeed: env === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
   apiKeys: getApiKeys(),
   plugins: [
-    new GDmanagedLogin({ enable: true }),
-    new GDdoubleAuthentication({ enable: true }),
-    new GDapiKeyAuthentication({ enable: true, apiKeys: getApiKeys() })
+    '$$pluginsAutocomplete'
   ]
 }
 

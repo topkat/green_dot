@@ -34,7 +34,9 @@ export const defaultConfig = {
 /** This handles 2FA, pinCode authentication or biometric authentication.
 Request headers must contain at least one of those fields to work: `biometricAuthToken`, `pincode`, `2FA`.
 */
-export class GDapiKeyAuthentication extends GDplugin {
+export class GDapiKeyAuthentication extends GDplugin<Name> {
+
+  name = 'GDapiKeyAuthentication' as const
 
   config: PluginUserConfig
 
@@ -53,11 +55,12 @@ export class GDapiKeyAuthentication extends GDplugin {
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══   ╔══╗ ╦    ╦  ╦ ╔══╗ ═╦═ ╦╗ ╔
 //   ║  ║╚╗║  ║    ║     ╠══╝ ║    ║  ║ ║ ═╦  ║  ║╚╗║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩     ╩    ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩
-export default newPlugin<'GDapiKeyAuthentication', PluginUserConfig, typeof GDapiKeyAuthentication>({
+export default newPlugin<Name, PluginUserConfig, typeof GDapiKeyAuthentication>({
   name: 'GDapiKeyAuthentication',
   version: '1.0.0',
   defaultConfig,
   documentation,
   docOneLine,
+  paramsAsStringForProjectGeneration: () => `{ enable: true, apiKeys: {/** TODO put your apiKeys configs here */} }`,
   plugin: GDapiKeyAuthentication,
 })
