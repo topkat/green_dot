@@ -3,7 +3,7 @@ import { newPlugin } from '../newPlugin'
 import { GDmanagedLogin } from './GDmanagedLogin'
 import { defaultConfig, PluginUserConfig } from './config'
 
-export default newPlugin<'GDmanagedLogin', PluginUserConfig>({
+export default newPlugin<'GDmanagedLogin', PluginUserConfig, typeof GDmanagedLogin>({
   name: 'GDmanagedLogin',
   version: '1.0.0',
   defaultConfig,

@@ -2,9 +2,9 @@ import { C } from 'topkat-utils'
 import { luigi } from '../helpers/luigi.bot'
 import { templater } from 'simple-file-templater'
 import Path from 'path'
-import { allPlugins } from '../../plugins/pluginSystem'
+import { allPluginConfigs } from '../../plugins/pluginSystem'
 
-const pluginNames = Object.keys(allPlugins)
+const pluginNames = Object.keys(allPluginConfigs)
 
 export async function cliGenerateProject() {
 

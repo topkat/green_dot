@@ -1,5 +1,8 @@
 import { GDplugin } from '../GDplugin'
+import { newPlugin } from '../newPlugin'
+import { docOneLine, documentation } from './doc'
 import { getOnLogin } from './onLogin'
+
 
 
 export type Name = 'GDapiKeyAuthentication'
@@ -31,9 +34,7 @@ export const defaultConfig = {
 /** This handles 2FA, pinCode authentication or biometric authentication.
 Request headers must contain at least one of those fields to work: `biometricAuthToken`, `pincode`, `2FA`.
 */
-export class GDapiKeyAuthentication extends GDplugin<Name> {
-  name = 'GDapiKeyAuthentication' as const
-  version = '1.0.0'
+export class GDapiKeyAuthentication extends GDplugin {
 
   config: PluginUserConfig
 
@@ -47,3 +48,16 @@ export class GDapiKeyAuthentication extends GDplugin<Name> {
     }]
   }
 }
+
+
+//  ═╦═ ╦╗ ╔ ═╦═ ══╦══   ╔══╗ ╦    ╦  ╦ ╔══╗ ═╦═ ╦╗ ╔
+//   ║  ║╚╗║  ║    ║     ╠══╝ ║    ║  ║ ║ ═╦  ║  ║╚╗║
+//  ═╩═ ╩ ╚╩ ═╩═   ╩     ╩    ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩
+export default newPlugin<'GDapiKeyAuthentication', PluginUserConfig, typeof GDapiKeyAuthentication>({
+  name: 'GDapiKeyAuthentication',
+  version: '1.0.0',
+  defaultConfig,
+  documentation,
+  docOneLine,
+  plugin: GDapiKeyAuthentication,
+})

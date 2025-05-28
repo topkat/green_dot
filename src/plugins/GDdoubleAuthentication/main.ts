@@ -68,7 +68,7 @@ declare module '../../security/userAndConnexion/userAdditionalFields' {
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══   ╔══╗ ╦    ╦  ╦ ╔══╗ ═╦═ ╦╗ ╔
 //   ║  ║╚╗║  ║    ║     ╠══╝ ║    ║  ║ ║ ═╦  ║  ║╚╗║
 //  ═╩═ ╩ ╚╩ ═╩═   ╩     ╩    ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩
-export default newPlugin<'GDdoubleAuthentication', PluginUserConfig>({
+export default newPlugin<'GDdoubleAuthentication', PluginUserConfig, typeof GDdoubleAuthentication>({
   name: 'GDdoubleAuthentication',
   version: '1.0.0',
   defaultConfig,

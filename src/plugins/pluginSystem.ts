@@ -1,33 +1,24 @@
 
 
 import type { GDpluginHandlerEventNames } from './GDplugin'
-import { Name as ManagedLoginName, GDmanagedLogin, defaultConfig as managedLoginDefaultConfig, docOneLine as managedLoginOneLineDoc } from './GDmanagedLogin/main'
-import { Name as SecureAuthName, GDdoubleAuthentication, defaultConfig as secureAuthDefaultConfig, docOneLine as doubleAutOneLineDoc } from './GDdoubleAuthentication/main'
-import { Name as GDapiKeyAuthenticationName, GDapiKeyAuthentication, defaultConfig as GDapiKeyAuthenticationNameDefaultConfig, docOneLine as apiKeyAuthOneLineDoc } from './GDapiKeyAuthentication/main'
+import GDmanagedLogin from './GDmanagedLogin/main'
+import GDdoubleAuthentication from './GDdoubleAuthentication/main'
+import GDapiKeyAuthentication from './GDapiKeyAuthentication/main'
 import { ServiceGeneric } from '../types/services.types'
+import { newPlugin } from './newPlugin'
 
+export type PluginNames = typeof GDmanagedLogin.name | typeof GDdoubleAuthentication.name | typeof GDapiKeyAuthentication.name
 
-export const allPlugins = {
+export const allPluginConfigs = {
   GDdoubleAuthentication,
   GDmanagedLogin,
   GDapiKeyAuthentication,
-} as const satisfies Record<PluginNames, any>
+} as const satisfies Record<PluginNames, ReturnType<typeof newPlugin>>
 
-export const allOneLineDoc = {
-  GDdoubleAuthentication: doubleAutOneLineDoc,
-  GDmanagedLogin: managedLoginOneLineDoc,
-  GDapiKeyAuthentication: apiKeyAuthOneLineDoc,
-} as const satisfies Record<PluginNames, string>
+type AllPluginConfig = typeof allPluginConfigs
 
-export type PluginNames = ManagedLoginName | SecureAuthName | GDapiKeyAuthenticationName
 
-const defaultConfigs = {
-  GDdoubleAuthentication: secureAuthDefaultConfig,
-  GDmanagedLogin: managedLoginDefaultConfig,
-  GDapiKeyAuthentication: GDapiKeyAuthenticationNameDefaultConfig,
-} as const satisfies Record<PluginNames, any>
-
-export type InstanciatedPlugin = InstanceType<(typeof allPlugins)[PluginNames]>
+export type InstanciatedPlugin = InstanceType<AllPluginConfig[PluginNames]['plugin']>
 
 const registeredPlugins = [] as InstanciatedPlugin[]
 
@@ -36,12 +27,12 @@ export function registerPlugin(plugin: InstanciatedPlugin) {
 }
 
 export function getPlugin<T extends PluginNames>(name: T) {
-  return registeredPlugins.find(p => p.name === name) as InstanceType<(typeof allPlugins)[T]> | null
+  return registeredPlugins.find(p => p.name === name) as InstanceType<(typeof allPluginConfigs)[T]> | null
 }
 
 /** Will return plugon config if registered or default config otherwise */
 export function getPluginConfig<T extends PluginNames>(name: T) {
-  return (registeredPlugins.find(p => p.name === name)?.config || defaultConfigs[name]) as InstanceType<(typeof allPlugins)[T]>['config']
+  return (registeredPlugins.find(p => p.name === name)?.config || defaultConfigs[name]) as InstanceType<(typeof allPluginConfigs)[T]>['config']
 }
 
 export function getAllPluginServices() {
@@ -53,7 +44,7 @@ export function getPluginHook(eventName: GDpluginHandlerEventNames) {
 }
 
 export function getAllPluginsOneLineDoc(eventName: GDpluginHandlerEventNames) {
-  return Object.values(allPlugins).map(p => p.)
+  return Object.values(allPluginConfigs).map(p => p.)
 }
 
 // type AllPlugins = (typeof allPlugins)
