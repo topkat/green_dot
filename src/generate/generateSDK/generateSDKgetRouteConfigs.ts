@@ -2,7 +2,7 @@
 import fs from 'fs-extra'
 import Path from 'path'
 import { MainTypes, Definition } from 'good-cop'
-import { capitalize1st, includes } from 'topkat-utils'
+import { C, capitalize1st, includes } from 'topkat-utils'
 
 import { daoValidators } from '../../databases/mongo/types/mongoDaoTypes'
 import { error } from '../../error'
@@ -52,50 +52,57 @@ export async function createServiceRouteConfigPerPlatformForSdk(
         routeDescriptionSorted[platform] ??= []
 
         for (const [route, routeConfig] of Object.entries(sdkRouteConfig[platform])) {
-            if (!generateSdkConfig.shallExposeRoute(route)) continue
+            const errorExtraInfos = { route, routeConfig } as Record<string, any>
+            try {
+                if (!generateSdkConfig.shallExposeRoute(route)) continue
 
-            if (routeConfig.maskInSdk === true) continue
+                if (routeConfig.maskInSdk === true) continue
 
-            const { input } = routeConfig
-            let { output } = routeConfig
+                const { input } = routeConfig
+                let { output } = routeConfig
 
-            // INPUT TYPE
-            const inputTypeStr = input.map((v: Definition, i) => {
-                return ' ' + (v.getName() || `param${i}`) + '?: ' + v.getTsTypeAsString().read
-            }).join(', ')
-
-
-            // OUTPUT TYPE
-            let outputTypeStr = 'Promise<void>'
-
-            if (output) {
-                const mainReturnType = output.getMainType()
-                const flatTypes = ['boolean', 'date', 'number', 'string'] satisfies MainTypes[]
-
-                if (mainReturnType === 'object') output = output.complete() as any as Definition
-                else if (includes(flatTypes, mainReturnType)) output = output.required() as any as Definition
-
-                outputTypeStr = output.promise().getTsTypeAsString().read
-            }
+                // INPUT TYPE
+                const inputTypeStr = input.map((v: Definition, i) => {
+                    return ' ' + (v.getName() || `param${i}`) + '?: ' + v.getTsTypeAsString().read
+                }).join(', ')
 
 
-            const queryName = routeToObjAddr(route)
-            routeDescriptionSorted[platform].push([
-                queryName,
-                {
-                    queryName,
-                    inputValidator: routeConfig.input,
-                    outputValidator: routeConfig.output,
-                    route,
-                    tsType: [`(${inputTypeStr}): ${outputTypeStr}`],
-                    doc: routeConfig.doc,
-                    isShared: routeConfig._isSharedService,
-                    isDao: false,
-                    platform,
-                    method: routeConfig.method,
-                    queriesToInvalidate: routeConfig.invalidateCacheFor,
+                // OUTPUT TYPE
+                let outputTypeStr = 'Promise<void>'
+
+                if (output) {
+                    const mainReturnType = output.getMainType()
+                    const flatTypes = ['boolean', 'date', 'number', 'string'] satisfies MainTypes[]
+
+                    if (mainReturnType === 'object') output = output.complete() as any as Definition
+                    else if (includes(flatTypes, mainReturnType)) output = output.required() as any as Definition
+
+                    outputTypeStr = output.promise().getTsTypeAsString().read
                 }
-            ]) // .push(                [routeToObjAddr(route), { ts: [`(${inputTypeStr}): ${outputTypeStr}`], doc, isShared: _isSharedService }]            )
+
+
+                const queryName = routeToObjAddr(route)
+                routeDescriptionSorted[platform].push([
+                    queryName,
+                    {
+                        queryName,
+                        inputValidator: routeConfig.input,
+                        outputValidator: routeConfig.output,
+                        route,
+                        tsType: [`(${inputTypeStr}): ${outputTypeStr}`],
+                        doc: routeConfig.doc,
+                        isShared: routeConfig._isSharedService,
+                        isDao: false,
+                        platform,
+                        method: routeConfig.method,
+                        queriesToInvalidate: routeConfig.invalidateCacheFor,
+                    }
+                ])
+            } catch (err) {
+                C.error(false, 'Extra Infos ========')
+                C.error(false, JSON.stringify(errorExtraInfos, null, 2))
+                throw err
+            }
         }
 
         sortRoutes(routeDescriptionSorted[platform])

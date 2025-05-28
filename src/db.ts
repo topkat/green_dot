@@ -5,7 +5,7 @@ import { error } from './error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
-import { _, Definition, ModelReadWrite } from 'good-cop'
+import { _, Definition, DefinitionObjChild, ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
 import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos'
 
@@ -14,7 +14,9 @@ import { GD_deviceModel } from './security/userAndConnexion/GD_device.model'
 import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
 import { getUserAdditionalFields } from './security/userAndConnexion/userAdditionalFields'
+import { InferTypeRead, InferTypeWrite } from 'good-cop'
 
+type InferTypeRW<T extends DefinitionObjChild> = { Read: InferTypeRead<T>, Write: InferTypeWrite<T> }
 
 //  ╔══╗ ╔══╗ ╔══╗ ╦  ╦ ╔══╗
 //  ║    ╠══╣ ║    ╠══╣ ╠═
@@ -38,14 +40,11 @@ export const dbCache = {} as ModelsConfigCache
 
 export type Dbs = {
   [K in keyof ModelsWithDbNamesAndReadWrite]: {
-    [L in keyof ModelsWithDbNamesAndReadWrite[K]]: ModelsWithDbNamesAndReadWrite[K][L] extends ModelReadWrite ? DaoMethodsMongo<ModelsWithDbNamesAndReadWrite[K][L]> : never
+    [L in keyof ModelsWithDbNamesAndReadWrite[K]]:
+    L extends 'GD_serverBlackList' ? DaoMethodsMongo<InferTypeRW<typeof GD_serverBlacklistModel>> :
+    L extends 'GD_device' ? DaoMethodsMongo<InferTypeRW<typeof GD_deviceModel>> :
+    ModelsWithDbNamesAndReadWrite[K][L] extends ModelReadWrite ? DaoMethodsMongo<ModelsWithDbNamesAndReadWrite[K][L]> : never
   } & ModelAdditionalFields
-} & {
-  [k in MainDbName]: {
-    // we also inject models created by green_dot
-    GD_serverBlackList: DaoMethodsMongo<{ Read: typeof GD_serverBlacklistModel.tsTypeRead, Write: typeof GD_serverBlacklistModel.tsTypeWrite }>
-    GD_deviceModel: DaoMethodsMongo<{ Read: typeof GD_deviceModel.tsTypeRead, Write: typeof GD_deviceModel.tsTypeWrite }>
-  }
 }
 
 export type Db = Dbs[MainDbName]
@@ -98,6 +97,7 @@ export async function initDbs(resetCache: boolean = false) {
 
       // we inject greenDotModels
       models.GD_serverBlackList = GD_serverBlacklistModel as any as Definition
+      models.GD_device = GD_deviceModel as any as Definition
 
     }
 

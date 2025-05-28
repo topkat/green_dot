@@ -30,7 +30,7 @@ export async function generateFilesForCachedDb(
 
     if (mainConfig.defaultDatabaseName === dbName) {
       models.GD_serverBlackList = GD_serverBlacklistModel as unknown as Definition
-      models.GD_deviceModel = GD_deviceModel as unknown as Definition
+      models.GD_device = GD_deviceModel as unknown as Definition
     }
 
     let modelTypeFileContent = `import { TranslationObj } from '${basePath.includes(greenDotCacheModuleFolder) ? '../../index' : 'green_dot'}'\n\n`

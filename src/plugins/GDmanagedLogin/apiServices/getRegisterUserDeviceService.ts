@@ -1,8 +1,10 @@
-import { _ } from 'good-cop'
+
 import { svc } from '../../../service'
 import { db } from '../../../db'
 import { getId } from 'topkat-utils'
 import { getMainConfig } from '../../../helpers/getGreenDotConfigs'
+import { _ } from '../../../validator'
+import { MainDbName } from '../../../cache/dbs/index.generated'
 
 
 export function getRegisterUserDeviceService() {
@@ -12,11 +14,11 @@ export function getRegisterUserDeviceService() {
   return {
     registerUserDevice: svc({
       for: ['ALL', 'public'],
-      input: _.model(mainConfig.defaultDatabaseName, 'GD_deviceModel').required(),
+      input: _.model(mainConfig.defaultDatabaseName as MainDbName, 'GD_device').required(),
       rateLimiter: { default: '5/30s', test: '100/30s' },
       async main(ctx, { ...deviceInfos }) {
 
-        const _id = await db.GD_deviceModel.upsert(ctx.GM, {
+        const _id = await db.GD_device.upsert(ctx.GM, {
           ...deviceInfos,
           user: ctx._id,
         })
