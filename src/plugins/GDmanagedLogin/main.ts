@@ -19,7 +19,6 @@ import { getUpdateEmailService } from './apiServices/getUpdateEmailService'
 import { userLoginReturnValidator, userLogin } from './userLogin'
 import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
 import { getRegisterUserDeviceService } from './apiServices/getRegisterUserDeviceService'
-import { GenericDef } from 'good-cop'
 import { credentialManagementMailing } from './credentialManagementMailing'
 import { db } from '../../db'
 import { getId } from 'topkat-utils'
@@ -32,8 +31,6 @@ export type Name = 'GDmanagedLogin'
 
 export type GDmanagedLoginLoginConfig = {
   emailLogin: boolean
-  canSignUp: boolean
-  signupExtraFields?: Record<string, GenericDef>
   loginOnValidateToken?: boolean
   /** Returning false will throw an accessDenied error with no other infos. If you want more control over error thrown, extraInfos, alerts..etc, use onLogin  */
   additionalChecks?(ctx: Ctx, user: ModelTypes['user'])
@@ -43,19 +40,23 @@ export type GDmanagedLoginLoginConfig = {
   onAfterLogin?(ctx: Ctx, requestedRole: GD['role'], user: ModelTypes['user'], loginTokens: Awaited<ReturnType<typeof setConnexionTokens>>)
 }
 
+export type GDmanagedLoginSendEmailUpdatedMailConfirmationFunction = (ctx: Ctx, props: { user: ModelTypes['user'], newEmail: string, oldEmail: string }) => any
+
+export type GDmanagedLoginSendEmailFunction = (
+  ctx: Ctx,
+  emailType: EmailTypes,
+  encodedToken: string,
+  user: ModelTypes['user'],
+  /** Thoses can be optionnaly passed in frontend in the SDK and will be forwarded to the function  */
+  additionalParams: Record<string, any>,
+  /** In case emailType is changeEmail, this is the updatedEmail */
+  updatedEmail?: string
+) => any
+
 export type PluginUserConfig = {
   enable: boolean,
 
-  sendEmail(
-    ctx: Ctx,
-    emailType: EmailTypes,
-    encodedToken: string,
-    user: ModelTypes['user'],
-    /** Thoses can be optionnaly passed in frontend in the SDK and will be forwarded to the function  */
-    additionalParams: Record<string, any>,
-    /** In case emailType is changeEmail, this is the updatedEmail */
-    updatedEmail?: string
-  ): any
+  sendEmail: GDmanagedLoginSendEmailFunction
 
   sendPasswordUpdatedMailConfirmation: (ctx: Ctx, user: ModelTypes['user']) => any
 
@@ -63,7 +64,7 @@ export type PluginUserConfig = {
 
   // OPTIONAL TYPES
   /** This email is sent when user update their email and when update has succeeded */
-  sendEmailUpdatedMailConfirmation?: (ctx: Ctx, props: { user: ModelTypes['user'], newEmail: string, oldEmail: string }) => any
+  sendEmailUpdatedMailConfirmation?: GDmanagedLoginSendEmailUpdatedMailConfirmationFunction
   /** Default 30 minutes */
   emailTokenTimeValidMinutes?: number
   /** Default: true */

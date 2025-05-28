@@ -25,6 +25,12 @@
       ],
       "src/*": [
         "./*"
+      ],
+      "green_dot": [
+        "./index.ts"
+      ],
+      "green_dot/plugins": [
+        "./src/plugins/index.ts"
       ]
     },
     "types": [

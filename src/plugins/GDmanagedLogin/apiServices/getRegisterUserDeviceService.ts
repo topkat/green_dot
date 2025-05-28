@@ -16,7 +16,7 @@ export function getRegisterUserDeviceService() {
       rateLimiter: { default: '5/30s', test: '100/30s' },
       async main(ctx, { ...deviceInfos }) {
 
-        const _id = await db.device.upsert(ctx.GM, {
+        const _id = await db.GD_deviceModel.upsert(ctx.GM, {
           ...deviceInfos,
           user: ctx._id,
         })

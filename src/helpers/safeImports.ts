@@ -8,7 +8,11 @@ export async function safeImport(path: string) {
 
   const { mainConfig } = await getProjectPaths()
 
-  const pathRelative = Path.relative(mainConfig.folderPath, path)
+  let pathRelative = Path.relative(mainConfig.folderPath, path)
+
+  if (process.env.RUN_FROM_DIST === 'false') {
+    pathRelative = pathRelative.replace(Path.sep + 'dist' + Path.sep, Path.sep)
+  }
 
   if (verbose) C.log('Importing ' + pathRelative)
 
