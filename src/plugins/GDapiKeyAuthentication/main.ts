@@ -3,8 +3,7 @@ import { getOnLogin } from './onLogin'
 
 
 export type Name = 'GDapiKeyAuthentication'
-
-export const documentation = ``
+export { docOneLine, documentation } from './doc'
 
 export type GDapiKey = {
   [apiKey in (GD['role'] | (string & {}))]?: {

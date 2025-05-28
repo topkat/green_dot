@@ -3,9 +3,7 @@ import { svc } from '../service'
 import { GreenDotAppConfig } from '../types/appConfig.types'
 import { GenericDef } from 'good-cop'
 
-export class GDplugin<Name extends string> {
-  protected readonly name: Name
-  protected readonly version: string
+export abstract class GDplugin {
 
   /** Will register those services into the app and SDK and eventually expose configured routes */
   serviceToRegister: Record<string, ReturnType<typeof svc>> = {}
@@ -25,7 +23,6 @@ export class GDplugin<Name extends string> {
   * ```
   */
   errors?: ErrorObject
-
 }
 
 export type GDpluginHandlers = {

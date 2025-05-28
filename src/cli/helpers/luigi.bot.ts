@@ -3,7 +3,6 @@ import { asArray, C, randomItemInArray } from 'topkat-utils'
 import { wrapCliText, terminalCharSize } from './cli'
 import { openInDefaultEditor } from './openInDefaultEditor'
 
-
 export const luigi = {
   greet() {
     C.log('\n')
@@ -64,7 +63,7 @@ export const luigi = {
       message: this.say(message, { log: false }),
     })
   },
-  async askSelection<V extends string | { name?: string, value: string, description?: string }, C extends Omit<Parameters<typeof select>[0], 'message' | 'choices'> & { multi?: boolean }>(
+  async askSelection<V extends string | { name?: string, value: string, description?: string, checked?: boolean }, C extends Omit<Parameters<typeof select>[0], 'message' | 'choices'> & { multi?: boolean }>(
     msg: string | string[],
     choices: readonly (V | Separator)[],
     config: C = { multi: false } as C
