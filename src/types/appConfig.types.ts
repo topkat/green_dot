@@ -1,10 +1,9 @@
 
 
-import { TopkatUtilConfig } from 'topkat-utils/src/config'
 import { ServiceClean } from './services.types'
 import { Request, Response } from 'express'
-import { MaybeArray } from 'typescript-generic-types'
 import { InstanciatedPlugin } from '../plugins/pluginSystem'
+import { Color } from 'topkat-utils/src/types'
 
 //----------------------------------------
 // GENERAL CONFIG
@@ -41,7 +40,9 @@ export type GreenDotAppConfig = {
   corsOrigin: (RegExp | string)[] | ((origin: string) => boolean)
 
   serverCliIntro: string
-  dataValidationConfig: Partial<TopkatUtilConfig>
+  disableTerminalColors?: boolean
+  terminalColor1?: Color
+  terminalColor2?: Color
   enableSchedules: boolean
   enableSeed: boolean
   defaultPaginationLimit?: number

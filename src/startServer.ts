@@ -64,7 +64,7 @@ export async function startServer(isMaster = true) {
 
     await initDbs()
 
-    registerConfig(appConfig.dataValidationConfig)
+    registerConfig({ env: env.env, terminal: { theme: { primary: appConfig.terminalColor1 || [65, 117, 255], shade1: appConfig.terminalColor2 || [117, 155, 255] }, noColor: mainConfig.isProdEnv || appConfig.disableTerminalColors }, isProd: mainConfig.isProdEnv })
 
     const app = express()
 
