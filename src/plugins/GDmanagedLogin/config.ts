@@ -67,11 +67,11 @@ export type PluginUserConfig = {
   * @link https://jwt.io/introduction
   */
   jwtExpirationMs?: number
-  /** Token expiration time for web (default 15 minutes) Web is less secure than mobile so you can set a different value here
+  /** Token expiration time for web (default 48h) Web is less secure than mobile so you can set a different value here
    * @link https://jwt.io/introduction
    */
   jwtRefreshExpirationMsWeb?: number | 'never'
-  /** Token expiration time for web (default 15 minutes) In mobile, everything should be stored in secureStore. You may want the token to never expire if you use 2FA or biometric auth
+  /** Token expiration time for web (default 48h) In mobile, everything should be stored in secureStore. You may want the token to never expire if you use 2FA or biometric auth
   * @link https://jwt.io/introduction
   */
   jwtRefreshExpirationMsMobile?: number | 'never'

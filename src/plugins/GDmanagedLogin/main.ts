@@ -13,6 +13,7 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
     addToEnvVariableImports: [`JWT_SECRET = 'TODOreplaceThisStringWithYourTestSecret'`],
     instanciatePluginInAppConfig: ({ roles }) => `
       enable: true,
+      jwtSecret: JWT_SECRET,
       loginConfigPerRole: {
         ${roles.map(r => `
         ${r}: {

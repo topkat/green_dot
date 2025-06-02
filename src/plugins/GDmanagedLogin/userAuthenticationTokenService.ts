@@ -46,7 +46,7 @@ export async function createToken(
     const { jwtRefreshExpirationMsMobile, jwtRefreshExpirationMsWeb, jwtSecret } = config
 
     if (data.role === 'public') throw ctx.error.serverError('noTokenIsAllowedWithRolePublic')
-    const expireInMs = data.type === 'access' ? config.jwtExpirationMs /** do not spread */ : data.deviceType === 'web' ? jwtRefreshExpirationMsWeb : jwtRefreshExpirationMsMobile
+    const expireInMs = (data.type === 'access' ? config.jwtExpirationMs || 15 * 60 * 1000 : data.deviceType === 'web' ? jwtRefreshExpirationMsWeb : jwtRefreshExpirationMsMobile) || 48 * 3600 * 1000
     const expirationDate = expireInMs === 'never' ? expireInMs : Date.now() + expireInMs
 
     const { userId, role, permissions, ...otherFields } = data
