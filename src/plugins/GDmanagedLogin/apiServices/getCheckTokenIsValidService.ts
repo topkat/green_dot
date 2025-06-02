@@ -2,7 +2,8 @@ import { _ } from 'good-cop'
 import { svc } from '../../../service'
 import { checkOrChangeEmailOrPasswordRateLimiter, emailTypes } from '../constants'
 import { decryptValidationToken } from '../decryptValidationTokens'
-import { PluginUserConfig } from '../main'
+import { PluginUserConfig } from '../config'
+
 
 
 export function getCheckTokenIsValidService(

@@ -6,7 +6,7 @@ import { ModelTypes } from '../../cache/dbs/index.generated'
 import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService'
 import { db } from '../../db'
 import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
-import { PluginUserConfig } from './main'
+import { PluginUserConfig } from './config'
 import { JWTdataWrite, setConnexionTokens } from './userAuthenticationTokenService'
 import { applyMaskOnObjectForUser } from '../../databases/mongo/services/maskService'
 import { credentialManagementMailing } from './credentialManagementMailing'
@@ -67,7 +67,7 @@ export async function userLogin(
     permissions: user, // extra fields will be removed in the token
   } satisfies JWTdataWrite
 
-  const tokens = await setConnexionTokens(userCtx, deviceId, toknData)
+  const tokens = await setConnexionTokens(userCtx, deviceId, toknData, pluginConfig)
 
   const maskedUser = await applyMaskOnObjectForUser(userCtx, 'bangk', 'user', 'getOne', user)
 

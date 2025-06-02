@@ -9,9 +9,10 @@ import { svc } from '../../../service'
 import { _ } from '../../../validator'
 import { ensureUserIsNotLocked } from '../../../security/userAndConnexion/userLockService'
 import { parseToken, revokeToken, setConnexionTokens } from '../userAuthenticationTokenService'
+import { PluginUserConfig } from '../config'
 
 
-export const getNewTokenService = () => {
+export const getNewTokenService = (config: PluginUserConfig) => {
 
     const doubleAuth = getPlugin('GDdoubleAuthentication')
     const { pinCodeLength } = getPluginConfig('GDdoubleAuthentication')
@@ -51,7 +52,7 @@ export const getNewTokenService = () => {
 
                 if (!refreshToken) throw ctx.error.wrongToken({ additionalInfos: 'noCookieProvided' })
 
-                const tokenData = await parseToken(ctx, refreshToken, false)
+                const tokenData = await parseToken(ctx, refreshToken, config, false)
 
                 const isSameDevice = tokenData.deviceId === deviceId
 
@@ -83,7 +84,7 @@ export const getNewTokenService = () => {
                 if (user.refreshTokens) {
                     const foundRefreshTkn = user.refreshTokens.find(r => r === refreshToken)
                     if (foundRefreshTkn) {
-                        const { accessToken, refreshToken, csrfToken, expirationDate, biometricAuthToken } = await setConnexionTokens(userCtx, deviceId, tokenData)
+                        const { accessToken, refreshToken, csrfToken, expirationDate, biometricAuthToken } = await setConnexionTokens(userCtx, deviceId, tokenData, config)
 
                         // TODO 129JDIE find a way to simulate prod env and test that this value is not returned
                         return {

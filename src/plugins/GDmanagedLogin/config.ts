@@ -59,6 +59,22 @@ export type PluginUserConfig = {
   passwordMinLength?: number
   /** Default 35 */
   passwordMaxLength?: number
+  /** Secret for your JWT/ This should be passed via ENV variables and should NOT be exposed in your repository
+   * @link https://jwt.io/introduction
+   */
+  jwtSecret: string
+  /** Token expiration time (default 15 minutes)
+  * @link https://jwt.io/introduction
+  */
+  jwtExpirationMs?: number
+  /** Token expiration time for web (default 15 minutes) Web is less secure than mobile so you can set a different value here
+   * @link https://jwt.io/introduction
+   */
+  jwtRefreshExpirationMsWeb?: number | 'never'
+  /** Token expiration time for web (default 15 minutes) In mobile, everything should be stored in secureStore. You may want the token to never expire if you use 2FA or biometric auth
+  * @link https://jwt.io/introduction
+  */
+  jwtRefreshExpirationMsMobile?: number | 'never'
 }
 
 export const defaultConfig = {

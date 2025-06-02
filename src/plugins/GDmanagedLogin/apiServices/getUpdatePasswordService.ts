@@ -1,6 +1,6 @@
 import { _ } from 'good-cop'
 import { svc } from '../../../service'
-import { PluginUserConfig } from '../main'
+import { PluginUserConfig } from '../config'
 import { checkOrChangeEmailOrPasswordRateLimiter } from '../constants'
 import { updatePasswordWithToken } from '../updatePasswordOrEmailWithToken'
 

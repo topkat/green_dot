@@ -8,6 +8,7 @@ import { GreenDotAppConfig } from '../../types/appConfig.types'
 import { parseToken } from './userAuthenticationTokenService'
 import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { PluginUserConfig } from './config'
 
 
 
@@ -15,7 +16,9 @@ import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 
 
-export function getOnLogin(): GreenDotAppConfig['onLoginCallback'] {
+export function getOnLoginHandler(
+  config: PluginUserConfig
+): GreenDotAppConfig['onLoginCallback'] {
   return async (ctxUser: CtxUser, req) => {
 
     const { generateSdkConfig } = getMainConfig()
@@ -41,7 +44,7 @@ export function getOnLogin(): GreenDotAppConfig['onLoginCallback'] {
         if (csrfToken !== csrfTokenFromHeader && process.env.NODE_ENV !== 'development') throw error.wrongToken({ additionalInfos: `wrong CSRF token` })
 
         try {
-          const { role, userId, permissions } = await parseToken(ctx, authorization)
+          const { role, userId, permissions } = await parseToken(ctx, authorization, config)
           if (userId) {
             // TODO Handle Cache and userId difference
             user = await db.user.getById(ctx.GM, userId)

@@ -3,7 +3,7 @@ import { getId } from 'topkat-utils'
 import { svc } from '../../../service'
 import { _ } from '../../../validator'
 import { db } from '../../../db'
-import { PluginUserConfig } from '../main'
+import { PluginUserConfig } from '../config'
 import { credentialManagementMailing } from '../credentialManagementMailing'
 
 

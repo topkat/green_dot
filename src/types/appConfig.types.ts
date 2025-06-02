@@ -53,10 +53,7 @@ export type GreenDotAppConfig = {
   filterRoutesForTest?: (route: string) => boolean
 
 
-  jwtSecret?: string
-  jwtExpirationMs?: number
-  jwtRefreshExpirationMsWeb?: number | 'never'
-  jwtRefreshExpirationMsMobile?: number | 'never'
+
 
 
   //  ╔══╗ ╦    ╔══╗ ╔══╗ ══╦══ ╔═══

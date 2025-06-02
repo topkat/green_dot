@@ -1,14 +1,14 @@
 
 
 import jwt from 'jsonwebtoken'
-import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 import { generateUniqueToken } from '../../services/generateUniqueToken'
 import { db } from '../../db'
 import { ModelTypes } from '../../cache/dbs/index.generated'
 import { setCsrfTokenCookie, setRefreshTokenCookie } from './cookieService'
-import { getPluginConfig } from '../pluginSystem'
 import { decryptToken, encryptToken } from '../../security/encryptAndDecryptSafe'
+import { PluginUserConfig } from './config'
 
 
 
@@ -39,15 +39,14 @@ type JWTdataObfuscated = JWTdataBase & { d: string } // d is used to store userI
 
 export async function createToken(
     ctx: Ctx,
-    data: Omit<JWTdata, 'expirationDate'>
+    data: Omit<JWTdata, 'expirationDate'>,
+    config: PluginUserConfig
 ) {
 
-    const appConfig = await getActiveAppConfig()
-
-    const { jwtRefreshExpirationMsMobile, jwtRefreshExpirationMsWeb, jwtSecret } = appConfig
+    const { jwtRefreshExpirationMsMobile, jwtRefreshExpirationMsWeb, jwtSecret } = config
 
     if (data.role === 'public') throw ctx.error.serverError('noTokenIsAllowedWithRolePublic')
-    const expireInMs = data.type === 'access' ? appConfig.jwtExpirationMs /** do not spread */ : data.deviceType === 'web' ? jwtRefreshExpirationMsWeb : jwtRefreshExpirationMsMobile
+    const expireInMs = data.type === 'access' ? config.jwtExpirationMs /** do not spread */ : data.deviceType === 'web' ? jwtRefreshExpirationMsWeb : jwtRefreshExpirationMsMobile
     const expirationDate = expireInMs === 'never' ? expireInMs : Date.now() + expireInMs
 
     const { userId, role, permissions, ...otherFields } = data
@@ -68,17 +67,15 @@ export async function createToken(
 export async function parseToken(
     ctx: Ctx,
     token: string,
+    config: PluginUserConfig,
     checkExpiredToken = true
 ) {
     let data: JWTdata | undefined
 
-    const appConfig = await getActiveAppConfig()
-    const { jwtSecret } = appConfig
-
     const requiredTokenFields = ['type', 'userId', 'deviceId', 'expirationDate']
 
     try {
-        const { d, ...otherFields } = jwt.verify(decryptToken(ctx, token), jwtSecret) as JWTdataObfuscated
+        const { d, ...otherFields } = jwt.verify(decryptToken(ctx, token), config.jwtSecret) as JWTdataObfuscated
         const { _id, permissions, role } = decryptPermInJwt(d)
 
         data = {
@@ -109,6 +106,7 @@ export async function setConnexionTokens(
     ctx: Ctx,
     deviceId: string,
     tokenData: JWTdataWrite,
+    config: PluginUserConfig
 ) {
 
     const user = await ctx.getUser()
@@ -116,19 +114,19 @@ export async function setConnexionTokens(
     const previousRefreshTokenList = user.refreshTokens
     const previousAccessTokenList = user.accessTokens
 
-    const { maxRefreshTokenPerRole } = getPluginConfig('GDmanagedLogin')
+    const { maxRefreshTokenPerRole } = config
 
     const { role } = tokenData
     // GENERATE TOKENS
-    const { token: refreshToken, expirationDate } = await createToken(ctx, { ...tokenData, type: 'refresh' })
-    const { token: accessToken } = await createToken(ctx, { ...tokenData, type: 'access' })
+    const { token: refreshToken, expirationDate } = await createToken(ctx, { ...tokenData, type: 'refresh' }, config)
+    const { token: accessToken } = await createToken(ctx, { ...tokenData, type: 'access' }, config)
     const csrfToken = generateUniqueToken(24) // Simple Session Token
     const biometricAuthToken = generateUniqueToken(24) // biometric auth token
 
     //KEEP THE LATEST TOKENS
 
-    const refreshTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousRefreshTokenList, deviceId, role, maxRefreshTokenPerRole[role] || 3)
-    const accessTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousAccessTokenList, deviceId, role, maxRefreshTokenPerRole[role])
+    const refreshTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousRefreshTokenList, deviceId, role, maxRefreshTokenPerRole[role] || 3, config)
+    const accessTokenListWithoutPrevious = getTokenListWithoutPrevious(ctx, previousAccessTokenList, deviceId, role, maxRefreshTokenPerRole[role], config)
 
     await db.user.update(ctx.GM, ctx._id, {
         refreshTokens: [...refreshTokenListWithoutPrevious, refreshToken],
@@ -153,14 +151,15 @@ function getTokenListWithoutPrevious(
     previousTokenList: Array<string>,
     deviceId: string,
     role: Parameters<typeof setConnexionTokens>[2]['role'],
-    maxTokenListLength: number
+    maxTokenListLength: number,
+    config: PluginUserConfig,
 ) {
 
     let tokenNbSessionsLeftForRole = maxTokenListLength - 1
 
     return previousTokenList.reverse().filter(async tkn => {
         try {
-            const data = await parseToken(ctx, tkn)
+            const data = await parseToken(ctx, tkn, config)
             // FILTER OUT PREVIOUS TOKEN ASSOCIATED WITH THIS DEVICEID
             const isSameDeviceAndRole = data.deviceId === deviceId && data.role === role
             // OR TOKENS ABOVE MAX SESSIONS

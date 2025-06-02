@@ -7,7 +7,7 @@ import { db } from '../../db'
 import { decryptToken } from '../../security/encryptAndDecryptSafe'
 import { EmailTypes } from './constants'
 import { credentialManagementMailing } from './credentialManagementMailing'
-import { PluginUserConfig } from './main'
+import { PluginUserConfig } from './config'
 
 
 

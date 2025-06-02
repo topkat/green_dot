@@ -1,7 +1,7 @@
 
 
 import { db } from '../../db'
-import { PluginUserConfig } from './main'
+import { PluginUserConfig } from './config'
 import { ModelTypes } from '../../cache/dbs/index.generated'
 import { EmailTypes } from './constants'
 import { generateUniqueToken } from '../../services/generateUniqueToken'

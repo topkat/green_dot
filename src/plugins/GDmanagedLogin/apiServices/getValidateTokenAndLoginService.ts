@@ -3,7 +3,7 @@ import { svc } from '../../../service'
 import { checkOrChangeEmailOrPasswordRateLimiter, userLoginReturnValidatorRaw } from '../constants'
 import { decryptValidationToken } from '../decryptValidationTokens'
 import { db } from '../../../db'
-import { PluginUserConfig } from '../main'
+import { PluginUserConfig } from '../config'
 import { userLogin } from '../userLogin'
 import { objKeys } from 'topkat-utils'
 

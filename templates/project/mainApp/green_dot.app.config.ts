@@ -2,13 +2,14 @@
 
 
 import { GreenDotAppConfig, cliIntro } from 'green_dot'
+import greenDotConfig from '../green_dot.config'
 
 import { ENV } from 'topkat-utils'
 
 const {
   NODE_ENV = 'development',
-  LIVE_URL,
-  SERVER_PORT,
+  SERVER_PORT = 9086,
+  LIVE_URL = `http://localhost:${SERVER_PORT}`,
   JWT_SECRET = 'TODOreplaceThisStringWithYourTestSecret',
   IS_CRON_SERVER = false,
 } = ENV()
@@ -16,15 +17,9 @@ const {
 
 const env: Env = NODE_ENV
 
-const port = SERVER_PORT || 9086
-const appName = 'mainBackend'
+// const port = SERVER_PORT || 9086
+
 const version = '0.0.0'
-
-const isProd = env === 'production' || env === 'preprod'
-
-const liveUrl = typeof LIVE_URL === 'string' ? LIVE_URL.replace(/\/$/, '') : `http://localhost`
-const appNameShort = appName.replace('bangk-', '').replace('-backend', '').toUpperCase()
-const versionLine = appNameShort + ' '.repeat(30 - appNameShort.length - version.length) + version
 
 
 export const appConfig: GreenDotAppConfig = {
@@ -37,22 +32,10 @@ export const appConfig: GreenDotAppConfig = {
   swaggerDoc: {
     enable: true,
   },
-  serverLiveUrl: liveUrl.includes('localhost') ? `${liveUrl}:${port}/` : liveUrl,
+  serverLiveUrl: LIVE_URL,
   emailFromAddress: 'no-reply@$$projectName.app',
-  port,
+  port: SERVER_PORT,
   smtp: {}, // TODO add SMTP config here
-  dataValidationConfig: {
-    isProd,
-    env,
-    customTypes: {},
-    terminal: {
-      noColor: false,
-      theme: {
-        primary: [65, 117, 255], //
-        shade1: [117, 155, 255],
-      },
-    },
-  },
   jwtSecret: JWT_SECRET as string,
   jwtExpirationMs: refreshTokenExpirationMinutes * 60 * 1000,
   jwtRefreshExpirationMsMobile: 'never', // it will expire on new login // 48 * 3600 * 1000,

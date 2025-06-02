@@ -2,7 +2,7 @@ import { _ } from 'good-cop'
 import { svc } from '../../../service'
 import { checkOrChangeEmailOrPasswordRateLimiter } from '../constants'
 import { updateEmailWithToken } from '../updatePasswordOrEmailWithToken'
-import { PluginUserConfig } from '../main'
+import { PluginUserConfig } from '../config'
 
 
 export function getUpdateEmailService(pluginConfig: PluginUserConfig) {

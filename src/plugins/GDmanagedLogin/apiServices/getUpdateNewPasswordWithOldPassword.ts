@@ -1,6 +1,6 @@
 import { _ } from 'good-cop'
 import { db } from '../../../db'
-import { PluginUserConfig } from '../main'
+import { PluginUserConfig } from '../config'
 import { svc } from '../../../service'
 import { checkOrChangeEmailOrPasswordRateLimiter } from '../constants'
 import { comparePasswordAddAttemptAndLockIfNecessary } from '../userPasswordService'

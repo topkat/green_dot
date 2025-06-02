@@ -1,6 +1,6 @@
 import { _ } from 'good-cop'
 import { svc } from '../../../service'
-import { PluginUserConfig } from '../main'
+import { PluginUserConfig } from '../config'
 import { getPluginConfig } from '../../pluginSystem'
 import { objKeys } from 'topkat-utils'
 import { db } from '../../../db'

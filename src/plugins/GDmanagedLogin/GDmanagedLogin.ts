@@ -1,5 +1,5 @@
 import { GDplugin } from '../GDplugin'
-import { getOnLogin } from './onLogin'
+import { getOnLoginHandler } from './onLogin'
 import { getNewTokenService } from './apiServices/getNewTokenService'
 import { InferTypeRead, InferTypeWrite, _ } from 'good-cop'
 import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
@@ -51,7 +51,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
 
     // SERVICES
     this.serviceToRegister = {
-      ...getNewTokenService(),
+      ...getNewTokenService(this.config),
       ...getCheckTokenIsValidService(this.config),
       ...getValidateTokenAndLoginService(this.config),
       ...getLogoutService(),
@@ -66,7 +66,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
     this.handlers = [{
       priority: 10,
       event: 'onLogin',
-      callback: getOnLogin()
+      callback: getOnLoginHandler(this.config)
     }]
   }
 
