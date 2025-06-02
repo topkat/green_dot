@@ -5,15 +5,15 @@ import GDmanagedLogin from './GDmanagedLogin/main'
 import GDdoubleAuthentication from './GDdoubleAuthentication/main'
 import GDapiKeyAuthentication from './GDapiKeyAuthentication/main'
 import { ServiceGeneric } from '../types/services.types'
-import { newPlugin } from './newPlugin'
+import { type NewPluginConfig } from './newPlugin'
 
 export type PluginNames = typeof GDmanagedLogin.name | typeof GDdoubleAuthentication.name | typeof GDapiKeyAuthentication.name
 
-export const allPluginConfigs = {
+export const allPluginConfigs: Record<PluginNames, NewPluginConfig<any, any, any>> = {
   GDdoubleAuthentication,
   GDmanagedLogin,
   GDapiKeyAuthentication,
-} as const satisfies Record<PluginNames, ReturnType<typeof newPlugin>>
+}
 
 type AllPluginConfig = typeof allPluginConfigs
 
@@ -36,7 +36,7 @@ export function getPluginConfig<T extends PluginNames>(name: T) {
 }
 
 export function getAllPluginServices() {
-  return registeredPlugins.reduce((allServices, p) => ({ ...p.serviceToRegister, ...allServices }), {} as Record<string, ServiceGeneric>)
+  return registeredPlugins.reduce((allServices, p) => ({ ...(p.serviceToRegister || {}), ...allServices }), {} as Record<string, ServiceGeneric>)
 }
 
 export function getPluginHook(eventName: GDpluginHandlerEventNames) {

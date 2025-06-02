@@ -61,6 +61,8 @@ export default newPlugin<Name, PluginUserConfig, typeof GDapiKeyAuthentication>(
   defaultConfig,
   documentation,
   docOneLine,
-  paramsAsStringForProjectGeneration: () => `{ enable: true, apiKeys: {/** TODO put your apiKeys configs here */} }`,
+  addToVariablesInNewProjectTemplate: {
+    instanciatePluginInAppConfig: () => `{ enable: true, apiKeys: {/** TODO put your apiKeys configs here */} }`,
+  },
   plugin: GDapiKeyAuthentication,
 })

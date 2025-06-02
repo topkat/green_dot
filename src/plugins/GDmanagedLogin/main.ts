@@ -9,7 +9,9 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
   defaultConfig,
   documentation,
   docOneLine,
-  paramsAsStringForProjectGeneration: ({ roles }) => `
+  addToVariablesInNewProjectTemplate: {
+    addToEnvVariableImports: [`JWT_SECRET = 'TODOreplaceThisStringWithYourTestSecret'`],
+    instanciatePluginInAppConfig: ({ roles }) => `
       enable: true,
       loginConfigPerRole: {
         ${roles.map(r => `
@@ -28,6 +30,7 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
         // TODO ma,age sending updated mail here
       }
 `,
+  },
   plugin: GDmanagedLogin,
 })
 

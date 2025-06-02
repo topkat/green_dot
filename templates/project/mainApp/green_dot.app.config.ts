@@ -12,6 +12,7 @@ const {
   LIVE_URL = `http://localhost:${SERVER_PORT}`,
   JWT_SECRET = 'TODOreplaceThisStringWithYourTestSecret',
   IS_CRON_SERVER = false,
+  $$addToEnvVariableImports,
 } = ENV()
 
 
@@ -36,13 +37,11 @@ export const appConfig: GreenDotAppConfig = {
   emailFromAddress: 'no-reply@$$projectName.app',
   port: SERVER_PORT,
   smtp: {}, // TODO add SMTP config here
-  jwtSecret: JWT_SECRET as string,
-  jwtExpirationMs: refreshTokenExpirationMinutes * 60 * 1000,
+  jwtSecret: JWT_SECRET,
   jwtRefreshExpirationMsMobile: 'never', // it will expire on new login // 48 * 3600 * 1000,
   jwtRefreshExpirationMsWeb: 'never', // it will expire on new login // 48 * 3600 * 1000,
   enableSchedules: env === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
   enableSeed: env === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
-  additionalServices: { errorSimulator, rolesAttributionForTestOnly },
   plugins: [
     '$$pluginsAutocomplete'
   ]
@@ -52,7 +51,7 @@ export default appConfig
 
 declare global {
   interface GD {
-    // apiKeys: ApiKeys
+    $$addToGlobalType
   }
 }
 
