@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { C } from 'topkat-utils'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-import { getUserPermissionFields } from '../../db'
+import { getUserPermissionFields } from '../../helpers/getProjectModelsAndDaos'
 
 
 

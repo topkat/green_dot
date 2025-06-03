@@ -1,13 +1,17 @@
 
 
-import { getDbConfigs } from './getGreenDotConfigs'
-import { Definition } from 'good-cop'
+import { getDbConfigs, getMainConfig } from './getGreenDotConfigs'
+import { _, Definition } from 'good-cop'
 import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
 import { C, objEntries } from 'topkat-utils'
 import { safeImport } from './safeImports'
 import { parseDaos } from '../databases/parseDaos'
 import { error } from '../error'
 import defaultDaoConfigMongo from '../databases/mongo/defaultDaoConfigMongo'
+import { getUserAdditionalFields } from '../security/userAndConnexion/userAdditionalFields'
+import { convertRoleToPermsToModelFields } from '../security/helpers/convertPermsToModelFields'
+import { GD_serverBlacklistModel } from '../security/userAndConnexion/GD_serverBlackList.model'
+import { GD_deviceModel } from '../security/userAndConnexion/GD_device.model'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
@@ -16,6 +20,8 @@ import defaultDaoConfigMongo from '../databases/mongo/defaultDaoConfigMongo'
 let modelsCache: { [dbName: string]: { [modelName: string]: Definition } }
 let daosCache: { [dbName: string]: { [modelName: string]: MongoDaoParsed<any> } }
 
+let userPermissionFields = [] as (keyof UserPermissionFields)[]
+
 let cacheInitialized = false
 
 export async function initProjectAndDaosCache(resetCache = false) {
@@ -23,11 +29,44 @@ export async function initProjectAndDaosCache(resetCache = false) {
   modelsCache = {}
   daosCache = {}
   cacheInitialized = true
+  let hasDefaultDatabase = false
+
+  const mainConfig = getMainConfig()
   const dbConfigs = getDbConfigs()
+
+
   for (const { generatedIndexPath, name: dbName } of dbConfigs) {
+
     const fileContent = await safeImport(generatedIndexPath) as DatabaseIndexFileContent
 
     modelsCache[dbName] = objEntries(fileContent.models).reduce((obj, [modelName, content]) => ({ ...obj, [modelName.replace(/Model$/, '')]: content }), {})
+
+    if (mainConfig.defaultDatabaseName === dbName) {
+      // DEFAULT DATABASE
+      // So we put all technical green_dot fields
+      hasDefaultDatabase = true
+
+      // inject permissions fields in user model
+      const permissionsFields = {
+        ...getUserAdditionalFields(),
+        ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
+        ...convertRoleToPermsToModelFields(mainConfig.allRoles)
+      }
+      userPermissionFields = Object.keys(permissionsFields) as any
+
+      if (!modelsCache[dbName].user) {
+        // we inject a user model
+        modelsCache[dbName].user = _.mongoModel(['creationDate', 'lastUpdateDate'], permissionsFields) as any as Definition
+      } else {
+        const objDef = (modelsCache[dbName].user as Definition)._definitions.find(def => def.name === 'object')
+        if (typeof objDef !== 'function') Object.assign(objDef.objectCache, permissionsFields)
+      }
+
+      // we inject greenDotModels
+      modelsCache[dbName].GD_serverBlackList = GD_serverBlacklistModel as any as Definition
+      modelsCache[dbName].GD_device = GD_deviceModel as any as Definition
+
+    }
 
     const { _defaultDao, ...regularDaos } = fileContent.daos
 
@@ -37,6 +76,9 @@ export async function initProjectAndDaosCache(resetCache = false) {
       _defaultDao
     )
   }
+
+  if (!hasDefaultDatabase) throw error.serverError(`No default database found with name ${mainConfig.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
+
 }
 
 
@@ -93,4 +135,16 @@ type DatabaseIndexFileContent = {
   models: { [modelName: string]: Definition }
   daos: { [modelName: string]: MongoDaoParsed<any> | MongoDao<any> }
   defaultDao?: MongoDaoParsed<any> | MongoDao<any>
+}
+
+export function getUserPermissionFields() {
+  if (userPermissionFields.length === 0) {
+    const mainConfig = getMainConfig()
+    const permissionsFields = {
+      ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
+      ...convertRoleToPermsToModelFields(mainConfig.allRoles)
+    }
+    userPermissionFields = Object.keys(permissionsFields) as any
+  }
+  return userPermissionFields
 }

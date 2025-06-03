@@ -5,15 +5,13 @@ import { error } from './error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
-import { _, Definition, DefinitionObjChild, ModelReadWrite } from 'good-cop'
+import { DefinitionObjChild, ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
 import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos'
 
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
 import { GD_deviceModel } from './security/userAndConnexion/GD_device.model'
-import { convertRoleToPermsToModelFields } from './security/helpers/convertPermsToModelFields'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
-import { getUserAdditionalFields } from './security/userAndConnexion/userAdditionalFields'
 import { InferTypeRead, InferTypeWrite } from 'good-cop'
 
 type InferTypeRW<T extends DefinitionObjChild> = { Read: InferTypeRead<T>, Write: InferTypeWrite<T> }
@@ -55,7 +53,7 @@ export type Db = Dbs[MainDbName]
 //  ═╩═ ╩ ╚╩ ═╩═   ╩     ╚══╝ ╚══╝ ═══╝
 
 let isRunning = false
-let userPermissionFields = [] as (keyof UserPermissionFields)[]
+
 
 export async function initDbs(resetCache: boolean = false) {
 
@@ -65,41 +63,12 @@ export async function initDbs(resetCache: boolean = false) {
   } else isRunning = true
 
   const dbConfigs = getDbConfigs()
-  const mainConfig = getMainConfig()
-
-  let hasDefaultDatabase = false
 
   for (const { dbs: connexionConfigs, name: dbName, type } of dbConfigs) {
 
     const models = await getProjectDatabaseModelsForDbName(dbName, resetCache)
     const daos = await getProjectDatabaseDaosForDbName(dbName, resetCache)
 
-    if (mainConfig.defaultDatabaseName === dbName) {
-      // DEFAULT DATABASE
-      // So we put all technical green_dot fields
-      hasDefaultDatabase = true
-
-      // inject permissions fields in user model
-      const permissionsFields = {
-        ...getUserAdditionalFields(),
-        ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
-        ...convertRoleToPermsToModelFields(mainConfig.allRoles)
-      }
-      userPermissionFields = Object.keys(permissionsFields) as any
-
-      if (!models.user) {
-        // we inject a user model
-        models.user = _.mongoModel(['creationDate', 'lastUpdateDate'], permissionsFields) as any as Definition
-      } else {
-        const objDef = (models.user as Definition)._definitions.find(def => def.name === 'object')
-        if (typeof objDef !== 'function') Object.assign(objDef.objectCache, permissionsFields)
-      }
-
-      // we inject greenDotModels
-      models.GD_serverBlackList = GD_serverBlacklistModel as any as Definition
-      models.GD_device = GD_deviceModel as any as Definition
-
-    }
 
     if (type === 'mongo') {
       //----------------------------------------
@@ -128,8 +97,6 @@ export async function initDbs(resetCache: boolean = false) {
       throw error.serverError(`Database type not implemented: ${type}. Please make sure you provided green_dot.config.ts a defaultDatabase`, { dbName: dbName, dbType: type })
     }
   }
-
-  if (!hasDefaultDatabase) throw error.serverError(`No default database found with name ${mainConfig.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
 
   isRunning = false
 
@@ -166,17 +133,7 @@ export const db = new Proxy({} as Db, {
   },
 })
 
-export function getUserPermissionFields() {
-  if (userPermissionFields.length === 0) {
-    const mainConfig = getMainConfig()
-    const permissionsFields = {
-      ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
-      ...convertRoleToPermsToModelFields(mainConfig.allRoles)
-    }
-    userPermissionFields = Object.keys(permissionsFields) as any
-  }
-  return userPermissionFields
-}
+
 
 /** This mean to exist for performances reason to avoid initiating two databases when there is two execution contexts (the client app / the green_dot module), TODO In Progress not fully tested / implemented */
 export function updateCacheFromOutside(cache2: ModelsConfigCache) {

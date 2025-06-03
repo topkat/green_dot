@@ -32,7 +32,8 @@ export { makeApiCall } from './services/makeApiCall'
 
 export { _ } from './validator'
 
-export { db, dbs, dbCache, getUserPermissionFields, type Db, type Dbs } from './db'
+export { db, dbs, dbCache, type Db, type Dbs } from './db'
+export { getUserPermissionFields } from './helpers/getProjectModelsAndDaos'
 export type { ModelTypes, ModelNames, ModelNamesForDb, MainDbName, ModelsWithDbNamesAndReadWrite as AllModelsWithReadWrite } from './cache/dbs/index.generated'
 
 export { getActiveAppConfig, getActiveDbConfig, getMainConfig, initMainConfigCache, initClientApp, initEnv } from './helpers/getGreenDotConfigs'
@@ -62,5 +63,6 @@ export * from './security/userAndConnexion/userLockService'
 
 // TODO this should be a special /plugins exports
 export * from './plugins'
+export { getPluginConfig, getPlugin } from './plugins/pluginSystem'
 
 export { UserAdditionalFields, UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from './security/userAndConnexion/userAdditionalFields'
