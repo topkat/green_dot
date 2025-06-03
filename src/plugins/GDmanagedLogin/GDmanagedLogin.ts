@@ -23,6 +23,7 @@ import { credentialManagementMailing } from './credentialManagementMailing'
 import { db } from '../../db'
 import { getId } from 'topkat-utils'
 import { defaultConfig, PluginUserConfig } from './config'
+import { getSendValidationEmailService } from './apiServices/getSendValidationEmailService'
 
 export type Name = 'GDmanagedLogin'
 
@@ -56,6 +57,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
       ...getCheckTokenIsValidService(this.config),
       ...getValidateTokenAndLoginService(this.config),
       ...getLogoutService(),
+      ...getSendValidationEmailService(this.config),
       ...getUpdateNewPasswordWithOldPassword(this.config),
       ...getCredentialManagementServices(this.config),
       ...getLoginServices(this.config),
