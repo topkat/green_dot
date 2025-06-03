@@ -1,9 +1,27 @@
+### v0.0.44
+- Streamlined type definitions in index.generated.ts by removing unnecessary complexity and consolidating types.
+- Updated the green_dot dependency version in package.json from 0.0.41 to 0.0.44 for improved functionality.
+
+- Renamed exportFolderInSdk to injectFolderInSdk for clarity in SDK configuration.
+- Updated related logic in generateSdkFiles and generateSdkFolderFromTemplates to reflect the new naming.
+- Added yarn build command execution in cliGenerateProject to ensure project builds after generation.
+- Cleaned up .gitignore and green_dot.config.ts by removing outdated entries and security feature flags.
+- Streamlined package.json by removing unnecessary scripts to enhance clarity.
+- Updated cliGenerateProject to improve user prompts and project root path handling.
+- Added execWaitForOutput to run yarn commands in the generated project directory.
+- Refined user role input instructions for clarity.
+- Introduced default application configuration in getGreenDotConfigs for better initialization.
+- Updated rate limiter logic to utilize active application configuration.
+- Enhanced DAO and model templates for better snippet autocompletion and documentation.
+- Removed outdated template files to streamline project structure.
+- Changed 'permissions' to 'permission' in various type definitions for consistency and improved type safety.
+- Updated related logic in GDapiKeyAuthentication and GDmanagedLogin to reflect the new type structure.
+
 ### v0.0.43
 - Added JWTdata export to GDmanagedLogin plugin for enhanced functionality.
 - Updated import paths in generateIndexForDbTypeFiles to conditionally reference user additional fields based on cache output.
 - Refined platform type definition in global types for improved type safety.
 - Ensured consistent export structure in index.ts files for better module organization.
-
 - Added getSendValidationEmailService to GDmanagedLogin for improved user email validation functionality.
 - Updated service composition in GDmanagedLogin to include the new email validation service, enhancing user communication and security.
 - Removed the displayIntroTimeout configuration from the test command to streamline the initialization process.
