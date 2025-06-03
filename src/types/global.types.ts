@@ -25,12 +25,12 @@ declare global {
 
   interface GD extends GDbase {
     role: keyof GD_RegisterAllRoles
-    permissions: keyof GD_RegisterAllPermissions
+    permission: keyof GD_RegisterAllPermissions
     platform: keyof GD_RegisterAllPlatforms
   }
 
   type UserRolePermissionFields = { [K in GD['role']as `is${Capitalize<K>}`]: boolean }
-  type UserPermissionFields = Record<GD['permissions'], boolean> & UserRolePermissionFields
+  type UserPermissionFields = Record<GD['permission'], boolean> & UserRolePermissionFields
   type UserPermissionsWithoutRolePerms = Omit<UserPermissionFields, keyof UserRolePermissionFields>
 
   interface GDeventNames extends GDeventNamesBase { }

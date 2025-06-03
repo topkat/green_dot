@@ -30,7 +30,7 @@ export type GreenDotConfig = {
   //  ╚══╝ ╚══╝ ╩ ╚╩ ╩ ╚╩ ╚══╝ ═╝╚═ ═╩═ ╚══╝ ╩ ╚╩
   allRoles: readonly GD['role'][]
   /** List all permissions that will be used in the app. Usually like `['hasPremiumMembership', 'hasVerifiedIdentity'...']`. Put here all permissions that may differentiate users on what they have access to  */
-  allPermissions: readonly GD['permissions'][]
+  allPermissions: readonly GD['permission'][]
   /** Permissions restrictions that apply to all users. Eg: `isLocked: false` is considered mandatory for all users to connect
   * @example
   *```ts
@@ -41,7 +41,7 @@ export type GreenDotConfig = {
   * }
   * ```
   */
-  defaultPermRestrictionForAll: Partial<Record<GD['permissions'], boolean>>
+  defaultPermRestrictionForAll: Partial<Record<GD['permission'], boolean>>
   /** Permissions restrictions that apply to users with role. Eg: Let's say that by default you want all users to be `isEmailVerified: true`. This is where you set it
   * @example
   *```ts
@@ -51,7 +51,7 @@ export type GreenDotConfig = {
   * }
   * ```
   */
-  defaultPermRestrictionForRole: Partial<Record<GD['role'], Partial<Record<GD['permissions'], boolean>>>>
+  defaultPermRestrictionForRole: Partial<Record<GD['role'], Partial<Record<GD['permission'], boolean>>>>
 
   /** Giving a ctx, this function is meant to retrieve the user in the database. It just usually returns something like `await myDb.dbName.user.getById(ctx.GM, ctx._id, { triggerErrorIfNotSet: true })` and is used internally to provide ctx.getUser() shortcut (that will use cache if requested twice) */
   getUserFromCtx?: (ctx: Ctx) => CtxUser

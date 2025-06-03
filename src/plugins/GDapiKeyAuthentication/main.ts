@@ -13,7 +13,7 @@ export type GDapiKey = {
     _id?: string
     token: string
     role?: GD['role'] // GD['role'] extends 'notImplemented' ? string : GD['role']
-    permissions?: Partial<Record<GD['permissions'], any>>
+    permissions?: Partial<Record<GD['permission'], any>>
     // TODO
     /** Add IPs to whitelist, all other IPs will be non-authorized to authenticate with apiKey */
     ipWhitelist?: MaybeArray<string>

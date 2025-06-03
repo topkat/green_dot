@@ -64,7 +64,7 @@ export function getOnLoginHandler(
 
               const platform = req.headers.platform as GD['platform'] | undefined
 
-              ctxUser.role = permissionPerPlatform[platform] || (env.isTest ? role : 'public')
+              ctxUser.role = permissionPerPlatform[platform as any] || (env.isTest ? role : 'public')
 
               ctxUser.user = user
               for (const perm of getUserPermissionFields()) {
