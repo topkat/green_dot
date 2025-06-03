@@ -65,6 +65,8 @@ export async function cliGenerateProject() {
   )
 
   await execWaitForOutput('yarn', { execOptions: { cwd: projectRoot } })
+
+  await execWaitForOutput('yarn build', { execOptions: { cwd: projectRoot } })
 }
 
 

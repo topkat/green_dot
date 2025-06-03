@@ -72,9 +72,6 @@ apps/frontend/.env
 ! 
 .nyc_output/**/*
 **/.nyc_output/**/*
-## Panda
-styled-system
-styled-system-studio
 
 #editor
 .idea

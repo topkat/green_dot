@@ -59,15 +59,15 @@ export async function generateSdkFiles(
 
 
     // TODO add ability to embbed custom files in SDK (compiled at build time dynamically ?)
-    if (generateSdkConfig.exportFolderInSdk) {
+    if (generateSdkConfig.injectFolderInSdk) {
 
-        const folders = [...(generateSdkConfig.exportFolderInSdk.all || []), ...(generateSdkConfig.exportFolderInSdk[platform] || [])]
+        const folders = [...(generateSdkConfig.injectFolderInSdk.all || []), ...(generateSdkConfig.injectFolderInSdk[platform] || [])]
 
         for (const folder of folders) {
             const absolute = Path.join(rootPath, folder)
 
             if (!await fs.exists(absolute)) {
-                throw new Error('Provided path in mainConfig.generateSdkConfig.exportFolderInSdk does not exist: ' + absolute)
+                throw new Error('Provided path in mainConfig.generateSdkConfig.injectFolderInSdk does not exist: ' + absolute)
             }
 
             const lastBit = absolute.split(Path.sep).pop()

@@ -1,19 +1,11 @@
 
-
-import { GreenDotApiTestsConfig, TestSuite as TestFlowRaw, TestItem as TestItemRaw, assert, InitBackendConfig } from 'green_dot'
-import { $ as icoSdk, initBackend as initBackendIcoDashboard, ServerUrls } from '../SDKs/icoDashboardSdk'
-import { $ as adminSdk, initBackend as initBackendAdmin } from '../SDKs/adminSdk'
-import { $ as mobileAppSdk, initBackend as initBackendMobile } from '../SDKs/mobileAppSdk'
-import { UserNames } from './1_shared/tests/testUsers'
-import { TestEnvUser } from './1_shared/tests/testEnv.type'
-import { objKeys, C } from 'topkat-utils'
-
+import { GreenDotApiTestsConfig, TestSuite as TestFlowRaw, TestItem as TestItemRaw } from 'green_dot'
 import { appConfig } from './green_dot.app.config'
-import { allRoutes } from './2_generated/all-routes-for-tests.generated'
-import { testUsers } from './1_shared/tests/testUsers'
-import { testApiKeys } from '../shared/backendConstants'
-import { logTestUser, logUserWithEmail } from './user/tests/logTestUser'
-import { serverActionTypedForTests } from './1_shared/tests/serverActionTypedForTests'
+import { allRoutes } from './.generated/all-routes-for-tests.generated'
+
+
+type TestUserNames = 'TODO import your userNames here'
+type ConnexionInfos = { email: string, password: string }
 
 export const restTestEnv = {
     routes: allRoutes,
@@ -23,20 +15,6 @@ export const restTestEnv = {
 export const servers = {
     default: appConfig.serverLiveUrl,
 }
-
-type ApiKeys = keyof typeof testApiKeys
-type ConnexionInfos = { email: string, password: string }
-type TestUserNames = keyof typeof testUsers
-
-const initSdkConfig = (projectName: string) => ({
-    projectName,
-    getDeviceId: () => '990063773062617365557372',
-    serverUrls: {
-        backend: 'http://localhost:9086',
-        default: 'backend',
-    },
-    onErrorCallback(err) { throw err },
-} as const satisfies InitBackendConfig<ServerUrls>)
 
 export const testConfig: GreenDotApiTestsConfig = {
     disableSolo: process.env.NODE_ENV === 'ci',
@@ -52,78 +30,29 @@ export const testConfig: GreenDotApiTestsConfig = {
         // ALLOW TO SEE WITH WICH TOKEN WE ARE CONNECTED
         overrideBackendAuthorization(env)
 
-        // INIT BACKEND
-        initBackendIcoDashboard(initSdkConfig('icoDashboard'))
-        initBackendMobile(initSdkConfig('mobileApp'))
-        initBackendAdmin(initSdkConfig('adminDashboard'))
-
-        if (!isReload) {
-            C.info('CLEARING THE DATABASE AND SEEDING')
-            await serverActionTypedForTests('clearDB')
-
-            // POPULATE ENV WITH USERS
-            for (const userName of objKeys(testUsers)) {
-                const { platform, user } = await logTestUser(userName)
-                assert(user.accessToken, `loggedUser.accessToken`, { type: 'string' })
-                assert(user.creationDate, `loggedUser.creationDate`)
-                env.users ??= {} as any
-                env.users[userName] = {
-                    platform,
-                    ...user,
-                    // accessToken: loggedUser.accessToken,
-                    // deviceId: loggedUser.deviceId,
-                }
-            }
-        }
+        // TODO INIT SDKs here
     },
     //----------------------------------------
     // BEFORE / AFTER EACH TEST
     //----------------------------------------
     async onBeforeTest({ env, as, apiKey, headers }) {
         if (apiKey) {
-            headers.apiKey = apiKey // just in case it's a route instead of a service
+            headers.apiKey = apiKey
         } else if (as) {
             if (typeof as === 'string') {
-                if (testUsers[as]) {
-                    const userFromEnv = env.users[as]
-                    if (!userFromEnv?.accessToken) {
-                        const { platform, user } = await logTestUser(as)
-                        env.users ??= {} as any
-                        env.users[as] = {
-                            ...user,
-                            platform,
-                        }
-                    }
-                    headers.authorization = env.users[as].accessToken
-                    headers.platform = env.users[as].platform
-                } else throw new Error(`Trying to connect with a non existing user: ${as}`)
+                // as === 'user1'
             } else if (typeof as === 'object') {
-                const userFromEnv = env.users[as.email]
-                if (!userFromEnv?.accessToken) {
-                    const { email, password } = as
-                    const data = await logUserWithEmail(email, password)
-                    env.users[as.email] ??= {}
-                    Object.assign(env.users[as.email], data)
-                }
-                headers.authorization = env.users[as.email].accessToken
-                headers.platform = env.users[as.email].platform
+                // as === { email: 'my@email.com', password: 'Aazz' }
             }
         }
-        icoSdk.setHeaders(headers)
-        adminSdk.setHeaders(headers)
-        mobileAppSdk.setHeaders(headers)
+        // mySdk.setHeaders(headers)
         // while setAuthorization is just an alias of setHeaders, it is called because it triggers overrideBackendAuthorization
-        icoSdk.setAuthorization(headers.authorization)
-        adminSdk.setAuthorization(headers.authorization)
-        mobileAppSdk.setAuthorization(headers.authorization)
+        // mySdk.setAuthorization(headers.authorization)
     },
     onAfterTest() {
-        icoSdk.setHeaders({ apiKey: null, refreshToken: null, platform: null })
-        icoSdk.setAuthorization(null)
-        adminSdk.setHeaders({ apiKey: null, refreshToken: null, platform: null })
-        adminSdk.setAuthorization(null)
-        mobileAppSdk.setHeaders({ apiKey: null, refreshToken: null, platform: null })
-        mobileAppSdk.setAuthorization(null)
+        // RESET perms for SDK
+        // mySdk.setHeaders({ apiKey: null, refreshToken: null, platform: null })
+        // mySdk.setAuthorization(null)
     },
 }
 
@@ -151,11 +80,10 @@ function overrideBackendAuthorization(env: TestEnv) {
         })
 
         C.info(authToken === null ? 'UNLOG USER' : `LOGIN WITH: ` + (userThatWeAreConnectingWith || authToken || ' /!\\ NOT SET /!\\ '))
-        icoSdk.setHeaders({ authorization: authToken })
-        adminSdk.setHeaders({ authorization: authToken })
+        // mySdk.setHeaders({ authorization: authToken })
     }
-    icoSdk.setAuthorization = callbck
-    adminSdk.setAuthorization = callbck
+    // TODO replace connection function by this
+    //  mySdk.setAuthorization = callbck
 }
 
 
@@ -174,12 +102,12 @@ function overrideBackendAuthorization(env: TestEnv) {
 declare global {
     interface GD {
         testUserNames: TestUserNames
-        apiKeys: ApiKeys
+        // apiKeys: ApiKeys
         testEnvType: TestEnv
     }
 
     /** env variable type that is used in API tests ('.testFlow.ts' files). You can also override env type per test flow instead of globally in a type param (see generated file comments or documentation for advanced use cases TODO document me) */
     interface TestEnv {
-        users: Record<UserNames, TestEnvUser>
+        users: Record<string, any> // Record<UserNames, TestEnvUser>
     }
 }

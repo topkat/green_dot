@@ -20,10 +20,6 @@ export default {
   defaultDatabaseName: 'mainDb',
   allRoles,
   allPermissions: [],
-  // SECURITY FEATURES
-  enableRateLimiter: true,
-  enableUserBan: true,
-  enableUserWarnings: true,
   generateSdkConfig: {
     enable: true,
     sdkNameForRole: { user: 'app' },
