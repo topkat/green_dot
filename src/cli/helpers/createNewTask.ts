@@ -34,8 +34,7 @@ export function createNewTask() {
         C.error(err)
         C.error(false, `Step ${this._stepNb} ERROR`)
         if (watch) {
-          const spin = new cliLoadingSpinner('dots')
-          spin.start('Waiting for file change')
+          C.warning(false, `Waiting for file change`)
 
           await onFileChange(async () => {
             C.log(`\n\n`)
