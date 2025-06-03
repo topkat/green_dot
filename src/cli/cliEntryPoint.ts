@@ -11,28 +11,8 @@ import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
 import { onFileChange } from './helpers/fileWatcher'
 import { parentProcessExitCodes } from '../constants'
+import Path from 'path'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
-
-// import { findConfigFile } from 'typescript'
-// import { sys } from 'typescript'
-// import { resolve } from 'path'
-
-// const tsconfig = findConfigFile(resolve(), sys.fileExists, 'tsconfig.json')
-// console.log('ts-node likely using tsconfig at:', tsconfig)
-
-// if (tsconfig) {
-//   console.log(`readFileSync(tsconfig, 'utf8')`, readFileSync(tsconfig, 'utf8'))
-//   const tsconfigData = JSON.parse(readFileSync(tsconfig, 'utf8'))
-
-//   tsconfigData.compilerOptions ??= {}
-//   tsconfigData.compilerOptions.paths ??= {}
-
-//   tsconfigData.compilerOptions.paths['green_dot'] = ['../modules/green_dot/src/index.ts']
-//   tsconfigData.compilerOptions.paths['green_dot/*'] = ['../modules/green_dot/src/*']
-
-//   writeFileSync(tsconfig, JSON.stringify(tsconfigData, null, 2))
-//   console.log('Injected green_dot paths into tsconfig.')
-// }
 
 
 const [tsNodePath] = process.argv
@@ -115,7 +95,7 @@ async function start() {
         try {
           const programPath = runFromDist ? 'node' : tsNodePath
 
-          const baseDir = runFromDist ? __dirname.replace('src', 'dist/src') : __dirname
+          const baseDir = runFromDist ? __dirname.replace(`(dist)?${Path.sep}src`, `dist${Path.sep}src`) : __dirname.replace('dist' + Path.sep, '')
 
           const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : `/childProcessEntryPoint.`) + (runFromDist ? 'js' : 'ts')
 

@@ -1,3 +1,111 @@
+### v0.0.43
+- Added JWTdata export to GDmanagedLogin plugin for enhanced functionality.
+- Updated import paths in generateIndexForDbTypeFiles to conditionally reference user additional fields based on cache output.
+- Refined platform type definition in global types for improved type safety.
+- Ensured consistent export structure in index.ts files for better module organization.
+
+- Added getSendValidationEmailService to GDmanagedLogin for improved user email validation functionality.
+- Updated service composition in GDmanagedLogin to include the new email validation service, enhancing user communication and security.
+- Removed the displayIntroTimeout configuration from the test command to streamline the initialization process.
+- Updated the parseDaos function to ensure default values for DAOs include a fallback for type, enhancing robustness.
+- Cleaned up the test runner by eliminating unnecessary timeout logic for improved clarity.
+- Updated the GreenDotApiTestsConfig interface to reflect changes in configuration options.
+- Removed unused user permission fields logic from db.ts and centralized it in getProjectModelsAndDaos.ts.
+- Updated import paths for getUserPermissionFields to reflect the new location.
+- Cleaned up the initDbs function by removing unnecessary checks and comments related to default database handling.
+- Enhanced clarity and maintainability of the database initialization process.
+- Added new email sending functions to GDmanagedLogin for improved user communication.
+- Updated main application configuration to include environment handling and refined plugin settings.
+- Cleaned up unused variables and improved type safety in the configuration files.
+- Added global type augmentation for apiKeys in GDapiKeyAuthentication to enhance type safety.
+- Updated GDmanagedLogin configuration to include jwtSecret in the instantiation process for improved security.
+- Modified token expiration logic in userAuthenticationTokenService to default to 48 hours for better consistency across platforms.
+- Introduced role input during project generation to define user interfaces for the application.
+- Updated plugin instantiation to support new configuration options, including dynamic imports and global type augmentation.
+- Refactored the project generation logic to utilize new helper functions for better plugin variable handling.
+- Enhanced templates to incorporate new variables for improved configuration management.
+- Added new JWT configuration options to PluginUserConfig, including jwtSecret, jwtExpirationMs, and refresh token expiration settings for web and mobile.
+- Refactored various services to utilize the updated PluginUserConfig for improved token management and security.
+- Updated import paths to ensure consistency and clarity across the plugin files.
+- Modified the server initialization to register a more comprehensive configuration object, including terminal color settings and production environment flags.
+- Updated the GreenDotAppConfig type to include optional properties for terminal colors and a flag to disable terminal colors.
+- Cleaned up the main application configuration by removing hardcoded SMTP settings and adding a placeholder for future configuration.
+- Enhanced the data validation configuration to support custom types and improved clarity in the application setup.
+- Updated GDmanagedLogin to include new email sending functions for improved user communication.
+- Enhanced GDdoubleAuthentication with detailed documentation outlining its features, configuration, and security mechanisms.
+- Refactored type definitions in both plugins to improve clarity and maintainability.
+- Added support for user device registration in GDmanagedLogin, integrating with the new GD_deviceModel for better device management.
+- Improved safeImport function to handle path adjustments based on the environment.
+- Added getRegisterUserDeviceService to support user device registration within the GDmanagedLogin plugin.
+- Updated GDmanagedLogin to include a new sendValidationEmail method for improved email validation processes.
+- Enhanced configuration to allow for user sign-up options and additional fields in the login process.
+- Introduced GD_deviceModel to the database structure for improved device management.
+- Updated Dbs type to include GD_deviceModel for better integration.
+- Enhanced GDmanagedLogin by adding userLogin and password comparison functionalities for improved user authentication processes.
+- Added getUpdateEmailService to support email updates within the GDmanagedLogin plugin.
+- Enhanced PluginUserConfig to include a new callback for email update confirmation.
+- Updated userLogin function to streamline token handling and improve clarity.
+- Modified credential management services to allow for broader access permissions.
+- Added getUpdatePasswordService to enhance password management capabilities within the GDmanagedLogin plugin.
+- Updated service registration to include the new password update functionality for improved user experience.
+- Introduced onBeforeLogin and onAfterLogin hooks in GDmanagedLogin for better control over the login flow.
+- Integrated getLoginServices to streamline login service management.
+- Updated userLogin function to utilize additional checks and hooks for improved validation and error handling.
+- Enhanced type definitions in PluginUserConfig to support new login-related parameters.
+- Exported ErrorObject type for better error management in plugins.
+- Added userLocked error handling to improve user authentication flow.
+- Refactored GDmanagedLogin to utilize new error handling structure and removed deprecated sendValidationEmail service.
+- Updated user login and token validation services to streamline email validation process.
+- Enhanced type definitions for PluginUserConfig to support additional parameters in email sending functions.
+- Introduced a new code snippet for creating functions in VSCode.
+- Added user login return validator to improve validation of user login data.
+- Refactored decryptValidationToken function parameters for clarity.
+- Updated GDmanagedLogin to include new API services for token validation and logout functionality.
+- Updated getActiveAppServices to merge services from plugins using getAllPluginServices.
+- Changed serviceToRegister in GDplugin to use a Record type for better structure.
+- Refactored service registration in GDmanagedLogin to return services as an object.
+- Enhanced service definitions in getCheckTokenIsValidService, getNewTokenService, and getSendValidationEmail for improved clarity and maintainability.
+- Updated import path for getNewTokenService to reflect new directory structure.
+- Removed the obsolete getNewTokenService file to streamline the codebase.
+- Enhanced GDmanagedLogin plugin to include additional API services for token validation and email sending.
+- Updated ModelsWithDbNamesAndReadWrite to include detailed type mappings for admin, bangk, and website models.
+- Refactored DbIds and AllDbIds for improved type safety and clarity.
+- Enhanced ModelTypes to provide better access to read and write types for models.
+- Improved GDdoubleAuthentication and GDmanagedLogin plugins by integrating new user additional fields and refining type definitions.
+- Adjusted getGreenDotConfigs to ensure safe plugin initialization.
+- Cleaned up imports in getProjectPaths for better organization.
+- Adjusted TypeScript types path in package.json for better module resolution.
+- Introduced typesVersions to enhance plugin type definitions.
+- Updated cliEntryPoint to set RUN_FROM_DIST environment variable for improved runtime context.
+- Refactored getGreenDotConfigs to streamline cache initialization logic.
+- Modified getProjectPaths to utilize RUN_FROM_DIST for determining build context.
+- Enhanced GDmanagedLogin plugin to utilize allRoles from configuration for better role management.
+- Removed deprecated cookie and user authentication token services to streamline the codebase.
+- Updated GDmanagedLogin and GDdoubleAuthentication plugins to include addUserAdditionalFields method for enhanced user data handling.
+- Refactored userAdditionalFields to support dynamic configuration and improved type safety.
+- Adjusted package.json to remove unnecessary src export paths and improve plugin accessibility.
+- Enhanced type definitions in userAdditionalFields for better clarity and maintainability.
+- Corrected sorting logic in event registration to prioritize lower numbers.
+- Updated import paths for managedLogin and GDmanagedLogin plugins to reflect new directory structure.
+- Removed deprecated loginHookDefault and related services to streamline the codebase.
+- Enhanced type definitions for clarity and maintainability across various modules.
+- Added GDapiKey export to index.ts for improved plugin accessibility.
+- Updated userPasswordService import path to reflect new structure.
+- Modified apiKeys type in GreenDotApiTestsConfig to use GDapiKey for better type safety.
+- Adjusted import of encryptPassword in userAdditionalFields to align with plugin organization.
+- Changed `_user` field to `user` in global context type for clarity.
+- Refactored plugin exports in index.ts to streamline plugin management.
+- Updated loginHookDefault to use `publicUserId` for user ID assignment.
+- Enhanced GDplugin class to include handlers for plugin events.
+- Removed deprecated cookie and user authentication token services to clean up the codebase.
+- Improved type definitions in appConfig.types.ts for better clarity and maintainability.
+- Updated package.json to support TypeScript exports for plugins and core types.
+- Refactored getGreenDotConfigs to improve cache initialization logic.
+- Enhanced plugin registration to conditionally add plugins based on their configuration.
+- Modified encryption error handling to check NODE_ENV for production.
+- Improved type definitions in userAdditionalFields for better type safety.
+- Updated tsconfig.json to use Node16 module resolution and exclude coverage directory.
+
 ### v0.0.42
 - Added modulePathIgnorePatterns to jest configuration to exclude dist directory.
 - Updated package.json to support new plugin export structure for managedLogin.
@@ -5,7 +113,6 @@
 - Enhanced userAdditionalFields and user authentication services to utilize plugin configurations.
 - Removed deprecated getNewTokenService file to streamline codebase.
 - Improved type definitions in appConfig.types.ts and mainConfig.types.ts to support plugin instantiation.
-
 - Added default configuration handling for managedLogin and secureAuth plugins.
 - Refactored plugin system to return default configurations when plugins are not registered.
 - Updated managedLogin plugin to include new configuration options and validation logic.

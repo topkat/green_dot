@@ -36,7 +36,7 @@
     }
   },
   "scripts": {
-    "clean": "rm -rf ./dist || true && tscp && tsc && node ./dist/src/cli/cliEntryPoint.js clean",
+    "clean": "rm -rf ./dist || true && tscp && tsc && ts-node ./src/cli/cliEntryPoint.ts clean",
     "build": "tscp && tsc",
     "build:watch": "tscp & tsc -w --preserveWatchOutput",
     "test": "jest --watchAll",
@@ -70,7 +70,6 @@
     "node-schedule": "^2.1.0",
     "node-telegram-bot-api": "^0.64.0",
     "nodemailer": "^6.8.0",
-    "rest-test2": "^1.0.12",
     "send-teams-message": "^1.0.1",
     "simple-cli-prompt": "^1.0.5",
     "simple-file-templater": "^1.0.5",
