@@ -45,7 +45,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
     const mainConfig = getMainConfig()
     if (!config.maxRefreshTokenPerRole) {
       for (const role of mainConfig.allRoles) {
-        config.maxRefreshTokenPerRole ??= { public: 2 }
+        config.maxRefreshTokenPerRole ??= { public: 2 } as any
         config.maxRefreshTokenPerRole[role] = 2
       }
     }

@@ -2,7 +2,7 @@ import { DefaultPermissions, DefaultRoles } from './coreGeneric.types'
 import './databaseEvents.types'
 
 interface GDbase {
-  platform: 'notImplemented' // needs to be union since string will mess everything
+  platform: (string & {}) // needs to be union since string will mess everything
   role: DefaultRoles
   permissions: DefaultPermissions
   // TESTS

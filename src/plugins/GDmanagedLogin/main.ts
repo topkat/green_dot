@@ -35,5 +35,6 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
   plugin: GDmanagedLogin,
 })
 
+export { JWTdata } from './userAuthenticationTokenService'
 export { GDmanagedLogin } from './GDmanagedLogin'
 export { GDmanagedLoginSendEmailFunction, GDmanagedLoginSendEmailUpdatedMailConfirmationFunction } from './config'

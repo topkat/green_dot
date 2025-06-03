@@ -18,6 +18,9 @@ export async function generateIndexForDbTypeFiles({
   hardCodePermissionFields = false
 } = {}) {
 
+  const isCacheOutput = !outputFolder || outputFolder.includes(greenDotCacheModuleFolder)
+  outputFolder ??= Path.join(greenDotCacheModuleFolder, 'dbs')
+
   let indexFileContent = ''
 
   if (!indexFile) {
@@ -57,7 +60,7 @@ ${permFields.map(perm => `  ${perm}: boolean`).join('\n')}
 
     indexFileContent += `
 import { MergeMultipleObjects } from 'typescript-generic-types'
-import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from '../../security/userAndConnexion/userAdditionalFields'
+import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from ${isCacheOutput ? `'../../security/userAndConnexion/userAdditionalFields'` : `'green_dot'`}
 ${indexFile.imports}
 
 ${hardCodePermissionFields ? permType : ''}\
