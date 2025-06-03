@@ -28,7 +28,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "crypto-js": "^4.2.0",
-    "green_dot": "^0.0.41",
+    "green_dot": "^0.0.44",
     "js-sha256": "^0.11.0",
     "jsonwebtoken": "^9.0.2",
     "topkat-utils": "^1.3.17",
