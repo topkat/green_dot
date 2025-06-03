@@ -110,9 +110,10 @@ export interface GreenDotApiTestsConfig<
     // ApiKeysType extends Record<string, any> = any
     > {
     // TODO document jsdoc
-    displayIntroTimeout: number
     mode: 'jsonRpc' | 'rest'
+    /** Solo mode is when you want to run a test alone from its config (you can also --filter='user' in the cli) You may want to disable solo mode for tests in CI since you don't want a forgot solo to mess out with test results */
     disableSolo?: boolean
+    /** Api keys like configured in appConfig */
     apiKeys?: GDapiKey
     servers: {
         default: string // should be present, main server

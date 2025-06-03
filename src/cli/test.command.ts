@@ -56,7 +56,6 @@ export async function testCommand() {
       startAtTestNb,
       env: { ...(testConfig.env || {}), ...getEnvAtTest(startAtTestNb) },
       afterTest,
-      displayIntroTimeout: startAtTestNb > 0 ? 0 : testConfig.displayIntroTimeout,
       filter,
       isReload,
       restTestState,
@@ -72,7 +71,9 @@ export async function testCommand() {
 
 
 
-
+//  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗   ╦  ╦ ╔══╗ ╦╗ ╔ ╔═╗  ╦    ╔══╗ ╔══╗
+//  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝   ╠══╣ ╠══╣ ║╚╗║ ║  ║ ║    ╠═   ╠═╦╝
+//  ╚══╝ ╩ ╚  ╩ ╚  ╚══╝ ╩ ╚    ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ╚══╝ ╚══╝ ╩ ╚
 async function errorHandler(err?) {
 
   if (err) C.error(err)

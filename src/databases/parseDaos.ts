@@ -21,7 +21,7 @@ export async function parseDaos<
 
   for (const modelName of modelNames) {
     // DEFAULT VALUES FOR EACH DAO
-    (daoConfigsParsed as any)[modelName] ??= daoConfigsGeneratedRaw[modelName + 'Dao']
+    (daoConfigsParsed as any)[modelName] ??= daoConfigsGeneratedRaw[modelName + 'Dao'] || { expose: [], type: 'mongo' }
 
     await mergeDaoWithDefaults(daoConfigsParsed[modelName], defaultDaoConfig)
 

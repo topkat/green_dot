@@ -16,11 +16,6 @@ export const testRunner = {
 
         const { startAtTestNb = 0, isReload, restTestState } = config
 
-        if (!isReload) {
-            const introTimeout = typeof config.displayIntroTimeout === 'number' ? config.displayIntroTimeout : 800
-            await timeout(introTimeout)
-        }
-
         const testSuites: TestSuiteRaw[] = []
         for (const [defaultName, testSuiteRaw] of Object.entries(scenario)) {
             const testSuite = typeof testSuiteRaw == 'function' ? await testSuiteRaw() : testSuiteRaw

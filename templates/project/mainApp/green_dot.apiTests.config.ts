@@ -40,7 +40,6 @@ const initSdkConfig = (projectName: string) => ({
 
 export const testConfig: GreenDotApiTestsConfig = {
     disableSolo: process.env.NODE_ENV === 'ci',
-    displayIntroTimeout: 800,
     mode: 'jsonRpc',
     servers,
     apiKeys: appConfig.apiKeys as any,
@@ -181,9 +180,6 @@ declare global {
 
     /** env variable type that is used in API tests ('.testFlow.ts' files). You can also override env type per test flow instead of globally in a type param (see generated file comments or documentation for advanced use cases TODO document me) */
     interface TestEnv {
-        lastConnectedUser: string
-        /** Populated in sellOffer test flow */
-        investmentProjectId: string
         users: Record<UserNames, TestEnvUser>
     }
 }
