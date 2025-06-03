@@ -70,6 +70,7 @@ export const luigi = {
   ): Promise<C extends { multi: true } ? (V extends { value: any } ? V['value'] : V)[] : V extends { value: any } ? V['value'] : V> {
     C.log('\n')
     const { multi = false } = config
+
     return await (multi ? checkbox : select)({
       message: luigi.say(msg, { log: false }),
       choices: choices as any,
@@ -100,7 +101,7 @@ export const luigi = {
   ) {
     let lines: string
     if (noWrap) lines = randomItemInArray(asArray(sentence))
-    else lines = wrapCliText(randomItemInArray(asArray(sentence)), terminalCharSize - 5).join('\n     ')
+    else lines = wrapCliText(randomItemInArray(asArray(sentence)), terminalCharSize - 7).join('\n     ')
     const s = '🤖 < ' + lines + '\n\n'
     if (log !== false) C.log('\n')
     if (log === 'log') C.log(s)

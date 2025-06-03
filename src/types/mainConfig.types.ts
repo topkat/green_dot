@@ -56,43 +56,6 @@ export type GreenDotConfig = {
   /** Giving a ctx, this function is meant to retrieve the user in the database. It just usually returns something like `await myDb.dbName.user.getById(ctx.GM, ctx._id, { triggerErrorIfNotSet: true })` and is used internally to provide ctx.getUser() shortcut (that will use cache if requested twice) */
   getUserFromCtx?: (ctx: Ctx) => CtxUser
 
-  /** RateLimiter is a security feature that prevent user to exploit
-  the server by doing a very big amount of request in a very short
-  time (Eg: DDoS attack...). It will use a discriminator (userId if
-  connected or IP adresse if not) and add a warning each time the
-  rateLimiter is triggered according to the settings you set. After
-  the configured nbWarningBeforeBan, the user will be banned for a
-  short amount of time, and if it is banned again, this time will be
-  greater. The limit will reset with a certain amount of time.
-  * You can configure rateLimiter per routes in a service (this fine tuning is very useful)
-  * * **NOTE**: if you work with KUBERNETES or distributed environement, you have to make sure IP adress are always assigned to the same pods, if not the rateLimiter will not work as expected.
-  */
-  enableRateLimiter: boolean
-
-  /** Default is '50/30s' => 30 apiCall for a 30 sec time window OR '200/30sec' for isTest env */
-  defaultRateLimit?: RateLimiterConfig
-
-  /** Warnings are set manually via ctx.addWarning() or by the system
-  (rateLimiter...). After the configured nbWarningBeforeBan, the user will
-  be banned for a short amount of time, and if it is banned again, this
-  time will be greater. The limit will reset with a certain amount of time.
-  */
-  enableUserWarnings: boolean
-  /** You can ban manually a user via ctx.banUser() or it can be banned after
-  receivving a certain amount of warnings, whenever manually via ctx.addWarning()
-  or by the system if configured (rateLimiter...)
-  */
-  enableUserBan: boolean
-  /** Default: 3; Determines how much warnings it takes for a user to be banned */
-  nbWarningsBeforeBan?: number
-  /** interval in milliseconds to which the database should be checked to unblacklist users. Default: ```env === 'test' ? 1000 : 3 * 60 * 1000``` */
-  blackListCheckInterval?: number,
-  /** This is an array of user blacklist duration. Default: ```[15, 120, 12 * 60]```. In this case the user will be banned 15 minutes the first time he is banned, then 120 minutes the second time and 12h the third time. Timer will reset at a certian interval (which ? TODO) */
-  blackListBanMinutes?: number[],
-  /** Green dot will expose a ensureUserIsNotLocked() and lockUserAndThrow() so you can lock the user if needed. This configure the time  */
-  lockDurationMinutes?: number
-
-
   /** If you want to define your own custom regexp for email validation. Default at least 1 upperCase, 1 lowerCase, 1 digit => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).*$/. Leng */
   emailRegexp?: RegExp,
   userLockReasons?: readonly string[] | string[],
@@ -100,10 +63,10 @@ export type GreenDotConfig = {
   // /!\ IMPORTANT, this is in a subObject since banUser and addWarning shoud be provided together
   /** Use this to override ban user and addUserWarning behavior. Warning and ban will happen when rate limiter is triggered or whan you call it manually with ctx.addUserWarning() or ctx.banUser(), so you have full control over it */
   customWarningAndBanUserFunctions?: {
-    /** Provide a way to ban a user, for example when rate limiter in case you don't want it the default way...TODO TODO */
+    /** This function will be called when the code request to banUser(). It will override the default green_dot behavior. Provide a way to ban a user, for example when rate limiter in case you don't want it the default way...TODO TODO */
     banUser(ctx: Ctx, extraInfos: GreenDotConfigRateLimiterInfos): MaybePromise<Record<string, any>>
 
-    /** Use that if you want to blacklist IP in your database or lock the user for example, should return extraInfos to be sent alongside the error */
+    /** This function will be called when the code request a addUserWarning. It will override the default green_dot behavior. Use that if you want to blacklist IP in your database or lock the user for example, should return extraInfos to be sent alongside the error */
     addUserWarning(ctx: Ctx, extraInfos: GreenDotConfigRateLimiterInfos): MaybePromise<{
       nbWarnings: number
       nbWarningLeftBeforeBan: number
@@ -161,8 +124,5 @@ export type GreenDotConfigWithDefaults = AddRequiredFieldsToObject<GreenDotConfi
 
 export const greenDotConfigDefaults = {
   env: process.env.NODE_ENV as Env,
-  blackListBanMinutes: [15, 120, 12 * 60],
-  blackListCheckInterval: process.env.NODE_ENV === 'test' ? 1000 : 3 * 60 * 1000,
-  nbWarningsBeforeBan: 3,
   generateSdkConfig: generateSdkConfigDefault
 } satisfies AddRequiredFieldsToObject<RecursivePartial<GreenDotConfig>, RequiredFields>

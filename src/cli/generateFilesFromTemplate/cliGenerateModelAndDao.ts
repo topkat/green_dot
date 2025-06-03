@@ -35,13 +35,13 @@ import { ${modelName}Model } from './${modelName}.model'
 const dao = {
     type: 'mongo',
     expose: [
-
+      // type gd_dao:expose to expand snippet
     ],
     filter: [
-
+      // type gd_dao:filter to expand snippet
     ],
     mask: [
-
+      // type gd_dao:mask to expand snippet
     ],
     populate: []
 } satisfies MongoDao<typeof ${modelName}Model.tsType>

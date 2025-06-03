@@ -114,6 +114,12 @@ async function initDbConfigCache(resetCache = false) {
 //  ╠══╣ ╠══╝ ╠══╝   ║    ║  ║ ║╚╗║ ╠═    ║  ║ ═╦ ╚══╗
 //  ╩  ╩ ╩    ╩      ╚══╝ ╚══╝ ╩ ╚╩ ╩    ═╩═ ╚══╝ ═══╝
 
+const defaultAppConfig = {
+  blackListBanMinutes: [15, 120, 12 * 60],
+  blackListCheckInterval: process.env.NODE_ENV === 'test' ? 1000 : 3 * 60 * 1000,
+  nbWarningsBeforeBan: 3,
+} satisfies Partial<GreenDotAppConfig>
+
 let greenDotAppConfigsCache: Array<GreenDotAppConfig & GDpathConfigWithIndex>
 
 export function getAppConfigs() {
@@ -149,7 +155,7 @@ async function initAppConfigCache(resetCache = false) {
             registerPlugin(p)
           }
         }
-        greenDotAppConfigsCache.push({ ...conf, ...appConfigPath })
+        greenDotAppConfigsCache.push({ ...defaultAppConfig, ...conf, ...appConfigPath })
       }
     } catch (err) {
       C.error(err)

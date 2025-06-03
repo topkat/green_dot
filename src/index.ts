@@ -65,4 +65,4 @@ export * from './security/userAndConnexion/userLockService'
 export * from './plugins'
 export { getPluginConfig, getPlugin } from './plugins/pluginSystem'
 
-export { UserAdditionalFields, UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from './security/userAndConnexion/userAdditionalFields'
+export { UserAdditionalFields, UserAdditionalFieldsRead, UserAdditionalFieldsWrite, getUserAdditionalFields } from './security/userAndConnexion/userAdditionalFields'

@@ -1,6 +1,6 @@
 import { C, getId } from 'topkat-utils'
 import { db } from '../../db'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { GreenDotConfigRateLimiterInfos } from '../../types/mainConfig.types'
 import { GD_serverBlacklistModel } from './GD_serverBlackList.model'
 
@@ -14,7 +14,8 @@ let blacklistLastCacheCheck = 0
 //  ╚══╝ ╩  ╩ ╚══╝ ╚══╝ ╩  ╚ ═══╝
 export async function checkUserBlacklistCache(ctx, { discriminator }) {
 
-  const { enableUserBan, enableUserWarnings, blackListCheckInterval, customWarningAndBanUserFunctions } = getMainConfig()
+  const { customWarningAndBanUserFunctions } = getMainConfig()
+  const { enableUserBan, enableUserWarnings, blackListCheckInterval } = await getActiveAppConfig()
 
   if ((enableUserBan || enableUserWarnings) && !customWarningAndBanUserFunctions) {
 
@@ -58,7 +59,8 @@ export async function checkUserBlacklistCache(ctx, { discriminator }) {
 //  ╩╝╚╩ ╩  ╩ ╩ ╚  ╩ ╚╩
 export async function addUserWarning(ctx, { discriminator, route }: GreenDotConfigRateLimiterInfos) {
 
-  const { enableUserWarnings, customWarningAndBanUserFunctions } = getMainConfig()
+  const { customWarningAndBanUserFunctions } = getMainConfig()
+  const { enableUserWarnings } = await getActiveAppConfig()
 
   if (enableUserWarnings) {
 
@@ -92,7 +94,8 @@ export async function addUserWarning(ctx, { discriminator, route }: GreenDotConf
 //  ╚══╝ ╩  ╩ ╩ ╚╩
 export async function banUser(ctx, { discriminator, route }: GreenDotConfigRateLimiterInfos) {
 
-  const { enableUserBan, blackListBanMinutes, customWarningAndBanUserFunctions } = getMainConfig()
+  const { customWarningAndBanUserFunctions } = getMainConfig()
+  const { enableUserBan, blackListBanMinutes } = await getActiveAppConfig()
 
   if (enableUserBan) {
 

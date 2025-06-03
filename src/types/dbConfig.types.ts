@@ -4,8 +4,7 @@ import mongoose from 'mongoose'
 export type GreenDotDbConfig = {
   type: 'mongo',
   name: string,
-  // name: string // No need, we will take the name of the folder
-  /** Here you can instantiate one or multiple versions of the same database with the same models */
+  /** Here you can instantiate one or multiple versions of the same database with the same models. Use it like `{ connexionString: string }` OR `{ connexionString: { dbInstanceName1: connexionString, dbInstance2...} }`. The second use case works well if you have a database per client for example */
   dbs: DbConfigsObj
 }
 

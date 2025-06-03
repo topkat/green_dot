@@ -5,7 +5,7 @@ import { Request } from 'express'
 import { sendRateLimiterTeamsMessage } from '../services/sendViaTeams'
 
 import { C } from 'topkat-utils'
-import { getMainConfig } from '../helpers/getGreenDotConfigs'
+import { getActiveAppConfig, getMainConfig } from '../helpers/getGreenDotConfigs'
 import { checkUserBlacklistCache, addUserWarning, banUser } from './userAndConnexion/banAndAddUserWarning'
 
 const rateLimiterCache = {} as {
@@ -130,6 +130,10 @@ async function cleanRouteCache(discriminator: string, route: string, rateLimiter
 export function rateLimiterMiddleware(ipWhitelist?: string[], config?: RateLimiterConfig) {
     return async (req: Request, res, next) => {
         try {
+            const appConf = await getActiveAppConfig()
+
+            if (appConf.enableRateLimiter === false) return next()
+
             const ctx: Ctx = (req as any).ctx
             const route = req.originalUrl.replace(/\?.+/, '').split('?')[0]
             if (ipWhitelist && !ipWhitelist.includes(ctx.api.ipAdress.replace('::ffff:', ''))) {
@@ -152,11 +156,11 @@ setInterval(() => rateLimiter.cleanup(), 60 * 60 * 1000) // once each hour
 
 async function getRateLimiterConfigFromStr(env2: Env, conf?: RateLimiterConfig) {
 
-    const mainConfig = getMainConfig()
+    const appConf = await getActiveAppConfig()
 
     const defaultRateLimit: RateLimiterConfig = env.isTest ? '200/30s' : '50/30s'
 
-    if (!conf) conf = mainConfig.defaultRateLimit || defaultRateLimit
+    if (!conf) conf = appConf.defaultRateLimit || defaultRateLimit
 
     if (typeof conf !== 'string') {
         if (conf[env2]) conf = conf[env2]
