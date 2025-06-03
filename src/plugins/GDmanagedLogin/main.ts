@@ -36,3 +36,4 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
 })
 
 export { GDmanagedLogin } from './GDmanagedLogin'
+export { GDmanagedLoginSendEmailFunction, GDmanagedLoginSendEmailUpdatedMailConfirmationFunction } from './config'

@@ -26,6 +26,7 @@ import { defaultConfig, PluginUserConfig } from './config'
 
 export type Name = 'GDmanagedLogin'
 
+
 //  ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔══╗ ╔══╗ ╔══╗ ╔═╗    ╦    ╔══╗ ╔══╗ ═╦═ ╦╗ ╔
 //  ║╚╝║ ╠══╣ ║╚╗║ ╠══╣ ║ ═╦ ╠═   ║  ║   ║    ║  ║ ║ ═╦  ║  ║╚╗║
 //  ╩  ╩ ╩  ╩ ╩ ╚╩ ╩  ╩ ╚══╝ ╚══╝ ╚══╝   ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩

@@ -1,24 +1,16 @@
 
 
 
-import { GreenDotAppConfig, cliIntro } from 'green_dot'
-import greenDotConfig from '../green_dot.config'
+import { GreenDotAppConfig, cliIntro, env } from 'green_dot'
 
 import { ENV } from 'topkat-utils'
 
 const {
-  NODE_ENV = 'development',
   SERVER_PORT = 9086,
   LIVE_URL = `http://localhost:${SERVER_PORT}`,
-  JWT_SECRET = 'TODOreplaceThisStringWithYourTestSecret',
   IS_CRON_SERVER = false,
   $$addToEnvVariableImports,
 } = ENV()
-
-
-const env: Env = NODE_ENV
-
-// const port = SERVER_PORT || 9086
 
 const version = '0.0.0'
 
@@ -37,11 +29,8 @@ export const appConfig: GreenDotAppConfig = {
   emailFromAddress: 'no-reply@$$projectName.app',
   port: SERVER_PORT,
   smtp: {}, // TODO add SMTP config here
-  jwtSecret: JWT_SECRET,
-  jwtRefreshExpirationMsMobile: 'never', // it will expire on new login // 48 * 3600 * 1000,
-  jwtRefreshExpirationMsWeb: 'never', // it will expire on new login // 48 * 3600 * 1000,
-  enableSchedules: env === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
-  enableSeed: env === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
+  enableSchedules: env.isProd ? IS_CRON_SERVER : true,
+  enableSeed: env.isProd === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
   plugins: [
     '$$pluginsAutocomplete'
   ]
