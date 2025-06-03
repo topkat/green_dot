@@ -1,11 +1,7 @@
-import { DefaultPermissions, DefaultRoles } from './coreGeneric.types'
 import './databaseEvents.types'
+import { DefaultPermissions, DefaultRoles } from './coreGeneric.types'
 
 interface GDbase {
-  platform: (string & {}) // needs to be union since string will mess everything
-  role: DefaultRoles
-  permissions: DefaultPermissions
-  // TESTS
   testUserNames: string
   apiKeys: string
   testEnvType: any
@@ -16,13 +12,21 @@ interface GDeventNamesBase {
 }
 
 declare global {
+
+  // Those types are helpers to make it easy to augment types like role, permissions or platform
+  interface GD_RegisterAllRoles extends Record<DefaultRoles, any> { }
+  interface GD_RegisterAllPermissions extends Record<DefaultPermissions, any> { }
+  interface GD_RegisterAllPlatforms { }
+
   /** This stores all error names, particularly for `ctx.throw` autocompletion */
   interface GreenDotErrors { }
 
   type GreenDotErrorNames = keyof GreenDotErrors
 
   interface GD extends GDbase {
-
+    role: keyof GD_RegisterAllRoles
+    permissions: keyof GD_RegisterAllPermissions
+    platform: keyof GD_RegisterAllPlatforms
   }
 
   type UserRolePermissionFields = { [K in GD['role']as `is${Capitalize<K>}`]: boolean }

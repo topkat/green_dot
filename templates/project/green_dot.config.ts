@@ -1,11 +1,17 @@
 
 import 'typescript-generic-types'
-import { GreenDotConfig, DefaultPermissions, DefaultRoles } from 'green_dot'
+import { GreenDotConfig } from 'green_dot'
 
 const env = (process.env.NODE_ENV || 'development') as Env
 
 export const allRoles = ['user', 'admin'] as const
 export type AllRoles = typeof allRoles[number]
+
+export const allPermissions = ['examplePermission'] as const
+export type AllPermissions = typeof allPermissions[number]
+
+export const allPlatforms = ['app'] as const
+export type AllPlatforms = typeof allPlatforms[number]
 
 export default {
   env: env as Env,
@@ -34,18 +40,20 @@ export default {
 //----------------------------------------------------------
 
 declare global {
+
+  // This allow you to access all roles and permissions within your app
+  // with GD['role'] and GD['permission] as global types
+  interface GD_RegisterAllRoles extends Record<AllRoles, any> { }
+  interface GD_RegisterAllPermissions extends Record<AllPermissions, any> { }
+  interface GD_RegisterAllPlatforms extends Record<AllPlatforms, any> { }
+
   // Here you can augment Ctx with your custom functions types
   interface Ctx {
     // myCustomProp: boolean
   }
 
-  // You can access roles and permissions types across your
-  // whole repo by using `GD['role']`, `GD['permissions']`...
-  // green_dot also offers other helpers global types like
-  // UserPermissionFields and UserRolePermissionFields
+  // Here you can augment global GD variable as you like
   interface GD {
-    platform: 'app'
-    role: DefaultRoles | AllRoles
-    permissions: DefaultPermissions
+
   }
 }
