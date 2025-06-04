@@ -1,8 +1,14 @@
+### v0.0.47
+- Added CLI helper functions: cliIntro, clearCli, cliBadge.
+- Updated cliGenerateProject to utilize templater for project name input.
+- Refactored app configuration to include dynamic project name in server CLI intro.
+- Removed deprecated index.generated.ts file and adjusted related imports.
+- Cleaned up project configuration files and improved type definitions.
+
 ### v0.0.45
 - Added a detailed file structure section to the README for better project navigation.
 - Updated error message in db.ts to reference gd.config.ts instead of green_dot.config.ts for accuracy.
 - Exported initClientApp from green_dot.config.ts to enhance module usability.
-
 - Updated README to clarify framework capabilities, including front-end and back-end type safety, shared models, and SDK generation.
 - Improved project generation CLI prompts for better user experience, including role and platform handling.
 - Enhanced SDK configuration in green_dot.config.ts to dynamically use roles and platforms.
@@ -171,8 +177,3 @@
 - Updated appConfig.types.ts to rename connexionFn to onLoginCallback for clarity.
 - Modified mainConfig.types.ts to include lockDurationMinutes for user management.
 - Adjusted green_dot.app.config.ts to reflect the new onLoginCallback import and usage.
-- Added CLI helper functions: cliIntro, clearCli, cliBadge.
-- Updated cliGenerateProject to utilize templater for project name input.
-- Refactored app configuration to include dynamic project name in server CLI intro.
-- Removed deprecated index.generated.ts file and adjusted related imports.
-- Cleaned up project configuration files and improved type definitions.
