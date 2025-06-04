@@ -1,7 +1,16 @@
+### v0.0.45
+- Added a detailed file structure section to the README for better project navigation.
+- Updated error message in db.ts to reference gd.config.ts instead of green_dot.config.ts for accuracy.
+- Exported initClientApp from green_dot.config.ts to enhance module usability.
+
+- Updated README to clarify framework capabilities, including front-end and back-end type safety, shared models, and SDK generation.
+- Improved project generation CLI prompts for better user experience, including role and platform handling.
+- Enhanced SDK configuration in green_dot.config.ts to dynamically use roles and platforms.
+- Refined type definitions for default permission restrictions in GreenDotConfig for better clarity and type safety.
+
 ### v0.0.44
 - Streamlined type definitions in index.generated.ts by removing unnecessary complexity and consolidating types.
 - Updated the green_dot dependency version in package.json from 0.0.41 to 0.0.44 for improved functionality.
-
 - Renamed exportFolderInSdk to injectFolderInSdk for clarity in SDK configuration.
 - Updated related logic in generateSdkFiles and generateSdkFolderFromTemplates to reflect the new naming.
 - Added yarn build command execution in cliGenerateProject to ensure project builds after generation.
