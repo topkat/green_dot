@@ -103,6 +103,7 @@ async function start() {
             programPath,
             [command, _command],
             code => {
+              console.log(`exitCode`, code)
               if (!code || code === parentProcessExitCodes.exit) {
                 // SUCCESS EXIT
                 resolve('continue')
@@ -129,7 +130,8 @@ async function start() {
                 restartTimes++
               } else {
                 // ERROR EXIT RESTART PROCESS
-                resolve('continue')
+                C.error(false, `Error in child processs. Exit with code ${code}`)
+                process.exit(code)
               }
             })
         } catch (err) {

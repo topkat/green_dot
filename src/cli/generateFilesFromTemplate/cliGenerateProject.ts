@@ -19,7 +19,9 @@ export async function cliGenerateProject() {
   //  ╦╗ ╔ ╔══╗ ╦╗╔╦ ╔══╗   ╔══╗ ╦╗ ╔ ╔═╗    ╔══╗ ╔══╗ ╦    ╔═╗  ╔══╗ ╔══╗
   //  ║╚╗║ ╠══╣ ║╚╝║ ╠═     ╠══╣ ║╚╗║ ║  ║   ╠═   ║  ║ ║    ║  ║ ╠═   ╠═╦╝
   //  ╩ ╚╩ ╩  ╩ ╩  ╩ ╚══╝   ╩  ╩ ╩ ╚╩ ╚══╝   ╩    ╚══╝ ╚══╝ ╚══╝ ╚══╝ ╩ ╚
-  const projectName = await luigi.askUserInput(`Greetings, carbon-based entity 🖖\nWhat is the name of the project you want to create:`)
+  let projectName = await luigi.askUserInput(`Greetings, carbon-based entity 🖖\nWhat is the name of the project you want to create:`)
+
+  projectName = projectName.replace(/\s/g, '')
 
   const projectRootRelative = await luigi.askUserInput(`Where is your projet root path:\n${C.dim('relative to ' + cwd)}`, { default: '.' + Path.sep })
 
@@ -70,7 +72,7 @@ export async function cliGenerateProject() {
     projectRoot,
     [
       ['$$projectNameHyphens', camelCaseToWords(projectName).join('-').trim()],
-      ['$$projectName', projectName.trim()],
+      ['$$projectName', projectName],
       [`'$$pluginsAutocomplete'`, allPluginsAsString],
       [`$$addToGlobalType`, addToGlobalType],
       [`$$addToEnvVariableImports`, addToEnvVariableImports],

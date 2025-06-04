@@ -59,7 +59,7 @@ export async function generateSdkFolderFromTemplates(
 
   const packageNamePrefix = generateSdkConfig?.npmPublishConfig?.packageNamePrefix ? generateSdkConfig.npmPublishConfig.packageNamePrefix.replace(/\/$/, '') + '/' : ''
 
-  const generatedSdkFolders = [...(generateSdkConfig.injectFolderInSdk.all || []), ...(generateSdkConfig.injectFolderInSdk[platform] || [])]
+  const generatedSdkFolders = [...(generateSdkConfig?.injectFolderInSdk?.all || []), ...(generateSdkConfig?.injectFolderInSdk?.[platform] || [])]
 
   const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}/mjs'`).join('\n') : ''
 

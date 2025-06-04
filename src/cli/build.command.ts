@@ -45,7 +45,7 @@ export async function buildCommand({ tsc = true, publishSdks = false } = {}) {
   const { generateSdk } = await import('../generate/generateSDK/generateSDK')
   const { generateIndexForDbTypeFiles } = await import('./build/generateIndexForDbTypeFiles')
 
-  await build.step(`Generating SDKs defaults`, () => generateSdk(true))
+  await build.step(`Generating SDKs defaults`, async () => await generateSdk(true))
 
   await build.step(`Generating types for databases`, async () => {
     const indexFile = await generateFilesForCachedDb()

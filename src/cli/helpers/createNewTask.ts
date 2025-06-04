@@ -1,5 +1,5 @@
 
-import { C, cliLoadingSpinner, perfTimer } from 'topkat-utils'
+import { C, perfTimer } from 'topkat-utils'
 import { cleanCommand } from '../clean.command'
 import { onFileChange } from '../helpers/fileWatcher'
 import { terminalCharSize } from '../helpers/cli'

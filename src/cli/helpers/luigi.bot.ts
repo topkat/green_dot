@@ -28,9 +28,6 @@ export const luigi = {
     ])
     C.log('\n')
   },
-  success(msg: string) {
-    this.say(msg, { log: 'success' })
-  },
   async askUserInput(
     message: string,
     conf?: Omit<Parameters<typeof input>[0], 'message'>
@@ -97,8 +94,8 @@ export const luigi = {
   ) {
     let lines: string
     if (noWrap) lines = randomItemInArray(asArray(sentence))
-    else lines = wrapCliText(randomItemInArray(asArray(sentence)), terminalCharSize - 7).join('\n     ')
-    console.log(`lines`, lines.split('\n').length)
+    else lines = wrapCliText(randomItemInArray(asArray(sentence)), terminalCharSize - 7).filter(l => l).join('\n     ')
+
     const s = '🤖 < ' + lines + '\n\n'
     if (log !== false) C.log('\n')
     if (log === 'log') C.log(s)
@@ -117,6 +114,9 @@ export const luigi = {
     C.log('\n')
     this.say(sentence, { log: 'info' })
     C.log('\n')
+  },
+  success(msg: string) {
+    this.say(msg, { log: 'success' })
   },
   tips(sentence: string[] | string) {
     C.log('\n\n')
