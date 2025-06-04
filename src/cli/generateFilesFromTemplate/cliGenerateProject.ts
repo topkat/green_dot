@@ -14,15 +14,18 @@ export async function cliGenerateProject() {
 
   const cwd = process.cwd()
 
-  // NAME
+  //  ╦╗ ╔ ╔══╗ ╦╗╔╦ ╔══╗   ╔══╗ ╦╗ ╔ ╔═╗    ╔══╗ ╔══╗ ╦    ╔═╗  ╔══╗ ╔══╗
+  //  ║╚╗║ ╠══╣ ║╚╝║ ╠═     ╠══╣ ║╚╗║ ║  ║   ╠═   ║  ║ ║    ║  ║ ╠═   ╠═╦╝
+  //  ╩ ╚╩ ╩  ╩ ╩  ╩ ╚══╝   ╩  ╩ ╩ ╚╩ ╚══╝   ╩    ╚══╝ ╚══╝ ╚══╝ ╚══╝ ╩ ╚
   const projectName = await luigi.askUserInput(`Greetings, carbon-based entity 🖖\nWhat is the name of the project you want to create:`)
 
-  // ROOT
   const projectRootRelative = await luigi.askUserInput(`Where is your projet root path:\n${C.dim('relative to ' + cwd)}`, { default: '.' + Path.sep })
 
   const projectRoot = Path.resolve(cwd, projectRootRelative)
 
-  // ROLES
+  //  ╔══╗ ╔══╗ ╦    ╔══╗ ╔═══
+  //  ╠═╦╝ ║  ║ ║    ╠═   ╚══╗
+  //  ╩ ╚  ╚══╝ ╚══╝ ╚══╝ ═══╝
   const rolesStr = await luigi.askUserInput(
     `What are the roles in your app (comma separated list)?\n${C.dim(`Roles are central to your app, in green_dot, they represent each interface the users connects to (Eg: if you have a dashboard and a mobile app you should have 2 roles, this is very important as it will determine how SDKs are generated for the different interfaces you have and for different roles. For everything else, you should use permissions)`)}`,
     { default: 'user,admin', required: true }
@@ -30,7 +33,13 @@ export async function cliGenerateProject() {
 
   const roles = rolesStr.split(',').map(s => s.trim())
 
-  // PLUGINS
+  const platforms = roles.map(r => r + 'App')
+
+  const sdkNameForRole = `{ ${roles.map((r, i) => `${r}: '${platforms[i]}'`).join(', ')} }`
+
+  //  ╔══╗ ╦    ╦  ╦ ╔══╗ ═╦═ ╦╗ ╔ ╔═══
+  //  ╠══╝ ║    ║  ║ ║ ═╦  ║  ║╚╗║ ╚══╗
+  //  ╩    ╚══╝ ╚══╝ ╚══╝ ═╩═ ╩ ╚╩ ═══╝
   const selectedPlugins = await luigi.askSelection(
     'Which plugins do you want to install?',
     Object.values(allPluginConfigs).map(p => ({ name: p.name, value: p, description: p.docOneLine, checked: true })),
@@ -48,8 +57,9 @@ export async function cliGenerateProject() {
 
   const addToEnvVariableImports = getStringFromPluginVar(ctx, selectedPlugins, p => p.addToVariablesInNewProjectTemplate?.addToEnvVariableImports)
 
-  // import '../../../templates/project'
-
+  //  ══╦══ ╔══╗ ╦╗╔╦ ╔══╗ ╦    ╔══╗ ══╦══ ═╦═ ╦╗ ╔ ╔══╗
+  //    ║   ╠═   ║╚╝║ ╠══╝ ║    ╠══╣   ║    ║  ║╚╗║ ║ ═╦
+  //    ╩   ╚══╝ ╩  ╩ ╩    ╚══╝ ╩  ╩   ╩   ═╩═ ╩ ╚╩ ╚══╝
   await templater(
     Path.resolve(__dirname, '../../../templates/project'),
     projectRoot,
@@ -57,7 +67,10 @@ export async function cliGenerateProject() {
       ['$$projectName', projectName],
       [`'$$pluginsAutocomplete'`, allPluginsAsString],
       [`$$addToGlobalType`, addToGlobalType],
-      [`$$addToEnvVariableImports`, addToEnvVariableImports]
+      [`$$addToEnvVariableImports`, addToEnvVariableImports],
+      [`'$$roles'`, `'` + roles.join(`', '`) + `'`],
+      [`'$$platforms'`, `'` + platforms.join(`', '`) + `'`],
+      [`'$$sdkNameForRole'`, sdkNameForRole],
     ],
     [
       ['.template', ''],

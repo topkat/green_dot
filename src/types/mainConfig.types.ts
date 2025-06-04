@@ -31,12 +31,10 @@ export type GreenDotConfig = {
   allRoles: readonly GD['role'][]
   /** List all permissions that will be used in the app. Usually like `['hasPremiumMembership', 'hasVerifiedIdentity'...']`. Put here all permissions that may differentiate users on what they have access to  */
   allPermissions: readonly GD['permission'][]
-  /** Permissions restrictions that apply to all users. Eg: `isLocked: false` is considered mandatory for all users to connect
+  /** Permissions restrictions that apply to all users. Eg: `hasAgreedWithTermsAndConditions: true` will check that a user has accepted T&C before using all routes that are not public
   * @example
   *```ts
   * {
-  *   isLocked: false,
-  *   isDeleted: false,
   *   hasAgreedWithTermsAndConditions: true,
   * }
   * ```
@@ -51,7 +49,7 @@ export type GreenDotConfig = {
   * }
   * ```
   */
-  defaultPermRestrictionForRole: Partial<Record<GD['role'], Partial<Record<GD['permission'], boolean>>>>
+  defaultPermRestrictionForRole: Partial<Record<Exclude<GD['role'], 'public'>, Partial<Record<GD['permission'], boolean>>>>
 
   /** Giving a ctx, this function is meant to retrieve the user in the database. It just usually returns something like `await myDb.dbName.user.getById(ctx.GM, ctx._id, { triggerErrorIfNotSet: true })` and is used internally to provide ctx.getUser() shortcut (that will use cache if requested twice) */
   getUserFromCtx?: (ctx: Ctx) => CtxUser

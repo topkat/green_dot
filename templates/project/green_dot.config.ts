@@ -4,13 +4,13 @@ import { GreenDotConfig } from 'green_dot'
 
 const env = (process.env.NODE_ENV || 'development') as Env
 
-export const allRoles = ['user', 'admin'] as const
+export const allRoles = ['$$roles'] as const
 export type AllRoles = typeof allRoles[number]
 
 export const allPermissions = ['examplePermission'] as const
 export type AllPermissions = typeof allPermissions[number]
 
-export const allPlatforms = ['app'] as const
+export const allPlatforms = ['$$platforms'] as const
 export type AllPlatforms = typeof allPlatforms[number]
 
 export default {
@@ -22,8 +22,10 @@ export default {
   allPermissions: [],
   generateSdkConfig: {
     enable: true,
-    sdkNameForRole: { user: 'app' },
-  }
+    sdkNameForRole: '$$sdkNameForRole',
+  },
+  defaultPermRestrictionForAll: { isEmailVerified: true },
+  defaultPermRestrictionForRole: {},
 } satisfies GreenDotConfig
 
 

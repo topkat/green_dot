@@ -1,34 +1,40 @@
 # 🟢 green_dot
 
-A powerful TypeScript nodeJs framework for building DX friendly, secure and type-safe backend services with MongoDB integration
+A powerful TypeScript nodeJs framework for building DX friendly, secure and front-end / back-end type-safe backend services with MongoDB integration (other DBs coming soon) and SDK generation
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/top-kat/green_dot)
 
 ## Features
 
-🧭 Back/Front Type-safe API route declarations  
+🧭 Back/Front Type-safe API route declarations, shared models  
 📐 Secure model definitions with validation and routes exposed automatically via configuration  
-🪪 Built-in security and access control  
+🪪 Built-in DX friendly security and access control  
+🔌 Powerful plugin system with Managed Login, ApiKey Login, and Secure Authentication (2FA, biometric authentication and pinCode) (BETA)
+🪄 File generation from templates to generate project, database, app, model...so you get up and running in no time
 🗃️ MongoDB integration with type safety (others database drivers to come)  
 👨‍💻 DX and intellisense friendly  
-🏗️ Generate a SDK to use in frontend (Eg: `$.myApiRoute()`)  
+🏗️ Generate it's own SDK to use in frontend (Eg: `$.myApiRoute()`)  
 ⚡  Fully cached in frontend via TanStack Query  
+📦 [VSCode / Cursor Plugin](https://marketplace.visualstudio.com/items?itemName=topkat.green-dot-vscode-module)
 
-## Installation
+## Quick Start  
 
-```bash
-npm install green_dot
-# yarn
-yarn add green_dot
-```
+1. Generate a project with `npx green_dot generate` in a blank folder
+2. Generate your first model with `npx green_dot generate` => and choose 'Model'
+3. Configure model security in the .dao.ts generated file
+4. Generate your first service (api route) with `npx green_dot generate` => and choose 'Service'
 
-## Create project or files
 
-```bash
-npx green_dot generate
-```
+## IDE Integration  
 
-=> Follow the prompt to configure your project. Run the same command again to generate database models, api routes, schedules...
+1. Hover any green_dot props or function to see the documentation in your IDE
+2. Type gd_ in any ts file to see all green_dot snippets to use to improve productivity
+3. Install VSCode / Cursor extension from the IDE extension tab or by downloading it [here](https://marketplace.visualstudio.com/items?itemName=topkat.green-dot-vscode-module)
+
+
+<br/><br/><br/>
+<br/><br/>
+
 
 ## API Service example
 
@@ -45,7 +51,7 @@ export const checkUserExists = svc({
     },
     // Type-safe output
     output: _.boolean(),
-    // optinal security features
+    // optional security features
     rateLimiter: '10/min',
     ...
     async main(ctx, { email }) {
