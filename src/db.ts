@@ -94,7 +94,7 @@ export async function initDbs(resetCache: boolean = false) {
         )
       }
     } else {
-      throw error.serverError(`Database type not implemented: ${type}. Please make sure you provided green_dot.config.ts a defaultDatabase`, { dbName: dbName, dbType: type })
+      throw error.serverError(`Database type not implemented: ${type}. Please make sure you provided gd.config.ts a defaultDatabase`, { dbName: dbName, dbType: type })
     }
   }
 

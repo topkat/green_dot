@@ -55,3 +55,4 @@ declare global {
 
   }
 }
+export { initClientApp } from 'green_dot'

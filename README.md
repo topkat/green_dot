@@ -31,10 +31,37 @@ A powerful TypeScript nodeJs framework for building DX friendly, secure and fron
 2. Type gd_ in any ts file to see all green_dot snippets to use to improve productivity
 3. Install VSCode / Cursor extension from the IDE extension tab or by downloading it [here](https://marketplace.visualstudio.com/items?itemName=topkat.green-dot-vscode-module)
 
+## File Structure
+
+```bash
+📁 app/
+├── 📁 myDb1/                   
+│   ├── 📁 models/              
+│   │   ├── user.dao.ts         # Security config for the 'user' model
+│   │   └── user.model.ts       # Data model definition for 'user'
+│   └── ⚙️ gd.db.config.ts     # DB config file specific to this database
+│
+├── 📁 myApp1/                  
+│   ├── 📁 _shared/             # Shared utilities and types across modules
+│   │   └── mySharedFile.ts
+│   ├── 📁 myModule/            # A custom module; structure is flexible
+│   │   └── myModule.svc.ts     # API route definition for the module
+│   ├── ⚙️ gd.apiTests.config.ts # Config file for automated API tests (BETA)
+│   └── ⚙️ gd.app.config.ts      # App config file specific to this application
+│
+└── ⚙️ gd.config.ts              # Global config (all roles, permissions, etc.)
+```
+
+Note: you can create mutiple app and dbs with the `npx green_dot generate` command
+
 
 <br/><br/><br/>
 <br/><br/>
 
+## Helpers
+
+* `getMainConfig()` => get your main config where yuo set allRoles, allPermissions
+* `getActiveAppConfig()`, `getActiveDbConfig()` => get respective actual db/app config
 
 ## API Service example
 
