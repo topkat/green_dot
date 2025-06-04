@@ -44,6 +44,7 @@
   ],
   "exclude": [
     "./src/templates/**/*",
+    "./src/sdkHelpersModule/**/*",
     "./templates/**/*",
     "./src/generate/generateSDK/templates/**/*",
     "./src/generate/dbFolderGeneratedDefaults/**/*",

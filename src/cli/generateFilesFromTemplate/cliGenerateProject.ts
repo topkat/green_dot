@@ -2,7 +2,7 @@ import { luigi } from '../helpers/luigi.bot'
 import { templater } from 'simple-file-templater'
 import Path from 'path'
 import { allPluginConfigs } from '../../plugins/pluginSystem'
-import { C } from 'topkat-utils'
+import { C, camelCaseToWords } from 'topkat-utils'
 import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugins/newPlugin'
 import { execWaitForOutput } from 'topkat-utils/backend'
 import { version as gdVersion } from '../../../package.json'
@@ -52,7 +52,7 @@ export async function cliGenerateProject() {
 
 
   const allPluginsAsString = getStringFromPluginVar(ctx, selectedPlugins, p => (
-    `new ${p.name}(${getValue(ctx, p.addToVariablesInNewProjectTemplate?.instanciatePluginInAppConfig) || `{ enable: true }`}),`
+    `new ${p.name}(${getValue(ctx, p.addToVariablesInNewProjectTemplate?.instanciatePluginInAppConfig) || `{ enable: true }`})`
   ))
 
   const addToGlobalType = getStringFromPluginVar(ctx, selectedPlugins, p => p.addToVariablesInNewProjectTemplate?.addToGlobalType)
@@ -64,11 +64,13 @@ export async function cliGenerateProject() {
   //  ══╦══ ╔══╗ ╦╗╔╦ ╔══╗ ╦    ╔══╗ ══╦══ ═╦═ ╦╗ ╔ ╔══╗
   //    ║   ╠═   ║╚╝║ ╠══╝ ║    ╠══╣   ║    ║  ║╚╗║ ║ ═╦
   //    ╩   ╚══╝ ╩  ╩ ╩    ╚══╝ ╩  ╩   ╩   ═╩═ ╩ ╚╩ ╚══╝
+
   await templater(
     Path.resolve(__dirname, '../../../templates/project'),
     projectRoot,
     [
-      ['$$projectName', projectName],
+      ['$$projectNameHyphens', camelCaseToWords(projectName).join('-').trim()],
+      ['$$projectName', projectName.trim()],
       [`'$$pluginsAutocomplete'`, allPluginsAsString],
       [`$$addToGlobalType`, addToGlobalType],
       [`$$addToEnvVariableImports`, addToEnvVariableImports],
@@ -86,6 +88,16 @@ export async function cliGenerateProject() {
   await execWaitForOutput('yarn', { execOptions: { cwd: projectRoot } })
 
   await execWaitForOutput('yarn build', { execOptions: { cwd: projectRoot } })
+
+  await luigi.openFile(Path.resolve(projectRoot, './gd.config.ts'))
+  await luigi.openFile(Path.resolve(projectRoot, './mainApp/gd.app.config.ts'))
+  await luigi.openFile(Path.resolve(projectRoot, './mainDb/gd.db.config.ts'))
+  C.log(`\n\n\n\n`)
+  await luigi.info(`Wow! Such a work 🥵! It's your turn now:
+1) Check open config files to adapt as you need
+2) Relaunch \`npx green_dot generate\` or simply \`yarn generate\` equivalent to generate a service, a model, a database or even an app
+3) Read the doc quick start: TODO link
+4) Hover with your cursor nearly any green_dot thing to have the documentation to be displayed in your IDE`)
 }
 
 

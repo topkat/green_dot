@@ -11,11 +11,10 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
   docOneLine,
   addToVariablesInNewProjectTemplate: {
     addToEnvVariableImports: [`JWT_SECRET = 'TODOreplaceThisStringWithYourTestSecret'`],
-    instanciatePluginInAppConfig: ({ roles }) => `
+    instanciatePluginInAppConfig: ({ roles }) => `{
       enable: true,
       jwtSecret: JWT_SECRET,
-      loginConfigPerRole: {
-        ${roles.map(r => `
+      loginConfigPerRole: {${roles.map(r => `
         ${r}: {
           emailLogin: true,
           loginOnValidateToken: true,
@@ -30,7 +29,7 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
       async sendEmailUpdatedMailConfirmation(ctx, { oldEmail }) {
         // TODO ma,age sending updated mail here
       }
-`,
+}`,
   },
   plugin: GDmanagedLogin,
 })

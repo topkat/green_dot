@@ -5,7 +5,7 @@
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
 import { app, Command } from 'command-line-application'
-import { clearCli, cliIntro, cliArgsToEnv } from './helpers/cli'
+import { clearCli, cliArgsToEnv, greenDotCliIntro } from './helpers/cli'
 import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager'
 import { C } from 'topkat-utils'
@@ -76,7 +76,7 @@ async function start() {
       error: 'throw'
     }) as { _command: keyof typeof commands }
 
-    cliIntro({ subTitle: _command.toUpperCase() })
+    greenDotCliIntro({ subTitle: _command.toUpperCase() })
 
     // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
     const runFromDist = _command === 'start' //_command === 'build'
