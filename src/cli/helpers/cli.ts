@@ -7,10 +7,23 @@ import pkg from '../../../package.json'
 export const terminalCharSize = minMax(process.stdout.columns || 40, 30, 80)
 
 
-export function cliIntro(name = C.green('◉') + ' green_dot', version = pkg.version) {
+export function cliIntro({
+  title = '',
+  subTitle = '',
+  rightText = '',
+} = {}) {
   C.log('\n' + C.dim('='.repeat(terminalCharSize)))
-  C.log('\n' + `${name} ${C.dim(`cli ${' '.repeat((terminalCharSize - 17) - version.length)}v${version}`)}\n`)
+  C.log('\n' + `${title} ${C.dim(`${subTitle} ${' '.repeat((terminalCharSize - 13) - rightText.length - subTitle.length)}${rightText}`)}\n`)
   C.log(C.dim('='.repeat(terminalCharSize)))
+}
+
+export function greenDotCliIntro(param: Parameters<typeof cliIntro>[0] = {}) {
+  return cliIntro({
+    title: C.green('◉') + ' green_dot',
+    subTitle: 'cli',
+    rightText: 'v' + pkg.version,
+    ...param,
+  })
 }
 
 export function clearCli() {

@@ -1,8 +1,8 @@
 
 
 
-import { GreenDotAppConfig, cliIntro, env } from 'green_dot'
-
+import { GreenDotAppConfig, cliIntro, env, $$importsFromGreenDot } from 'green_dot'
+import { version } from '../package.json'
 import { ENV } from 'topkat-utils'
 
 const {
@@ -12,12 +12,10 @@ const {
   $$addToEnvVariableImports,
 } = ENV()
 
-const version = '0.0.0'
-
 
 export const appConfig: GreenDotAppConfig = {
   name: 'main',
-  serverCliIntro: cliIntro('$$projectName', version),
+  version,
   corsOrigin: origin => {
     // TODO configure CORS security here
     return true

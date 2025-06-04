@@ -65,7 +65,6 @@ async function start() {
   try {
 
     clearCli()
-    cliIntro()
 
     const { _command, ...args } = app(
       {
@@ -77,6 +76,7 @@ async function start() {
       error: 'throw'
     }) as { _command: keyof typeof commands }
 
+    cliIntro({ subTitle: _command.toUpperCase() })
 
     // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
     const runFromDist = _command === 'start' //_command === 'build'

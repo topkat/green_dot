@@ -23,6 +23,7 @@ import { env } from './helpers/getEnv'
 import { startServerAsyncTasks } from './startServerAsyncTasks'
 import { newSystemCtx } from './ctx'
 import { initDbs } from './db'
+import { cliIntro } from './cli/helpers/cli'
 
 dotenv.config()
 
@@ -44,7 +45,11 @@ export async function startServer(isMaster = true) {
 
     // CLI INTRO
     if (isMaster) {
-        C.gradientize(appConfig.serverCliIntro)
+
+        if (typeof appConfig.cliIntro === 'string') C.gradientize(appConfig.cliIntro)
+        else if (typeof appConfig.cliIntro === 'function') appConfig.cliIntro()
+        else cliIntro({ title: appConfig.name, rightText: 'v' + (appConfig.version || '1.0.0') })
+
         C.log(C.primary(`Env: ${mainConfig.env} | Schedules: ${appConfig.enableSchedules ? '✓' : '✖️'} | Seeds: ${appConfig.enableSeed ? '✓' : '✖️'}\n`))
         if (DISPLAY_NO_BUILD_WARNING) C.error(false, `✓ LOCAL BUILD NOT RAN`)
         else C.log(C.primary(`✓ BUILD ${appConfig.name}`))

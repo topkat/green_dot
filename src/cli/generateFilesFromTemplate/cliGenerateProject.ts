@@ -5,6 +5,8 @@ import { allPluginConfigs } from '../../plugins/pluginSystem'
 import { C } from 'topkat-utils'
 import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugins/newPlugin'
 import { execWaitForOutput } from 'topkat-utils/backend'
+import { version as gdVersion } from '../../../package.json'
+
 
 
 
@@ -57,6 +59,8 @@ export async function cliGenerateProject() {
 
   const addToEnvVariableImports = getStringFromPluginVar(ctx, selectedPlugins, p => p.addToVariablesInNewProjectTemplate?.addToEnvVariableImports)
 
+  const importsFromGreenDot = getStringFromPluginVar(ctx, selectedPlugins, p => p.name, ', ')
+
   //  ══╦══ ╔══╗ ╦╗╔╦ ╔══╗ ╦    ╔══╗ ══╦══ ═╦═ ╦╗ ╔ ╔══╗
   //    ║   ╠═   ║╚╝║ ╠══╝ ║    ╠══╣   ║    ║  ║╚╗║ ║ ═╦
   //    ╩   ╚══╝ ╩  ╩ ╩    ╚══╝ ╩  ╩   ╩   ═╩═ ╩ ╚╩ ╚══╝
@@ -71,6 +75,8 @@ export async function cliGenerateProject() {
       [`'$$roles'`, `'` + roles.join(`', '`) + `'`],
       [`'$$platforms'`, `'` + platforms.join(`', '`) + `'`],
       [`'$$sdkNameForRole'`, sdkNameForRole],
+      [`$$gdVersion`, gdVersion],
+      [`$$importsFromGreenDot`, importsFromGreenDot]
     ],
     [
       ['.template', ''],

@@ -12,6 +12,7 @@ import { RateLimiterConfig } from '../security/serviceRouteRateLimiter'
 
 export type GreenDotAppConfig = {
   name: string,
+  version?: string,
   /** Default process.env.NODE_ENV */
   env?: Env
   port: number
@@ -37,10 +38,10 @@ export type GreenDotAppConfig = {
   * @example TODO
   */
   onLoginCallback?(defaultCtx: CtxUser, req: Request, res: Response)
-  publicFolder?: string
+  // publicFolder?: string
   corsOrigin: (RegExp | string)[] | ((origin: string) => boolean)
-
-  serverCliIntro: string
+  /** A string to be used as an intro for the cli server start process OR a function where you handle console log yourself */
+  cliIntro?: string | (() => any)
   disableTerminalColors?: boolean
   terminalColor1?: Color
   terminalColor2?: Color

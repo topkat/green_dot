@@ -23,12 +23,16 @@
     "start:backend-ci": "concurrently -k --success=first --kill-others-on-fail \"NODE_ENV=test dot start\" \"sh -c 'sleep 5 && dot test --ci'\"",
     "coverage": "bun ./coverage.ts",
     "==--->     CLEAN     <---==": "",
-    "clean": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} \\; && find . -type d -name node_modules -prune -exec rm -rf {} \\;"
+    "clean": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} \\; && find . -type d -name node_modules -prune -exec rm -rf {} \\;",
+    "==--->     DEBUG     <---==": "",
+    "// Replaces a node_modules green_dot version with local one. Please change the path accordingly)": "",
+    "symlink": "cd ./node_modules/ && rm -rf ./green_dot && ln -s ../../modules/green_dot ./green_dot && cd ./.bin && rm -f ./dot && ln -s ../../../modules/green_dot/src/cli/cliEntryPoint.ts ./dot || echo 'IF IT HAS PERMISSION ERROR PLEASE RUN chmod +x $(realpath ./node_modules/.bin/dot)' && rm -f ./gdStartProd && ln -s ../../../modules/green_dot/dist/src/cli/startProdSpecialEntryPoint.js ./gdStartProd",
+    "rmGdFolder": "cd ./node_modules/ && rm -rf ./green_dot"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "crypto-js": "^4.2.0",
-    "green_dot": "^0.0.44",
+    "green_dot": "$$gdVersion",
     "js-sha256": "^0.11.0",
     "jsonwebtoken": "^9.0.2",
     "topkat-utils": "^1.3.17",
@@ -37,9 +41,9 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.3",
+    "@types/node": "^22.13.13",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.6.0",
-    "babel-jest": "^29.7.0",
     "bun": "^1.2.10",
     "concurrently": "^9.1.2",
     "eslint": "^8.56.0",

@@ -1,6 +1,13 @@
 
 import { C, JSONstringyParse, noDuplicateFilter, removeCircularJSONstringify } from 'topkat-utils'
-import { clearCli, cliBadge, cliIntro, getServerConfigFromEnv, userInputConfirmLog, userInputKeyHandler } from './helpers/cli'
+import {
+  clearCli,
+  cliBadge,
+  getServerConfigFromEnv,
+  greenDotCliIntro,
+  userInputConfirmLog,
+  userInputKeyHandler,
+} from './helpers/cli'
 import { getProjectPaths, greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './helpers/fileWatcher'
@@ -215,7 +222,7 @@ async function findTestPaths() {
     luigi.confirm()
 
     clearCli()
-    cliIntro()
+    greenDotCliIntro()
   }
 
   const testIndexPath = appConfigs.find(appConf => appConf.testConfigPath === testConfigPath).testIndexPath

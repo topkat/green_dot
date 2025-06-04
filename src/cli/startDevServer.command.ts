@@ -1,6 +1,12 @@
 
 import { C } from 'topkat-utils'
-import { clearCli, cliBadge, cliIntro, userInputConfirmLog, userInputKeyHandler } from './helpers/cli'
+import {
+  clearCli,
+  cliBadge,
+  greenDotCliIntro,
+  userInputConfirmLog,
+  userInputKeyHandler,
+} from './helpers/cli'
 import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
 import { luigi } from './helpers/luigi.bot'
 import { onFileChange } from './helpers/fileWatcher'
@@ -27,7 +33,7 @@ export async function startDevServerCommand() {
     autoFindAndInitActiveAppAndDbPaths(folder)
 
     clearCli()
-    cliIntro()
+    greenDotCliIntro()
   }
 
   process.stdin.setRawMode?.(true)
