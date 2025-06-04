@@ -1,3 +1,9 @@
+### v0.0.48
+- Updated `send-teams-message` package version from 1.0.1 to 1.0.3.
+- Refactored CLI intro to support dynamic titles and subtitles.
+- Replaced `cliIntro` calls with `greenDotCliIntro` for consistency across CLI commands.
+- Added version and imports from GreenDot to project generation templates.
+
 ### v0.0.47
 - Added CLI helper functions: cliIntro, clearCli, cliBadge.
 - Updated cliGenerateProject to utilize templater for project name input.

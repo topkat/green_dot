@@ -28,7 +28,7 @@ export const appConfig: GreenDotAppConfig = {
   port: SERVER_PORT,
   smtp: {}, // TODO add SMTP config here
   enableSchedules: env.isProd ? IS_CRON_SERVER : true,
-  enableSeed: env.isProd === 'production' || env === 'preprod' ? IS_CRON_SERVER : true,
+  enableSeed: env.isProd ? IS_CRON_SERVER : true,
   plugins: [
     '$$pluginsAutocomplete'
   ]

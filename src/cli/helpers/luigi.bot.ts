@@ -28,6 +28,9 @@ export const luigi = {
     ])
     C.log('\n')
   },
+  success(msg: string) {
+    this.say(msg, { log: 'success' })
+  },
   // messages: {
   //   serverStarted() {
   //     say([
@@ -95,7 +98,7 @@ export const luigi = {
   say(
     sentence: string[] | string,
     { log = 'log', noWrap = false }: {
-      log?: false | 'log' | 'warning' | 'error' | 'info'
+      log?: false | 'log' | 'warning' | 'error' | 'info' | 'success'
       noWrap?: boolean
     } = {},
   ) {
@@ -108,6 +111,7 @@ export const luigi = {
     else if (log === 'warning') C.logClr(s, [255, 122, 0])
     else if (log === 'error') C.log(C.red(s))
     else if (log === 'info') C.info(s)
+    else if (log === 'success') C.success(s)
     return s
   },
   warn(sentence: string[] | string) {
