@@ -31,13 +31,6 @@ export const luigi = {
   success(msg: string) {
     this.say(msg, { log: 'success' })
   },
-  // messages: {
-  //   serverStarted() {
-  //     say([
-  //       `Allocating 42 units of startup energy… Ready!`
-  //     ])
-  //   }
-  // },
   async askUserInput(
     message: string,
     conf?: Omit<Parameters<typeof input>[0], 'message'>
@@ -105,6 +98,7 @@ export const luigi = {
     let lines: string
     if (noWrap) lines = randomItemInArray(asArray(sentence))
     else lines = wrapCliText(randomItemInArray(asArray(sentence)), terminalCharSize - 7).join('\n     ')
+    console.log(`lines`, lines.split('\n').length)
     const s = '🤖 < ' + lines + '\n\n'
     if (log !== false) C.log('\n')
     if (log === 'log') C.log(s)
