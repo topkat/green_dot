@@ -15,11 +15,11 @@ export const greenDotCacheModuleFolder = Path.resolve(__dirname.replace(Path.sep
 export type AppConfigPaths = Array<GDpathConfigWithIndex & { testConfigPath?: string, testIndexPath?: string }>
 
 let greenDotPathsCache: {
-  /** Path of green_dot.config.ts */
+  /** Path of gd.config.ts */
   mainConfig: GDpathConfig
-  /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
+  /** Paths to all gd.app.config.ts that can be found in the project alongside their app names (folder name)*/
   appConfigs: AppConfigPaths
-  /** Paths to all green_dot.app.config.ts that can be found in the project alongside their app names (folder name)*/
+  /** Paths to all gd.app.config.ts that can be found in the project alongside their app names (folder name)*/
   dbConfigs: GDpathConfigWithIndex[]
 
   activeApp?: GDpathConfigWithIndex
@@ -35,7 +35,7 @@ export async function getProjectPaths(resetCache = false) {
 
     // FIND ALL GREEN DOT CONFIGS
     let allFiles = await glob.async(
-      '**/green_dot.*.config.*', {
+      '**/gd.*.config.*', {
       cwd: rootPath,
       ignore: ['node_modules/**', '**/*.map', '**/*.d.ts', '**/.*/**', '**/coverage-jest/**', '**/dist/**'],
       onlyFiles: true,
@@ -45,11 +45,11 @@ export async function getProjectPaths(resetCache = false) {
     if (process.env.GREEN_DOT_INPUT_COMMAND !== 'start') allFiles = allFiles.map(f => f.replace(/dist(\\|\/)/, ''))
 
     const dbConfigPaths = allFiles
-      .filter(fileName => fileName.includes('green_dot.db.config'))
+      .filter(fileName => fileName.includes('gd.db.config'))
       .map(configFilePathMapper(rootPath))
 
     const appConfigPaths = allFiles
-      .filter(fileName => fileName.includes('green_dot.app.config'))
+      .filter(fileName => fileName.includes('gd.app.config'))
       .map(configFilePathMapper(rootPath, true))
 
 
@@ -72,20 +72,20 @@ export async function findProjectPath(silent = false) {
   const cwd = process.cwd()
   let isSubFolder = false
 
-  let mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `green_dot.config.${extension}`)
+  let mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `gd.config.${extension}`)
 
   let exists = await fs.exists(mainConfigPath)
   if (!exists) {
     isSubFolder = true
-    mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `../green_dot.config.${extension}`)
+    mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `../gd.config.${extension}`)
     exists = await fs.exists(mainConfigPath)
     if (!exists) {
-      mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `../../green_dot.config.${extension}`)
+      mainConfigPath = Path.join(cwd, isDist ? 'dist' : '', `../../gd.config.${extension}`)
       exists = await fs.exists(mainConfigPath)
     }
   }
 
-  if (!exists && !silent) throw C.error(false, './green_dot.config.ts NOT FOUND. Please ensure you run the command from a valid green_dot project')
+  if (!exists && !silent) throw C.error(false, './gd.config.ts NOT FOUND. Please ensure you run the command from a valid green_dot project')
 
   const rootPath = mainConfigPath.replace(/[/\\][^/\\]*$/, '') // replace last path bit
 
@@ -99,18 +99,18 @@ export async function findProjectPath(silent = false) {
 
 function configFilePathMapper(mainConfigFolderPath: string, includesTestConfig = false) {
   return (path: string) => {
-    const folderPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, '')
+    const folderPath = path.replace(/[/\\]gd.[^/\\]*?config[^/\\]*?$/, '')
     const paths = {
       path: path,
       folderPath,
       folderPathRelative: Path.relative(mainConfigFolderPath, folderPath),
-      generatedIndexPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + `index.generated.${extension}`),
-      generatedFolderPath: path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + '.generated'),
+      generatedIndexPath: path.replace(/[/\\]gd.[^/\\]*?config[^/\\]*?$/, Path.sep + `index.generated.${extension}`),
+      generatedFolderPath: path.replace(/[/\\]gd.[^/\\]*?config[^/\\]*?$/, Path.sep + '.generated'),
     }
     if (includesTestConfig) {
       const yoTsBullshit = paths as any
       yoTsBullshit.testConfigPath = path.replace(/\.app\./, `.apiTests.`)
-      yoTsBullshit.testIndexPath = path.replace(/[/\\]green_dot.[^/\\]*?config[^/\\]*?$/, Path.sep + `testIndex.generated.${extension}`)
+      yoTsBullshit.testIndexPath = path.replace(/[/\\]gd.[^/\\]*?config[^/\\]*?$/, Path.sep + `testIndex.generated.${extension}`)
     }
     return paths
   }

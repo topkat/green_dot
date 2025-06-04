@@ -89,7 +89,7 @@ ${rateLimiter === 'disable' || !rateLimiter ? '' : `    rateLimiter: '${rateLimi
 
   await fs.outputFile(filePath, file, 'utf-8')
 
-  luigi.tips(`In your 'green_dot.config.ts' file, you can configure the default values for file generation via the param \`{ generateCommandOptions }\``)
+  luigi.tips(`In your 'gd.config.ts' file, you can configure the default values for file generation via the param \`{ generateCommandOptions }\``)
 
 }
 

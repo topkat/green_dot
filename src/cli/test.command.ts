@@ -205,7 +205,7 @@ async function findTestPaths() {
   let testConfigPath = testConfigs[0]
 
   if (!testConfigs.length) {
-    throw new Error('No test config found for any projects, please make sure you have green_dot.apiTests.config.ts file on your project')
+    throw new Error('No test config found for any projects, please make sure you have gd.apiTests.config.ts file on your project')
   } else if (testConfigs.length > 1) {
     testConfigPath = await luigi.askSelection(
       'Which app should I test ?',
@@ -221,7 +221,7 @@ async function findTestPaths() {
   const testIndexPath = appConfigs.find(appConf => appConf.testConfigPath === testConfigPath).testIndexPath
 
   if (!fs.exists(testConfigPath)) {
-    throw new Error('Test config file do not exist. Make sure there is a green_dot.apiTests.config.ts in one of your app folder')
+    throw new Error('Test config file do not exist. Make sure there is a gd.apiTests.config.ts in one of your app folder')
   }
 
   if (!fs.exists(testIndexPath)) {

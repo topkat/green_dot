@@ -60,7 +60,7 @@ export async function generateIndexForProjectApp() {
 
       const fileContent = `
 import { RegisterErrorType, initClientApp, initEnv } from 'green_dot'
-import mainConfig from '${mainPathRelative}/green_dot.config'
+import mainConfig from '${mainPathRelative}/gd.config'
 
 initEnv(mainConfig)
 
@@ -77,7 +77,7 @@ declare global {
 
       const testFileContent = `
 import { type TestSuite, initClientApp } from 'green_dot'
-import mainConfig from '${mainPathRelative}/green_dot.config'
+import mainConfig from '${mainPathRelative}/gd.config'
 ${testIndexContent.imports}
 
 export const initApp = async () => initClientApp(mainConfig)

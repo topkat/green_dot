@@ -1,6 +1,6 @@
 
 import { GreenDotApiTestsConfig, TestSuite as TestFlowRaw, TestItem as TestItemRaw } from 'green_dot'
-import { appConfig } from './green_dot.app.config'
+import { appConfig } from './gd.app.config'
 import { allRoutes } from './.generated/all-routes-for-tests.generated'
 
 

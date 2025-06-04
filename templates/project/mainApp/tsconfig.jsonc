@@ -1,6 +1,6 @@
 /**------------------------------------------------------------
 This file should be in the root of your app folder. Usually 
-where the `green_dot.APP.config.ts` file resides. It is here 
+where the `gd.APP.config.ts` file resides. It is here 
 to correctly scope the global types inside your app
 ---------------------------------------------------------------*/
 {

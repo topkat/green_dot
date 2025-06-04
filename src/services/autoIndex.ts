@@ -33,7 +33,7 @@ export async function autoIndex(fileConfigs: AutoIndexFileConfig[], basePath: st
 
       await fs.outputFile(`${indexBasePath}/${indexFileName}.ts`, indexFileData.join('\n'))
 
-    } else C.warning(false, `Path ${indexBasePath} do not exist. Please check your autoIndex config in green_dot.config.ts`)
+    } else C.warning(false, `Path ${indexBasePath} do not exist. Please check your autoIndex config in gd.config.ts`)
   }))
 
   C.success('Indexes files generated for client:\n' + fileConfigs.map(c => '    * ' + c.path.replace(/^\.\//, '')).join('\n'))

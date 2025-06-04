@@ -11,7 +11,7 @@ export async function startServerProd() {
   const { activeApp } = await getProjectPaths()
 
   if (!activeApp) {
-    throw new Error('Please start the process in a green_dot.app folder (folder containing green_dot.APP.config.ts)')
+    throw new Error('Please start the process in a gd.app folder (folder containing gd.APP.config.ts)')
   }
 
   const { startServer, stopServer } = await import('green_dot' as any)

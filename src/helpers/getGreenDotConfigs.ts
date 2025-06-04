@@ -59,7 +59,7 @@ export function getMainConfig(silent = false): typeof greenDotConfigsCache {
 export async function initMainConfigCache(resetCache = false) {
   if (!greenDotConfigsCache || resetCache === true) { // we don't want this process to happen each time we call that function
     const { mainConfig: mainConfigPaths } = await getProjectPaths()
-    // /Users/garcias/DEV/BANGK/bangk-app-backend/green_dot.config.ts
+    // /Users/garcias/DEV/BANGK/bangk-app-backend/gd.config.ts
     const { default: conf, initClientApp } = (await safeImport(mainConfigPaths.path)) as { default: GreenDotConfig, initClientApp: (conf: GreenDotConfig) => any }
     process.env.IS_PROD_ENV = conf.isProdEnv.toString()
     process.env.IS_TEST_ENV = conf.isTestEnv.toString()
@@ -105,7 +105,7 @@ async function initDbConfigCache(resetCache = false) {
     }
   } catch (err) {
     C.error(err)
-    throw `ERROR in .${pathNameErrExtraInfos}/green_dot.db.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`
+    throw `ERROR in .${pathNameErrExtraInfos}/gd.db.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`
   }
 }
 
@@ -159,7 +159,7 @@ async function initAppConfigCache(resetCache = false) {
       }
     } catch (err) {
       C.error(err)
-      C.error(false, `ERROR in .${pathNameErrExtraInfos}/green_dot.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`)
+      C.error(false, `ERROR in .${pathNameErrExtraInfos}/gd.app.config.ts: There is probably a type error on your file. Please check everything works as expected and read carrefully above log.`)
       setTimeout(() => process.exit(parentProcessExitCodes.waitForFileChange))
     }
   }
