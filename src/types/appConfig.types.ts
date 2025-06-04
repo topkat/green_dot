@@ -65,22 +65,22 @@ export type GreenDotAppConfig = {
    * You can configure rateLimiter per routes in a service (this fine tuning is very useful)
    * * **NOTE**: if you work with KUBERNETES or distributed environement, you have to make sure IP adress are always assigned to the same pods, if not the rateLimiter will not work as expected.
    */
-  enableRateLimiter: boolean
+  enableRateLimiter?: boolean
 
   /** Default is '50/30s' => 50 apiCall for a 30 sec time window for a single user (IP or userId if possible) OR '200/30sec' for isTest env */
   defaultRateLimit?: RateLimiterConfig
 
-  /** Warnings are set manually via ctx.addWarning() or by the system
+  /** Default: true. Warnings are set manually via ctx.addWarning() or by the system
   (rateLimiter...). After the configured nbWarningBeforeBan, the user will
   be banned for a short amount of time, and if it is banned again, this
   time will be greater. The limit will reset with a certain amount of time.
   */
-  enableUserWarnings: boolean
-  /** You can ban manually a user via ctx.banUser() or it can be banned after
+  enableUserWarnings?: boolean
+  /** Default: true. You can ban manually a user via ctx.banUser() or it can be banned after
   receivving a certain amount of warnings, whenever manually via ctx.addWarning()
   or by the system if configured (rateLimiter...)
   */
-  enableUserBan: boolean
+  enableUserBan?: boolean
   /** Default: 3; Determines how much warnings it takes for a user to be banned */
   nbWarningsBeforeBan?: number
   /** interval in milliseconds to which the database should be checked to unblacklist users. Default: ```env === 'test' ? 1000 : 3 * 60 * 1000``` */

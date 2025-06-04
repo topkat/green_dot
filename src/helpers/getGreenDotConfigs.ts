@@ -118,6 +118,9 @@ const defaultAppConfig = {
   blackListBanMinutes: [15, 120, 12 * 60],
   blackListCheckInterval: process.env.NODE_ENV === 'test' ? 1000 : 3 * 60 * 1000,
   nbWarningsBeforeBan: 3,
+  enableUserBan: true,
+  enableSeed: true,
+  enableUserWarnings: true,
 } satisfies Partial<GreenDotAppConfig>
 
 let greenDotAppConfigsCache: Array<GreenDotAppConfig & GDpathConfigWithIndex>
