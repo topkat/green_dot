@@ -13,7 +13,7 @@ export default async function generateAllRouteFile(allRoutes: string[]) {
 
     for (const route of allRoutes) {
         if (
-            !route.includes('mongo') || route.includes('bangk')
+            !route.includes('mongo') // TODO is this still relevant
         ) {
             const routeClean = route
                 .replace(/^\//g, '')

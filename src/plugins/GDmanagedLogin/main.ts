@@ -14,6 +14,7 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
     instanciatePluginInAppConfig: ({ roles }) => `{
       enable: true,
       jwtSecret: JWT_SECRET,
+      cookieProductionDomain: '.myDomain.com',
       loginConfigPerRole: {${roles.map(r => `
         ${r}: {
           emailLogin: true,

@@ -40,6 +40,9 @@ export type PluginUserConfig = {
 
   loginConfigPerRole: Partial<Record<GD['role'], GDmanagedLoginLoginConfig>>
 
+  /** Cookie may be set for user authentication and session. Typically a value like: '.myDomain.com' */
+  cookieProductionDomain: string
+
   // OPTIONAL TYPES
   /** This email is sent when user update their email and when update has succeeded */
   sendEmailUpdatedMailConfirmation?: GDmanagedLoginSendEmailUpdatedMailConfirmationFunction

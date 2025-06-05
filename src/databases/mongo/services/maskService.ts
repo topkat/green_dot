@@ -5,6 +5,7 @@ import { forEachPopulateFieldRecursive } from './populateService'
 import { PopulateConfig, PopulateConfigWithoutStringSyntax } from '../types/mongoDbTypes'
 import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types/core.types'
 import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
+import { AllDbIds } from '../../../cache/dbs/index.generated'
 
 import { getId, objForceWrite, escapeRegexp, flattenObject, unflattenObject } from 'topkat-utils'
 
@@ -16,7 +17,7 @@ export type Mask<T = any> = DaoHookSharedParsed & MaskHook<T>
 export async function applyMaskIncludingOnPopulatedFieldsRecursive<ModelName extends string, T extends Record<string, any>>(
     ctx: Ctx,
     method: DaoGenericMethods,
-    dbName: string,
+    dbName: AllDbIds,
     modelName: ModelName,
     fields: T,
     recursive = true
@@ -36,7 +37,7 @@ export async function applyMaskIncludingOnPopulatedFieldsRecursive<ModelName ext
 
 export async function applyMaskOnObjectForUser<T extends Record<string, any>>(
     ctx: Ctx,
-    dbName: string,
+    dbName: AllDbIds,
     modelName: string,
     method: DaoGenericMethods,
     obj: T
@@ -57,7 +58,7 @@ export async function applyMaskOnObjectForUser<T extends Record<string, any>>(
  */
 export async function combineMaskHooksAndReturnMaskOrSelectAddrArray(
     ctx: Ctx,
-    dbName: string,
+    dbName: AllDbIds,
     modelName: string,
     maskHooks: Mask[],
     method: DaoGenericMethods
@@ -159,7 +160,7 @@ function applyMaskFlatToModel<T extends Record<string, any>>(
 export async function applyMaskToPopulateConfig(
     ctx: Ctx,
     conf: PopulateConfig<any>[],
-    dbName: string,
+    dbName: AllDbIds,
     baseModelName: string,
     method: DaoGenericMethods
 ) {
@@ -223,7 +224,7 @@ export async function getMaskFromSelect(selectArr: string[], dbName: string, mod
 export async function getMongoMaskForUser(
     ctx: Ctx,
     method: DaoGenericMethods,
-    dbName: string,
+    dbName: AllDbIds,
     modelName: string
 ) {
 

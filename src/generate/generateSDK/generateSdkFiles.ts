@@ -5,7 +5,7 @@ import { displayObjectClean } from '../helpers/displayObjectClean'
 import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
+import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbIndex'
 import { commonJsTsConfig, compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler'
 import { generateFilesForCachedDb } from '../../cli/build/generateFilesForCachedDb'
 
@@ -47,8 +47,7 @@ export async function generateSdkFiles(
     const indexFile = await generateFilesForCachedDb(false, Path.join(sdkRoot, ''))
 
     await Promise.all([
-        generateIndexForDbTypeFiles({
-            indexFile,
+        generateIndexForDbTypeFiles(indexFile, {
             outputFolder: sdkRoot,
             outputFileNameWithoutExtension: 'modelTypes.generated',
             hardCodePermissionFields: true,

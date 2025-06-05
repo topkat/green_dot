@@ -45,7 +45,7 @@ type Models = {
 export const models: Models = {
     mongo: {},
     daos: {
-        main: {
+        mainDb: {
             user: {
                 type: 'mongo',
                 // authorizedOLDApiEndpoint: ['count', 'create', 'delete', 'deleteWithFilter', 'getAll', 'getById', 'getFirstN', 'getOne', 'update', 'delete'],
@@ -92,7 +92,7 @@ export const models: Models = {
         }
     },
     populateAddrFlatWithModelName: {
-        main: {
+        mainDb: {
             user: {
                 organization: 'organization'
             },
@@ -101,5 +101,5 @@ export const models: Models = {
             },
         }
     },
-    validation: { main: validationAddr() as any },
+    validation: { mainDb: validationAddr() as any },
 }

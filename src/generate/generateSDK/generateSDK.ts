@@ -13,8 +13,8 @@ import { generateSDKconfigForDaos } from './generateSDKconfigForDao'
 import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs'
 import { getAppConfigs } from '../../helpers/getGreenDotConfigs'
 import { findProjectPath } from '../../helpers/getProjectPaths'
-import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbTypeFiles'
 import { generateMainBackendFiles } from '../generateMainBackendFiles'
+import { generateDefaultSafeIndexDbCacheFile } from '../../cli/build/generateIndexDefaultSafeDbIndexCache'
 
 const sdkFolderName = 'SDKs'
 
@@ -38,7 +38,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
         await Promise.all(platforms.map(async platform => {
             const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
             await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
-            await generateIndexForDbTypeFiles({
+            await generateDefaultSafeIndexDbCacheFile({
                 outputFolder: sdkRootPath,
                 outputFileNameWithoutExtension: 'modelTypes.generated'
             })
@@ -278,7 +278,7 @@ async function SAFEmode() {
             const sdkAbsPath = Path.join(sdkRoot, sdkPath)
 
             await generateSdkFolderFromTemplates(platform, sdkAbsPath, platforms)
-            await generateIndexForDbTypeFiles({
+            await generateDefaultSafeIndexDbCacheFile({
                 outputFolder: sdkAbsPath,
                 outputFileNameWithoutExtension: 'modelTypes.generated'
             })

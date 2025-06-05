@@ -134,8 +134,8 @@ export async function setConnexionTokens(
         biometricAuthToken,
     })
 
-    setRefreshTokenCookie(ctx, refreshToken)
-    setCsrfTokenCookie(ctx, csrfToken)
+    setRefreshTokenCookie(ctx, refreshToken, config)
+    setCsrfTokenCookie(ctx, csrfToken, config)
 
     return {
         refreshToken,

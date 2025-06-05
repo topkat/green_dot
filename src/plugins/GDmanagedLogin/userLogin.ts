@@ -2,7 +2,7 @@
 import { getId } from 'topkat-utils'
 import { userLoginReturnValidatorRaw } from './constants'
 import { _ } from '../../validator'
-import { ModelTypes } from '../../cache/dbs/index.generated'
+import { MainDbName, ModelTypes } from '../../cache/dbs/index.generated'
 import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService'
 import { db } from '../../db'
 import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
@@ -10,6 +10,7 @@ import { PluginUserConfig } from './config'
 import { JWTdataWrite, setConnexionTokens } from './userAuthenticationTokenService'
 import { applyMaskOnObjectForUser } from '../../databases/mongo/services/maskService'
 import { credentialManagementMailing } from './credentialManagementMailing'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 
 
 
@@ -29,6 +30,7 @@ export async function userLogin(
 ) {
 
   const { loginErrorIfEmailIsNotValidated, loginConfigPerRole } = pluginConfig
+  const { defaultDatabaseName } = getMainConfig()
 
   const user = typeof userOrId === 'string' ? await db.user.getById(ctx.GM, userOrId) : userOrId
 
@@ -69,7 +71,7 @@ export async function userLogin(
 
   const tokens = await setConnexionTokens(userCtx, deviceId, toknData, pluginConfig)
 
-  const maskedUser = await applyMaskOnObjectForUser(userCtx, 'bangk', 'user', 'getOne', user)
+  const maskedUser = await applyMaskOnObjectForUser(userCtx, defaultDatabaseName as MainDbName, 'user', 'getOne', user)
 
   await loginConfigPerRole[role]?.onAfterLogin?.(ctx, role, user, tokens)
 

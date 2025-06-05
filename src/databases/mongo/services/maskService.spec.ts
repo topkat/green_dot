@@ -6,6 +6,7 @@ import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
 import { getCtx, createUser, createOrg, orgId1 } from '../../../tests/jestHelpers'
 
 import { nbOccurenceInString, C } from 'topkat-utils'
+import { MainDbName } from '../../../cache/dbs/index.generated'
 
 jest.mock('../../../helpers/getGreenDotConfigs', () => ({
     getMainConfig: () => ({
@@ -41,14 +42,14 @@ describe('combineAndParseMaskHooks', () => {
     //----------------------------------------
     it(`Single hooks, PUBLIC`, async () => {
         const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'mainDb' as MainDbName, 'user', hooks, 'getOne')
 
         expect(mask).toEqual(userFields.filter(e => e !== 'name'))
         // it('select', () => expect(select).toEqual(['name']))
     })
     it(`Check CACHING works`, async () => {
         const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { validUntil } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'main', 'user', hooks, 'getOne') as any
+        const { validUntil } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'mainDb' as MainDbName, 'user', hooks, 'getOne') as any
 
         C.info('validUntil should be set so coming from CACHE')
         expect(validUntil).toBeDefined()
@@ -58,14 +59,14 @@ describe('combineAndParseMaskHooks', () => {
     //----------------------------------------
     it(`single hooks, ADMIN, method:CREATE No hooks apply`, async () => {
         const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.main.user.mask, 'create', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'main', 'user', hooks, 'create')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'mainDb' as MainDbName, 'user', hooks, 'create')
 
         expect(mask).toEqual([])
         // it('select', () => expect(select).toEqual(userFields))// can create with a password
     })
     it(`single hooks, ADMIN, method:GETALL One hook apply`, async () => {
         const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.main.user.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'main', 'user', hooks, 'getAll')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'mainDb' as MainDbName, 'user', hooks, 'getAll')
 
         expect(mask).toEqual(['password'])
         // it('select', () => expect(select).toEqual(userFields.filter(f => f !== 'password')))
@@ -75,7 +76,7 @@ describe('combineAndParseMaskHooks', () => {
     //----------------------------------------
     it(`multiple hook, user`, async () => {
         const hooks = await appliableHooksForUser(getCtx('user'), models.daos.main.organization.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
-        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('user'), 'main', 'organization', hooks, 'getAll')
+        const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('user'), 'mainDb' as MainDbName, 'organization', hooks, 'getAll')
 
         expect(mask).toEqual([
             'adminField1', // admin has been catched by * wildcard
@@ -87,12 +88,12 @@ describe('combineAndParseMaskHooks', () => {
 
 describe(`transformMaskToSelectMongo`, () => {
     it('no hook apply so allAllowed is true', async () => {
-        const maskArr = await getMongoMaskForUser(getCtx('admin'), 'create', 'main', 'user')
+        const maskArr = await getMongoMaskForUser(getCtx('admin'), 'create', 'mainDb' as MainDbName, 'user')
         expect(maskArr.length).toEqual(0)
     })
 
     it('User getall org', async () => {
-        const maskArr = await getMongoMaskForUser(getCtx('user'), 'getAll', 'main', 'organization')
+        const maskArr = await getMongoMaskForUser(getCtx('user'), 'getAll', 'mainDb' as MainDbName, 'organization')
         // same as above WITHOUT ARRAY SYNTAX
         expect(maskArr).toEqual(['-adminField1', '-adminField2', '-teams.adminAuth'])
     })
@@ -102,7 +103,7 @@ test('applyMaskOnPopulatedFieldsRecursive', async () => {
 
     const org = createOrg(1, ['USER_1', 'USER_2'])
 
-    const newFields = await applyMaskIncludingOnPopulatedFieldsRecursive(getCtx('user'), 'create', 'main', 'organization', org, false)
+    const newFields = await applyMaskIncludingOnPopulatedFieldsRecursive(getCtx('user'), 'create', 'mainDb' as MainDbName, 'organization', org, false)
 
     const user1 = createUser(1, orgId1)
     const user2 = createUser(2, orgId1)
@@ -128,7 +129,7 @@ test('applyMaskOnPopulatedFieldsRecursive', async () => {
 
     const user = createUser(1, createOrg(1, [user1, user2]))
 
-    const newUser = await applyMaskIncludingOnPopulatedFieldsRecursive(getCtx('user'), 'getAll', 'main', 'user', user)
+    const newUser = await applyMaskIncludingOnPopulatedFieldsRecursive(getCtx('user'), 'getAll', 'mainDb' as MainDbName, 'user', user)
 
     C.info('First Level Password should not be set for user')
     expect(newUser.password).toBeUndefined()
@@ -151,19 +152,19 @@ describe('applyMaskToPopulateConfig on Populate config 4 LEVEL DEEP', () => {
 
 
     it(`No hook apply`, async () => {
-        const popConfigOutAdminNoHookApply = await applyMaskToPopulateConfig(getCtx('admin'), popConfigIn, 'main', 'user', 'create')
+        const popConfigOutAdminNoHookApply = await applyMaskToPopulateConfig(getCtx('admin'), popConfigIn, 'mainDb' as MainDbName, 'user', 'create')
 
         expect(popConfigOutAdminNoHookApply).toEqual(popConfigIn)
     })
 
     it(`One hook apply for user`, async () => {
-        const popConfigOutAdminOneHookApply = await applyMaskToPopulateConfig(getCtx('admin'), popConfigIn, 'main', 'user', 'getAll')
+        const popConfigOutAdminOneHookApply = await applyMaskToPopulateConfig(getCtx('admin'), popConfigIn, 'mainDb' as MainDbName, 'user', 'getAll')
 
         expect(nbOccurenceInString(JSON.stringify(popConfigOutAdminOneHookApply), '"select":"-password')).toEqual(2)
     })
 
     it(`3 hooks apply (1 user and 2 org)`, async () => {
-        const popConfigOutUser = await applyMaskToPopulateConfig(getCtx('user'), popConfigIn, 'main', 'user', 'getAll')
+        const popConfigOutUser = await applyMaskToPopulateConfig(getCtx('user'), popConfigIn, 'mainDb' as MainDbName, 'user', 'getAll')
 
         expect(nbOccurenceInString(JSON.stringify(popConfigOutUser), '"select":"-password')).toEqual(2)
         expect(nbOccurenceInString(JSON.stringify(popConfigOutUser), '"select":"-adminField1 -adminField2 -teams.adminAuth"')).toEqual(2)

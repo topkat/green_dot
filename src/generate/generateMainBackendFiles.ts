@@ -40,11 +40,11 @@ export async function generateMainBackendFiles(
     // SERVICES API
     //----------------------------------------
 
-    for (const svc of Object.values(appConfig.additionalServices)) {
+    for (const svc of Object.values(appConfig?.additionalServices || {})) {
         svc._isSharedService = true
     }
 
-    const allServices = { ...allServicesFromApp, ...(appConfig.additionalServices || {}) }
+    const allServices = { ...allServicesFromApp, ...(appConfig?.additionalServices || {}) }
 
     for (const [serviceName, service] of Object.entries(allServices)) {
         if (typeof service.main === 'function' && ('route' in service || ('on' in service !== true && 'schedule' in service !== true))) {

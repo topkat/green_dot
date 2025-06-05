@@ -1,3 +1,4 @@
+import { defaultDbName, MainDbName } from '../../cache/dbs/index.generated'
 import { RateLimiterConfig } from '../../security/serviceRouteRateLimiter'
 import { _ } from '../../validator'
 
@@ -12,10 +13,12 @@ export const checkOrChangeEmailOrPasswordRateLimiter = {
 } satisfies RateLimiterConfig
 
 
-export const userLoginReturnValidatorRaw = () => ({
-  user: _.model('bangk', 'user'),
-  accessToken: _.string(),
-  deviceId: _.string(),
-  csrfToken: _.string(),
-  biometricAuthToken: _.string(),
-})
+export const userLoginReturnValidatorRaw = () => {
+  return {
+    user: _.model(defaultDbName as MainDbName, 'user'),
+    accessToken: _.string(),
+    deviceId: _.string(),
+    csrfToken: _.string(),
+    biometricAuthToken: _.string(),
+  }
+}

@@ -31,8 +31,8 @@ Examples:
 ```
 */
 
-import { MongoDao } from 'green_dot'
-import userModel from './user.model'
+import { MongoDao, UserAdditionalFieldsRead } from 'green_dot'
+import { User } from './user.model'
 
 const dao = {
     type: 'mongo',
@@ -47,6 +47,6 @@ const dao = {
         // type gd_dao:mask to expand snippet
     ],
     populate: [],
-} satisfies MongoDao<typeof userModel.tsType>
+} satisfies MongoDao<User>
 
 export default dao
