@@ -64,7 +64,7 @@ export function getCredentialManagementServices(
       async main(ctx, { newEmail, additionalParams }) {
         const user = await ctx.getUser()
         if (newEmail === user.email) throw ctx.error.newEmailSameAsOld()
-        return await credentialManagementMailing(ctx, user, getId(user), 'changeEmail', additionalParams, pluginConfig, newEmail)
+        return await credentialManagementMailing(ctx, user, getId(user), 'updateEmail', additionalParams, pluginConfig, newEmail)
       },
     }),
   }

@@ -5,14 +5,14 @@
 
 import { db } from '../../db'
 import { decryptToken } from '../../security/encryptAndDecryptSafe'
-import { EmailTypes } from './constants'
+import { GDmanagedLoginEmailTypes } from './constants'
 import { credentialManagementMailing } from './credentialManagementMailing'
 import { PluginUserConfig } from './config'
 
 
 
 export async function decryptValidationToken(
-  ctx, token: string, emailType: EmailTypes,
+  ctx, token: string, emailType: GDmanagedLoginEmailTypes,
   pluginConfig: PluginUserConfig,
   isForVerification = false
 ) {

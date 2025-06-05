@@ -5,7 +5,7 @@ import { InferTypeRead, InferTypeWrite, _ } from 'good-cop'
 import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
 import { getCheckTokenIsValidService } from './apiServices/getCheckTokenIsValidService'
 import { ModelTypes } from '../../cache/dbs/index.generated'
-import { emailTypes } from './constants'
+import { gdManagedLoginEmailTypes } from './constants'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { getValidateTokenAndLoginService } from './apiServices/getValidateTokenAndLoginService'
 import { getLogoutService } from './apiServices/getLogoutService'
@@ -117,7 +117,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
         validUntil: _.date(),
         creationDate: _.date(),
         value: _.string(),
-        type: _.enum([...(validationTokenTypes || []), ...emailTypes]),
+        type: _.enum([...(validationTokenTypes || []), ...gdManagedLoginEmailTypes]),
       }),
       /** Those are used to request an access token. Access token changes every N minutes, while refresh tokens last for a session */
       refreshTokens: [_.string()],

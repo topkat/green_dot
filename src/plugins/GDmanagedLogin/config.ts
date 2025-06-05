@@ -1,6 +1,6 @@
 
 import { ModelTypes } from '../../cache/dbs/index.generated'
-import { EmailTypes } from './constants'
+import { GDmanagedLoginEmailTypes } from './constants'
 import { setConnexionTokens } from './userAuthenticationTokenService'
 
 
@@ -22,12 +22,12 @@ export type GDmanagedLoginSendEmailUpdatedMailConfirmationFunction = (ctx: Ctx, 
 
 export type GDmanagedLoginSendEmailFunction = (
   ctx: Ctx,
-  emailType: EmailTypes,
+  emailType: GDmanagedLoginEmailTypes,
   encodedToken: string,
   user: ModelTypes['user'],
   /** Thoses can be optionnaly passed in frontend in the SDK and will be forwarded to the function  */
   additionalParams: Record<string, any>,
-  /** In case emailType is changeEmail, this is the updatedEmail */
+  /** In case emailType is updateEmail, this is the updatedEmail */
   updatedEmail?: string
 ) => any
 

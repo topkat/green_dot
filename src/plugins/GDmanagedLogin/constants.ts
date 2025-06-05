@@ -4,10 +4,10 @@ import { _ } from '../../validator'
 
 
 
-export const emailTypes = ['forgotPassword', 'emailValidation', 'changeEmail'] as const
-export type EmailTypes = typeof emailTypes[number]
+export const gdManagedLoginEmailTypes = ['forgotPassword', 'emailValidation', 'updateEmail'] as const
+export type GDmanagedLoginEmailTypes = typeof gdManagedLoginEmailTypes[number]
 
-export const checkOrChangeEmailOrPasswordRateLimiter = {
+export const checkOrUpdateEmailOrPasswordRateLimiter = {
   default: '7/min',
   test: '100/min',
 } satisfies RateLimiterConfig

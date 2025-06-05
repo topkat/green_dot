@@ -36,6 +36,6 @@ export type ModelNamesForDb = Record<string, string>
 
   await fs.outputFile(Path.join(outputFolder, outputFileNameWithoutExtension + '.ts'), indexFileContent)
 
-  C.success(`Successfully generated Default SAFE local cache/dbs/index.generated.ts`)
+  if (outputFolder.includes(greenDotCacheModuleFolder)) C.success(`Successfully generated Default SAFE local cache/dbs/index.generated.ts`)
 
 }

@@ -3,7 +3,7 @@
 import { db } from '../../db'
 import { PluginUserConfig } from './config'
 import { ModelTypes } from '../../cache/dbs/index.generated'
-import { EmailTypes } from './constants'
+import { GDmanagedLoginEmailTypes } from './constants'
 import { generateUniqueToken } from '../../services/generateUniqueToken'
 import { encryptToken } from '../../security/encryptAndDecryptSafe'
 
@@ -14,7 +14,7 @@ export async function credentialManagementMailing(
   ctx: Ctx,
   user: ModelTypes['user'],
   userId: string,
-  emailType: EmailTypes,
+  emailType: GDmanagedLoginEmailTypes,
   additionalParams: Record<string, any>,
   pluginConfig: PluginUserConfig,
   newEmail?: string
@@ -43,7 +43,7 @@ export async function credentialManagementMailing(
     }
   })
 
-  if (emailType === 'changeEmail') {
+  if (emailType === 'updateEmail') {
     await db.user.update(ctx.GM, userId, { newEmail })
   }
 

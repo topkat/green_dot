@@ -2,7 +2,7 @@
 
 A powerful TypeScript nodeJs framework for building DX friendly, secure and front-end / back-end type-safe backend services with MongoDB integration (other DBs coming soon) and SDK generation
 
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/top-kat/green_dot)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/topkat/green_dot)
 
 ## Features
 
@@ -181,9 +181,9 @@ const dao = {
 ## Contributing
 
 Contributions are welcome! 
-- For bug reports and feature requests, please open an issue at [GitHub Issues](https://github.com/top-kat/green_dot/issues)
-- For code contributions, please submit a Pull Request at [GitHub Pull Requests](https://github.com/top-kat/green_dot/pulls)
-- Visit our [GitHub Repository](https://github.com/top-kat/green_dot) for more information
+- For bug reports and feature requests, please open an issue at [GitHub Issues](https://github.com/topkat/green_dot/issues)
+- For code contributions, please submit a Pull Request at [GitHub Pull Requests](https://github.com/topkat/green_dot/pulls)
+- Visit our [GitHub Repository](https://github.com/topkat/green_dot) for more information
 
 ## License
 

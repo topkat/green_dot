@@ -1,6 +1,6 @@
 
 import { svc } from '../../../service'
-import { checkOrChangeEmailOrPasswordRateLimiter, userLoginReturnValidatorRaw } from '../constants'
+import { checkOrUpdateEmailOrPasswordRateLimiter, userLoginReturnValidatorRaw } from '../constants'
 import { decryptValidationToken } from '../decryptValidationTokens'
 import { db } from '../../../db'
 import { PluginUserConfig } from '../config'
@@ -36,7 +36,7 @@ export function getValidateTokenAndLoginService(pluginConfig: PluginUserConfig) 
           wasEmailAlreadyValidated: _.true(),
         }).complete(),
       ]),
-      rateLimiter: checkOrChangeEmailOrPasswordRateLimiter,
+      rateLimiter: checkOrUpdateEmailOrPasswordRateLimiter,
       async main(ctx, { token, deviceId, deviceType, additionalParamsIfSendValidationEmail, role }) {
         const result = await decryptValidationToken(ctx, token, 'emailValidation', pluginConfig)
         if (result.wasEmailAlreadyVerified) {

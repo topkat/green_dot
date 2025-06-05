@@ -2,7 +2,7 @@ import { _ } from 'good-cop'
 import { db } from '../../../db'
 import { PluginUserConfig } from '../config'
 import { svc } from '../../../service'
-import { checkOrChangeEmailOrPasswordRateLimiter } from '../constants'
+import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants'
 import { comparePasswordAddAttemptAndLockIfNecessary } from '../userPasswordService'
 
 
@@ -25,7 +25,7 @@ export function getUpdateNewPasswordWithOldPassword(
         }).required(),
       },
       output: _.string(),
-      rateLimiter: checkOrChangeEmailOrPasswordRateLimiter,
+      rateLimiter: checkOrUpdateEmailOrPasswordRateLimiter,
       async main(ctx, { oldPassword, newPassword }) {
 
         const user = await ctx.getUser()

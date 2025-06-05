@@ -27,12 +27,14 @@ export async function getDaoRouteDescriptionFromDaoConfigs() {
       const { fullMethodsPerRole } = getApiEndpointsPerRolesFromDao(dao.expose)
 
       for (const [role, allMethods] of objEntries(fullMethodsPerRole)) {
+
+        const platform = sdkNameForRole[role]
+        daoRoutesConfig[platform] ??= {}
+
         if (role === 'public') continue
         for (const fnName of allMethods) {
 
           const route = `/${dbId}/${modelName}/${fnName}`
-          const platform = sdkNameForRole[role]
-          daoRoutesConfig[platform] ??= {}
 
           pushIfNotExist(allDaoRoutes, route)
 

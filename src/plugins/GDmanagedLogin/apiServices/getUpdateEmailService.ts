@@ -1,6 +1,6 @@
 import { _ } from 'good-cop'
 import { svc } from '../../../service'
-import { checkOrChangeEmailOrPasswordRateLimiter } from '../constants'
+import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants'
 import { updateEmailWithToken } from '../updatePasswordOrEmailWithToken'
 import { PluginUserConfig } from '../config'
 
@@ -12,7 +12,7 @@ export function getUpdateEmailService(pluginConfig: PluginUserConfig) {
       input: {
         token: _.string().required(),
       },
-      rateLimiter: checkOrChangeEmailOrPasswordRateLimiter,
+      rateLimiter: checkOrUpdateEmailOrPasswordRateLimiter,
       invalidateCacheFor: ['user*'],
       async main(ctx, { token }) {
         const props = await updateEmailWithToken(ctx, token, pluginConfig)

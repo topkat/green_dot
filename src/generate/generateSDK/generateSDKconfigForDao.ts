@@ -35,6 +35,7 @@ export async function generateSDKconfigForDaos(routeConfig: RouteConfigPerPlatfo
         //----------------------------------------
         // GENERATE DAO FILES AND TYPES
         //----------------------------------------
+        console.log(`platform`, platform, Object.keys(routeConfig))
         for (const [originalApiAddr, { doc, tsType, outputValidator }] of routeConfig[platform]) {
 
             const queryName = generateSdkConfig.processAddrInSdk(originalApiAddr.replace(/[^.]*\./, ''))

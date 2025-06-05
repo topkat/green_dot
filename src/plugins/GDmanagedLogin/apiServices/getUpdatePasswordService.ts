@@ -1,7 +1,7 @@
 import { _ } from 'good-cop'
 import { svc } from '../../../service'
 import { PluginUserConfig } from '../config'
-import { checkOrChangeEmailOrPasswordRateLimiter } from '../constants'
+import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants'
 import { updatePasswordWithToken } from '../updatePasswordOrEmailWithToken'
 
 
@@ -20,7 +20,7 @@ export function getUpdatePasswordService(
           encrypt: async password => password,
         }).required(),
       },
-      rateLimiter: checkOrChangeEmailOrPasswordRateLimiter,
+      rateLimiter: checkOrUpdateEmailOrPasswordRateLimiter,
       async main(ctx, { token, newPassword }) {
         const user = await updatePasswordWithToken(ctx.GM, token, newPassword, pluginConfig)
         await pluginConfig.sendPasswordUpdatedMailConfirmation(ctx, user)

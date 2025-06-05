@@ -27,7 +27,6 @@ export function greenDotCliIntro(param: Parameters<typeof cliIntro>[0] = {}) {
 
 export function clearCli() {
   process.stdout.write('\x1Bc')
-  console.log(`process.stdout.columns`, process.stdout.columns)
 }
 
 export const wrapCliText = (str: string, width = terminalCharSize) => str.match(new RegExp(`(.{0,${width}})(\\s|$)`, 'g'))?.map(l => l.trim()) || []

@@ -40,7 +40,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
             await generateSdkFolderFromTemplates(platform, sdkRootPath, platforms, generateSdkConfig)
             await generateDefaultSafeIndexDbCacheFile({
                 outputFolder: sdkRootPath,
-                outputFileNameWithoutExtension: 'modelTypes.generated'
+                outputFileNameWithoutExtension: 'modelTypes.generated',
             })
         }))
 
