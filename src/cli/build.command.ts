@@ -4,6 +4,7 @@ import { createNewTask } from './helpers/createNewTask'
 import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
 import { C } from 'topkat-utils'
 import { execWaitForOutput } from 'topkat-utils/backend'
+import { generateDefaultSafeIndexDbCacheFile } from './build/generateIndexDefaultSafeDbIndexCache'
 
 
 
@@ -16,7 +17,8 @@ export async function buildCommand({ tsc = true, publishSdks = false } = {}) {
   await build.step(`Generating indexes for Databases and Applications`, async () => {
     await Promise.all([
       generateIndexForProjectDb(),
-      generateIndexForProjectApp()
+      generateIndexForProjectApp(),
+      generateDefaultSafeIndexDbCacheFile(),
     ])
   })
 
@@ -43,13 +45,13 @@ export async function buildCommand({ tsc = true, publishSdks = false } = {}) {
 
   const { generateFilesForCachedDb } = await import('./build/generateFilesForCachedDb')
   const { generateSdk } = await import('../generate/generateSDK/generateSDK')
-  const { generateIndexForDbTypeFiles } = await import('./build/generateIndexForDbTypeFiles')
+  const { generateIndexForDbTypeFiles } = await import('./build/generateIndexForDbIndex')
 
   await build.step(`Generating SDKs defaults`, async () => await generateSdk(true))
 
   await build.step(`Generating types for databases`, async () => {
     const indexFile = await generateFilesForCachedDb()
-    await generateIndexForDbTypeFiles({ indexFile })
+    await generateIndexForDbTypeFiles(indexFile)
   }, { watch: true, cleanOnError: true })
 
   await build.step(`Generating SDKs`, async () => {

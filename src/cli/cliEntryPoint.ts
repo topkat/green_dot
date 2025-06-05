@@ -103,7 +103,6 @@ async function start() {
             programPath,
             [command, _command],
             code => {
-              console.log(`exitCode`, code)
               if (!code || code === parentProcessExitCodes.exit) {
                 // SUCCESS EXIT
                 resolve('continue')

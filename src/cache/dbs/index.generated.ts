@@ -1,5 +1,7 @@
 
 
+export const defaultDbName = 'mainDb'
+
 export type ModelsWithDbNamesAndReadWrite = Record<string, any>
 
 export type DbIds = Record<string, string>

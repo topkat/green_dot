@@ -1,6 +1,7 @@
 
 import fs from 'fs-extra'
 import { luigi } from '../helpers/luigi.bot'
+import { capitalize1st } from 'topkat-utils'
 
 export async function cliGenerateModelAndDao(fileName: string, filePathWithoutExtension: string) {
 
@@ -26,11 +27,14 @@ export const ${modelName}Model = _.mongoModel(['creationDate'], {
 })
 
 export default ${modelName}Model
+export type ${capitalize1st(modelName)} = InferType<typeof model>
+// type may differ when writing (create / update) vs reading
+export type ${capitalize1st(modelName)}Write = InferTypeWrite<typeof model>
 `
 
 const daoFileTemplate = modelName => `
 import { MongoDao } from 'green_dot'
-import { ${modelName}Model } from './${modelName}.model'
+import { ${capitalize1st(modelName)} } from './${modelName}.model'
 
 const dao = {
     type: 'mongo',
@@ -44,7 +48,7 @@ const dao = {
       // type gd_dao:mask to expand snippet
     ],
     populate: []
-} satisfies MongoDao<typeof ${modelName}Model.tsType>
+} satisfies MongoDao<${capitalize1st(modelName)}>
 
 export default dao
 `

@@ -8,62 +8,41 @@ import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
 import { getUserPermissionFields } from '../../helpers/getProjectModelsAndDaos'
 
 
-
-
 /** If this function is called alone, it will generate a default index file that is typescript valid and safe */
-export async function generateIndexForDbTypeFiles({
-  indexFile = undefined as ReturnType<typeof getNewIndexForDbCacheFileStructure> | undefined,
-  outputFolder = Path.join(greenDotCacheModuleFolder, 'dbs'),
-  outputFileNameWithoutExtension = 'index.generated',
-  hardCodePermissionFields = false
-} = {}) {
+export async function generateIndexForDbTypeFiles(
+  indexFile: ReturnType<typeof getNewIndexForDbCacheFileStructure>,
+  {
+    outputFolder = Path.join(greenDotCacheModuleFolder, 'dbs'),
+    outputFileNameWithoutExtension = 'index.generated',
+    hardCodePermissionFields = false
+  } = {}
+) {
 
   const isCacheOutput = !outputFolder || outputFolder.includes(greenDotCacheModuleFolder)
   outputFolder ??= Path.join(greenDotCacheModuleFolder, 'dbs')
 
   let indexFileContent = ''
 
-  if (!indexFile) {
-    // CLEAN FILE
-    indexFileContent += `
+  // BUILDED FILE
+  const mainConfig = getMainConfig()
+  const dbConfigs = getDbConfigs()
 
-export type ModelsWithDbNamesAndReadWrite = Record<string, any>
+  const permFields = getUserPermissionFields()
 
-export type DbIds = Record<string, string>
-
-export type AllDbIds = string
-
-export type MainDbName = string
-
-export type ModelsWithReadWrite = Record<string, any>
-
-export type ModelTypes = Record<string, Record<string, any>> // type safety
-
-/** All ModelNames for all DB Names: 'modelName1' | 'modelName2'...  */
-export type ModelNames = string
-
-/** ModelNames for DB { [dbName]: 'modelName1' | 'modelName2'... } */
-export type ModelNamesForDb = Record<string, string>
-`
-  } else {
-    // BUILDED FILE
-    const mainConfig = getMainConfig()
-    const dbConfigs = getDbConfigs()
-
-    const permFields = getUserPermissionFields()
-
-    const permType = `
+  const permType = `
 type UserPermissionFields = {
 ${permFields.map(perm => `  ${perm}: boolean`).join('\n')}
 }
 `
 
-    indexFileContent += `
+  indexFileContent += `
 import { MergeMultipleObjects } from 'typescript-generic-types'
 import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from ${isCacheOutput ? `'../../security/userAndConnexion/userAdditionalFields'` : `'green_dot'`}
 ${indexFile.imports}
 
 ${hardCodePermissionFields ? permType : ''}\
+
+export const defaultDbName = '${mainConfig.defaultDatabaseName}'
 
 export type ModelsWithDbNamesAndReadWrite = {
 ${indexFile.allModels}\
@@ -95,7 +74,6 @@ export type ModelNames = keyof ModelsWithReadWrite
 /** ModelNames for DB { [dbName]: 'modelName1' | 'modelName2'... } */
 export type ModelNamesForDb = { [K in keyof ModelsWithDbNamesAndReadWrite]: keyof ModelsWithDbNamesAndReadWrite[K] }
 `
-  }
 
   await fs.outputFile(Path.join(outputFolder, outputFileNameWithoutExtension + '.ts'), indexFileContent)
 

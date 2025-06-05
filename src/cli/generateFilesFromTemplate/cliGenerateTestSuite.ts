@@ -24,7 +24,6 @@ export async function cliGenerateTestSuite(fileName: string, filePath: string) {
 
 import { TestSuite } from '../../1_shared/configs/rest-test-config'
 import { assert } from 'green_dot'
-import { $ } from '@bangk/ico-dashboard-sdk'
 ${asArray(sdkToImport).map(name => `import { ${sdkToImport.length === 1 ? '$' : `$ as ${name}Sdk`} } from '${name}'\n`)}/
 
 const testSuite = {

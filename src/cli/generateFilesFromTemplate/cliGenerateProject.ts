@@ -6,6 +6,7 @@ import { C, camelCaseToWords } from 'topkat-utils'
 import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugins/newPlugin'
 import { execWaitForOutput } from 'topkat-utils/backend'
 import { version as gdVersion } from '../../../package.json'
+import { clearCli, greenDotCliIntro } from '../helpers/cli'
 
 
 
@@ -67,6 +68,10 @@ export async function cliGenerateProject() {
   //    ║   ╠═   ║╚╝║ ╠══╝ ║    ╠══╣   ║    ║  ║╚╗║ ║ ═╦
   //    ╩   ╚══╝ ╩  ╩ ╩    ╚══╝ ╩  ╩   ╩   ═╩═ ╩ ╚╩ ╚══╝
 
+  clearCli()
+  greenDotCliIntro({ subTitle: 'GENERATE' })
+  luigi.info('Generating project files...')
+
   await templater(
     Path.resolve(__dirname, '../../../templates/project'),
     projectRoot,
@@ -87,17 +92,32 @@ export async function cliGenerateProject() {
     ]
   )
 
-  await execWaitForOutput('yarn', { execOptions: { cwd: projectRoot } })
+  clearCli()
+  greenDotCliIntro({ subTitle: 'INSTALL DEPENDENCIES' })
+  luigi.info('Running yarn...')
+
+  await execWaitForOutput('yarn', { execOptions: { cwd: projectRoot }, nbSecondsBeforeKillingProcess: 300 })
+
+  clearCli()
+  greenDotCliIntro({ subTitle: 'BUILDING PROJECT' })
+  luigi.info('Running yarn build...')
 
   await execWaitForOutput('yarn build', {
     execOptions: { cwd: projectRoot },
     errorHandle: 'error',
+    nbSecondsBeforeKillingProcess: 300
   })
+
+  clearCli()
+  greenDotCliIntro({ subTitle: 'GENERATE' })
+  luigi.info('Opening files in default editor...')
 
   await luigi.openFile(Path.resolve(projectRoot, './gd.config.ts'))
   await luigi.openFile(Path.resolve(projectRoot, './mainApp/gd.app.config.ts'))
   await luigi.openFile(Path.resolve(projectRoot, './mainDb/gd.db.config.ts'))
+
   C.log(`\n\n\n\n`)
+
   await luigi.info(`Wow! Such a work 🥵! It's your turn now:
 1) Check open config files to adapt as you need
 2) Relaunch \`npx green_dot generate\` or simply \`yarn generate\` equivalent to generate a service, a model, a database or even an app

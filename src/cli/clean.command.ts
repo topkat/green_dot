@@ -3,8 +3,8 @@
 import fs from 'fs-extra'
 import { C } from 'topkat-utils'
 import { createNewTask } from './helpers/createNewTask'
-import { generateIndexForDbTypeFiles } from './build/generateIndexForDbTypeFiles'
 import { greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
+import { generateDefaultSafeIndexDbCacheFile } from './build/generateIndexDefaultSafeDbIndexCache'
 
 
 export async function cleanCommand() {
@@ -21,7 +21,7 @@ export async function cleanCommand() {
 
   await build.step(
     `Regenerating default DB indexes`,
-    generateIndexForDbTypeFiles,
+    generateDefaultSafeIndexDbCacheFile,
     { cleanOnError: false, doNotDisplayTime: true }
   )
 

@@ -8,7 +8,7 @@ import { Definition } from 'good-cop'
 import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
 import { GD_deviceModel } from '../../security/userAndConnexion/GD_device.model'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-import { getNewIndexForDbCacheFileStructure } from './generateIndexForDbTypeFiles'
+import { getNewIndexForDbCacheFileStructure } from './generateIndexForDbIndex'
 
 
 

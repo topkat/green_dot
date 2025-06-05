@@ -1,6 +1,6 @@
 
 
-import type { ModelsWithDbNamesAndReadWrite, MainDbName, AllDbIds, DbIds } from './cache/dbs/index.generated'
+import { type ModelsWithDbNamesAndReadWrite, type MainDbName, type AllDbIds, type DbIds, defaultDbName } from './cache/dbs/index.generated'
 import { error } from './error'
 import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
@@ -126,10 +126,9 @@ export const db = new Proxy({} as Db, {
   // once in the file and thus wait until db and cache are operational
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
-    const { defaultDatabaseName } = getMainConfig()
-    if (!dbCache[defaultDatabaseName]?.db) throw C.error('DB not initialized, run "await initDb()" once before calling getDb()')
-    if (!dbCache[defaultDatabaseName]?.db?.[prop]) throw C.error(`Model ${prop} doesn't seem to be properly initialized and is not defined in modelsCache`)
-    return dbCache[defaultDatabaseName].db[prop]
+    if (!dbCache[defaultDbName]?.db) throw C.error('DB not initialized, run "await initDb()" once before calling getDb()')
+    if (!dbCache[defaultDbName]?.db?.[prop]) throw C.error(`Model ${prop} doesn't seem to be properly initialized and is not defined in modelsCache`)
+    return dbCache[defaultDbName].db[prop]
   },
 })
 
