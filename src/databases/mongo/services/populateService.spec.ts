@@ -23,7 +23,7 @@ describe('populateService', () => {
             const fields = createUser(1, createOrg(1, [userId1, userId2]))
             const fieldsUnpopulated = createUser(1, orgId1)
 
-            await unPopulate('main', 'user', fields)
+            await unPopulate('mainDb', 'user', fields)
 
             expect(fields).toEqual(fieldsUnpopulated)
         })
@@ -31,7 +31,7 @@ describe('populateService', () => {
             const fields = createOrg(1, [createUser(1, orgId1), createUser(2, orgId1)])
             const fieldsUnpopulated = createOrg(1, [userId1, userId2])
 
-            await unPopulate('main', 'organization', fields)
+            await unPopulate('mainDb', 'organization', fields)
 
             expect(fields).toEqual(fieldsUnpopulated)
         })
@@ -44,7 +44,7 @@ describe('populateService', () => {
         const callbackParamArr = [] as any[]
         const callback = (...params) => callbackParamArr.push(params)
 
-        await forEachPopulateFieldRecursive('main', 'user', user, callback)
+        await forEachPopulateFieldRecursive('mainDb', 'user', user, callback)
 
         C.info('Callback should have been called 6 times')
         expect(callbackParamArr.length).toEqual(6)

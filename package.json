@@ -71,7 +71,7 @@
     "node-schedule": "^2.1.0",
     "node-telegram-bot-api": "^0.64.0",
     "nodemailer": "^6.8.0",
-    "send-teams-message": "^1.0.3",
+    "send-teams-message": "^1.0.4",
     "simple-cli-prompt": "^1.0.5",
     "simple-file-templater": "^1.0.5",
     "swagger-ui-express": "^5.0.1",

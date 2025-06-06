@@ -22,7 +22,7 @@ jest.mock('../../../helpers/getProjectModelsAndDaos', () => ({
 
 describe('getMaskFromSelect', () => {
     it('COUCOU it je ne sais pas quoi mettre ici c est deja describe la haut j aime pas les test unitaires', async () => {
-        const mask = await getMaskFromSelect(['adminField1', 'adminField2'], 'main', 'organization')
+        const mask = await getMaskFromSelect(['adminField1', 'adminField2'], 'mainDb', 'organization')
         expect(mask).toEqual([
             'name',
             'anotherFieldUserHaveNoAccess',
@@ -41,14 +41,14 @@ describe('combineAndParseMaskHooks', () => {
     // PUBLIC
     //----------------------------------------
     it(`Single hooks, PUBLIC`, async () => {
-        const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
+        const hooks = await appliableHooksForUser(getCtx('public'), models.daos.mainDb.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
         const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'mainDb' as MainDbName, 'user', hooks, 'getOne')
 
         expect(mask).toEqual(userFields.filter(e => e !== 'name'))
         // it('select', () => expect(select).toEqual(['name']))
     })
     it(`Check CACHING works`, async () => {
-        const hooks = await appliableHooksForUser(getCtx('public'), models.daos.main.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
+        const hooks = await appliableHooksForUser(getCtx('public'), models.daos.mainDb.user.mask, 'getOne', 'alwaysReturnFalse', 'alwaysReturnTrue')
         const { validUntil } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('public'), 'mainDb' as MainDbName, 'user', hooks, 'getOne') as any
 
         C.info('validUntil should be set so coming from CACHE')
@@ -58,14 +58,14 @@ describe('combineAndParseMaskHooks', () => {
     // ADMIN
     //----------------------------------------
     it(`single hooks, ADMIN, method:CREATE No hooks apply`, async () => {
-        const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.main.user.mask, 'create', 'alwaysReturnFalse', 'alwaysReturnTrue')
+        const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.mainDb.user.mask, 'create', 'alwaysReturnFalse', 'alwaysReturnTrue')
         const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'mainDb' as MainDbName, 'user', hooks, 'create')
 
         expect(mask).toEqual([])
         // it('select', () => expect(select).toEqual(userFields))// can create with a password
     })
     it(`single hooks, ADMIN, method:GETALL One hook apply`, async () => {
-        const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.main.user.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
+        const hooks = await appliableHooksForUser(getCtx('admin'), models.daos.mainDb.user.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
         const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('admin'), 'mainDb' as MainDbName, 'user', hooks, 'getAll')
 
         expect(mask).toEqual(['password'])
@@ -75,7 +75,7 @@ describe('combineAndParseMaskHooks', () => {
     // USER
     //----------------------------------------
     it(`multiple hook, user`, async () => {
-        const hooks = await appliableHooksForUser(getCtx('user'), models.daos.main.organization.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
+        const hooks = await appliableHooksForUser(getCtx('user'), models.daos.mainDb.organization.mask, 'getAll', 'alwaysReturnFalse', 'alwaysReturnTrue')
         const { mask } = await combineMaskHooksAndReturnMaskOrSelectAddrArray(getCtx('user'), 'mainDb' as MainDbName, 'organization', hooks, 'getAll')
 
         expect(mask).toEqual([

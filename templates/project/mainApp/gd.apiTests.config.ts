@@ -1,14 +1,16 @@
 
 import { GreenDotApiTestsConfig, TestSuite as TestFlowRaw, TestItem as TestItemRaw } from 'green_dot'
 import { appConfig } from './gd.app.config'
-import { allRoutes } from './.generated/all-routes-for-tests.generated'
+import { C } from 'topkat-utils'
+// TODO you can import that when some route are generated to benefit from autocompletion in tests
+// import { allRoutes } from './.generated/all-routes-for-tests.generated'
 
 
 type TestUserNames = 'TODO import your userNames here'
 type ConnexionInfos = { email: string, password: string }
 
 export const restTestEnv = {
-    routes: allRoutes,
+    routes: [] // allRoutes,
 }
 
 /** Allow shorcut when testing on multiples servers */
@@ -20,7 +22,7 @@ export const testConfig: GreenDotApiTestsConfig = {
     disableSolo: process.env.NODE_ENV === 'ci',
     mode: 'jsonRpc',
     servers,
-    apiKeys: appConfig.apiKeys as any,
+    // apiKeys: appConfig.apiKeys, // TODO if you have some apiKeys you can put them here for autocompletion
     env: restTestEnv,
     //----------------------------------------
     // BEFORE ALL TESTS

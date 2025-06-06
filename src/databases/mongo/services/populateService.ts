@@ -2,9 +2,10 @@
 import { getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
 import { findByAddressAll, getId, isObject, asArray } from 'topkat-utils'
 import { MaybeArray } from 'typescript-generic-types'
+import { AllDbIds } from '../../../cache/dbs/index.generated'
 
 /** Transform populated fields into their respective _ids. Will modify the passed object */
-export async function unPopulate<ModelName extends string>(dbName: string, modelName: ModelName, fields: Record<string, any>) {
+export async function unPopulate<ModelName extends string>(dbName: AllDbIds, modelName: ModelName, fields: Record<string, any>) {
     await forEachPopulateField(dbName, modelName, fields, (val, addr, parent) => {
         parent[addr] = val !== null ? getId(val) : val
     })
@@ -13,7 +14,7 @@ export async function unPopulate<ModelName extends string>(dbName: string, model
 const modelFlatObjCache = {} as { [dbId: string]: { [modelName: string]: { [populatedFieldNameFlat: string]: string } } }
 
 async function forEachPopulateField<ModelName extends string>(
-    dbName: string,
+    dbName: AllDbIds,
     modelName: ModelName,
     fields: Record<string, any>,
     cb: (fieldValue: string | Record<string, any>, fieldAddrInParent: string | number, parent: MaybeArray<Record<string, any>>, modelName: string, addrFromRoot: string) => MaybePromise<any>,
