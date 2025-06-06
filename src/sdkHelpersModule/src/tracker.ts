@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { get$ } from './init'
+import { get$ } from './init.js'
 import { generateObjectId } from 'topkat-utils'
 
 

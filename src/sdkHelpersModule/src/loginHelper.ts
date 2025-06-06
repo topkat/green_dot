@@ -1,8 +1,8 @@
 
-import { getBackendConfig, isBackendInitialized } from './initBackend'
-import { get$ } from './init'
+import { getBackendConfig, isBackendInitialized } from './initBackend.js'
+import { get$ } from './init.js'
 import { failSafe, timeout } from 'topkat-utils'
-import { handleError } from './errorHandler'
+import { handleError } from './errorHandler.js'
 
 
 const isPageVisible = true

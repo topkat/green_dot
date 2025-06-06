@@ -3,7 +3,7 @@
   "version": "0.0.52",
   "main": ".",
   "type": "module",
-  "types": "/index.ts",
+  "types": "./index.ts",
   "description": "A powerful TypeScript nodeJs framework for building DX friendly, secure and type-safe backend services with MongoDB integration",
   "license": "MIT",
   "author": "https://github.com/topkat",
@@ -27,9 +27,14 @@
   "exports": {
     ".": {
       "types": "./index.ts",
-      "default": "./index.js"
+      "import": "./index.js",
+      "require": "./index.js"
     },
-    "./types": "./src/core-types.ts",
+    "./types": {
+      "types": "./src/core-types.ts",
+      "import": "./src/core-types.js",
+      "require": "./src/core-types.js"
+    },
     "./plugins": {
       "types": "./src/plugins/index.ts",
       "import": "./dist/src/plugins/index.js",

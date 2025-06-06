@@ -1,8 +1,8 @@
 import { _ } from 'good-cop'
-import { svc } from '../../../service'
-import { PluginUserConfig } from '../config'
-import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants'
-import { updatePasswordWithToken } from '../updatePasswordOrEmailWithToken'
+import { svc } from '../../../service.js'
+import { PluginUserConfig } from '../config.js'
+import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants.js'
+import { updatePasswordWithToken } from '../updatePasswordOrEmailWithToken.js'
 
 
 

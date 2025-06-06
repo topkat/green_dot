@@ -1,8 +1,8 @@
 
 
-import { MongoDaoParsed, MongoDao, daoHookNamesMongo, DaoHookNamesMongo } from '../mongo/types/mongoDbTypes'
-import { genericHookInterpreter } from './hookInterpreterGeneric'
-import defaultDaoConfigMongo from '../mongo/defaultDaoConfigMongo'
+import { MongoDaoParsed, MongoDao, daoHookNamesMongo, DaoHookNamesMongo } from '../mongo/types/mongoDbTypes.js'
+import { genericHookInterpreter } from './hookInterpreterGeneric.js'
+import defaultDaoConfigMongo from '../mongo/defaultDaoConfigMongo.js'
 
 import { includes, objKeys } from 'topkat-utils'
 

@@ -2,15 +2,15 @@
 
 
 import mongoose from 'mongoose'
-import { mongoBeforeRequest } from './mongoBeforeRequest'
-import { mongoAfterRequest, catchMongoDbDuplicateError } from './mongoAfterRequest'
+import { mongoBeforeRequest } from './mongoBeforeRequest.js'
+import { mongoAfterRequest, catchMongoDbDuplicateError } from './mongoAfterRequest.js'
 
-import { DaoMethodsBaseMongo, DaoMethodsMongo, RequestConfigRead } from './types/mongoDbTypes'
-import { LocalConfigParsed } from './types/mongoDbTypes'
-import { DaoGenericMethods, ModelReadWrite } from '../../types/core.types'
+import { DaoMethodsBaseMongo, DaoMethodsMongo, RequestConfigRead } from './types/mongoDbTypes.js'
+import { LocalConfigParsed } from './types/mongoDbTypes.js'
+import { DaoGenericMethods, ModelReadWrite } from '../../types/core.types.js'
 
 import { asArray, getId, deepClone, isset } from 'topkat-utils'
-import type { AllDbIds, DbIds, ModelNames } from '../../cache/dbs/index.generated'
+import type { AllDbIds, DbIds, ModelNames } from '../../cache/dbs/index.generated.js'
 
 export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
     MongooseModel: mongoose.Model<any>,

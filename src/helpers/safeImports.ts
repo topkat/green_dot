@@ -1,8 +1,10 @@
 import { C } from 'topkat-utils'
 import Path from 'path'
-import { getProjectPaths } from './getProjectPaths'
+import { getProjectPaths } from './getProjectPaths.js'
 
 export async function safeImport(path: string) {
+
+  path = path.replace(/\.(j|t)s$/, '') + '.js'
 
   const verbose = process.env.SAFE_IMPORT_VERBOSE === '1'
 

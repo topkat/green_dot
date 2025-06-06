@@ -1,5 +1,5 @@
-import { getMainConfig } from './getGreenDotConfigs'
-import { error } from '../error'
+import { getMainConfig } from './getGreenDotConfigs.js'
+import { error } from '../error.js'
 import { parseStringAsBoolean } from 'topkat-utils'
 
 

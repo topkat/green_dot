@@ -1,8 +1,8 @@
 
-import { TestSuite, Test as TestRaw, TestType, RestMethod, GreenDotApiTestsConfig, TestElement, TestSuiteRaw } from './rest-test-types'
-import { title } from './rest-test-ascii-display'
+import { TestSuite, Test as TestRaw, TestType, RestMethod, GreenDotApiTestsConfig, TestElement, TestSuiteRaw } from './rest-test-types.js'
+import { title } from './rest-test-ascii-display.js'
 import axios, { AxiosError } from 'axios'
-import { assert, restTest } from './rest-test'
+import { assert, restTest } from './rest-test.js'
 
 import { isset, C, timeout, urlPathJoin, asArray, round, capitalize1st, isEmptyOrNotSet, getDateAsInt, cliLoadingSpinner } from 'topkat-utils'
 

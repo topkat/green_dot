@@ -1,7 +1,7 @@
 
 
-import type { ModelsWithReadWrite } from '../cache/dbs/index.generated'
-import { CreateEventAfterCtx, CreateEventBeforeCtx, DeleteEventCtx, GetAllEventAfterCtx, GetAllEventBeforeCtx, GetOneEventAfterCtx, GetOneEventBeforeCtx, UpdateEventCtx } from './core.types'
+import type { ModelsWithReadWrite } from '../cache/dbs/index.generated.js'
+import { CreateEventAfterCtx, CreateEventBeforeCtx, DeleteEventCtx, GetAllEventAfterCtx, GetAllEventBeforeCtx, GetOneEventAfterCtx, GetOneEventBeforeCtx, UpdateEventCtx } from './core.types.js'
 
 
 type CreateBefore = {

@@ -1,9 +1,9 @@
 import { _ } from 'good-cop'
-import { db } from '../../../db'
-import { PluginUserConfig } from '../config'
-import { svc } from '../../../service'
-import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants'
-import { comparePasswordAddAttemptAndLockIfNecessary } from '../userPasswordService'
+import { db } from '../../../db.js'
+import { PluginUserConfig } from '../config.js'
+import { svc } from '../../../service.js'
+import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants.js'
+import { comparePasswordAddAttemptAndLockIfNecessary } from '../userPasswordService.js'
 
 
 export function getUpdateNewPasswordWithOldPassword(

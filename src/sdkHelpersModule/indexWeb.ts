@@ -1,1 +1,1 @@
-export * from './src/init.web'
+export * from './src/init.web.js'

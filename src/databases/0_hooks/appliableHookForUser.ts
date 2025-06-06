@@ -1,5 +1,5 @@
 
-import { doPermApplyToCtx } from '../../security/doPermApplyToCtx'
+import { doPermApplyToCtx } from '../../security/doPermApplyToCtx.js'
 import { DaoGenericMethods, DaoHookSharedParsed } from '../../types/core.types.js'
 
 type PublicAndSystemApplyToAllValues = Parameters<typeof doPermApplyToCtx>[2]

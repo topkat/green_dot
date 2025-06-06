@@ -1,8 +1,8 @@
 
 
-import { SdkInitOptions } from './types'
+import { SdkInitOptions } from './types.js'
 import { registerConfig, C } from 'topkat-utils'
-import { get$ } from './init'
+import { get$ } from './init.js'
 
 
 registerConfig({ terminal: { noColor: true } })

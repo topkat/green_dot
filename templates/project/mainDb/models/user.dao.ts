@@ -32,21 +32,21 @@ Examples:
 */
 
 import { MongoDao, UserAdditionalFieldsRead } from 'green_dot'
-import { User } from './user.model'
+import { User } from './user.model.js'
 
 const dao = {
-    type: 'mongo',
-    modelConfig: {},
-    expose: [
-        // type gd_dao:expose for snippet autocompletion
-    ],
-    filter: [
-        // type gd_dao:filter to expand snippet
-    ],
-    mask: [
-        // type gd_dao:mask to expand snippet
-    ],
-    populate: [],
+  type: 'mongo',
+  modelConfig: {},
+  expose: [
+    // type gd_dao:expose for snippet autocompletion
+  ],
+  filter: [
+    // type gd_dao:filter to expand snippet
+  ],
+  mask: [
+    // type gd_dao:mask to expand snippet
+  ],
+  populate: [],
 } satisfies MongoDao<User>
 
 export default dao

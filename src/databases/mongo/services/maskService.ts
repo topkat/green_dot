@@ -1,11 +1,11 @@
 
 
-import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
-import { forEachPopulateFieldRecursive } from './populateService'
-import { PopulateConfig, PopulateConfigWithoutStringSyntax } from '../types/mongoDbTypes'
-import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types/core.types'
-import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos'
-import { AllDbIds } from '../../../cache/dbs/index.generated'
+import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser.js'
+import { forEachPopulateFieldRecursive } from './populateService.js'
+import { PopulateConfig, PopulateConfigWithoutStringSyntax } from '../types/mongoDbTypes.js'
+import { DaoGenericMethods, MaskHook, DaoHookSharedParsed } from '../../../types/core.types.js'
+import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../../../helpers/getProjectModelsAndDaos.js'
+import { AllDbIds } from '../../../cache/dbs/index.generated.js'
 
 import { getId, objForceWrite, escapeRegexp, flattenObject, unflattenObject } from 'topkat-utils'
 

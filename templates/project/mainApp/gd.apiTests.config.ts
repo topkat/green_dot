@@ -1,9 +1,9 @@
 
 import { GreenDotApiTestsConfig, TestSuite as TestFlowRaw, TestItem as TestItemRaw } from 'green_dot'
-import { appConfig } from './gd.app.config'
+import { appConfig } from './gd.app.config.js'
 import { C } from 'topkat-utils'
 // TODO you can import that when some route are generated to benefit from autocompletion in tests
-// import { allRoutes } from './.generated/all-routes-for-tests.generated'
+// import { allRoutes } from './.generated/all-routes-for-tests.generated.js'
 
 
 type TestUserNames = 'TODO import your userNames here'

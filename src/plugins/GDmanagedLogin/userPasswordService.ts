@@ -1,9 +1,9 @@
 
 import bcrypt from 'bcrypt'
-import { db } from '../../db'
-import { ModelTypes } from '../../cache/dbs/index.generated'
+import { db } from '../../db.js'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
 
-import { lockUserAndThrow } from '../../security/userAndConnexion/userLockService'
+import { lockUserAndThrow } from '../../security/userAndConnexion/userLockService.js'
 
 import { getId, timeout, random } from 'topkat-utils'
 

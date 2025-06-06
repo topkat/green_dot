@@ -1,13 +1,13 @@
 
 
-import { error } from '../error'
-import { generateLoginMw } from '../security/login.middleware'
-import { sortUrlsByDeepnessInArrayOrObject } from './utils/sortUrlByDeepness'
-import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware'
-import { rateLimiterMiddleware } from '../security/serviceRouteRateLimiter'
-import { ApiOutputTypes, ServiceRegistered } from '../types/core.types'
+import { error } from '../error.js'
+import { generateLoginMw } from '../security/login.middleware.js'
+import { sortUrlsByDeepnessInArrayOrObject } from './utils/sortUrlByDeepness.js'
+import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware.js'
+import { rateLimiterMiddleware } from '../security/serviceRouteRateLimiter.js'
+import { ApiOutputTypes, ServiceRegistered } from '../types/core.types.js'
 import { Application } from 'express'
-import { env } from '../helpers/getEnv'
+import { env } from '../helpers/getEnv.js'
 
 import { isset, C } from 'topkat-utils'
 

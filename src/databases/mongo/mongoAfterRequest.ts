@@ -1,15 +1,15 @@
 
 import mongoose from 'mongoose'
-import event from '../../event'
-import { applyMaskToPopulateConfig, getMongoMaskForUser } from './services/maskService'
+import event from '../../event.js'
+import { applyMaskToPopulateConfig, getMongoMaskForUser } from './services/maskService.js'
 
-import { DaoGenericMethods } from '../../types/core.types'
-import { PaginationData, MaybePaginated } from './types/mongoDaoTypes'
-import { LocalConfigParsed } from './types/mongoDbTypes'
+import { DaoGenericMethods } from '../../types/core.types.js'
+import { PaginationData, MaybePaginated } from './types/mongoDaoTypes.js'
+import { LocalConfigParsed } from './types/mongoDbTypes.js'
 
 import { firstMatch } from 'topkat-utils'
-import { getActiveAppConfig } from '../../helpers/getGreenDotConfigs'
-import { getProjectDatabaseDaosForModel } from '../../helpers/getProjectModelsAndDaos'
+import { getActiveAppConfig } from '../../helpers/getGreenDotConfigs.js'
+import { getProjectDatabaseDaosForModel } from '../../helpers/getProjectModelsAndDaos.js'
 
 type MongooseReqRead = mongoose.Query<any[], any, {}, any, 'find'> | mongoose.Query<any, any, {}, any, 'findOne'>
 type MongooseReqDel = mongoose.Query<mongoose.mongo.DeleteResult, any, {}, any, 'deleteMany'>

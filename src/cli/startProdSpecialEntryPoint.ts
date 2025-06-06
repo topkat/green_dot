@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { C } from 'topkat-utils'
-import { getProjectPaths } from '../helpers/getProjectPaths'
+import { getProjectPaths } from '../helpers/getProjectPaths.js'
 
 export async function startServerProd() {
   //  ╔═══ ══╦══ ╔══╗ ╔══╗ ══╦══   ╔══╗ ╔══╗ ╔══╗ ╔═╗

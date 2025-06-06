@@ -1,11 +1,11 @@
 
 
-import type { GDpluginHandlerEventNames } from './GDplugin'
-import GDmanagedLogin from './GDmanagedLogin/main'
-import GDdoubleAuthentication from './GDdoubleAuthentication/main'
-import GDapiKeyAuthentication from './GDapiKeyAuthentication/main'
-import { ServiceGeneric } from '../types/services.types'
-import { type NewPluginConfig } from './newPlugin'
+import type { GDpluginHandlerEventNames } from './GDplugin.js'
+import GDmanagedLogin from './GDmanagedLogin/main.js'
+import GDdoubleAuthentication from './GDdoubleAuthentication/main.js'
+import GDapiKeyAuthentication from './GDapiKeyAuthentication/main.js'
+import { ServiceGeneric } from '../types/services.types.js'
+import { type NewPluginConfig } from './newPlugin.js'
 
 export type PluginNames = typeof GDmanagedLogin.name | typeof GDdoubleAuthentication.name | typeof GDapiKeyAuthentication.name
 

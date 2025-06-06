@@ -2,7 +2,7 @@
 import { spawn } from 'child_process'
 import { exec } from 'child_process'
 import fs from 'fs'
-import { luigi } from './luigi.bot'
+import { luigi } from './luigi.bot.js'
 import { C } from 'topkat-utils'
 import Path from 'path'
 

@@ -1,8 +1,8 @@
 import { _ } from 'good-cop'
-import { svc } from '../../../service'
-import { db } from '../../../db'
-import { PluginUserConfig } from '../config'
-import { credentialManagementMailing } from '../credentialManagementMailing'
+import { svc } from '../../../service.js'
+import { db } from '../../../db.js'
+import { PluginUserConfig } from '../config.js'
+import { credentialManagementMailing } from '../credentialManagementMailing.js'
 
 
 

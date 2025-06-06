@@ -1,7 +1,7 @@
 
-import { CtxClass, publicUserId } from '../ctx'
+import { CtxClass, publicUserId } from '../ctx.js'
 import { Request } from 'express'
-import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs.js'
 
 export function generateLoginMw() {
     return async function loginMw(req: Request & { ctx: any }, res, next) {

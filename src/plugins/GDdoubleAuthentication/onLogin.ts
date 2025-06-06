@@ -1,7 +1,7 @@
 
-import { ctx } from '../../ctx'
-import { GreenDotAppConfig } from '../../types/appConfig.types'
-import type { GDdoubleAuthentication } from './main'
+import { ctx } from '../../ctx.js'
+import { GreenDotAppConfig } from '../../types/appConfig.types.js'
+import type { GDdoubleAuthentication } from './main.js'
 
 
 

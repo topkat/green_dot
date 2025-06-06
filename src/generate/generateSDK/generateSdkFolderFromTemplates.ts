@@ -4,10 +4,10 @@ import fs from 'fs-extra'
 import Path, { dirname } from 'path'
 import { templater } from 'simple-file-templater'
 import { C, objEntries } from 'topkat-utils'
-import type { AllMethodsObjectForSdk } from '../../types/generateSdk.types'
-import type { GreenDotConfig } from '../../types/mainConfig.types'
-import { compileTypeScriptProject } from '../../helpers/tsCompiler'
-import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
+import type { AllMethodsObjectForSdk } from '../../types/generateSdk.types.js'
+import type { GreenDotConfig } from '../../types/mainConfig.types.js'
+import { compileTypeScriptProject } from '../../helpers/tsCompiler.js'
+import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -63,7 +63,7 @@ export async function generateSdkFolderFromTemplates(
 
   const generatedSdkFolders = [...(generateSdkConfig?.injectFolderInSdk?.all || []), ...(generateSdkConfig?.injectFolderInSdk?.[platform] || [])]
 
-  const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}/mjs'`).join('\n') : ''
+  const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}/.js'`).join('\n') : ''
 
   const replaceInFiles: [string: string | RegExp, replacement: string][] = [
     ['%%packageVersion%%', packageVersion],

@@ -1,12 +1,12 @@
 
-import { env } from '../helpers/getEnv'
-import { publicUserId } from '../ctx'
+import { env } from '../helpers/getEnv.js'
+import { publicUserId } from '../ctx.js'
 import { Request } from 'express'
-import { sendRateLimiterTeamsMessage } from '../services/sendViaTeams'
+import { sendRateLimiterTeamsMessage } from '../services/sendViaTeams.js'
 
 import { C } from 'topkat-utils'
-import { getActiveAppConfig, getMainConfig } from '../helpers/getGreenDotConfigs'
-import { checkUserBlacklistCache, addUserWarning, banUser } from './userAndConnexion/banAndAddUserWarning'
+import { getActiveAppConfig, getMainConfig } from '../helpers/getGreenDotConfigs.js'
+import { checkUserBlacklistCache, addUserWarning, banUser } from './userAndConnexion/banAndAddUserWarning.js'
 
 const rateLimiterCache = {} as {
     [ip: string]: {

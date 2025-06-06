@@ -1,5 +1,5 @@
-import './databaseEvents.types'
-import { DefaultPermissions, DefaultRoles } from './coreGeneric.types'
+import './databaseEvents.types.js'
+import { DefaultPermissions, DefaultRoles } from './coreGeneric.types.js'
 
 interface GDbase {
   testUserNames: string

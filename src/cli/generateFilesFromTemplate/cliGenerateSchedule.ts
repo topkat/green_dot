@@ -1,7 +1,7 @@
 
 import fs from 'fs-extra'
 import { C, objEntries, pad } from 'topkat-utils'
-import { luigi } from '../helpers/luigi.bot'
+import { luigi } from '../helpers/luigi.bot.js'
 
 
 const periods = {

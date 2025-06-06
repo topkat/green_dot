@@ -1,11 +1,11 @@
 
 
-import { db } from '../../db'
-import { PluginUserConfig } from './config'
-import { ModelTypes } from '../../cache/dbs/index.generated'
-import { GDmanagedLoginEmailTypes } from './constants'
-import { generateUniqueToken } from '../../services/generateUniqueToken'
-import { encryptToken } from '../../security/encryptAndDecryptSafe'
+import { db } from '../../db.js'
+import { PluginUserConfig } from './config.js'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
+import { GDmanagedLoginEmailTypes } from './constants.js'
+import { generateUniqueToken } from '../../services/generateUniqueToken.js'
+import { encryptToken } from '../../security/encryptAndDecryptSafe.js'
 
 
 export type CredentialManagementMailingParams = Parameters<typeof credentialManagementMailing>

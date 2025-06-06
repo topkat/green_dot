@@ -1,7 +1,7 @@
 
 
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { ForClauseWithAll, ForClauseParsedWithAll, ForClauseParsed } from '../../types/core.types'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { ForClauseWithAll, ForClauseParsedWithAll, ForClauseParsed } from '../../types/core.types.js'
 
 import { asArray } from 'topkat-utils'
 

@@ -1,11 +1,11 @@
-#!/usr/bin/env node --loader ts-node/esm
+#!/usr/bin/env node --loader ts-node/esm --showConfig
 
-import '../types/global.types'
-import { buildCommand } from './build.command'
-import { cleanCommand } from './clean.command'
-import { generateCommand } from './generate.command'
-import { startDevServerCommand } from './startDevServer.command'
-import { testCommand } from './test.command'
+import '../types/global.types.js'
+import { buildCommand } from './build.command.js'
+import { cleanCommand } from './clean.command.js'
+import { generateCommand } from './generate.command.js'
+import { startDevServerCommand } from './startDevServer.command.js'
+import { testCommand } from './test.command.js'
 
 
 export type ChildProcessCommands = keyof typeof commands

@@ -1,6 +1,6 @@
 import Path from 'path'
 import fs from 'fs-extra'
-import { getProjectPaths } from '../../helpers/getProjectPaths'
+import { getProjectPaths } from '../../helpers/getProjectPaths.js'
 import glob from 'fast-glob'
 import { C, capitalize1st } from 'topkat-utils'
 
@@ -47,20 +47,20 @@ export async function generateIndexForProjectApp() {
 
           if (moduleType === 'test' || moduleType === 'testFlow') {
             const varName = moduleName + capitalize1st(moduleType)
-            testIndexContent.imports += `import ${varName} from './${relativeToRoot}'\n`
+            testIndexContent.imports += `import ${varName} from './${relativeToRoot}.js'\n`
             testIndexContent.exports.push(varName)
           } else if (moduleType === 'error') {
-            indexContent.imports += `import ${moduleName}Errors from './${relativeToRoot}'\n`
+            indexContent.imports += `import ${moduleName}Errors from './${relativeToRoot}.js'\n`
             indexContent.errorType.push(`typeof ${moduleName}Errors`)
           } else {
-            indexContent.imports += `export * from './${relativeToRoot}'\n`
+            indexContent.imports += `export * from './${relativeToRoot}.js'\n`
           }
         }
       }
 
       const fileContent = `
 import { RegisterErrorType, initClientApp, initEnv } from 'green_dot'
-import mainConfig from '${mainPathRelative}/gd.config'
+import mainConfig from '${mainPathRelative}/gd.config.js'
 
 initEnv(mainConfig)
 
@@ -77,7 +77,7 @@ declare global {
 
       const testFileContent = `
 import { type TestSuite, initClientApp } from 'green_dot'
-import mainConfig from '${mainPathRelative}/gd.config'
+import mainConfig from '${mainPathRelative}/gd.config.js'
 ${testIndexContent.imports}
 
 export const initApp = async () => initClientApp(mainConfig)

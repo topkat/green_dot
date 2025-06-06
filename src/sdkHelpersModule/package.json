@@ -1,6 +1,7 @@
 {
   "name": "sdk-helpers",
   "version": "0.0.0",
+  "type": "module",
   "description": "Sdk additional files that will be copied to SDK output as helpers for frontend. Contains helpers for connexion, tracking, sending data events...",
   "main": "index.js",
   "scripts": {

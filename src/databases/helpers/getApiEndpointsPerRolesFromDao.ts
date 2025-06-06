@@ -1,6 +1,6 @@
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { DaoGenericMethods, DaoSharedParsed } from '../../types/daoGeneric.types'
-import { daoMethodsGenericToDaoMethodFull, MongoDaoMethodsFull } from '../mongo/types/mongoDaoTypes'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { DaoGenericMethods, DaoSharedParsed } from '../../types/daoGeneric.types.js'
+import { daoMethodsGenericToDaoMethodFull, MongoDaoMethodsFull } from '../mongo/types/mongoDaoTypes.js'
 
 import { pushIfNotExist } from 'topkat-utils'
 

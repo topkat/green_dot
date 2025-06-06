@@ -1,14 +1,15 @@
-import { luigi } from '../helpers/luigi.bot'
+import { luigi } from '../helpers/luigi.bot.js'
 import { templater } from 'simple-file-templater'
 import Path, { dirname } from 'path'
-import { allPluginConfigs } from '../../plugins/pluginSystem'
+import { allPluginConfigs } from '../../plugins/pluginSystem.js'
 import { C, camelCaseToWords } from 'topkat-utils'
-import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugins/newPlugin'
-import { execWaitForOutput } from 'topkat-utils/backend'
-import { version as gdVersion } from '../../../package.json'
-import { clearCli, greenDotCliIntro } from '../helpers/cli'
+import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugins/newPlugin.js'
+import { execWaitForOutput } from 'topkat-utils/backend.js'
+import { clearCli, greenDotCliIntro } from '../helpers/cli.js'
 import { fileURLToPath } from 'url'
-
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+const { version: gdVersion } = require('../../../package.json')
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

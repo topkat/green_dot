@@ -6,11 +6,11 @@ import {
   greenDotCliIntro,
   userInputConfirmLog,
   userInputKeyHandler,
-} from './helpers/cli'
-import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths'
-import { luigi } from './helpers/luigi.bot'
-import { onFileChange } from './helpers/fileWatcher'
-import { parentProcessExitCodes } from '../constants'
+} from './helpers/cli.js'
+import { autoFindAndInitActiveAppAndDbPaths, getProjectPaths } from '../helpers/getProjectPaths.js'
+import { luigi } from './helpers/luigi.bot.js'
+import { onFileChange } from './helpers/fileWatcher.js'
+import { parentProcessExitCodes } from '../constants.js'
 
 let watcherOn = true
 

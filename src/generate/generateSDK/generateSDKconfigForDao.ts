@@ -1,13 +1,13 @@
 
 
-import { GenerateSDKparamsForDao, DbReadWriteStr } from '../../types/core.types'
-import { mongoDaoREADMethodsFull } from '../../databases/mongo/types/mongoDaoTypes'
-import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator'
-import { SDKprefetchGenerator } from './generators/SDKprefetch.generator'
-import { SDKdeferGenerator } from './generators/SDKdefer.generator'
-import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
-import { RouteConfigPerPlatforms } from './generateSDKgetRouteConfigs'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { GenerateSDKparamsForDao, DbReadWriteStr } from '../../types/core.types.js'
+import { mongoDaoREADMethodsFull } from '../../databases/mongo/types/mongoDaoTypes.js'
+import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator.js'
+import { SDKprefetchGenerator } from './generators/SDKprefetch.generator.js'
+import { SDKdeferGenerator } from './generators/SDKdefer.generator.js'
+import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared.js'
+import { RouteConfigPerPlatforms } from './generateSDKgetRouteConfigs.js'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 
 
 

@@ -1,4 +1,4 @@
-import { AuthenticationMethod } from '../../ctx'
+import { AuthenticationMethod } from '../../ctx.js'
 
 
 

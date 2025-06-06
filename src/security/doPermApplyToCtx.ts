@@ -1,6 +1,6 @@
 
 
-import { ForClauseParsed } from '../types/core.types'
+import { ForClauseParsed } from '../types/core.types.js'
 
 import { asArray } from 'topkat-utils'
 

@@ -1,17 +1,17 @@
 
 
-import { getDbConfigs, getMainConfig } from './getGreenDotConfigs'
+import { getDbConfigs, getMainConfig } from './getGreenDotConfigs.js'
 import { _, Definition } from 'good-cop'
-import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
+import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes.js'
 import { C, objEntries } from 'topkat-utils'
-import { safeImport } from './safeImports'
-import { parseDaos } from '../databases/parseDaos'
-import { error } from '../error'
-import defaultDaoConfigMongo from '../databases/mongo/defaultDaoConfigMongo'
-import { getUserAdditionalFields } from '../security/userAndConnexion/userAdditionalFields'
-import { convertRoleToPermsToModelFields } from '../security/helpers/convertPermsToModelFields'
-import { GD_serverBlacklistModel } from '../security/userAndConnexion/GD_serverBlackList.model'
-import { GD_deviceModel } from '../security/userAndConnexion/GD_device.model'
+import { safeImport } from './safeImports.js'
+import { parseDaos } from '../databases/parseDaos.js'
+import { error } from '../error.js'
+import defaultDaoConfigMongo from '../databases/mongo/defaultDaoConfigMongo.js'
+import { getUserAdditionalFields } from '../security/userAndConnexion/userAdditionalFields.js'
+import { convertRoleToPermsToModelFields } from '../security/helpers/convertPermsToModelFields.js'
+import { GD_serverBlacklistModel } from '../security/userAndConnexion/GD_serverBlackList.model.js'
+import { GD_deviceModel } from '../security/userAndConnexion/GD_device.model.js'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║

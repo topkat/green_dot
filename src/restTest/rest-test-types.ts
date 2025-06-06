@@ -1,4 +1,6 @@
-import { GDapiKey } from '../plugins'
+
+
+import { GDapiKey } from '../plugins/index.js'
 
 export type RestMethod = 'POST' | 'GET' | 'PATCH' | 'DELETE'
 

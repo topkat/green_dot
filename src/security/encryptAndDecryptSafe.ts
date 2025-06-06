@@ -1,7 +1,7 @@
 
 import CryptoJS from 'crypto-js'
 import { v4 as uuidv4 } from 'uuid'
-import { error } from '../error'
+import { error } from '../error.js'
 
 import { ENV } from 'topkat-utils'
 

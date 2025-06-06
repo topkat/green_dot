@@ -1,10 +1,10 @@
 import { _ } from 'good-cop'
-import { svc } from '../../../service'
-import { PluginUserConfig } from '../config'
-import { getPluginConfig } from '../../pluginSystem'
+import { svc } from '../../../service.js'
+import { PluginUserConfig } from '../config.js'
+import { getPluginConfig } from '../../pluginSystem.js'
 import { objKeys } from 'topkat-utils'
-import { db } from '../../../db'
-import { userLogin, userLoginReturnValidator } from '../userLogin'
+import { db } from '../../../db.js'
+import { userLogin, userLoginReturnValidator } from '../userLogin.js'
 
 
 

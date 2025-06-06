@@ -1,7 +1,7 @@
 
-import { appliableHooksForUser } from './appliableHookForUser'
-import { DaoGenericMethods } from '../../types/core.types'
-import { getProjectDatabaseDaosForModel } from '../../helpers/getProjectModelsAndDaos'
+import { appliableHooksForUser } from './appliableHookForUser.js'
+import { DaoGenericMethods } from '../../types/core.types.js'
+import { getProjectDatabaseDaosForModel } from '../../helpers/getProjectModelsAndDaos.js'
 
 /** May throw a 403 unauthorized if user doesn't have access */
 export async function hookInterpreterExpose(

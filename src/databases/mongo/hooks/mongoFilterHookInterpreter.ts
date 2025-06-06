@@ -1,7 +1,7 @@
 
-import { getProjectDatabaseDaosForModel } from '../../../helpers/getProjectModelsAndDaos'
-import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
-import { LocalConfigParsed } from '../types/mongoDbTypes'
+import { getProjectDatabaseDaosForModel } from '../../../helpers/getProjectModelsAndDaos.js'
+import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser.js'
+import { LocalConfigParsed } from '../types/mongoDbTypes.js'
 
 import { isObject } from 'topkat-utils'
 

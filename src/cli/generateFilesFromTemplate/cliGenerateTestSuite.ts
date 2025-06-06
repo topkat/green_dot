@@ -1,8 +1,8 @@
 
 import fs from 'fs-extra'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 import { C, capitalize1st, camelCaseToWords, asArray } from 'topkat-utils'
-import { luigi } from '../helpers/luigi.bot'
+import { luigi } from '../helpers/luigi.bot.js'
 
 export async function cliGenerateTestSuite(fileName: string, filePath: string) {
 
@@ -22,7 +22,7 @@ export async function cliGenerateTestSuite(fileName: string, filePath: string) {
   // download green_dot VScode/cursor extension to autofill that header with your tests synopsis
 */
 
-import { TestSuite } from '../../1_shared/configs/rest-test-config'
+import { TestSuite } from '../../1_shared/configs/rest-test-config.js'
 import { assert } from 'green_dot'
 ${asArray(sdkToImport).map(name => `import { ${sdkToImport.length === 1 ? '$' : `$ as ${name}Sdk`} } from '${name}'\n`)}/
 

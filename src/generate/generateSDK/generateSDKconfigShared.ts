@@ -1,8 +1,8 @@
 
-import { GenerateSdkConfig, ServiceDocObject } from '../../types/core.types'
+import { GenerateSdkConfig, ServiceDocObject } from '../../types/core.types.js'
 import { camelCase } from 'topkat-utils'
 import { GenericDef } from 'good-cop'
-import { generateJsDoc } from './generateJsDocForSdk'
+import { generateJsDoc } from './generateJsDocForSdk.js'
 
 export const env = process.env.NODE_ENV as Env
 

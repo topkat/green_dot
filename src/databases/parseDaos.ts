@@ -1,8 +1,8 @@
 
 
-import { DaoHookNamesMongo, MongoDao, MongoDaoParsed } from './mongo/types/mongoDbTypes'
-import { parseForClause } from '../security/helpers/parseForClause'
-import { registerDaoHooks } from './0_hooks/registerDaoHooks'
+import { DaoHookNamesMongo, MongoDao, MongoDaoParsed } from './mongo/types/mongoDbTypes.js'
+import { parseForClause } from '../security/helpers/parseForClause.js'
+import { registerDaoHooks } from './0_hooks/registerDaoHooks.js'
 import { asArray, JSONstringyParse } from 'topkat-utils'
 
 

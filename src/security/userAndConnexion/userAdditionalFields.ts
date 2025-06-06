@@ -1,10 +1,10 @@
 
 import { Definition, InferTypeRead, InferTypeWrite, NextAutocompletionChoices } from 'good-cop'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { _ } from '../../validator'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { _ } from '../../validator.js'
 import { _ as fixRecursiveType } from 'good-cop'
-import { GD_deviceModel } from './GD_device.model'
-import { ModelsWithDbNamesAndReadWrite } from '../../cache/dbs/index.generated'
+import { GD_deviceModel } from './GD_device.model.js'
+import { ModelsWithDbNamesAndReadWrite } from '../../cache/dbs/index.generated.js'
 
 
 export const userLockReasons = ['tooMuchPasswordAttempts', 'ban', 'tooManyAttempsForSecureAuthentication'] as const

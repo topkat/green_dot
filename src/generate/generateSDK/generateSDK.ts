@@ -2,19 +2,20 @@ import Path from 'path'
 import fs from 'fs-extra'
 import { cliPrompt } from 'simple-cli-prompt'
 import { C, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
-import { execWaitForOutput } from 'topkat-utils/backend'
+import { execWaitForOutput } from 'topkat-utils/backend.js'
 import axios from 'axios'
 
-import { generateSdkFiles } from './generateSdkFiles'
-import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
-import { GenerateSDKparamsForService } from '../../types/generateSdk.types'
-import { getMainConfig, makeApiCall } from '../..'
-import { generateSDKconfigForDaos } from './generateSDKconfigForDao'
-import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs'
-import { getAppConfigs } from '../../helpers/getGreenDotConfigs'
-import { findProjectPath } from '../../helpers/getProjectPaths'
-import { generateMainBackendFiles } from '../generateMainBackendFiles'
-import { generateDefaultSafeIndexDbCacheFile } from '../../cli/build/generateIndexDefaultSafeDbIndexCache'
+import { generateSdkFiles } from './generateSdkFiles.js'
+import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates.js'
+import { GenerateSDKparamsForService } from '../../types/generateSdk.types.js'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { generateSDKconfigForDaos } from './generateSDKconfigForDao.js'
+import { createDaoRouteConfigPerPlatformForSdk } from './generateSDKgetRouteConfigs.js'
+import { getAppConfigs } from '../../helpers/getGreenDotConfigs.js'
+import { findProjectPath } from '../../helpers/getProjectPaths.js'
+import { generateMainBackendFiles } from '../generateMainBackendFiles.js'
+import { generateDefaultSafeIndexDbCacheFile } from '../../cli/build/generateIndexDefaultSafeDbIndexCache.js'
+import { makeApiCall } from '../../services/makeApiCall.js'
 
 const sdkFolderName = 'SDKs'
 
@@ -243,6 +244,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
         C.success(`Generated SDK defaults`)
 
     } catch (err) {
+        console.error(err)
         C.error(err)
         C.error(false, 'Error while generating the SDK, please see above log')
         process.exit(1)

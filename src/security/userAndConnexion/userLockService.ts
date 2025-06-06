@@ -1,11 +1,11 @@
 
 
 
-import { db } from '../../db'
-import { ModelTypes } from '../../cache/dbs/index.generated'
+import { db } from '../../db.js'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
 
 import { getId, addMinutes } from 'topkat-utils'
-import { UserLockReasonsDefault } from './userAdditionalFields'
+import { UserLockReasonsDefault } from './userAdditionalFields.js'
 
 
 export async function ensureUserIsNotLocked(ctx: Ctx, userOrId: ModelTypes['user'] | string) {

@@ -1,7 +1,7 @@
-import { type Mask } from '../databases/mongo/services/maskService'
+import { type Mask } from '../databases/mongo/services/maskService.js'
 
-import { type MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
-import { UserModels, OrgModels, Organization, User } from './jestHelpers'
+import { type MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes.js'
+import { UserModels, OrgModels, Organization, User } from './jestHelpers.js'
 import { _, Definition } from 'good-cop'
 
 

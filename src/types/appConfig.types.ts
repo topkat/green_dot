@@ -1,10 +1,10 @@
 
 
-import { ServiceClean } from './services.types'
+import { ServiceClean } from './services.types.js'
 import { Request, Response } from 'express'
-import { InstanciatedPlugin } from '../plugins/pluginSystem'
-import { Color } from 'topkat-utils/src/types'
-import { RateLimiterConfig } from '../security/serviceRouteRateLimiter'
+import { InstanciatedPlugin } from '../plugins/pluginSystem.js'
+import { Color } from 'topkat-utils/src/types.js'
+import { RateLimiterConfig } from '../security/serviceRouteRateLimiter.js'
 
 //----------------------------------------
 // GENERAL CONFIG
@@ -119,7 +119,7 @@ export type GreenDotAppConfig = {
   /**
   @example
   * ```
-    import {MyPlugin} from 'green_dot/plugins'
+    import {MyPlugin} from 'green_dot/plugins.js'
     const greenDotConfig = {
         ...
         plugins: [new MyPlugin({ enable: true, ...pluginConfig })]

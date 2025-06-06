@@ -1,13 +1,13 @@
 
 
-import { error } from '../../error'
-import { DaoHookShared, daoGenericMethods, DaoGenericMethods, DaoHookSharedParsed } from '../../types/core.types'
-import { DaoHookNamesMongo, MongoDaoParsed } from '../mongo/types/mongoDbTypes'
-import { hookValidators, HookValidator } from './hookValidators'
-import { notForToFor, notOnToOn } from '../../security/notForToForAndNotOnToOn'
+import { error } from '../../error.js'
+import { DaoHookShared, daoGenericMethods, DaoGenericMethods, DaoHookSharedParsed } from '../../types/core.types.js'
+import { DaoHookNamesMongo, MongoDaoParsed } from '../mongo/types/mongoDbTypes.js'
+import { hookValidators, HookValidator } from './hookValidators.js'
+import { notForToFor, notOnToOn } from '../../security/notForToForAndNotOnToOn.js'
 
 import { isset, noDuplicateFilter, isObject, asArray } from 'topkat-utils'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 
 /** Parse all 'for', 'on', 'notFor' and 'notOn' clauses + apply the custom hook interpreter */
 export async function genericHookInterpreter<HookName extends DaoHookNamesMongo>(

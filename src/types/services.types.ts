@@ -1,14 +1,14 @@
 
 
-import { LocalConfigParsed } from '../databases/mongo/types/mongoDbTypes'
+import { LocalConfigParsed } from '../databases/mongo/types/mongoDbTypes.js'
 import { Definition, GenericDef, InferTypeRead } from 'good-cop'
-import { RateLimiterConfig } from '../security/serviceRouteRateLimiter'
-import { DaoGenericMethods } from './daoGeneric.types'
-import { ForClauseParsed, ForClauseWithAll } from './coreGeneric.types'
-import { ModelReadWrite } from './models.types'
-import { AuthenticationMethod } from '../ctx'
+import { RateLimiterConfig } from '../security/serviceRouteRateLimiter.js'
+import { DaoGenericMethods } from './daoGeneric.types.js'
+import { ForClauseParsed, ForClauseWithAll } from './coreGeneric.types.js'
+import { ModelReadWrite } from './models.types.js'
+import { AuthenticationMethod } from '../ctx.js'
 import { MaybeArray } from 'typescript-generic-types'
-import { ModelNames } from '../cache/dbs/index.generated'
+import { ModelNames } from '../cache/dbs/index.generated.js'
 
 
 //----------------------------------------

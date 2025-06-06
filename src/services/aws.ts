@@ -1,5 +1,5 @@
 // import AWS from 'aws-sdk'
-// import { ServerConfig } from '../types/core.types'
+// import { ServerConfig } from '../types/core.types.js'
 
 // import { C } from 'topkat-utils'
 

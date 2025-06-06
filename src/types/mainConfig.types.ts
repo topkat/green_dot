@@ -1,9 +1,9 @@
 
 import 'typescript-generic-types'
-import { GenerateSdkConfig } from './generateSdk.types'
-import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared'
-import { RateLimiterStr } from '../security/serviceRouteRateLimiter'
-import { AutoIndexFileConfig } from '../services/autoIndex'
+import { GenerateSdkConfig } from './generateSdk.types.js'
+import { generateSdkConfigDefault } from '../generate/generateSDK/generateSDKconfigShared.js'
+import { RateLimiterStr } from '../security/serviceRouteRateLimiter.js'
+import { AutoIndexFileConfig } from '../services/autoIndex.js'
 
 export type GreenDotConfigRateLimiterInfos = { route?: string, discriminator: string }
 

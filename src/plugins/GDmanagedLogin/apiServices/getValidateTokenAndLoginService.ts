@@ -1,12 +1,12 @@
 
-import { svc } from '../../../service'
-import { checkOrUpdateEmailOrPasswordRateLimiter, userLoginReturnValidatorRaw } from '../constants'
-import { decryptValidationToken } from '../decryptValidationTokens'
-import { db } from '../../../db'
-import { PluginUserConfig } from '../config'
-import { userLogin } from '../userLogin'
+import { svc } from '../../../service.js'
+import { checkOrUpdateEmailOrPasswordRateLimiter, userLoginReturnValidatorRaw } from '../constants.js'
+import { decryptValidationToken } from '../decryptValidationTokens.js'
+import { db } from '../../../db.js'
+import { PluginUserConfig } from '../config.js'
+import { userLogin } from '../userLogin.js'
 import { objKeys } from 'topkat-utils'
-import { _ } from '../../../validator'
+import { _ } from '../../../validator.js'
 
 
 

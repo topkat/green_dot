@@ -1,12 +1,12 @@
 
 
-import { GenerateSDKparamsForService } from '../../types/core.types'
-import { RouteConfigPerPlatforms } from './generateSDKgetRouteConfigs'
-import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator'
-import { SDKprefetchGenerator } from './generators/SDKprefetch.generator'
-import { SDKdeferGenerator } from './generators/SDKdefer.generator'
-import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { GenerateSDKparamsForService } from '../../types/core.types.js'
+import { RouteConfigPerPlatforms } from './generateSDKgetRouteConfigs.js'
+import { SDKuseQueryGenerator } from './generators/SDKuseQuery.generator.js'
+import { SDKprefetchGenerator } from './generators/SDKprefetch.generator.js'
+import { SDKdeferGenerator } from './generators/SDKdefer.generator.js'
+import { env, getTsTypeAsStringAndRouteClean } from './generateSDKconfigShared.js'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 
 
 //  ╔═══ ╔══╗ ╔══╗ ╦  ╦ ═╦═ ╔══╗ ╔══╗ ╔═══

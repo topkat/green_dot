@@ -1,7 +1,7 @@
 
 
 import { isset, DescriptiveError, objEntries, isObject } from 'topkat-utils'
-import { env } from '../helpers/getEnv'
+import { env } from '../helpers/getEnv.js'
 
 export function getExpressErrHandlerMW() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

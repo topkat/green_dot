@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 import { asArray, miniTemplater, C } from 'topkat-utils'
-import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs.js'
 
 let testAccountCache
 

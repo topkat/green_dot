@@ -1,11 +1,11 @@
-import { AuthenticationMethod } from '../../ctx'
+import { AuthenticationMethod } from '../../ctx.js'
 import bcrypt from 'bcrypt'
 import { getId, timeout, random } from 'topkat-utils'
-import { lockUserAndThrow } from '../../security/userAndConnexion/userLockService'
-import { ModelTypes } from '../../cache/dbs/index.generated'
-import { db } from '../../db'
-import { AsMongooseBody } from '../../databases/mongo/types/mongoDbBaseTypes'
-import { PluginUserConfig } from './config'
+import { lockUserAndThrow } from '../../security/userAndConnexion/userLockService.js'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
+import { db } from '../../db.js'
+import { AsMongooseBody } from '../../databases/mongo/types/mongoDbBaseTypes.js'
+import { PluginUserConfig } from './config.js'
 
 
 

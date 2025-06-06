@@ -1,7 +1,7 @@
 
 import { addMinutes } from 'topkat-utils'
-import { PluginUserConfig } from './config'
-import { env } from '../../helpers/getEnv'
+import { PluginUserConfig } from './config.js'
+import { env } from '../../helpers/getEnv.js'
 
 
 

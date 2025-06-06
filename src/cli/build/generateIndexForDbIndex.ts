@@ -2,10 +2,10 @@
 
 import Path from 'path'
 import fs from 'fs-extra'
-import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 import { C } from 'topkat-utils'
-import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-import { getUserPermissionFields } from '../../helpers/getProjectModelsAndDaos'
+import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths.js'
+import { getUserPermissionFields } from '../../helpers/getProjectModelsAndDaos.js'
 
 
 /** If this function is called alone, it will generate a default index file that is typescript valid and safe */
@@ -37,7 +37,7 @@ ${permFields.map(perm => `  ${perm}: boolean`).join('\n')}
 
   indexFileContent += `
 import { MergeMultipleObjects } from 'typescript-generic-types'
-import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from ${isCacheOutput ? `'../../security/userAndConnexion/userAdditionalFields'` : `'green_dot'`}
+import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from ${isCacheOutput ? `'../../security/userAndConnexion/userAdditionalFields.js'` : `'green_dot'`}
 ${indexFile.imports}
 
 ${hardCodePermissionFields ? permType : ''}\

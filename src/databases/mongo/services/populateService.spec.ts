@@ -1,6 +1,7 @@
-import { unPopulate, forEachPopulateFieldRecursive } from './populateService'
-import { createUser, createOrg, userId1, userId2, orgId1 } from '../../../tests/jestHelpers'
-import { models } from '../../../tests/models'
+import { unPopulate, forEachPopulateFieldRecursive } from './populateService.js'
+import { createUser, createOrg, userId1, userId2, orgId1 } from '../../../tests/jestHelpers.js'
+import { models } from '../../../tests/models.js'
+import { MainDbName } from '../../../cache/dbs/index.generated.js'
 
 import { C } from 'topkat-utils'
 
@@ -23,7 +24,7 @@ describe('populateService', () => {
             const fields = createUser(1, createOrg(1, [userId1, userId2]))
             const fieldsUnpopulated = createUser(1, orgId1)
 
-            await unPopulate('mainDb', 'user', fields)
+            await unPopulate('mainDb' as MainDbName, 'user', fields)
 
             expect(fields).toEqual(fieldsUnpopulated)
         })
@@ -31,7 +32,7 @@ describe('populateService', () => {
             const fields = createOrg(1, [createUser(1, orgId1), createUser(2, orgId1)])
             const fieldsUnpopulated = createOrg(1, [userId1, userId2])
 
-            await unPopulate('mainDb', 'organization', fields)
+            await unPopulate('mainDb' as MainDbName, 'organization', fields)
 
             expect(fields).toEqual(fieldsUnpopulated)
         })
@@ -44,7 +45,7 @@ describe('populateService', () => {
         const callbackParamArr = [] as any[]
         const callback = (...params) => callbackParamArr.push(params)
 
-        await forEachPopulateFieldRecursive('mainDb', 'user', user, callback)
+        await forEachPopulateFieldRecursive('mainDb' as MainDbName, 'user', user, callback)
 
         C.info('Callback should have been called 6 times')
         expect(callbackParamArr.length).toEqual(6)

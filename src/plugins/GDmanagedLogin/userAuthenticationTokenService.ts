@@ -1,14 +1,14 @@
 
 
 import jwt from 'jsonwebtoken'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 
-import { generateUniqueToken } from '../../services/generateUniqueToken'
-import { db } from '../../db'
-import { ModelTypes } from '../../cache/dbs/index.generated'
-import { setCsrfTokenCookie, setRefreshTokenCookie } from './cookieService'
-import { decryptToken, encryptToken } from '../../security/encryptAndDecryptSafe'
-import { PluginUserConfig } from './config'
+import { generateUniqueToken } from '../../services/generateUniqueToken.js'
+import { db } from '../../db.js'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
+import { setCsrfTokenCookie, setRefreshTokenCookie } from './cookieService.js'
+import { decryptToken, encryptToken } from '../../security/encryptAndDecryptSafe.js'
+import { PluginUserConfig } from './config.js'
 
 
 

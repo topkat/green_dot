@@ -1,19 +1,19 @@
 
 import Path from 'path'
 import fs from 'fs-extra'
-import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectModelsAndDaos'
+import { getDbConfigs, getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { getProjectDatabaseModelsForDbName } from '../../helpers/getProjectModelsAndDaos.js'
 import { C, capitalize1st } from 'topkat-utils'
 import { Definition } from 'good-cop'
-import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model'
-import { GD_deviceModel } from '../../security/userAndConnexion/GD_device.model'
-import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
-import { getNewIndexForDbCacheFileStructure } from './generateIndexForDbIndex'
+import { GD_serverBlacklistModel } from '../../security/userAndConnexion/GD_serverBlackList.model.js'
+import { GD_deviceModel } from '../../security/userAndConnexion/GD_device.model.js'
+import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths.js'
+import { getNewIndexForDbCacheFileStructure } from './generateIndexForDbIndex.js'
 
 
 
 
-/** This will generate a string representation of all db types in local green_dot module cache folder to be accessed in the project app with ```import { ModelTypes } from 'green_dot/db'``` */
+/** This will generate a string representation of all db types in local green_dot module cache folder to be accessed in the project app with ```import { ModelTypes } from 'green_dot/db.js'``` */
 export async function generateFilesForCachedDb(
   resetCache = false,
   basePath = Path.join(greenDotCacheModuleFolder, 'dbs')
@@ -33,7 +33,7 @@ export async function generateFilesForCachedDb(
       models.GD_device = GD_deviceModel as unknown as Definition
     }
 
-    let modelTypeFileContent = `import { TranslationObj } from '${basePath.includes(greenDotCacheModuleFolder) ? '../../index' : 'green_dot'}'\n\n`
+    let modelTypeFileContent = `import { TranslationObj } from '${basePath.includes(greenDotCacheModuleFolder) ? '../../index.js' : 'green_dot'}'\n\n`
     const modelNames = Object.keys(models)
     const dbNameCapital = capitalize1st(dbName)
 
@@ -70,7 +70,7 @@ export async function generateFilesForCachedDb(
     //  ║ ═╦ ╠═   ║╚╗║ ╠═   ╠═╦╝ ╠══╣   ║   ╠═     ║  ║ ╠═╩╗   ║    ╠══╣ ║    ╠══╣ ╠═      ║  ║╚╗║ ║  ║ ╠═    ╠╣
     //  ╚══╝ ╚══╝ ╩ ╚╩ ╚══╝ ╩ ╚  ╩  ╩   ╩   ╚══╝   ╚══╝ ╚══╝   ╚══╝ ╩  ╩ ╚══╝ ╩  ╩ ╚══╝   ═╩═ ╩ ╚╩ ╚══╝ ╚══╝ ═╝╚═
 
-    indexFile.imports += `import { AllModels as ${dbNameCapital}AllModels } from './${dbName}.modelTypes.generated'\n`
+    indexFile.imports += `import { AllModels as ${dbNameCapital}AllModels } from './${dbName}.modelTypes.generated.js'\n`
     if (dbName === mainConfig.defaultDatabaseName) {
       indexFile.allModels += `    ${dbName}: { [K in keyof ${dbNameCapital}AllModels]: K extends 'user' ? ${dbNameCapital}AllModels[K] & { Read: UserPermissionFields & UserAdditionalFieldsRead, Write: Partial<UserPermissionFields & UserAdditionalFieldsWrite> } : ${dbNameCapital}AllModels[K] }\n`
     } else {

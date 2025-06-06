@@ -2,7 +2,7 @@ import * as fs from 'fs-extra'
 import path from 'path'
 
 import { capitalize1st } from 'topkat-utils'
-import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs.js'
 
 export default async function generateAllRouteFile(allRoutes: string[]) {
 

@@ -1,12 +1,12 @@
-import { GDplugin } from '../GDplugin'
-import { newPlugin } from '../newPlugin'
-import { docOneLine, documentation } from './doc'
-import { getOnLogin } from './onLogin'
+import { GDplugin } from '../GDplugin.js'
+import { newPlugin } from '../newPlugin.js'
+import { docOneLine, documentation } from './doc.js'
+import { getOnLogin } from './onLogin.js'
 
 
 
 export type Name = 'GDapiKeyAuthentication'
-export { docOneLine, documentation } from './doc'
+export { docOneLine, documentation } from './doc.js'
 
 export type GDapiKey = {
   [apiKey in (GD['role'] | (string & {}))]?: {

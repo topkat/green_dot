@@ -1,6 +1,6 @@
 
-import { getMainConfig } from '../helpers/getGreenDotConfigs'
-import { daoGenericMethods, DaoGenericMethods } from '../types/core.types'
+import { getMainConfig } from '../helpers/getGreenDotConfigs.js'
+import { daoGenericMethods, DaoGenericMethods } from '../types/core.types.js'
 import { includes } from 'topkat-utils'
 
 

@@ -1,17 +1,17 @@
 
 
-import { type ModelsWithDbNamesAndReadWrite, type MainDbName, type AllDbIds, type DbIds, defaultDbName } from './cache/dbs/index.generated'
-import { error } from './error'
-import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs'
-import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes'
-import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb'
+import { type ModelsWithDbNamesAndReadWrite, type MainDbName, type AllDbIds, type DbIds, defaultDbName } from './cache/dbs/index.generated.js'
+import { error } from './error.js'
+import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs.js'
+import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes.js'
+import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb.js'
 import { DefinitionObjChild, ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
-import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos'
+import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos.js'
 
-import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model'
-import { GD_deviceModel } from './security/userAndConnexion/GD_device.model'
-import { dbIdsToDbNames } from './databases/dbIdsToDbNames'
+import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model.js'
+import { GD_deviceModel } from './security/userAndConnexion/GD_device.model.js'
+import { dbIdsToDbNames } from './databases/dbIdsToDbNames.js'
 import { InferTypeRead, InferTypeWrite } from 'good-cop'
 
 type InferTypeRW<T extends DefinitionObjChild> = { Read: InferTypeRead<T>, Write: InferTypeWrite<T> }

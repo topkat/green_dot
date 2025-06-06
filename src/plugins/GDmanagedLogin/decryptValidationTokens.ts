@@ -3,11 +3,11 @@
 
 
 
-import { db } from '../../db'
-import { decryptToken } from '../../security/encryptAndDecryptSafe'
-import { GDmanagedLoginEmailTypes } from './constants'
-import { credentialManagementMailing } from './credentialManagementMailing'
-import { PluginUserConfig } from './config'
+import { db } from '../../db.js'
+import { decryptToken } from '../../security/encryptAndDecryptSafe.js'
+import { GDmanagedLoginEmailTypes } from './constants.js'
+import { credentialManagementMailing } from './credentialManagementMailing.js'
+import { PluginUserConfig } from './config.js'
 
 
 

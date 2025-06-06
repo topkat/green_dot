@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import { generateObjectId } from 'topkat-utils'
-import { get$ } from './init'
+import { get$ } from './init.js'
 
 
 export type Device = {

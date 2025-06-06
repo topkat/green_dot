@@ -1,8 +1,8 @@
 
 
 
-import { daoMethodsWithReadWrite } from '../../types/core.types'
-import { DaoHookNamesMongo, MongoDao } from '../mongo/types/mongoDbTypes'
+import { daoMethodsWithReadWrite } from '../../types/core.types.js'
+import { DaoHookNamesMongo, MongoDao } from '../mongo/types/mongoDbTypes.js'
 
 export const hookValidators: Record<DaoHookNamesMongo, HookValidator> = {
     //----------------------------------------

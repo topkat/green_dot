@@ -1,8 +1,8 @@
 
 import { objEntries } from 'topkat-utils'
-import { ctx } from '../../ctx'
-import { GreenDotAppConfig } from '../../types/appConfig.types'
-import type { GDapiKeyAuthentication } from './main'
+import { ctx } from '../../ctx.js'
+import { GreenDotAppConfig } from '../../types/appConfig.types.js'
+import type { GDapiKeyAuthentication } from './main.js'
 
 //  ╔══╗ ╔══╗ ═╦═   ╦ ╔  ╔══╗ ╦   ╦
 //  ╠══╣ ╠══╝  ║    ╠═╩╗ ╠═   ╚═╦═╝

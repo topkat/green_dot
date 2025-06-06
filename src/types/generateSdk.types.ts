@@ -1,8 +1,8 @@
 
 
-import { PublicRole, SystemRole } from '../ctx'
-import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDaoTypes'
-import { ServiceRegistered } from './services.types'
+import { PublicRole, SystemRole } from '../ctx.js'
+import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDaoTypes.js'
+import { ServiceRegistered } from './services.types.js'
 
 
 export const generateSdkRouteTypes = ['dao', 'service'] as const

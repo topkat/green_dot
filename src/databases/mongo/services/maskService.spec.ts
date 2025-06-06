@@ -1,12 +1,12 @@
 
-import { applyMaskIncludingOnPopulatedFieldsRecursive, applyMaskToPopulateConfig, combineMaskHooksAndReturnMaskOrSelectAddrArray, getMongoMaskForUser, getMaskFromSelect } from './maskService'
-import { models } from '../../../tests/models'
-import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser'
+import { applyMaskIncludingOnPopulatedFieldsRecursive, applyMaskToPopulateConfig, combineMaskHooksAndReturnMaskOrSelectAddrArray, getMongoMaskForUser, getMaskFromSelect } from './maskService.js'
+import { models } from '../../../tests/models.js'
+import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser.js'
 
-import { getCtx, createUser, createOrg, orgId1 } from '../../../tests/jestHelpers'
+import { getCtx, createUser, createOrg, orgId1 } from '../../../tests/jestHelpers.js'
 
 import { nbOccurenceInString, C } from 'topkat-utils'
-import { MainDbName } from '../../../cache/dbs/index.generated'
+import { MainDbName } from '../../../cache/dbs/index.generated.js'
 
 jest.mock('../../../helpers/getGreenDotConfigs', () => ({
     getMainConfig: () => ({

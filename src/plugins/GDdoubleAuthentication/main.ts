@@ -1,13 +1,13 @@
-import { AuthenticationMethod } from '../../ctx'
-import { ModelTypes } from '../../cache/dbs/index.generated'
-import { GDplugin } from '../GDplugin'
-import { getOnLogin } from './onLogin'
-import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
+import { AuthenticationMethod } from '../../ctx.js'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
+import { GDplugin } from '../GDplugin.js'
+import { getOnLogin } from './onLogin.js'
+import { encryptPassword } from '../../security/userAndConnexion/encryptPassword.js'
 import { _, InferTypeRead, InferTypeWrite } from 'good-cop'
-import { documentation, docOneLine } from './doc'
-import { newPlugin } from '../newPlugin'
-import { defaultConfig, PluginUserConfig } from './config'
-import { compareAndAddAttempt } from './compareAndAddAttempt'
+import { documentation, docOneLine } from './doc.js'
+import { newPlugin } from '../newPlugin.js'
+import { defaultConfig, PluginUserConfig } from './config.js'
+import { compareAndAddAttempt } from './compareAndAddAttempt.js'
 
 export type Name = 'GDdoubleAuthentication'
 
@@ -63,7 +63,7 @@ export class GDdoubleAuthentication extends GDplugin<Name> {
 //    ╩     ╩   ╩    ╚══╝   ╚══╝ ═╝╚═   ╩   ╚══╝ ╩ ╚╩ ═══╝ ═╩═ ╚══╝ ╩ ╚╩ ═══╝
 
 // DECLARE ADDITIONAL USER FIELDS TYPE
-declare module '../../security/userAndConnexion/userAdditionalFields' {
+declare module '../../security/userAndConnexion/userAdditionalFields.js' {
   interface UserAdditionalFieldsRead extends InferTypeRead<ReturnType<GDdoubleAuthentication['addUserAdditionalFields']>> { }
   interface UserAdditionalFieldsWrite extends InferTypeWrite<ReturnType<GDdoubleAuthentication['addUserAdditionalFields']>> { }
 }

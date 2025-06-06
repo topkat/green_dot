@@ -1,14 +1,14 @@
 
 
 import { C, mergeDeepOverrideArrays } from 'topkat-utils'
-import { GDpathConfig, GDpathConfigWithIndex, getProjectPaths } from './getProjectPaths'
-import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types'
-import { safeImport } from './safeImports'
-import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types'
-import { error } from '../error'
-import { initProjectAndDaosCache } from './getProjectModelsAndDaos'
-import { parentProcessExitCodes } from '../constants'
-import { registerPlugin } from '../plugins/pluginSystem'
+import { GDpathConfig, GDpathConfigWithIndex, getProjectPaths } from './getProjectPaths.js'
+import { GreenDotDbConfig, GreenDotAppConfig } from '../types/core.types.js'
+import { safeImport } from './safeImports.js'
+import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } from '../types/mainConfig.types.js'
+import { error } from '../error.js'
+import { initProjectAndDaosCache } from './getProjectModelsAndDaos.js'
+import { parentProcessExitCodes } from '../constants.js'
+import { registerPlugin } from '../plugins/pluginSystem.js'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║

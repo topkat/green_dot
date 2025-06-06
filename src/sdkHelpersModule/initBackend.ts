@@ -1,1 +1,1 @@
-export * from './src/initBackend'
+export * from './src/initBackend.js'

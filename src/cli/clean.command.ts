@@ -2,9 +2,9 @@
 
 import fs from 'fs-extra'
 import { C } from 'topkat-utils'
-import { createNewTask } from './helpers/createNewTask'
-import { greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
-import { generateDefaultSafeIndexDbCacheFile } from './build/generateIndexDefaultSafeDbIndexCache'
+import { createNewTask } from './helpers/createNewTask.js'
+import { greenDotCacheModuleFolder } from '../helpers/getProjectPaths.js'
+import { generateDefaultSafeIndexDbCacheFile } from './build/generateIndexDefaultSafeDbIndexCache.js'
 
 
 export async function cleanCommand() {

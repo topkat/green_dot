@@ -2,12 +2,12 @@
 
 
 import { removeCircularJSONstringify, generateObjectId, DescriptiveError } from 'topkat-utils'
-import { log } from './logger'
-import { trackerEvent } from './tracker'
-import { logout } from './loginHelper'
-import { isBackendInitialized } from './initBackend'
-import { get$ } from './init'
-import { Device } from './device.web'
+import { log } from './logger.js'
+import { trackerEvent } from './tracker.js'
+import { logout } from './loginHelper.js'
+import { isBackendInitialized } from './initBackend.js'
+import { get$ } from './init.js'
+import { Device } from './device.web.js'
 
 
 //----------------------------------------

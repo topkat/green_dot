@@ -1,6 +1,6 @@
 
-import { sendErrorViaTelegram } from './services/sendViaTelegram'
-import { sendErrorOnTeams } from './services/sendViaTeams'
+import { sendErrorViaTelegram } from './services/sendViaTelegram.js'
+import { sendErrorOnTeams } from './services/sendViaTeams.js'
 
 import { DescriptiveError, ErrorOptions, C, createProxy } from 'topkat-utils'
 

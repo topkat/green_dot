@@ -1,6 +1,6 @@
 
-import { applyMaskOnObjectForUser } from './maskService'
-import { LocalConfigParsed } from '../types/mongoDbTypes'
+import { applyMaskOnObjectForUser } from './maskService.js'
+import { LocalConfigParsed } from '../types/mongoDbTypes.js'
 
 /** Prevent user filtering on unauthorized fields. Eg: getAllUsers({ password: '1234' })
  * Mainly used to sanitize filter sent from front end

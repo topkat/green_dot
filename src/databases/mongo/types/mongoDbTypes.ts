@@ -1,9 +1,9 @@
-import { DaoHookShared, DaoHookSharedParsed, DaoShared, DaoSharedParsed, daoHookNamesShared, DaoGenericMethods, MaskHook } from '../../../types/core.types'
+import { DaoHookShared, DaoHookSharedParsed, DaoShared, DaoSharedParsed, daoHookNamesShared, DaoGenericMethods, MaskHook } from '../../../types/core.types.js'
 import mongoose from 'mongoose'
-import { AsFilter, RequestConfigGetOne, RequestConfigRead, RequestConfigWrite, PopulateConfig, SortConfig } from './mongoDaoTypes'
-import type { ModelNames, DbIds, AllDbIds } from '../../../cache/dbs/index.generated'
+import { AsFilter, RequestConfigGetOne, RequestConfigRead, RequestConfigWrite, PopulateConfig, SortConfig } from './mongoDaoTypes.js'
+import type { ModelNames, DbIds, AllDbIds } from '../../../cache/dbs/index.generated.js'
 
-export * from './mongoDaoTypes'
+export * from './mongoDaoTypes.js'
 
 
 export const daoHookNamesMongo = [...daoHookNamesShared, 'filter', 'mask'] as const

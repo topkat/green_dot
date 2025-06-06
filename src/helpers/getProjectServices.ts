@@ -1,9 +1,10 @@
 
 
-import { getActiveAppConfig } from './getGreenDotConfigs'
-import { GreenDotAppConfig, ServicesObj } from '../types/core.types'
-import { GDpathConfigWithIndex } from './getProjectPaths'
-import { getAllPluginServices } from '../plugins/pluginSystem'
+import { getActiveAppConfig } from './getGreenDotConfigs.js'
+import { GreenDotAppConfig, ServicesObj } from '../types/core.types.js'
+import { GDpathConfigWithIndex } from './getProjectPaths.js'
+import { getAllPluginServices } from '../plugins/pluginSystem.js'
+import { safeImport } from './safeImports.js'
 
 let activeAppServicesCache: Omit<ServicesObj, 'initClientApp'>
 
@@ -18,7 +19,7 @@ export async function getActiveAppServices(
 
     const { generatedIndexPath } = appConfig
 
-    const { initApp, ...services } = await import(generatedIndexPath) as ServicesObj
+    const { initApp, ...services } = await safeImport(generatedIndexPath) as ServicesObj
 
     activeAppServicesCache = { ...services, ...getAllPluginServices() }
 

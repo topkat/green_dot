@@ -38,6 +38,7 @@ export async function compileTypeScriptProject(options: CompileOptions): Promise
     }
 
     const tsConfigContent = await fs.readFile(tsConfigPath, 'utf-8')
+
     const tsConfigJson = ts.parseConfigFileTextToJson(tsConfigPath, tsConfigContent)
 
     if (tsConfigJson.error) {
@@ -91,7 +92,7 @@ const toMergeTsConfig = {
   'declaration': true,
   'noImplicitAny': false,
   'noImplicitThis': true,
-  'moduleResolution': 'node',
+  'moduleResolution': 'nodenext',
   'esModuleInterop': true,
   'resolveJsonModule': true,
   'allowSyntheticDefaultImports': true,
@@ -111,9 +112,9 @@ export const commonJsTsConfig = JSON.stringify({
 
 export const esmModuleTsConfig = JSON.stringify({
   'compilerOptions': {
-    'module': 'ESNext',
-    'target': 'ES2020',
+    'module': 'nodenext',
+    'target': 'ES2022',
     ...toMergeTsConfig,
   },
   'include': ['.']
-})
+}, null, 2)

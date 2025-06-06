@@ -1,6 +1,6 @@
 
 import fs from 'fs-extra'
-import { luigi } from '../helpers/luigi.bot'
+import { luigi } from '../helpers/luigi.bot.js'
 import { capitalize1st } from 'topkat-utils'
 
 export async function cliGenerateModelAndDao(fileName: string, filePathWithoutExtension: string) {
@@ -34,7 +34,7 @@ export type ${capitalize1st(modelName)}Write = InferTypeWrite<typeof model>
 
 const daoFileTemplate = modelName => `
 import { MongoDao } from 'green_dot'
-import { ${capitalize1st(modelName)} } from './${modelName}.model'
+import { ${capitalize1st(modelName)} } from './${modelName}.model.js'
 
 const dao = {
     type: 'mongo',

@@ -1,9 +1,9 @@
 
 import 'typescript-generic-types'
-import { square } from './rest-test-ascii-display'
+import { square } from './rest-test-ascii-display.js'
 // EXPORTS
-export * from './rest-test-types'
-export * from './rest-test-runner'
+export * from './rest-test-types.js'
+export * from './rest-test-runner.js'
 
 import { ValidatorObject, C, isObject, isset, validatorReturnErrArray, cleanStackTrace, moyenne, removeCircularJSONstringify, DescriptiveError, randomItemInArray } from 'topkat-utils'
 

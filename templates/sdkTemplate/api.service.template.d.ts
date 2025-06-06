@@ -1,15 +1,15 @@
 
-import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongodbBaseTypes.generated'
-import { SdkError, ServerUrls, SdkInitOptions, Breakpoints } from './apiCall'
-import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query'
-import { ModelNames } from './modelTypes.generated'
-import { InitBackendConfig } from './sdkHelpers/initBackend'
+import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongodbBaseTypes.generated.js'
+import { SdkError, ServerUrls, SdkInitOptions, Breakpoints } from './apiCall.js'
+import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query.js'
+import { ModelNames } from './modelTypes.generated.js'
+import { InitBackendConfig } from './sdkHelpers/initBackend.js'
 
-export * from './sdkHelpers'
+export * from './sdkHelpers.js'
 
 type MethodNames = '%%AllMethodNameTypeString%%'
 
-export * from './modelTypes.generated'
+export * from './modelTypes.generated.js'
 
 export type ApiType = {
   init(config: SdkInitOptions): void

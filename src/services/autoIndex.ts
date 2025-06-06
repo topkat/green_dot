@@ -29,7 +29,7 @@ export async function autoIndex(fileConfigs: AutoIndexFileConfig[], basePath: st
       const urls = await findAllInDirRecursive(indexBasePath, match)
       const indexFileData = urls
         .filter(url => !url.endsWith(indexFileName + '.ts'))
-        .map(url => `export * from './${Path.relative(indexBasePath, url).replace(/.ts$/, '')}'`)
+        .map(url => `export * from './${Path.relative(indexBasePath, url).replace(/.ts$/, '')}.js'`)
 
       await fs.outputFile(`${indexBasePath}/${indexFileName}.ts`, indexFileData.join('\n'))
 

@@ -3,13 +3,13 @@
 
 
 
-import { db } from '../../../db'
-import { getPlugin, getPluginConfig } from '../../pluginSystem'
-import { svc } from '../../../service'
-import { _ } from '../../../validator'
-import { ensureUserIsNotLocked } from '../../../security/userAndConnexion/userLockService'
-import { parseToken, revokeToken, setConnexionTokens } from '../userAuthenticationTokenService'
-import { PluginUserConfig } from '../config'
+import { db } from '../../../db.js'
+import { getPlugin, getPluginConfig } from '../../pluginSystem.js'
+import { svc } from '../../../service.js'
+import { _ } from '../../../validator.js'
+import { ensureUserIsNotLocked } from '../../../security/userAndConnexion/userLockService.js'
+import { parseToken, revokeToken, setConnexionTokens } from '../userAuthenticationTokenService.js'
+import { PluginUserConfig } from '../config.js'
 
 
 export const getNewTokenService = (config: PluginUserConfig) => {

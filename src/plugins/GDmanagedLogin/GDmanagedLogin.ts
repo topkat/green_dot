@@ -1,29 +1,29 @@
-import { GDplugin } from '../GDplugin'
-import { getOnLoginHandler } from './onLogin'
-import { getNewTokenService } from './apiServices/getNewTokenService'
+import { GDplugin } from '../GDplugin.js'
+import { getOnLoginHandler } from './onLogin.js'
+import { getNewTokenService } from './apiServices/getNewTokenService.js'
 import { InferTypeRead, InferTypeWrite, _ } from 'good-cop'
-import { encryptPassword } from '../../security/userAndConnexion/encryptPassword'
-import { getCheckTokenIsValidService } from './apiServices/getCheckTokenIsValidService'
-import { ModelTypes } from '../../cache/dbs/index.generated'
-import { gdManagedLoginEmailTypes } from './constants'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { getValidateTokenAndLoginService } from './apiServices/getValidateTokenAndLoginService'
-import { getLogoutService } from './apiServices/getLogoutService'
-import { getUpdateNewPasswordWithOldPassword } from './apiServices/getUpdateNewPasswordWithOldPassword'
-import { getCredentialManagementServices } from './apiServices/getCredentialManagementServices'
-import { RegisterErrorType } from '../../error'
-import { setConnexionTokens } from './userAuthenticationTokenService'
-import { getLoginServices } from './apiServices/getLoginServices'
-import { getUpdatePasswordService } from './apiServices/getUpdatePasswordService'
-import { getUpdateEmailService } from './apiServices/getUpdateEmailService'
-import { userLoginReturnValidator, userLogin } from './userLogin'
-import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
-import { getRegisterUserDeviceService } from './apiServices/getRegisterUserDeviceService'
-import { credentialManagementMailing } from './credentialManagementMailing'
-import { db } from '../../db'
+import { encryptPassword } from '../../security/userAndConnexion/encryptPassword.js'
+import { getCheckTokenIsValidService } from './apiServices/getCheckTokenIsValidService.js'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
+import { gdManagedLoginEmailTypes } from './constants.js'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { getValidateTokenAndLoginService } from './apiServices/getValidateTokenAndLoginService.js'
+import { getLogoutService } from './apiServices/getLogoutService.js'
+import { getUpdateNewPasswordWithOldPassword } from './apiServices/getUpdateNewPasswordWithOldPassword.js'
+import { getCredentialManagementServices } from './apiServices/getCredentialManagementServices.js'
+import { RegisterErrorType } from '../../error.js'
+import { setConnexionTokens } from './userAuthenticationTokenService.js'
+import { getLoginServices } from './apiServices/getLoginServices.js'
+import { getUpdatePasswordService } from './apiServices/getUpdatePasswordService.js'
+import { getUpdateEmailService } from './apiServices/getUpdateEmailService.js'
+import { userLoginReturnValidator, userLogin } from './userLogin.js'
+import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService.js'
+import { getRegisterUserDeviceService } from './apiServices/getRegisterUserDeviceService.js'
+import { credentialManagementMailing } from './credentialManagementMailing.js'
+import { db } from '../../db.js'
 import { getId } from 'topkat-utils'
-import { defaultConfig, PluginUserConfig } from './config'
-import { getSendValidationEmailService } from './apiServices/getSendValidationEmailService'
+import { defaultConfig, PluginUserConfig } from './config.js'
+import { getSendValidationEmailService } from './apiServices/getSendValidationEmailService.js'
 
 export type Name = 'GDmanagedLogin'
 
@@ -134,7 +134,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
 //    ╩     ╩   ╩    ╚══╝   ╚══╝ ═╝╚═   ╩   ╚══╝ ╩ ╚╩ ═══╝ ═╩═ ╚══╝ ╩ ╚╩ ═══╝
 
 // DECLARE ADDITIONAL USER FIELDS TYPE
-declare module '../../security/userAndConnexion/userAdditionalFields' {
+declare module '../../security/userAndConnexion/userAdditionalFields.js' {
   interface UserAdditionalFieldsRead extends InferTypeRead<ReturnType<GDmanagedLogin['addUserAdditionalFields']>> { }
   interface UserAdditionalFieldsWrite extends InferTypeWrite<ReturnType<GDmanagedLogin['addUserAdditionalFields']>> { }
 }

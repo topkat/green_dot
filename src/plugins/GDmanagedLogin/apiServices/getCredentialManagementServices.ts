@@ -1,10 +1,10 @@
 
 import { getId } from 'topkat-utils'
-import { svc } from '../../../service'
-import { _ } from '../../../validator'
-import { db } from '../../../db'
-import { PluginUserConfig } from '../config'
-import { credentialManagementMailing } from '../credentialManagementMailing'
+import { svc } from '../../../service.js'
+import { _ } from '../../../validator.js'
+import { db } from '../../../db.js'
+import { PluginUserConfig } from '../config.js'
+import { credentialManagementMailing } from '../credentialManagementMailing.js'
 
 
 export function getCredentialManagementServices(

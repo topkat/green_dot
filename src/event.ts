@@ -1,6 +1,6 @@
 
 import { isset } from 'topkat-utils'
-import { newSystemCtx } from './ctx'
+import { newSystemCtx } from './ctx.js'
 
 export const event = {
     /**

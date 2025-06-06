@@ -1,10 +1,10 @@
 
 import fs from 'fs-extra'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 import { C, capitalize1st, camelCaseToWords } from 'topkat-utils'
-import { luigi } from '../helpers/luigi.bot'
-import { RateLimiterStr } from '../../security/serviceRouteRateLimiter'
-import { getProjectPaths } from '../../helpers/getProjectPaths'
+import { luigi } from '../helpers/luigi.bot.js'
+import { RateLimiterStr } from '../../security/serviceRouteRateLimiter.js'
+import { getProjectPaths } from '../../helpers/getProjectPaths.js'
 
 export async function cliGenerateService(fileName: string, filePath: string) {
 

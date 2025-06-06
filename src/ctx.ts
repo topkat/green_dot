@@ -1,17 +1,17 @@
 
 
-import { getMainConfig } from './helpers/getGreenDotConfigs'
-import { ApiOutputTypes } from './types/core.types'
+import { getMainConfig } from './helpers/getGreenDotConfigs.js'
+import { ApiOutputTypes } from './types/core.types.js'
 import mongoose from 'mongoose'
 import { Request, Response } from 'express'
-import { env } from './helpers/getEnv'
+import { env } from './helpers/getEnv.js'
 
 import { getId } from 'topkat-utils'
-import { ThrowErrorTypeSafe, errorWithCtx } from './error'
-import { dbs } from './db'
-import { type ModelTypes } from './cache/dbs/index.generated'
+import { ThrowErrorTypeSafe, errorWithCtx } from './error.js'
+import { dbs } from './db.js'
+import { type ModelTypes } from './cache/dbs/index.generated.js'
 
-import { banUser, addUserWarning } from './security/userAndConnexion/banAndAddUserWarning'
+import { banUser, addUserWarning } from './security/userAndConnexion/banAndAddUserWarning.js'
 
 //----------------------------------------
 // CTX CLASS

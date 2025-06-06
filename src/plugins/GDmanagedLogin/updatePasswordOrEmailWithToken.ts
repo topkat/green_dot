@@ -1,6 +1,6 @@
-import { db } from '../../db'
-import { decryptValidationToken } from './decryptValidationTokens'
-import { PluginUserConfig } from './config'
+import { db } from '../../db.js'
+import { decryptValidationToken } from './decryptValidationTokens.js'
+import { PluginUserConfig } from './config.js'
 
 
 

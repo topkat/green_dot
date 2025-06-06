@@ -1,5 +1,5 @@
-import { newPublicCtx } from '../ctx'
-import { models } from './models'
+import { newPublicCtx } from '../ctx.js'
+import { models } from './models.js'
 
 jest.mock('../helpers/getGreenDotConfigs', () => ({
     getMainConfig: () => ({

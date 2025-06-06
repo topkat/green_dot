@@ -1,16 +1,16 @@
 
 import { getId } from 'topkat-utils'
-import { userLoginReturnValidatorRaw } from './constants'
-import { _ } from '../../validator'
-import { MainDbName, ModelTypes } from '../../cache/dbs/index.generated'
-import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService'
-import { db } from '../../db'
-import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService'
-import { PluginUserConfig } from './config'
-import { JWTdataWrite, setConnexionTokens } from './userAuthenticationTokenService'
-import { applyMaskOnObjectForUser } from '../../databases/mongo/services/maskService'
-import { credentialManagementMailing } from './credentialManagementMailing'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { userLoginReturnValidatorRaw } from './constants.js'
+import { _ } from '../../validator.js'
+import { MainDbName, ModelTypes } from '../../cache/dbs/index.generated.js'
+import { ensureUserIsNotLocked } from '../../security/userAndConnexion/userLockService.js'
+import { db } from '../../db.js'
+import { comparePasswordAddAttemptAndLockIfNecessary } from './userPasswordService.js'
+import { PluginUserConfig } from './config.js'
+import { JWTdataWrite, setConnexionTokens } from './userAuthenticationTokenService.js'
+import { applyMaskOnObjectForUser } from '../../databases/mongo/services/maskService.js'
+import { credentialManagementMailing } from './credentialManagementMailing.js'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 
 
 

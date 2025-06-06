@@ -1,4 +1,4 @@
-import { MongoDaoParsed } from './types/mongoDbTypes'
+import { MongoDaoParsed } from './types/mongoDbTypes.js'
 
 const defaultDaoConfigMongo: MongoDaoParsed<any> = {
     type: 'mongo',

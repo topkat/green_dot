@@ -1,10 +1,10 @@
 
-import { svc } from '../../../service'
-import { db } from '../../../db'
+import { svc } from '../../../service.js'
+import { db } from '../../../db.js'
 import { getId } from 'topkat-utils'
-import { getMainConfig } from '../../../helpers/getGreenDotConfigs'
-import { _ } from '../../../validator'
-import { MainDbName } from '../../../cache/dbs/index.generated'
+import { getMainConfig } from '../../../helpers/getGreenDotConfigs.js'
+import { _ } from '../../../validator.js'
+import { MainDbName } from '../../../cache/dbs/index.generated.js'
 
 
 export function getRegisterUserDeviceService() {

@@ -3,18 +3,18 @@
 import 'typescript-generic-types' // imported here because this file is required independently in a build context
 import { C, urlPathJoin, kebabCase, camelCaseToWords, perfTimer } from 'topkat-utils'
 
-import { GenerateSDKparamsForService, GreenDotAppConfig, RouteFromSevicesConfigForGenerateSdk } from '../types/core.types'
-import generateAllRouteFile from './generateAllRoutesFile'
-import { generateSDKconfigForServices } from './generateSDK/generateSDKconfigForServices'
-import { getDaoRouteDescriptionFromDaoConfigs } from './helpers/getDaoRouteDescriptionFromDaoConfigs'
-import { getAllTargetRolesForService } from './helpers/getAllTargetRolesForService'
-import { parseForClause } from '../security/helpers/parseForClause'
-import { generateSwaggerDoc } from './generateSwaggerDoc'
-import { getMainConfig } from '../helpers/getGreenDotConfigs'
-import { createDaoRouteConfigPerPlatformForSdk, createServiceRouteConfigPerPlatformForSdk } from './generateSDK/generateSDKgetRouteConfigs'
-import { getActiveAppServices } from '../helpers/getProjectServices'
-import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
-import { GDpathConfig } from '../helpers/getProjectPaths'
+import { GenerateSDKparamsForService, GreenDotAppConfig, RouteFromSevicesConfigForGenerateSdk } from '../types/core.types.js'
+import generateAllRouteFile from './generateAllRoutesFile.js'
+import { generateSDKconfigForServices } from './generateSDK/generateSDKconfigForServices.js'
+import { getDaoRouteDescriptionFromDaoConfigs } from './helpers/getDaoRouteDescriptionFromDaoConfigs.js'
+import { getAllTargetRolesForService } from './helpers/getAllTargetRolesForService.js'
+import { parseForClause } from '../security/helpers/parseForClause.js'
+import { generateSwaggerDoc } from './generateSwaggerDoc.js'
+import { getMainConfig } from '../helpers/getGreenDotConfigs.js'
+import { createDaoRouteConfigPerPlatformForSdk, createServiceRouteConfigPerPlatformForSdk } from './generateSDK/generateSDKgetRouteConfigs.js'
+import { getActiveAppServices } from '../helpers/getProjectServices.js'
+import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos.js'
+import { GDpathConfig } from '../helpers/getProjectPaths.js'
 
 export async function generateMainBackendFiles(
     appConfig: GreenDotAppConfig & GDpathConfig & {

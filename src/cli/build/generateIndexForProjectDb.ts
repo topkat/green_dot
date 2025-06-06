@@ -2,7 +2,7 @@
 
 import Path from 'path'
 import fs from 'fs-extra'
-import { getProjectPaths } from '../../helpers/getProjectPaths'
+import { getProjectPaths } from '../../helpers/getProjectPaths.js'
 import glob from 'fast-glob'
 import { C, capitalize1st } from 'topkat-utils'
 
@@ -34,7 +34,7 @@ export async function generateIndexForProjectDb() {
         const relativeToRoot = Path.relative(folderPath, file).replace('.ts', '')
 
         if (isDefault) {
-          topOfFile += `import _defaultDao from './${relativeToRoot}'\n`
+          topOfFile += `import _defaultDao from './${relativeToRoot}.js'\n`
           daoVar += `  _defaultDao,\n`
         } else if (match) {
 
@@ -42,7 +42,7 @@ export async function generateIndexForProjectDb() {
           const moduleNameCapital = capitalize1st(moduleName)
           const moduleTypeCapital = capitalize1st(moduleType)
 
-          topOfFile += `import ${moduleName}${moduleTypeCapital} from './${relativeToRoot}'\n`
+          topOfFile += `import ${moduleName}${moduleTypeCapital} from './${relativeToRoot}.js'\n`
 
           if (moduleType === 'model') {
             types += `export type ${moduleNameCapital} = typeof ${moduleName}Model.tsTypeRead\n` +

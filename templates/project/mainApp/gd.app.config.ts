@@ -2,8 +2,10 @@
 
 
 import { GreenDotAppConfig, cliIntro, env, $$importsFromGreenDot } from 'green_dot'
-import { version } from '../package.json'
 import { ENV } from 'topkat-utils'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+const { version } = require('../package.json')
 
 const {
   SERVER_PORT = 9086,

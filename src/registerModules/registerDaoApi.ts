@@ -1,21 +1,21 @@
 
 import { Application } from 'express'
-import { generateLoginMw } from '../security/login.middleware'
-import { daoValidators } from '../databases/mongo/types/mongoDaoTypes'
-import { hookInterpreterExpose } from '../databases/0_hooks/hookInterpreterExpose'
-import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware'
+import { generateLoginMw } from '../security/login.middleware.js'
+import { daoValidators } from '../databases/mongo/types/mongoDaoTypes.js'
+import { hookInterpreterExpose } from '../databases/0_hooks/hookInterpreterExpose.js'
+import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware.js'
 
-import { Definition, DaoGenericMethods } from '../types/core.types'
-import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDbTypes'
+import { Definition, DaoGenericMethods } from '../types/core.types.js'
+import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDbTypes.js'
 
 import { isset } from 'topkat-utils'
-import { rateLimiterMiddleware } from '../security/serviceRouteRateLimiter'
-import { getApiEndpointsPerRolesFromDao } from '../databases/helpers/getApiEndpointsPerRolesFromDao'
-import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../helpers/getProjectModelsAndDaos'
-import { dbIdsToDbNames } from '../databases/dbIdsToDbNames'
+import { rateLimiterMiddleware } from '../security/serviceRouteRateLimiter.js'
+import { getApiEndpointsPerRolesFromDao } from '../databases/helpers/getApiEndpointsPerRolesFromDao.js'
+import { getProjectDatabaseDaosForModel, getProjectDatabaseModels } from '../helpers/getProjectModelsAndDaos.js'
+import { dbIdsToDbNames } from '../databases/dbIdsToDbNames.js'
 
-import { dbs } from '../db'
-import { env } from '../helpers/getEnv'
+import { dbs } from '../db.js'
+import { env } from '../helpers/getEnv.js'
 
 export async function registerDaoApi(
     app: Application,

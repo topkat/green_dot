@@ -1,6 +1,6 @@
-import { defaultDbName, MainDbName } from '../../cache/dbs/index.generated'
-import { RateLimiterConfig } from '../../security/serviceRouteRateLimiter'
-import { _ } from '../../validator'
+import { defaultDbName, MainDbName } from '../../cache/dbs/index.generated.js'
+import { RateLimiterConfig } from '../../security/serviceRouteRateLimiter.js'
+import { _ } from '../../validator.js'
 
 
 

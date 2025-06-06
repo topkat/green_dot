@@ -1,8 +1,8 @@
 import { C, getId } from 'topkat-utils'
-import { db } from '../../db'
-import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { GreenDotConfigRateLimiterInfos } from '../../types/mainConfig.types'
-import { GD_serverBlacklistModel } from './GD_serverBlackList.model'
+import { db } from '../../db.js'
+import { getActiveAppConfig, getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { GreenDotConfigRateLimiterInfos } from '../../types/mainConfig.types.js'
+import { GD_serverBlacklistModel } from './GD_serverBlackList.model.js'
 
 type GD_serverBlackList = typeof GD_serverBlacklistModel.tsType
 

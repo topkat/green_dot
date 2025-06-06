@@ -7,17 +7,18 @@ import {
   greenDotCliIntro,
   userInputConfirmLog,
   userInputKeyHandler,
-} from './helpers/cli'
-import { getProjectPaths, greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
-import { luigi } from './helpers/luigi.bot'
-import { onFileChange } from './helpers/fileWatcher'
-import { intro as testCliIntro } from '../restTest/rest-test-ascii-display'
-import { GreenDotApiTestsConfig, TestSuite } from '../restTest/rest-test-types'
+} from './helpers/cli.js'
+import { getProjectPaths, greenDotCacheModuleFolder } from '../helpers/getProjectPaths.js'
+import { luigi } from './helpers/luigi.bot.js'
+import { onFileChange } from './helpers/fileWatcher.js'
+import { intro as testCliIntro } from '../restTest/rest-test-ascii-display.js'
+import { GreenDotApiTestsConfig, TestSuite } from '../restTest/rest-test-types.js'
 import fs from 'fs-extra'
 import Path from 'path'
-// import { testRunner } from '../restTest/rest-test-runner'
-import type { GreenDotConfig } from '../types/mainConfig.types'
-import { parentProcessExitCodes } from '../constants'
+// import { testRunner } from '../restTest/rest-test-runner.js'
+import type { GreenDotConfig } from '../types/mainConfig.types.js'
+import { parentProcessExitCodes } from '../constants.js'
+import { safeImport } from '../helpers/safeImports.js'
 
 
 let watcherOn = false
@@ -235,14 +236,14 @@ async function findTestPaths() {
     throw new Error('Test config file do not exist. Make sure there is a testIndex.generated.ts in one of your app folder')
   }
 
-  const { default: mainConfig2 } = await import(mainConfig.path) as { default: GreenDotConfig } // IMPORT GLOBAL TYPES
+  const { default: mainConfig2 } = await safeImport(mainConfig.path) as { default: GreenDotConfig } // IMPORT GLOBAL TYPES
 
   process.env.IS_PROD_ENV = mainConfig2.isProdEnv?.toString()
   process.env.IS_TEST_ENV = mainConfig2.isTestEnv?.toString()
 
-  const { testConfig } = await import(testConfigPath) as { testConfig: GreenDotApiTestsConfig }
+  const { testConfig } = await safeImport(testConfigPath) as { testConfig: GreenDotApiTestsConfig }
 
-  const tests = await import(testIndexPath) as { initApp: () => any, allTests: { [fileName: string]: TestSuite } }
+  const tests = await safeImport(testIndexPath) as { initApp: () => any, allTests: { [fileName: string]: TestSuite } }
 
   await tests.initApp()
 

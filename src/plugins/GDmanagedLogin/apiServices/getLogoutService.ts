@@ -1,5 +1,5 @@
-import { svc } from '../../../service'
-import { revokeToken } from '../userAuthenticationTokenService'
+import { svc } from '../../../service.js'
+import { revokeToken } from '../userAuthenticationTokenService.js'
 
 
 

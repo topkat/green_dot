@@ -1,10 +1,10 @@
-import { generateIndexForProjectApp } from './build/generateIndexForProjectApp'
-import { generateIndexForProjectDb } from './build/generateIndexForProjectDb'
-import { createNewTask } from './helpers/createNewTask'
-import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos'
+import { generateIndexForProjectApp } from './build/generateIndexForProjectApp.js'
+import { generateIndexForProjectDb } from './build/generateIndexForProjectDb.js'
+import { createNewTask } from './helpers/createNewTask.js'
+import { initProjectAndDaosCache } from '../helpers/getProjectModelsAndDaos.js'
 import { C } from 'topkat-utils'
-import { execWaitForOutput } from 'topkat-utils/backend'
-import { generateDefaultSafeIndexDbCacheFile } from './build/generateIndexDefaultSafeDbIndexCache'
+import { execWaitForOutput } from 'topkat-utils/backend.js'
+import { generateDefaultSafeIndexDbCacheFile } from './build/generateIndexDefaultSafeDbIndexCache.js'
 
 
 
@@ -22,14 +22,14 @@ export async function buildCommand({ tsc = true, publishSdks = false } = {}) {
     ])
   })
 
-  const { initGreenDotConfigs, getMainConfig } = await import('../helpers/getGreenDotConfigs')
+  const { initGreenDotConfigs, getMainConfig } = await import('../helpers/getGreenDotConfigs.js')
 
   // From Here, we execute some project code so it may break more easily
   await build.step(`Getting green_dot configs`, async () => await initGreenDotConfigs(false), { watch: true, cleanOnError: true })
 
 
-  const { getProjectPaths } = await import('../helpers/getProjectPaths')
-  const { autoIndex } = await import('../services/autoIndex')
+  const { getProjectPaths } = await import('../helpers/getProjectPaths.js')
+  const { autoIndex } = await import('../services/autoIndex.js')
 
   const mainConfig = getMainConfig()
   const { mainConfig: mainConfigPath } = await getProjectPaths()
@@ -43,9 +43,9 @@ export async function buildCommand({ tsc = true, publishSdks = false } = {}) {
     })
   }
 
-  const { generateFilesForCachedDb } = await import('./build/generateFilesForCachedDb')
-  const { generateSdk } = await import('../generate/generateSDK/generateSDK')
-  const { generateIndexForDbTypeFiles } = await import('./build/generateIndexForDbIndex')
+  const { generateFilesForCachedDb } = await import('./build/generateFilesForCachedDb.js')
+  const { generateSdk } = await import('../generate/generateSDK/generateSDK.js')
+  const { generateIndexForDbTypeFiles } = await import('./build/generateIndexForDbIndex.js')
 
   await build.step(`Generating SDKs defaults`, async () => await generateSdk(true))
 

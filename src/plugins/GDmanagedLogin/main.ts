@@ -1,7 +1,7 @@
-import { documentation, docOneLine } from './doc'
-import { newPlugin } from '../newPlugin'
-import { GDmanagedLogin, Name } from './GDmanagedLogin'
-import { defaultConfig, PluginUserConfig } from './config'
+import { documentation, docOneLine } from './doc.js'
+import { newPlugin } from '../newPlugin.js'
+import { GDmanagedLogin, Name } from './GDmanagedLogin.js'
+import { defaultConfig, PluginUserConfig } from './config.js'
 
 export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
   name: 'GDmanagedLogin',
@@ -35,7 +35,7 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
   plugin: GDmanagedLogin,
 })
 
-export { JWTdata } from './userAuthenticationTokenService'
-export { GDmanagedLogin } from './GDmanagedLogin'
-export { GDmanagedLoginSendEmailFunction, GDmanagedLoginSendEmailUpdatedMailConfirmationFunction } from './config'
-export { gdManagedLoginEmailTypes, GDmanagedLoginEmailTypes } from './constants'
+export { JWTdata } from './userAuthenticationTokenService.js'
+export { GDmanagedLogin } from './GDmanagedLogin.js'
+export { GDmanagedLoginSendEmailFunction, GDmanagedLoginSendEmailUpdatedMailConfirmationFunction } from './config.js'
+export { gdManagedLoginEmailTypes, GDmanagedLoginEmailTypes } from './constants.js'

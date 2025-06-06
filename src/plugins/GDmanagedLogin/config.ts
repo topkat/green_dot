@@ -1,7 +1,7 @@
 
-import { ModelTypes } from '../../cache/dbs/index.generated'
-import { GDmanagedLoginEmailTypes } from './constants'
-import { setConnexionTokens } from './userAuthenticationTokenService'
+import { ModelTypes } from '../../cache/dbs/index.generated.js'
+import { GDmanagedLoginEmailTypes } from './constants.js'
+import { setConnexionTokens } from './userAuthenticationTokenService.js'
 
 
 

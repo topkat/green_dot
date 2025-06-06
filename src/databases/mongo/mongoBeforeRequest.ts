@@ -1,15 +1,15 @@
 
-import { LocalConfigParsed } from './types/mongoDbTypes'
-import { hookInterpreterExpose } from '../0_hooks/hookInterpreterExpose'
-import { mongoFilterHookInterpreter } from './hooks/mongoFilterHookInterpreter'
-import { mongoSanitizeFilter } from './services/mongoSanitizeFilter'
+import { LocalConfigParsed } from './types/mongoDbTypes.js'
+import { hookInterpreterExpose } from '../0_hooks/hookInterpreterExpose.js'
+import { mongoFilterHookInterpreter } from './hooks/mongoFilterHookInterpreter.js'
+import { mongoSanitizeFilter } from './services/mongoSanitizeFilter.js'
 
-import { unPopulate } from './services/populateService'
-import { applyMaskIncludingOnPopulatedFieldsRecursive } from './services/maskService'
-import event from '../../event'
+import { unPopulate } from './services/populateService.js'
+import { applyMaskIncludingOnPopulatedFieldsRecursive } from './services/maskService.js'
+import event from '../../event.js'
 
 import { getId } from 'topkat-utils'
-import { getProjectDatabaseModels } from '../../helpers/getProjectModelsAndDaos'
+import { getProjectDatabaseModels } from '../../helpers/getProjectModelsAndDaos.js'
 
 export async function mongoBeforeRequest(
     ctx: Ctx,

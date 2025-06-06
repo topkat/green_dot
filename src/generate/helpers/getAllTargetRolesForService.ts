@@ -1,6 +1,6 @@
 
 import { asArray, pushIfNotExist } from 'topkat-utils'
-import { ServiceClean } from '../../types/core.types'
+import { ServiceClean } from '../../types/core.types.js'
 
 export function getAllTargetRolesForService(
   allRoles: readonly string[],

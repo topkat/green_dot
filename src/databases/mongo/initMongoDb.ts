@@ -1,14 +1,14 @@
 
 import mongoose from 'mongoose'
-import { error } from '../../error'
-import { mongoCreateDao } from './mongoCreateDao'
-import { MongoDbConfigModels, MongoDbConfig, Definition, DbConfigsObj } from '../../types/core.types'
-import { MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes'
+import { error } from '../../error.js'
+import { mongoCreateDao } from './mongoCreateDao.js'
+import { MongoDbConfigModels, MongoDbConfig, Definition, DbConfigsObj } from '../../types/core.types.js'
+import { MongoDaoParsed, DaoMethodsMongo } from './types/mongoDbTypes.js'
 import { C, ENV, objEntries } from 'topkat-utils'
-import { luigi } from '../../cli/helpers/luigi.bot'
-import { event } from '../../event'
-import type { AllDbIds, DbIds } from '../../cache/dbs/index.generated'
-import { newSystemCtx } from '../../ctx'
+import { luigi } from '../../cli/helpers/luigi.bot.js'
+import { event } from '../../event.js'
+import type { AllDbIds, DbIds } from '../../cache/dbs/index.generated.js'
+import { newSystemCtx } from '../../ctx.js'
 
 const { NODE_ENV } = ENV()
 const env: Env = NODE_ENV

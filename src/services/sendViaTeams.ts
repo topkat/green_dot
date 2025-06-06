@@ -2,7 +2,7 @@
 import { sendTeamsMessage } from 'send-teams-message'
 
 import { removeCircularJSONstringify, C } from 'topkat-utils'
-import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs.js'
 
 
 export async function sendErrorOnTeams(ctx, code: number, msg: string, extraInfos: Record<string, any>, stackTrace?: string) {

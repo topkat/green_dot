@@ -1,13 +1,13 @@
 import Path from 'path'
 import { Express } from 'express'
-import { getActiveAppConfig, getMainConfig } from './helpers/getGreenDotConfigs'
-import { generateLoginMw } from './security/login.middleware'
+import { getActiveAppConfig, getMainConfig } from './helpers/getGreenDotConfigs.js'
+import { generateLoginMw } from './security/login.middleware.js'
 import { C, DescriptiveError, urlPathJoin } from 'topkat-utils'
-import { rateLimiter } from './security/serviceRouteRateLimiter'
+import { rateLimiter } from './security/serviceRouteRateLimiter.js'
 import swaggerUi from 'swagger-ui-express'
-import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware'
-import { generateMainBackendFiles } from './generate/generateMainBackendFiles'
-import { greenDotCacheModuleFolder } from './helpers/getProjectPaths'
+import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware.js'
+import { generateMainBackendFiles } from './generate/generateMainBackendFiles.js'
+import { greenDotCacheModuleFolder } from './helpers/getProjectPaths.js'
 
 
 

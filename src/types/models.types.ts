@@ -1,6 +1,6 @@
 
 
-import { DaoMethodsMongo, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes'
+import { DaoMethodsMongo, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes.js'
 import mongoose from 'mongoose'
 import { Definition } from 'good-cop'
 

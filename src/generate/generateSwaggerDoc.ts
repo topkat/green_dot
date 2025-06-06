@@ -1,10 +1,10 @@
 
 import Path from 'path'
 import fs from 'fs-extra'
-import { RouteConfig, RouteConfigPerPlatforms } from './generateSDK/generateSDKgetRouteConfigs'
-import { getMainConfig } from '../helpers/getGreenDotConfigs'
-import { getActiveAppConfig } from '../helpers/getGreenDotConfigs'
-import { greenDotCacheModuleFolder } from '../helpers/getProjectPaths'
+import { RouteConfig, RouteConfigPerPlatforms } from './generateSDK/generateSDKgetRouteConfigs.js'
+import { getMainConfig } from '../helpers/getGreenDotConfigs.js'
+import { getActiveAppConfig } from '../helpers/getGreenDotConfigs.js'
+import { greenDotCacheModuleFolder } from '../helpers/getProjectPaths.js'
 import { C } from 'topkat-utils'
 import { _ } from 'good-cop'
 

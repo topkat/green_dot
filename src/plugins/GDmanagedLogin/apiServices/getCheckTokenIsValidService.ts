@@ -1,8 +1,8 @@
 import { _ } from 'good-cop'
-import { svc } from '../../../service'
-import { checkOrUpdateEmailOrPasswordRateLimiter, gdManagedLoginEmailTypes } from '../constants'
-import { decryptValidationToken } from '../decryptValidationTokens'
-import { PluginUserConfig } from '../config'
+import { svc } from '../../../service.js'
+import { checkOrUpdateEmailOrPasswordRateLimiter, gdManagedLoginEmailTypes } from '../constants.js'
+import { decryptValidationToken } from '../decryptValidationTokens.js'
+import { PluginUserConfig } from '../config.js'
 
 
 

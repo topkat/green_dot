@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import Path from 'path'
-import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
+import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths.js'
 import { C } from 'topkat-utils'
 
 

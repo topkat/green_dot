@@ -1,11 +1,11 @@
 
 
-import { RouteFromDaoConfigForGenerateSdk } from '../../types/core.types'
+import { RouteFromDaoConfigForGenerateSdk } from '../../types/core.types.js'
 
-import { getApiEndpointsPerRolesFromDao } from '../../databases/helpers/getApiEndpointsPerRolesFromDao'
+import { getApiEndpointsPerRolesFromDao } from '../../databases/helpers/getApiEndpointsPerRolesFromDao.js'
 import { objEntries, pushIfNotExist } from 'topkat-utils'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { getProjectDatabaseDaos } from '../../helpers/getProjectModelsAndDaos'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { getProjectDatabaseDaos } from '../../helpers/getProjectModelsAndDaos.js'
 
 
 

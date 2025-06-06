@@ -1,6 +1,6 @@
 
 import 'typescript-generic-types'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query.js'
 
 
 export type SdkError = {

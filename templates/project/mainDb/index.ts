@@ -1,1 +1,1 @@
-export * from './index.generated'
+export * from './index.generated.js'

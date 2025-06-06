@@ -1,7 +1,7 @@
 import { input, select, checkbox, confirm, search, number, Separator } from '@inquirer/prompts'
 import { asArray, C, randomItemInArray } from 'topkat-utils'
-import { wrapCliText, terminalCharSize } from './cli'
-import { openInDefaultEditor } from './openInDefaultEditor'
+import { wrapCliText, terminalCharSize } from './cli.js'
+import { openInDefaultEditor } from './openInDefaultEditor.js'
 
 export const luigi = {
   greet() {

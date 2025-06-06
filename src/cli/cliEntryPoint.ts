@@ -6,7 +6,7 @@
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
 import { Command } from 'commander'
-import { clearCli, cliArgsToEnv, greenDotCliIntro } from './helpers/cli.js'
+import { cliArgsToEnv, greenDotCliIntro } from './helpers/cli.js'
 import type { ChildProcessCommands } from './childProcessEntryPoint.js' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager.js'
 import { C } from 'topkat-utils'
@@ -18,8 +18,6 @@ import { dirname, join } from 'path'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-
-const tsNodePath = 'node --loader ts-node/esm'
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
@@ -112,17 +110,17 @@ async function start() {
     do {
       next = await new Promise(resolve => {
         try {
-          const programPath = runFromDist ? 'node' : tsNodePath
+          const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--loader', 'ts-node/esm']
 
           const baseDir = runFromDist
             ? __dirname.replace(`(dist)?${join('src')}`, `dist${join('src')}`)
             : __dirname.replace(`dist${join('')}`, '')
 
           const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : `/childProcessEntryPoint.`) + (runFromDist ? 'js' : 'ts')
-          console.log(`COMM`, programPath + ' ' + command + ' ' + _command)
+
           startChildProcess(
-            programPath,
-            [command, _command],
+            'node',
+            [...additionalTsNodeArgsFirstArgs, command, _command],
             code => {
               if (!code || code === parentProcessExitCodes.exit) {
                 // SUCCESS EXIT

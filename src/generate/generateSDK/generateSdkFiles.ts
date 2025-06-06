@@ -1,13 +1,13 @@
 
 import fs from 'fs-extra'
 import Path, { dirname } from 'path'
-import { displayObjectClean } from '../helpers/displayObjectClean'
-import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
-import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
-import { getMainConfig } from '../../helpers/getGreenDotConfigs'
-import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbIndex'
-import { commonJsTsConfig, compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler'
-import { generateFilesForCachedDb } from '../../cli/build/generateFilesForCachedDb'
+import { displayObjectClean } from '../helpers/displayObjectClean.js'
+import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates.js'
+import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types.js'
+import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
+import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbIndex.js'
+import { commonJsTsConfig, compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler.js'
+import { generateFilesForCachedDb } from '../../cli/build/generateFilesForCachedDb.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -74,11 +74,11 @@ export async function generateSdkFiles(
 
             const lastBit = absolute.split(Path.sep).pop()
 
-            await compileTypeScriptProject({
-                tsConfig: commonJsTsConfig,
-                projectPath: absolute,
-                outputPath: Path.join(sdkRoot, lastBit, 'cjs'),
-            })
+            // await compileTypeScriptProject({
+            //     tsConfig: commonJsTsConfig,
+            //     projectPath: absolute,
+            //     outputPath: Path.join(sdkRoot, lastBit, 'cjs'),
+            // })
 
             await compileTypeScriptProject({
                 tsConfig: esmModuleTsConfig,
