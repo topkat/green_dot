@@ -1,15 +1,17 @@
 import { luigi } from '../helpers/luigi.bot'
 import { templater } from 'simple-file-templater'
-import Path from 'path'
+import Path, { dirname } from 'path'
 import { allPluginConfigs } from '../../plugins/pluginSystem'
 import { C, camelCaseToWords } from 'topkat-utils'
 import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugins/newPlugin'
 import { execWaitForOutput } from 'topkat-utils/backend'
 import { version as gdVersion } from '../../../package.json'
 import { clearCli, greenDotCliIntro } from '../helpers/cli'
+import { fileURLToPath } from 'url'
 
 
-
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 
 
@@ -69,7 +71,7 @@ export async function cliGenerateProject() {
   //    ╩   ╚══╝ ╩  ╩ ╩    ╚══╝ ╩  ╩   ╩   ═╩═ ╩ ╚╩ ╚══╝
 
   clearCli()
-  greenDotCliIntro({ subTitle: 'GENERATE' })
+  await greenDotCliIntro({ subTitle: 'GENERATE' })
   luigi.info('Generating project files...')
 
   await templater(
@@ -93,13 +95,13 @@ export async function cliGenerateProject() {
   )
 
   clearCli()
-  greenDotCliIntro({ subTitle: 'INSTALL DEPENDENCIES' })
+  await greenDotCliIntro({ subTitle: 'INSTALL DEPENDENCIES' })
   luigi.info('Running yarn...')
 
   await execWaitForOutput('yarn', { execOptions: { cwd: projectRoot }, nbSecondsBeforeKillingProcess: 300 })
 
   clearCli()
-  greenDotCliIntro({ subTitle: 'BUILDING PROJECT' })
+  await greenDotCliIntro({ subTitle: 'BUILDING PROJECT' })
   luigi.info('Running yarn build...')
 
   await execWaitForOutput('yarn build', {
@@ -109,7 +111,7 @@ export async function cliGenerateProject() {
   })
 
   clearCli()
-  greenDotCliIntro({ subTitle: 'GENERATE' })
+  await greenDotCliIntro({ subTitle: 'GENERATE' })
   luigi.info('Opening files in default editor...')
 
   await luigi.openFile(Path.resolve(projectRoot, './gd.config.ts'))

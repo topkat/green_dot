@@ -1,8 +1,12 @@
 
-import Path from 'path'
+import Path, { dirname } from 'path'
 import fs from 'fs-extra'
 import glob from 'fast-glob'
 import { C } from 'topkat-utils'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const isDist = process.env.RUN_FROM_DIST === 'true' && __dirname.includes('dist')
 const extension = isDist ? 'js' : 'ts'

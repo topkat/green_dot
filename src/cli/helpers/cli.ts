@@ -1,6 +1,13 @@
 // /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 import { C, minMax } from 'topkat-utils'
-import pkg from '../../../package.json'
+import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../../../package.json'), 'utf-8'))
+const { version } = packageJson
 
 
 export const terminalCharSize = minMax(process.stdout.columns || 40, 30, 80)
@@ -20,7 +27,7 @@ export function greenDotCliIntro(param: Parameters<typeof cliIntro>[0] = {}) {
   return cliIntro({
     title: C.green('◉') + ' green_dot',
     subTitle: 'cli',
-    rightText: 'v' + pkg.version,
+    rightText: 'v' + version,
     ...param,
   })
 }

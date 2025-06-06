@@ -33,7 +33,7 @@ export async function startDevServerCommand() {
     autoFindAndInitActiveAppAndDbPaths(folder)
 
     clearCli()
-    greenDotCliIntro()
+    await greenDotCliIntro()
   }
 
   process.stdin.setRawMode?.(true)

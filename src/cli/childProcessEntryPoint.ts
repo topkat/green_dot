@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node --loader ts-node/esm
 
 import '../types/global.types'
 import { buildCommand } from './build.command'

@@ -1,6 +1,6 @@
 
 import fs from 'fs-extra'
-import Path from 'path'
+import Path, { dirname } from 'path'
 import { MainTypes, Definition } from 'good-cop'
 import { C, capitalize1st, includes } from 'topkat-utils'
 
@@ -11,6 +11,11 @@ import { _ } from '../../validator'
 import { getDaoRouteDescriptionFromDaoConfigs } from '../helpers/getDaoRouteDescriptionFromDaoConfigs'
 import { generateSdkConfigDefault } from './generateSDKconfigShared'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
 
 export type RouteConfig = {
     queryName: string,

@@ -1,15 +1,17 @@
 
 
 import fs from 'fs-extra'
-import Path from 'path'
+import Path, { dirname } from 'path'
 import { templater } from 'simple-file-templater'
 import { C, objEntries } from 'topkat-utils'
 import type { AllMethodsObjectForSdk } from '../../types/generateSdk.types'
 import type { GreenDotConfig } from '../../types/mainConfig.types'
 import { compileTypeScriptProject } from '../../helpers/tsCompiler'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths'
+import { fileURLToPath } from 'url'
 
-
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 const dirNameBase = __dirname.replace(Path.sep + 'dist' + Path.sep, Path.sep)
 
 export async function generateSdkFolderFromTemplates(

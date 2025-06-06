@@ -1,21 +1,25 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node --loader ts-node/esm
 // --showConfig
+
 
 // /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
-import { app, Command } from 'command-line-application'
-import { clearCli, cliArgsToEnv, greenDotCliIntro } from './helpers/cli'
-import type { ChildProcessCommands } from './childProcessEntryPoint' // is not imported at runtime
-import { startChildProcess } from './helpers/processManager'
+import { Command } from 'commander'
+import { clearCli, cliArgsToEnv, greenDotCliIntro } from './helpers/cli.js'
+import type { ChildProcessCommands } from './childProcessEntryPoint.js' // is not imported at runtime
+import { startChildProcess } from './helpers/processManager.js'
 import { C } from 'topkat-utils'
-import { onFileChange } from './helpers/fileWatcher'
-import { parentProcessExitCodes } from '../constants'
-import Path from 'path'
+import { onFileChange } from './helpers/fileWatcher.js'
+import { parentProcessExitCodes } from '../constants.js'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
-const [tsNodePath] = process.argv
+const tsNodePath = 'node --loader ts-node/esm'
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
@@ -63,24 +67,39 @@ const commands = {
 
 async function start() {
   try {
+    // clearCli()
 
-    clearCli()
+    const program = new Command()
+    program
+      .name('dot')
+      .description('dot CLI from green_dot backend framework')
 
-    const { _command, ...args } = app(
-      {
-        name: 'dot',
-        description: 'dot CLI from green_dot backend framework',
-        examples: Object.entries(commands).map(([name, command]) => `dot ${name} # ${command.description}`),
-        commands: Object.entries(commands).map(([name, command]) => ({ name, ...command })),
-      }, {
-      error: 'throw'
-    }) as { _command: keyof typeof commands }
+    // Add all commands
+    Object.entries(commands).forEach(([name, command]) => {
+      const cmd = program
+        .command(name)
+        .description(command.description)
 
-    greenDotCliIntro({ subTitle: _command.toUpperCase() })
+      // Add options if they exist
+      if ('options' in command && command.options) {
+        command.options.forEach(option => {
+          if (option.type === Boolean) {
+            cmd.option(`--${option.name}`, option.description)
+          } else {
+            cmd.option(`--${option.name} <value>`, option.description)
+          }
+        })
+      }
+    })
 
-    // const c = commands[_command] as any as Required<CommandPlus[keyof CommandPlus]>
-    const runFromDist = _command === 'start' //_command === 'build'
+    // Parse arguments
+    program.parse(process.argv)
+    const _command = program.args[0] as keyof typeof commands
+    const args = program.opts()
 
+    await greenDotCliIntro({ subTitle: _command.toUpperCase() })
+
+    const runFromDist = _command === 'start'
 
     process.env.GREEN_DOT_INPUT_COMMAND = _command
     process.env.RUN_FROM_DIST = runFromDist.toString()
@@ -95,10 +114,12 @@ async function start() {
         try {
           const programPath = runFromDist ? 'node' : tsNodePath
 
-          const baseDir = runFromDist ? __dirname.replace(`(dist)?${Path.sep}src`, `dist${Path.sep}src`) : __dirname.replace('dist' + Path.sep, '')
+          const baseDir = runFromDist
+            ? __dirname.replace(`(dist)?${join('src')}`, `dist${join('src')}`)
+            : __dirname.replace(`dist${join('')}`, '')
 
           const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : `/childProcessEntryPoint.`) + (runFromDist ? 'js' : 'ts')
-
+          console.log(`COMM`, programPath + ' ' + command + ' ' + _command)
           startChildProcess(
             programPath,
             [command, _command],
@@ -161,6 +182,12 @@ start()
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-type CommandPlus = Record<ChildProcessCommands | 'start', Omit<Command, 'name'> & {
+type CommandPlus = Record<ChildProcessCommands | 'start', {
+  description: string
   executeWith?: 'bun' | 'ts-node'
+  options?: Array<{
+    name: string
+    description: string
+    type: any
+  }>
 }>

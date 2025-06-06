@@ -222,7 +222,7 @@ async function findTestPaths() {
     luigi.confirm()
 
     clearCli()
-    greenDotCliIntro()
+    await greenDotCliIntro()
   }
 
   const testIndexPath = appConfigs.find(appConf => appConf.testConfigPath === testConfigPath).testIndexPath

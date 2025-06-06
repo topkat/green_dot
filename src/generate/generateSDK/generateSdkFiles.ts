@@ -1,6 +1,6 @@
 
 import fs from 'fs-extra'
-import Path from 'path'
+import Path, { dirname } from 'path'
 import { displayObjectClean } from '../helpers/displayObjectClean'
 import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates'
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types'
@@ -8,7 +8,10 @@ import { getMainConfig } from '../../helpers/getGreenDotConfigs'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbIndex'
 import { commonJsTsConfig, compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler'
 import { generateFilesForCachedDb } from '../../cli/build/generateFilesForCachedDb'
+import { fileURLToPath } from 'url'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 const dirNameBase = __dirname.replace(Path.sep + 'dist' + Path.sep, Path.sep)
 
 export async function generateSdkFiles(
