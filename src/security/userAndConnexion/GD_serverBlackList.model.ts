@@ -1,4 +1,4 @@
-import { _ } from 'good-cop'
+import { _ } from '../../lib/good-cop/src/index.js'
 
 // TODO initialize that if user is not using custom blacklist
 export const GD_serverBlacklistModel = _.mongoModel(['creationDate', 'lastUpdateDate'], {

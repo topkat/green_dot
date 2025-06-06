@@ -2,17 +2,16 @@
 
 import { type ModelsWithDbNamesAndReadWrite, type MainDbName, type AllDbIds, type DbIds, defaultDbName } from './cache/dbs/index.generated.js'
 import { error } from './error.js'
-import { getMainConfig, getDbConfigs } from './helpers/getGreenDotConfigs.js'
+import { getDbConfigs } from './helpers/getGreenDotConfigs.js'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes.js'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb.js'
-import { DefinitionObjChild, ModelReadWrite } from 'good-cop'
 import { C, objEntries, timeout } from 'topkat-utils'
 import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos.js'
 
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model.js'
 import { GD_deviceModel } from './security/userAndConnexion/GD_device.model.js'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames.js'
-import { InferTypeRead, InferTypeWrite } from 'good-cop'
+import type { DefinitionObjChild, ModelReadWrite, InferTypeRead, InferTypeWrite } from './lib/good-cop/src/definitionTypes.js'
 
 type InferTypeRW<T extends DefinitionObjChild> = { Read: InferTypeRead<T>, Write: InferTypeWrite<T> }
 

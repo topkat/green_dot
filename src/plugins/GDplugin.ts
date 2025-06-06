@@ -1,7 +1,7 @@
 import { ErrorObject } from '../error.js'
 import { svc } from '../service.js'
 import { GreenDotAppConfig } from '../types/appConfig.types.js'
-import { GenericDef } from 'good-cop'
+import { GenericDef } from '../lib/good-cop/src/index.js'
 
 export abstract class GDplugin<Name extends string> {
 

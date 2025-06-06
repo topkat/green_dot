@@ -1,3 +1,4 @@
+
 import 'typescript-generic-types'
 import './types/global.types.js'
 
@@ -23,7 +24,10 @@ export { getApiEndpointsPerRolesFromDao } from './databases/helpers/getApiEndpoi
 
 export * from './databases/mongo/types/mongoDbTypes.js'
 
-// Re-export good-cop types with explicit type exports
+export type { RateLimiterConfig } from './security/serviceRouteRateLimiter.js'
+
+export { makeApiCall } from './services/makeApiCall.js'
+
 export type {
   InferTypeRead,
   InferTypeWrite,
@@ -32,8 +36,7 @@ export type {
   GenericDef,
   DefinitionPartial,
   DefCtx
-} from 'good-cop'
-
+} from './lib/good-cop/src/index.js'
 // Export the validator instance
 export { _ } from './validator.js'
 

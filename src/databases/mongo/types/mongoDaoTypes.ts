@@ -24,8 +24,8 @@
 
 import { ModelReadWrite, ServiceDocObject } from '../../../types/core.types.js'
 import { requestConfigReadEXPOSED, requestConfigGetOne, requestConfigWrite } from './mongoDbTypes.js'
-import type { Definition, GenericDef } from 'good-cop'
-import { _ } from 'good-cop'
+import type { Definition, GenericDef } from '../../../lib/good-cop/src/index.js'
+import { _ } from '../../../lib/good-cop/src/index.js'
 import { MaybeArray } from 'typescript-generic-types'
 
 import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongoDbBaseTypes.js'

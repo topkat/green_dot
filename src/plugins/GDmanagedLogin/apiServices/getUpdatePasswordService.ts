@@ -1,4 +1,4 @@
-import { _ } from 'good-cop'
+import { _ } from '../../../lib/good-cop/src/index.js'
 import { svc } from '../../../service.js'
 import { PluginUserConfig } from '../config.js'
 import { checkOrUpdateEmailOrPasswordRateLimiter } from '../constants.js'

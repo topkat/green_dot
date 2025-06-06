@@ -1,7 +1,7 @@
 import { GDplugin } from '../GDplugin.js'
 import { getOnLoginHandler } from './onLogin.js'
 import { getNewTokenService } from './apiServices/getNewTokenService.js'
-import { InferTypeRead, InferTypeWrite, _ } from 'good-cop'
+import { InferTypeRead, InferTypeWrite, _ } from '../../lib/good-cop/src/index.js'
 import { encryptPassword } from '../../security/userAndConnexion/encryptPassword.js'
 import { getCheckTokenIsValidService } from './apiServices/getCheckTokenIsValidService.js'
 import { ModelTypes } from '../../cache/dbs/index.generated.js'

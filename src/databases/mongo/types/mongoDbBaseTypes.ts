@@ -1,6 +1,6 @@
 // /!\ IMPORTANT NOTICE /!\ dnt rmv the rmv as it's for generating types for frontend // rmv
 
-import { _ } from 'good-cop' // rmv
+import { _ } from '../../../lib/good-cop/src/index.js' // rmv
 
 export type RequestConfigShared = {
     disableEmittingEvents?: boolean // rmv

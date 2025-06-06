@@ -6,7 +6,7 @@ import { getMainConfig } from '../helpers/getGreenDotConfigs.js'
 import { getActiveAppConfig } from '../helpers/getGreenDotConfigs.js'
 import { greenDotCacheModuleFolder } from '../helpers/getProjectPaths.js'
 import { C } from 'topkat-utils'
-import { _ } from 'good-cop'
+import { _ } from '../lib/good-cop/src/index.js'
 
 
 

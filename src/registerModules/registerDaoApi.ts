@@ -5,7 +5,8 @@ import { daoValidators } from '../databases/mongo/types/mongoDaoTypes.js'
 import { hookInterpreterExpose } from '../databases/0_hooks/hookInterpreterExpose.js'
 import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware.js'
 
-import { Definition, DaoGenericMethods } from '../types/core.types.js'
+import { DaoGenericMethods } from '../types/core.types.js'
+import type { Definition } from '../lib/good-cop/src/DefinitionClass.js'
 import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDbTypes.js'
 
 import { isset } from 'topkat-utils'

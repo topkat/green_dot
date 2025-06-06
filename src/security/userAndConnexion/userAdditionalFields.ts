@@ -1,8 +1,8 @@
 
-import { Definition, InferTypeRead, InferTypeWrite, NextAutocompletionChoices } from 'good-cop'
+import { Definition, InferTypeRead, InferTypeWrite, NextAutocompletionChoices } from '../../lib/good-cop/src/index.js'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 import { _ } from '../../validator.js'
-import { _ as fixRecursiveType } from 'good-cop'
+import { _ as fixRecursiveType } from '../../lib/good-cop/src/index.js'
 import { GD_deviceModel } from './GD_device.model.js'
 import { ModelsWithDbNamesAndReadWrite } from '../../cache/dbs/index.generated.js'
 

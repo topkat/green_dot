@@ -1,7 +1,7 @@
 
 
 import { getDbConfigs, getMainConfig } from './getGreenDotConfigs.js'
-import { _, Definition } from 'good-cop'
+import { _, Definition } from '../lib/good-cop/src/index.js'
 import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes.js'
 import { C, objEntries } from 'topkat-utils'
 import { safeImport } from './safeImports.js'

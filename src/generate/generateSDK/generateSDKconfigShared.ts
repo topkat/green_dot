@@ -1,7 +1,7 @@
 
 import { GenerateSdkConfig, ServiceDocObject } from '../../types/core.types.js'
 import { camelCase } from 'topkat-utils'
-import { GenericDef } from 'good-cop'
+import { GenericDef } from '../../lib/good-cop/src/index.js'
 import { generateJsDoc } from './generateJsDocForSdk.js'
 
 export const env = process.env.NODE_ENV as Env

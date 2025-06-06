@@ -1,4 +1,4 @@
-import { GenericDef } from 'good-cop'
+import { GenericDef } from '../../lib/good-cop/src/index.js'
 import { ServiceDocObject } from '../../types/services.types.js'
 import { _ } from '../../validator.js'
 

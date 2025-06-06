@@ -1,6 +1,6 @@
 
 import nodeSchedule from 'node-schedule'
-import { Definition } from 'good-cop'
+import { Definition } from '../lib/good-cop/src/index.js'
 import { asArray, C, isset, isValid, camelCaseToWords, kebabCase, objEntries } from 'topkat-utils'
 
 import { doPermApplyToCtx } from '../security/doPermApplyToCtx.js'
