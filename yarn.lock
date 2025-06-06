@@ -5377,10 +5377,10 @@ semver@^7.5.3, semver@^7.5.4, semver@^7.7.1:
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.1.tgz#abd5098d82b18c6c81f6074ff2647fd3e7220c9f"
   integrity sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==
 
-send-teams-message@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/send-teams-message/-/send-teams-message-1.0.5.tgz#cf85531620017ca44112ccb982b7e476770b642b"
-  integrity sha512-nSqOy2M16xYHBpImW2JOf6LOHYfKXSME82g1+T3OL2lzMSW0AsiKWQWkBx/OXuAbWDF8+UEhSudYKuJNRme2Xw==
+send-teams-message@^1.0.6:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/send-teams-message/-/send-teams-message-1.0.7.tgz#e83213f621766bba169ee5f43dd2692aa0fd37c1"
+  integrity sha512-TjSsoY6vWZWMUlbAmkygkp48GyZKmMesO9KIoLQh09uhuWw1jhsR32uMfH6GaqGEsXPb8IaUJ8FoyCKAUCnduw==
   dependencies:
     axios "^1.9.0"
     bump-simple "^1.0.24"

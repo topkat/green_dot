@@ -1,3 +1,30 @@
+### v0.0.51
+- Upgraded `send-teams-message` package from version 1.0.4 to 1.0.5 for improved functionality.
+- Updated `axios` dependency from version 1.7.4 to 1.9.0 to leverage new features and fixes.
+- Refined type definitions in `index.generated.ts` to improve type safety and clarity for database models.
+- Streamlined the structure of model types to ensure better maintainability and usability across the codebase.
+
+- Upgraded `send-teams-message` package from version 1.0.3 to 1.0.4 for enhanced functionality.
+- Refactored database service functions to consistently use `mainDb` instead of `main`, improving type safety and clarity in the codebase.
+- Updated related tests in `maskService.spec.ts` and `populateService.spec.ts` to reflect the new database naming conventions.
+- Cleaned up unused imports and streamlined type definitions in `index.generated.ts` for better maintainability.
+- Refactored email handling in the GDmanagedLogin plugin to replace `EmailTypes` with `GDmanagedLoginEmailTypes`, enhancing type safety for email-related functions.
+- Updated various services and API endpoints to utilize the new email type definitions, ensuring consistency across the plugin.
+- Cleaned up imports and removed deprecated code, including the deletion of the unused `apiKeys.ts` file.
+- Enhanced the README with clearer contribution guidelines and improved formatting for better readability.
+- Updated `maskService` to utilize `MainDbName` for database operations, enhancing type safety and consistency across masking functions.
+- Adjusted tests in `maskService.spec.ts` to reflect changes in database name handling.
+- Enhanced `GDmanagedLogin` plugin to support cookie domain configuration for improved security.
+- Cleaned up code and imports for better maintainability and readability.
+- Updated `index.generated.ts` to improve type safety for database models, incorporating user permissions and additional fields.
+- Refactored CLI project generation to include clearer output and structured steps for generating and building projects.
+- Improved cookie handling in `GDmanagedLogin` plugin to utilize configuration for production domains and enhance security.
+- Cleaned up unused imports and streamlined code for better readability and maintainability.
+- Added bcrypt package to package.json for password hashing.
+- Updated appConfig.types.ts to rename connexionFn to onLoginCallback for clarity.
+- Modified mainConfig.types.ts to include lockDurationMinutes for user management.
+- Adjusted green_dot.app.config.ts to reflect the new onLoginCallback import and usage.
+
 ### v0.0.48
 - Updated `send-teams-message` package version from 1.0.1 to 1.0.3.
 - Refactored CLI intro to support dynamic titles and subtitles.
@@ -179,7 +206,3 @@
 - Refactored user authentication token service to utilize maxRefreshTokenPerRole from mainConfig.
 - Enhanced type definitions in mainConfig.types.ts to support new configuration options for user management.
 - Improved user model to incorporate additional fields for better data handling.
-- Added bcrypt package to package.json for password hashing.
-- Updated appConfig.types.ts to rename connexionFn to onLoginCallback for clarity.
-- Modified mainConfig.types.ts to include lockDurationMinutes for user management.
-- Adjusted green_dot.app.config.ts to reflect the new onLoginCallback import and usage.
