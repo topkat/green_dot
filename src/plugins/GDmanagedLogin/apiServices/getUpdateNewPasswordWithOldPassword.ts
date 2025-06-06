@@ -11,7 +11,7 @@ export function getUpdateNewPasswordWithOldPassword(
 ) {
   return {
     updatePasswordWithOldPassword: svc({
-      for: ['icoInvestor'],
+      for: ['ALL'],
       input: {
         oldPassword: _.password({
           minLength: 8,
