@@ -1,6 +1,6 @@
 
 
-import { _ } from '../../lib/good-cop/src/index.js'
+import { _ } from '../../lib/good-cop/index-backend.js'
 import { capitalize1st } from 'topkat-utils'
 
 

@@ -1,8 +1,8 @@
 
-import { Definition, InferTypeRead, InferTypeWrite, NextAutocompletionChoices } from '../../lib/good-cop/src/index.js'
+import { Definition, InferTypeRead, InferTypeWrite, GoodCopNextDefinition } from '../../lib/good-cop/index-backend.js'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 import { _ } from '../../validator.js'
-import { _ as fixRecursiveType } from '../../lib/good-cop/src/index.js'
+import { _ as fixRecursiveType } from '../../lib/good-cop/index-backend.js'
 import { GD_deviceModel } from './GD_device.model.js'
 import { ModelsWithDbNamesAndReadWrite } from '../../cache/dbs/index.generated.js'
 
@@ -17,7 +17,7 @@ export function getUserAdditionalFields({ silent = false } = {}) {
 
   // FIX a type recursively reference itself problem
   type RecursiveTypeFixType = { Read: typeof GD_deviceModel.tsTypeRead, Write: typeof GD_deviceModel.tsTypeWrite }
-  const def = _.ref('GD_device') as NextAutocompletionChoices<
+  const def = _.ref('GD_device') as GoodCopNextDefinition<
     Definition<ModelsWithDbNamesAndReadWrite, RecursiveTypeFixType | string, string>
   >
 

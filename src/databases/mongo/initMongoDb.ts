@@ -9,7 +9,7 @@ import { luigi } from '../../cli/helpers/luigi.bot.js'
 import { event } from '../../event.js'
 import type { AllDbIds, DbIds } from '../../cache/dbs/index.generated.js'
 import { newSystemCtx } from '../../ctx.js'
-import type { Definition } from '../../lib/good-cop/src/DefinitionClass.js'
+import type { Definition } from '../../lib/good-cop//DefinitionClass.js'
 
 const { NODE_ENV } = ENV()
 const env: Env = NODE_ENV

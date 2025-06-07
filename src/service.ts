@@ -1,7 +1,7 @@
 
 import { asArray } from 'topkat-utils'
 import { ScheduleService, Service, ServiceClean } from './types/services.types.js'
-import { _, Definition, GenericDef } from './lib/good-cop/src/index.js'
+import { _, Definition, GenericDef } from './lib/good-cop/index-backend.js'
 import { notForToFor } from './security/notForToForAndNotOnToOn.js'
 
 /** This is the base function for registering services. It handle types as

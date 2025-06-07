@@ -34,9 +34,9 @@ export type {
   InferType,
   Definition,
   GenericDef,
-  DefinitionPartial,
-  DefCtx
-} from './lib/good-cop/src/index.js'
+  GoodCopDefinitionPartial,
+  GoodCopDefCtx,
+} from './lib/good-cop/index-backend.js'
 // Export the validator instance
 export { _ } from './validator.js'
 

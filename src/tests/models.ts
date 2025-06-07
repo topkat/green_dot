@@ -2,7 +2,7 @@ import { type Mask } from '../databases/mongo/services/maskService.js'
 
 import { type MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes.js'
 import { UserModels, OrgModels, Organization, User } from './jestHelpers.js'
-import { _, Definition } from '../lib/good-cop/src/index.js'
+import { _, Definition } from '../lib/good-cop/index-backend.js'
 
 
 const validationAddr = () => ({

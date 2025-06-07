@@ -6,7 +6,7 @@ import { hookInterpreterExpose } from '../databases/0_hooks/hookInterpreterExpos
 import { logRouteInfos } from './apiMiddlewares/logRouteInfo.middleware.js'
 
 import { DaoGenericMethods } from '../types/core.types.js'
-import type { Definition } from '../lib/good-cop/src/DefinitionClass.js'
+import type { Definition } from '../lib/good-cop//DefinitionClass.js'
 import { MongoDaoMethodsFull } from '../databases/mongo/types/mongoDbTypes.js'
 
 import { isset } from 'topkat-utils'

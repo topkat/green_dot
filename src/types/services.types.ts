@@ -1,7 +1,7 @@
 
 
 import { LocalConfigParsed } from '../databases/mongo/types/mongoDbTypes.js'
-import { Definition, GenericDef, InferTypeRead } from '../lib/good-cop/src/index.js'
+import { Definition, GenericDef, InferTypeRead } from '../lib/good-cop/index-backend.js'
 import { RateLimiterConfig } from '../security/serviceRouteRateLimiter.js'
 import { DaoGenericMethods } from './daoGeneric.types.js'
 import { ForClauseParsed, ForClauseWithAll } from './coreGeneric.types.js'

@@ -1,21 +1,44 @@
 
+import { MergeMultipleObjects } from 'typescript-generic-types'
+import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from '../../security/userAndConnexion/userAdditionalFields.js'
+import { AllModels as AdminAllModels } from './admin.modelTypes.generated.js'
+import { AllModels as WebsiteAllModels } from './website.modelTypes.generated.js'
+import { AllModels as BangkAllModels } from './bangk.modelTypes.generated.js'
 
-export const defaultDbName = 'mainDb'
 
-export type ModelsWithDbNamesAndReadWrite = Record<string, any>
 
-export type DbIds = Record<string, string>
+export const defaultDbName = 'bangk'
 
-export type AllDbIds = string
+export type ModelsWithDbNamesAndReadWrite = {
+    admin: AdminAllModels
+    website: WebsiteAllModels
+    bangk: { [K in keyof BangkAllModels]: K extends 'user' ? BangkAllModels[K] & { Read: UserPermissionFields & UserAdditionalFieldsRead, Write: Partial<UserPermissionFields & UserAdditionalFieldsWrite> } : BangkAllModels[K] }
+}
 
-export type MainDbName = string
+export type DbIds = {
+    admin: 'admin'
+    website: 'website'
+    bangk: 'bangk'
+}
 
-export type ModelsWithReadWrite = Record<string, any>
+export type AllDbIds = DbIds[keyof DbIds]
 
-export type ModelTypes = Record<string, Record<string, any>> // type safety
+export type MainDbName = 'bangk'
+
+export type ModelsWithReadWrite = MergeMultipleObjects<ModelsWithDbNamesAndReadWrite>
+
+/** With this getter you can safely use your model types anywhere (even in db folders).
+If you use straight type like ```User```, it may error when you are in a database folder
+ * @example ```type User = ModelTypes['user']```
+*/
+export type ModelTypes = {
+    [K in keyof ModelsWithReadWrite]: ModelsWithReadWrite[K]['Read']
+} & {
+    [K in keyof ModelsWithReadWrite as `${K & string}Write`]: ModelsWithReadWrite[K]['Write']
+}
 
 /** All ModelNames for all DB Names: 'modelName1' | 'modelName2'...  */
-export type ModelNames = string
+export type ModelNames = keyof ModelsWithReadWrite
 
 /** ModelNames for DB { [dbName]: 'modelName1' | 'modelName2'... } */
-export type ModelNamesForDb = Record<string, string>
+export type ModelNamesForDb = { [K in keyof ModelsWithDbNamesAndReadWrite]: keyof ModelsWithDbNamesAndReadWrite[K] }

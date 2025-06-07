@@ -1,7 +1,7 @@
 
 import fs from 'fs-extra'
 import Path, { dirname } from 'path'
-import { MainTypes, Definition } from '../../lib/good-cop/src/index.js'
+import { GoodCopMainTypes, Definition } from '../../lib/good-cop/index-backend.js'
 import { C, capitalize1st, includes } from 'topkat-utils'
 
 import { daoValidators } from '../../databases/mongo/types/mongoDaoTypes.js'
@@ -77,7 +77,7 @@ export async function createServiceRouteConfigPerPlatformForSdk(
 
                 if (output) {
                     const mainReturnType = output.getMainType()
-                    const flatTypes = ['boolean', 'date', 'number', 'string'] satisfies MainTypes[]
+                    const flatTypes = ['boolean', 'date', 'number', 'string'] satisfies GoodCopMainTypes[]
 
                     if (mainReturnType === 'object') output = output.complete() as any as Definition
                     else if (includes(flatTypes, mainReturnType)) output = output.required() as any as Definition

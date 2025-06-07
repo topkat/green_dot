@@ -1,4 +1,4 @@
-import { _ } from '../../../lib/good-cop/src/index.js'
+import { _ } from '../../../lib/good-cop/index-backend.js'
 import { svc } from '../../../service.js'
 import { db } from '../../../db.js'
 import { PluginUserConfig } from '../config.js'

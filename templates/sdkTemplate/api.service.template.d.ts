@@ -6,6 +6,7 @@ import { ModelNames } from './modelTypes.generated.js'
 import { InitBackendConfig } from './sdkHelpers/initBackend.js'
 
 export * from './sdkHelpers.js'
+export { ServerUrls } from './apiCall.js'
 
 type MethodNames = '%%AllMethodNameTypeString%%'
 

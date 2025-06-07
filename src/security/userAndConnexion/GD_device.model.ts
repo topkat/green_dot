@@ -1,4 +1,4 @@
-import { _ } from '../../lib/good-cop/src/index.js'
+import { _ } from '../../lib/good-cop/index-backend.js'
 
 export const GD_deviceModel = _.mongoModel([], {
   user: _.ref('user'),

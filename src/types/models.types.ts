@@ -2,7 +2,7 @@
 
 import { DaoMethodsMongo, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes.js'
 import mongoose from 'mongoose'
-import { Definition } from '../lib/good-cop/src/index.js'
+import { Definition } from '../lib/good-cop/index-backend.js'
 
 
 

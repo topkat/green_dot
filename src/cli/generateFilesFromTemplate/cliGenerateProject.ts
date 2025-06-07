@@ -7,9 +7,7 @@ import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugin
 import { execWaitForOutput } from 'topkat-utils/backend.js'
 import { clearCli, greenDotCliIntro } from '../helpers/cli.js'
 import { fileURLToPath } from 'url'
-import { createRequire } from 'module'
-const require = createRequire(import.meta.url)
-const { version: gdVersion } = require('../../../package.json')
+import { getPackageJsonVersion } from '../helpers/getPackageJsonVersion.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -87,7 +85,7 @@ export async function cliGenerateProject() {
       [`'$$roles'`, `'` + roles.join(`', '`) + `'`],
       [`'$$platforms'`, `'` + platforms.join(`', '`) + `'`],
       [`'$$sdkNameForRole'`, sdkNameForRole],
-      [`$$gdVersion`, gdVersion],
+      [`$$gdVersion`, getPackageJsonVersion()],
       [`$$importsFromGreenDot`, importsFromGreenDot]
     ],
     [

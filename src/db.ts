@@ -1,8 +1,8 @@
 
 
-import { type ModelsWithDbNamesAndReadWrite, type MainDbName, type AllDbIds, type DbIds, defaultDbName } from './cache/dbs/index.generated.js'
+import { type ModelsWithDbNamesAndReadWrite, type MainDbName, type AllDbIds, type DbIds } from './cache/dbs/index.generated.js'
 import { error } from './error.js'
-import { getDbConfigs } from './helpers/getGreenDotConfigs.js'
+import { getDbConfigs, getMainConfig } from './helpers/getGreenDotConfigs.js'
 import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes.js'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb.js'
 import { C, objEntries, timeout } from 'topkat-utils'
@@ -11,7 +11,8 @@ import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } fr
 import { GD_serverBlacklistModel } from './security/userAndConnexion/GD_serverBlackList.model.js'
 import { GD_deviceModel } from './security/userAndConnexion/GD_device.model.js'
 import { dbIdsToDbNames } from './databases/dbIdsToDbNames.js'
-import type { DefinitionObjChild, ModelReadWrite, InferTypeRead, InferTypeWrite } from './lib/good-cop/src/definitionTypes.js'
+import type { DefinitionObjChild, InferTypeRead, InferTypeWrite } from './lib/good-cop//definitionTypes.js'
+import { ModelReadWrite } from './types/models.types.js'
 
 type InferTypeRW<T extends DefinitionObjChild> = { Read: InferTypeRead<T>, Write: InferTypeWrite<T> }
 
@@ -125,9 +126,10 @@ export const db = new Proxy({} as Db, {
   // once in the file and thus wait until db and cache are operational
   // In short we make sync out of async (more DX friendly at usage)
   get(_, prop: string) {
-    if (!dbCache[defaultDbName]?.db) throw C.error('DB not initialized, run "await initDb()" once before calling getDb()')
-    if (!dbCache[defaultDbName]?.db?.[prop]) throw C.error(`Model ${prop} doesn't seem to be properly initialized and is not defined in modelsCache`)
-    return dbCache[defaultDbName].db[prop]
+    const { defaultDatabaseName } = getMainConfig()
+    if (!dbCache[defaultDatabaseName]?.db) throw C.error('DB not initialized, run "await initDb()" once before calling getDb()')
+    if (!dbCache[defaultDatabaseName]?.db?.[prop]) throw C.error(`Model ${prop} doesn't seem to be properly initialized and is not defined in modelsCache`)
+    return dbCache[defaultDatabaseName].db[prop]
   },
 })
 
