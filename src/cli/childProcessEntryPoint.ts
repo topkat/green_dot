@@ -6,6 +6,7 @@ import { cleanCommand } from './clean.command.js'
 import { generateCommand } from './generate.command.js'
 import { startDevServerCommand } from './startDevServer.command.js'
 import { testCommand } from './test.command.js'
+import { upgradeCommand } from './upgrade.command.js'
 
 
 export type ChildProcessCommands = keyof typeof commands
@@ -43,6 +44,10 @@ const commands = {
   },
   test: {
     execute: [testCommand],
+    exitAfter: true,
+  },
+  upgrade: {
+    execute: [upgradeCommand],
     exitAfter: true,
   },
 } satisfies CommandPlus

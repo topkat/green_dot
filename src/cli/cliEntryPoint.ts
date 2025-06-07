@@ -55,6 +55,9 @@ const commands = {
       description: `Run tests in CI mode: will fail and quit process with code 1 on the first error`,
     }],
   },
+  upgrade: {
+    description: 'Install the latest version of green_dot',
+  },
 } satisfies CommandPlus
 
 
@@ -180,7 +183,7 @@ start()
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
-type CommandPlus = Record<ChildProcessCommands | 'start', {
+type CommandPlus = Record<ChildProcessCommands | 'start' | 'upgrade', {
   description: string
   executeWith?: 'bun' | 'ts-node'
   options?: Array<{
