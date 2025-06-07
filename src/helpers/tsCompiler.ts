@@ -92,7 +92,6 @@ const toMergeTsConfig = {
   'declaration': true,
   'noImplicitAny': false,
   'noImplicitThis': true,
-  'moduleResolution': 'nodenext',
   'esModuleInterop': true,
   'resolveJsonModule': true,
   'allowSyntheticDefaultImports': true,
@@ -105,6 +104,7 @@ export const commonJsTsConfig = JSON.stringify({
   'compilerOptions': {
     'module': 'CommonJS',
     'target': 'ES2020',
+    'moduleResolution': 'node',
     ...toMergeTsConfig
   },
   'include': ['.']
@@ -114,6 +114,7 @@ export const esmModuleTsConfig = JSON.stringify({
   'compilerOptions': {
     'module': 'nodenext',
     'target': 'ES2022',
+    'moduleResolution': 'nodenext',
     ...toMergeTsConfig,
   },
   'include': ['.']

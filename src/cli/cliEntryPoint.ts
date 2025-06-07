@@ -1,4 +1,4 @@
-#!/usr/bin/env node --loader ts-node/esm
+#!/usr/bin/env node --no-warnings --loader ts-node/esm
 // --showConfig
 
 
@@ -110,7 +110,7 @@ async function start() {
     do {
       next = await new Promise(resolve => {
         try {
-          const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--loader', 'ts-node/esm']
+          const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--no-warnings', '--loader', 'ts-node/esm']
 
           const baseDir = runFromDist
             ? __dirname.replace(`(dist)?${join('src')}`, `dist${join('src')}`)

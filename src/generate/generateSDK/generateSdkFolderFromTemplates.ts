@@ -120,13 +120,13 @@ export async function generateSdkFolderFromTemplates(
       [/export \{/, 'module.exports = {'], // TODO this is not 100% safe because it imply export * from has to be used after that, using Object assign here is a too complex regexp though because can be multilines
       [/export * from (.*)/, 'Object.assign(module.exports, require($1))'],
       // extensions in imports (avoid targetting package.json "exports")
-      [/(import .*)\.mjs/g, `$1.cjs`],
-      [/(require.*)\.mjs/g, `$1.cjs`],
+      [/(import .*)\.js/g, `$1.cjs`],
+      [/(require.*)\.js/g, `$1.cjs`],
       [`/**%%export_all*/`, generatedSdkFolders.length ? `Object.assign(\n  module.exports, \n  ${generatedSdkFolders.map(f => `require('./${f.split(Path.sep).pop()}/cjs/index'),`).join('\n  ')}\n)` : '']
     ],
     [
       ['.template', ''],
-      ['.mjs', '.cjs'],
+      ['.js', '.cjs'],
     ],
     [/\.ts$/]
   )

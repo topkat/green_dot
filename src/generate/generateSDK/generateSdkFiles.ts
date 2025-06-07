@@ -6,7 +6,7 @@ import { generateSdkFolderFromTemplates } from './generateSdkFolderFromTemplates
 import { GenerateSDKparamsForDao, AllMethodsObjectForSdk } from '../../types/generateSdk.types.js'
 import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 import { generateIndexForDbTypeFiles } from '../../cli/build/generateIndexForDbIndex.js'
-import { commonJsTsConfig, compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler.js'
+import { compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler.js'
 import { generateFilesForCachedDb } from '../../cli/build/generateFilesForCachedDb.js'
 import { fileURLToPath } from 'url'
 
@@ -108,7 +108,7 @@ async function copyFile(
     } else {
         let fileAsStrMjs = fileAsStr.replace(/%%%!isEs6Import .*/g, '').replace(/%%%isEs6Import /g, '')
         fileAsStrMjs = replaceInFileStr(fileAsStrMjs)
-        await fs.outputFile(Path.join(sdkFolderPath, to.replace('.js', '.mjs')), fileAsStrMjs)
+        await fs.outputFile(Path.join(sdkFolderPath, to), fileAsStrMjs)
         fileAsStr = fileAsStr.replace(/%%%isEs6Import .*/g, '').replace(/%%%!isEs6Import /g, '')
     }
     fileAsStr = replaceInFileStr(fileAsStr)

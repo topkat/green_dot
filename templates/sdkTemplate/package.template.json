@@ -2,7 +2,7 @@
     "name": "%%packageNamePrefix%%%%app-name%%-sdk",
     "version": "%%packageVersion%%",
     "license": "ISC",
-    "main": "api.service.cjs",
+    "main": "api.service.js",
     "types": "api.service.d.ts",
     "publishConfig": {
         "access": "%%packageNameAccess%%",
@@ -11,12 +11,12 @@
     "exports": {
         ".": {
             "require": "./api.service.cjs",
-            "import": "./api.service.mjs",
+            "import": "./api.service.js",
             "types": "./api.service.d.ts"
         },
         "./web": {
             "require": "./init.web.cjs",
-            "import": "./init.web.mjs",
+            "import": "./init.web.js",
             "types": "./init.web.ts"
         },
         "./require": {
