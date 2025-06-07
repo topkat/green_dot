@@ -51,6 +51,7 @@
     "bump": "yarn clean && tscp && tsc && yarn test:ci && bump --patch",
     "bump:patch": "yarn clean && tscp && tsc && yarn test:ci && bump --patch",
     "test:ci": "jest --ci --runInBand --maxConcurrency=1 --silent",
+    "// This is copied to avoid a typescript problem of types ": "",
     "postinstall": "cp -r ./node_modules/good-cop/src/* ./src/lib/good-cop/"
   },
   "dependencies": {
@@ -71,7 +72,7 @@
     "express-xml-bodyparser": "^0.3.0",
     "fast-glob": "^3.2.12",
     "fs-extra": "^11.3.0",
-    "good-cop": "^1.4.5",
+    "good-cop": "^1.4.7",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
     "multer": "^1.4.5-lts.1",

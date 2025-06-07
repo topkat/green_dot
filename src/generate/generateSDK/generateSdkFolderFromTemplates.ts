@@ -6,7 +6,7 @@ import { templater } from 'simple-file-templater'
 import { C, objEntries } from 'topkat-utils'
 import type { AllMethodsObjectForSdk } from '../../types/generateSdk.types.js'
 import type { GreenDotConfig } from '../../types/mainConfig.types.js'
-import { compileTypeScriptProject } from '../../helpers/tsCompiler.js'
+import { compileTypeScriptProject, esmModuleTsConfig } from '../../helpers/tsCompiler.js'
 import { greenDotCacheModuleFolder } from '../../helpers/getProjectPaths.js'
 import { fileURLToPath } from 'url'
 
@@ -63,7 +63,7 @@ export async function generateSdkFolderFromTemplates(
 
   const generatedSdkFolders = [...(generateSdkConfig?.injectFolderInSdk?.all || []), ...(generateSdkConfig?.injectFolderInSdk?.[platform] || [])]
 
-  const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}/.js'`).join('\n') : ''
+  const exportAllTsCjs = generatedSdkFolders.length ? generatedSdkFolders.map(f => `export * from './${f.split(Path.sep).pop()}/mjs/index.js'`).join('\n') : ''
 
   const replaceInFiles: [string: string | RegExp, replacement: string][] = [
     ['%%packageVersion%%', packageVersion],
@@ -143,6 +143,7 @@ export async function generateSdkFolderFromTemplates(
     if (!await fs.exists(sdkHelperFolderPath)) throw new Error('sdkHelperFolderPath not existing in green_dot: ' + sdkHelperFolderPath)
 
     await compileTypeScriptProject({
+      tsConfig: esmModuleTsConfig,
       projectPath: sdkHelperFolderPath,
       outputPath: sdkHelperDistPath,
     })

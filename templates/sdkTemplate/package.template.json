@@ -2,6 +2,7 @@
     "name": "%%packageNamePrefix%%%%app-name%%-sdk",
     "version": "%%packageVersion%%",
     "license": "ISC",
+    "type": "module",
     "main": "index.js",
     "types": "index.d.ts",
     "publishConfig": {

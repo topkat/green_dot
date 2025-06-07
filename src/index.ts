@@ -73,4 +73,4 @@ export * from './security/userAndConnexion/userLockService.js'
 export * from './plugins/index.js'
 export { getPluginConfig, getPlugin } from './plugins/pluginSystem.js'
 
-export { UserAdditionalFields, UserAdditionalFieldsRead, UserAdditionalFieldsWrite, getUserAdditionalFields } from './security/userAndConnexion/userAdditionalFields.js'
+export { UserAdditionalFields, UserAdditionalFieldsRead, UserAdditionalFieldsWrite, getUserDefaultAdditionalFields } from './security/userAndConnexion/userAdditionalFields.js'

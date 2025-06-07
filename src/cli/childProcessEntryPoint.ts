@@ -63,8 +63,13 @@ export async function startTask(command = processCommand) {
   const { execute, exitAfter } = commands[command]
 
   do {
-    const next = execute.shift()
-    await next()
+    try {
+      const next = await execute.shift()
+      await next()
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
   } while (execute.length)
 
   if (exitAfter) process.exit(0)

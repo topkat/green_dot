@@ -1,11 +1,11 @@
 
 import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongodbBaseTypes.generated.js'
 import { SdkError, ServerUrls, SdkInitOptions, Breakpoints } from './apiCall.js'
-import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query.js'
+import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query'
 import { ModelNames } from './modelTypes.generated.js'
 import { InitBackendConfig } from './sdkHelpers/initBackend.js'
 
-export * from './sdkHelpers.js'
+export * from './sdkHelpers/index.js'
 export { ServerUrls } from './apiCall.js'
 
 type MethodNames = '%%AllMethodNameTypeString%%'

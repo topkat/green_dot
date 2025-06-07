@@ -2,8 +2,8 @@
 import { MergeMultipleObjects } from 'typescript-generic-types'
 import { UserAdditionalFieldsRead, UserAdditionalFieldsWrite } from '../../security/userAndConnexion/userAdditionalFields.js'
 import { AllModels as AdminAllModels } from './admin.modelTypes.generated.js'
-import { AllModels as WebsiteAllModels } from './website.modelTypes.generated.js'
 import { AllModels as BangkAllModels } from './bangk.modelTypes.generated.js'
+import { AllModels as WebsiteAllModels } from './website.modelTypes.generated.js'
 
 
 
@@ -11,14 +11,14 @@ export const defaultDbName = 'bangk'
 
 export type ModelsWithDbNamesAndReadWrite = {
     admin: AdminAllModels
-    website: WebsiteAllModels
     bangk: { [K in keyof BangkAllModels]: K extends 'user' ? BangkAllModels[K] & { Read: UserPermissionFields & UserAdditionalFieldsRead, Write: Partial<UserPermissionFields & UserAdditionalFieldsWrite> } : BangkAllModels[K] }
+    website: WebsiteAllModels
 }
 
 export type DbIds = {
     admin: 'admin'
-    website: 'website'
     bangk: 'bangk'
+    website: 'website'
 }
 
 export type AllDbIds = DbIds[keyof DbIds]

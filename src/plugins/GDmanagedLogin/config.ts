@@ -11,7 +11,7 @@ export type GDmanagedLoginLoginConfig = {
   emailLogin: boolean
   loginOnValidateToken?: boolean
   /** Returning false will throw an accessDenied error with no other infos. If you want more control over error thrown, extraInfos, alerts..etc, use onLogin  */
-  additionalChecks?(ctx: Ctx, user: ModelTypes['user'])
+  additionalLoginPermissionsChecks?(ctx: Ctx, user: ModelTypes['user'])
   /** This will be triggered before all other checks */
   onBeforeLogin?(ctx: Ctx, requestedRole: GD['role'], user: ModelTypes['user'])
   /** This will be triggered once login is successful */

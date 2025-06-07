@@ -19,6 +19,8 @@ import Path from 'path'
 import type { GreenDotConfig } from '../types/mainConfig.types.js'
 import { parentProcessExitCodes } from '../constants.js'
 import { safeImport } from '../helpers/safeImports.js'
+import { initGreenDotConfigs } from '../helpers/getGreenDotConfigs.js'
+
 
 
 let watcherOn = false
@@ -29,6 +31,8 @@ let startAtTestNb = 0
 const { filter, isReload, ci = false } = getServerConfigFromEnv<{ filter?: string, ci?: boolean }>()
 
 export async function testCommand() {
+
+  await initGreenDotConfigs()
 
   const { testConfig, allTests } = await findTestPaths()
 
@@ -48,7 +52,6 @@ export async function testCommand() {
   // Catch All App Errors, even the unhandled ones
   process.on('unhandledRejection', errorHandler)
   process.on('uncaughtException', errorHandler)
-
   try {
 
     const { testRunner } = await import('green_dot' as any) // we need to import from same module that client app

@@ -3,7 +3,7 @@ import { newPlugin } from '../newPlugin.js'
 import { GDmanagedLogin, Name } from './GDmanagedLogin.js'
 import { defaultConfig, PluginUserConfig } from './config.js'
 
-export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
+const plugin = newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
   name: 'GDmanagedLogin',
   version: '1.0.0',
   defaultConfig,
@@ -34,6 +34,10 @@ export default newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
   },
   plugin: GDmanagedLogin,
 })
+
+type RR = InstanceType<typeof plugin['plugin']>
+
+export default plugin
 
 export { JWTdata } from './userAuthenticationTokenService.js'
 export { GDmanagedLogin } from './GDmanagedLogin.js'

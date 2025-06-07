@@ -9,14 +9,13 @@ import { type NewPluginConfig } from './newPlugin.js'
 
 export type PluginNames = typeof GDmanagedLogin.name | typeof GDdoubleAuthentication.name | typeof GDapiKeyAuthentication.name
 
-export const allPluginConfigs: Record<PluginNames, NewPluginConfig<any, any, any>> = {
+export const allPluginConfigs = {
   GDdoubleAuthentication,
   GDmanagedLogin,
   GDapiKeyAuthentication,
-}
+} satisfies Record<PluginNames, NewPluginConfig<any, any, any>>
 
 type AllPluginConfig = typeof allPluginConfigs
-
 
 export type InstanciatedPlugin = InstanceType<AllPluginConfig[PluginNames]['plugin']>
 
@@ -43,6 +42,9 @@ export function getPluginHook(eventName: GDpluginHandlerEventNames) {
   return registeredPlugins.map(p => p.handlers.filter(h => h.event === eventName)).flat()
 }
 
+export function getPluginAdditionalUserFields() {
+  return registeredPlugins.reduce((obj, p) => ({ ...obj, ...(p?.addUserAdditionalFields?.() || {}) }), {})
+}
 // type AllPlugins = (typeof allPlugins)
 // type OO = {
 //   [K in PluginNames]: InstanceType<AllPlugins[K]> extends { addUserAdditionalFields: any } ? InstanceType<AllPlugins[K]>['addUserAdditionalFields'] : never

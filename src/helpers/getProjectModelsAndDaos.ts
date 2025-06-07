@@ -1,17 +1,18 @@
 
 
 import { getDbConfigs, getMainConfig } from './getGreenDotConfigs.js'
-import { _, Definition } from '../lib/good-cop/index-backend.js'
+import { _, Definition, mongoModelFieldsProcessing } from '../lib/good-cop/index-backend.js'
 import { MongoDao, MongoDaoParsed } from '../databases/mongo/types/mongoDbTypes.js'
 import { C, objEntries } from 'topkat-utils'
 import { safeImport } from './safeImports.js'
 import { parseDaos } from '../databases/parseDaos.js'
 import { error } from '../error.js'
 import defaultDaoConfigMongo from '../databases/mongo/defaultDaoConfigMongo.js'
-import { getUserAdditionalFields } from '../security/userAndConnexion/userAdditionalFields.js'
+import { getUserDefaultAdditionalFields } from '../security/userAndConnexion/userAdditionalFields.js'
 import { convertRoleToPermsToModelFields } from '../security/helpers/convertPermsToModelFields.js'
 import { GD_serverBlacklistModel } from '../security/userAndConnexion/GD_serverBlackList.model.js'
 import { GD_deviceModel } from '../security/userAndConnexion/GD_device.model.js'
+import { getAllPermissions } from './getAllPermissions.js'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
@@ -46,20 +47,24 @@ export async function initProjectAndDaosCache(resetCache = false) {
       // So we put all technical green_dot fields
       hasDefaultDatabase = true
 
+      const { getPluginAdditionalUserFields } = await import('../plugins/pluginSystem.js')
+
       // inject permissions fields in user model
-      const permissionsFields = {
-        ...getUserAdditionalFields(),
-        ...mainConfig.allPermissions.reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
+      const userAdditionalFields = {
+        ...getUserDefaultAdditionalFields(),
+        ...getPluginAdditionalUserFields(),
+        ...getAllPermissions().reduce((obj, perm) => ({ ...obj, [perm]: _.boolean().default(false) }), {}),
         ...convertRoleToPermsToModelFields(mainConfig.allRoles)
       }
-      userPermissionFields = Object.keys(permissionsFields) as any
+      userPermissionFields = Object.keys(userAdditionalFields) as any
 
       if (!modelsCache[dbName].user) {
         // we inject a user model
-        modelsCache[dbName].user = _.mongoModel(['creationDate', 'lastUpdateDate'], permissionsFields) as any as Definition
+        modelsCache[dbName].user = _.mongoModel(['creationDate', 'lastUpdateDate'], userAdditionalFields) as any as Definition
       } else {
+        mongoModelFieldsProcessing(userAdditionalFields)
         const objDef = (modelsCache[dbName].user as Definition)._definitions.find(def => def.name === 'object')
-        if (typeof objDef !== 'function') Object.assign(objDef.objectCache, permissionsFields)
+        if (typeof objDef !== 'function') Object.assign(objDef.objectCache, userAdditionalFields)
       }
 
       // we inject greenDotModels

@@ -10,7 +10,7 @@ import { ModelsWithDbNamesAndReadWrite } from '../../cache/dbs/index.generated.j
 export const userLockReasons = ['tooMuchPasswordAttempts', 'ban', 'tooManyAttempsForSecureAuthentication'] as const
 export type UserLockReasonsDefault = typeof userLockReasons[number]
 
-export function getUserAdditionalFields({ silent = false } = {}) {
+export function getUserDefaultAdditionalFields({ silent = false } = {}) {
 
 
   const mainConfig = getMainConfig(silent)
@@ -21,17 +21,18 @@ export function getUserAdditionalFields({ silent = false } = {}) {
     Definition<ModelsWithDbNamesAndReadWrite, RecursiveTypeFixType | string, string>
   >
 
-
-  return {
+  const defaultAdditionalFields = {
     /** Ability to lock a user for a time after nb of password retrial */
     lockedReason: fixRecursiveType.enum([...(mainConfig?.userLockReasons || []), ...userLockReasons] as const),
     lockUntil: fixRecursiveType.date(),
     devices: [def],
   }
+
+  return defaultAdditionalFields
 }
 
 
 // TO BE AUGMENTED BY PLUGINS
-export interface UserAdditionalFieldsRead extends InferTypeRead<ReturnType<typeof getUserAdditionalFields>> { }
-export interface UserAdditionalFieldsWrite extends InferTypeWrite<ReturnType<typeof getUserAdditionalFields>> { }
+export interface UserAdditionalFieldsRead extends InferTypeRead<ReturnType<typeof getUserDefaultAdditionalFields>> { }
+export interface UserAdditionalFieldsWrite extends InferTypeWrite<ReturnType<typeof getUserDefaultAdditionalFields>> { }
 export type UserAdditionalFields = UserAdditionalFieldsRead

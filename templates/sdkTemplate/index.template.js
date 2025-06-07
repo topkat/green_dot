@@ -1,8 +1,8 @@
 
 
-import { apiCall, init, onError, getServerState, setHeaders, beforeApiCall, registerSideEffect, methodNames } from './apiCall..js'
-import { useSuspenseQuery } from '@tanstack/react-query.js'
-import { ensureAccessToken, getActualScreen, getHandleErrorTyped, initTrackerData, sendDataToServer, trackerEvent, handleError, initErrorHandler, log, initHelpers, logout, setAccessToken } from './sdkHelpers.js'
+import { apiCall, init, onError, getServerState, setHeaders, beforeApiCall, registerSideEffect, methodNames } from './apiCall.js'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { ensureAccessToken, getActualScreen, getHandleErrorTyped, initTrackerData, sendDataToServer, trackerEvent, handleError, initErrorHandler, log, initHelpers, logout, setAccessToken } from './sdkHelpers/index.js'
 import { initBackend, isBackendInitialized } from './sdkHelpers/initBackend.js'
 
 /** Used to store the timeouts of deferred requests */
