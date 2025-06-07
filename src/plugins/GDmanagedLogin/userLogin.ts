@@ -33,10 +33,7 @@ export async function userLogin(
   const { defaultDatabaseName } = getMainConfig()
 
   const user = typeof userOrId === 'string' ? await db.user.getById(ctx.GM, userOrId) : userOrId
-  console.log('user', JSON.stringify(user, null, 2))
-  console.log('typeof loginConfigPerRole[role]?.additionalLoginPermissionsChecks', JSON.stringify(typeof loginConfigPerRole[role]?.additionalLoginPermissionsChecks, null, 2))
-  console.log(`await loginConfigPerRole[role]?.additionalLoginPermissionsChecks?.(ctx, user)`, await loginConfigPerRole[role]?.additionalLoginPermissionsChecks?.(ctx, user))
-  console.log(`role`, role)
+
   if (user
     && typeof loginConfigPerRole[role]?.additionalLoginPermissionsChecks !== 'undefined'
     && !(await loginConfigPerRole[role]?.additionalLoginPermissionsChecks?.(ctx, user))
