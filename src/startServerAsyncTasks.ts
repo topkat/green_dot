@@ -8,6 +8,7 @@ import swaggerUi from 'swagger-ui-express'
 import { getExpressErrHandlerMW } from './security/expressErrorHandler.middleware.js'
 import { generateMainBackendFiles } from './generate/generateMainBackendFiles.js'
 import { greenDotCacheModuleFolder } from './helpers/getProjectPaths.js'
+import fs from 'fs'
 
 
 
@@ -23,7 +24,7 @@ export async function startServerAsyncTasks(app: Express) {
         await generateMainBackendFiles(appConfig, { generateSdk: false, doGenerateSwaggerDoc: true })
 
         // GENERATE SWAGGER DOC
-        const swaggerDoc = await import(Path.join(greenDotCacheModuleFolder, `${appConfig.name}.swaggerDoc.generated.json`))
+        const swaggerDoc = JSON.parse(fs.readFileSync(Path.join(greenDotCacheModuleFolder, `${appConfig.name}.swaggerDoc.generated.json`), 'utf-8'))
 
         // Serve the Swagger JSON
         app.get('/doc/swagger.json', (req, res) => {
