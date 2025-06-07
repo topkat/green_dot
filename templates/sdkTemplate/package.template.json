@@ -2,17 +2,17 @@
     "name": "%%packageNamePrefix%%%%app-name%%-sdk",
     "version": "%%packageVersion%%",
     "license": "ISC",
-    "main": "api.service.js",
-    "types": "api.service.d.ts",
+    "main": "index.js",
+    "types": "index.d.ts",
     "publishConfig": {
         "access": "%%packageNameAccess%%",
         "registry": "https://registry.npmjs.org/"
     },
     "exports": {
         ".": {
-            "require": "./api.service.cjs",
-            "import": "./api.service.js",
-            "types": "./api.service.d.ts"
+            "require": "./index.cjs",
+            "import": "./index.js",
+            "types": "./index.d.ts"
         },
         "./web": {
             "require": "./init.web.cjs",
@@ -20,9 +20,9 @@
             "types": "./init.web.ts"
         },
         "./require": {
-            "require": "./api.service.cjs",
-            "import": "./api.service.cjs",
-            "types": "./api.service.d.ts"
+            "require": "./index.cjs",
+            "import": "./index.cjs",
+            "types": "./index.d.ts"
         }
     },
     "dependencies": {
