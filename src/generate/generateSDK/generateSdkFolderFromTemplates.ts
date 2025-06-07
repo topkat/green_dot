@@ -126,7 +126,7 @@ export async function generateSdkFolderFromTemplates(
     ],
     [
       ['.template', ''],
-      ['.js', '.cjs'],
+      [/\.js$/, '.cjs'],
     ],
     [/\.ts$/]
   )
