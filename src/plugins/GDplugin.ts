@@ -32,7 +32,7 @@ export type GDpluginHandlers = {
   priority?: number
 } & ({
   event: 'onLogin'
-  callback: GreenDotAppConfig['onLoginCallback']
+  callback: GreenDotAppConfig['onBeforeLoginCallback']
 })
 
 export type GDpluginHandlerEventNames = GDpluginHandlers['event']

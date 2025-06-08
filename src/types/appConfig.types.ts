@@ -34,10 +34,16 @@ export type GreenDotAppConfig = {
       pass?: string
     }
   }
-  /** This is where you connect and give role and permissions to enter your app. This is usually where you read apiKeys or JWT Tokens to ensure users have the right to connect. Note: you can add props to Ctx (Eg: ctx.companyId...) and augment type to reflect your new field. See Ctx augmentation doc (TODO)
+  /** Here you can change role and permission by modifying the first param ctxUser. You also have req and res (like in express middlewares) to get informations from headers, body, queryParams...This will be applied BEFORE plugins onLogin callbacks.
+  Note: you can add props to Ctx (Eg: ctx.companyId...) and augment type to reflect your new field. See Ctx augmentation doc (TODO)
   * @example TODO
   */
-  onLoginCallback?(defaultCtx: CtxUser, req: Request, res: Response)
+  onBeforeLoginCallback?(defaultCtx: CtxUser, req: Request, res: Response)
+  /** Here you can change role and permission by modifying the first param ctxUser. You also have req and res (like in express middlewares) to get informations from headers, body, queryParams...This will be applied BEFORE plugins onLogin callbacks.
+  Note: you can add props to Ctx (Eg: ctx.companyId...) and augment type to reflect your new field. See Ctx augmentation doc (TODO)
+  * @example TODO
+  */
+  onAfterLoginCallback?(defaultCtx: CtxUser, req: Request, res: Response)
   // publicFolder?: string
   corsOrigin: (RegExp | string)[] | ((origin: string) => boolean)
   /** A string to be used as an intro for the cli server start process OR a function where you handle console log yourself */

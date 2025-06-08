@@ -8,7 +8,7 @@ import type { GDapiKeyAuthentication } from './main.js'
 //  ╠══╣ ╠══╝  ║    ╠═╩╗ ╠═   ╚═╦═╝
 //  ╩  ╩ ╩    ═╩═   ╩  ╚ ╚══╝   ╩
 
-export function getOnLogin(gdApiKeyAuth: GDapiKeyAuthentication): GreenDotAppConfig['onLoginCallback'] {
+export function getOnLogin(gdApiKeyAuth: GDapiKeyAuthentication): GreenDotAppConfig['onBeforeLoginCallback'] {
   return async (ctxUser: CtxUser, req) => {
     if (ctxUser.role === 'public') {
       const apiKey = req?.headers?.apikey

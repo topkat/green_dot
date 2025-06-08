@@ -39,7 +39,10 @@ export function getAllPluginServices() {
 }
 
 export function getPluginHook(eventName: GDpluginHandlerEventNames) {
-  return registeredPlugins.map(p => p.handlers.filter(h => h.event === eventName)).flat()
+  return registeredPlugins
+    .map(p => p.handlers.filter(h => h.event === eventName))
+    .flat()
+    .sort(({ priority: priorityA }, { priority: priorityB }) => priorityA - priorityB)
 }
 
 export function getPluginAdditionalUserFields() {

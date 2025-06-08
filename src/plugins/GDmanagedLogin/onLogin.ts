@@ -19,7 +19,7 @@ import { PluginUserConfig } from './config.js'
 
 export function getOnLoginHandler(
   config: PluginUserConfig
-): GreenDotAppConfig['onLoginCallback'] {
+): GreenDotAppConfig['onBeforeLoginCallback'] {
   return async (ctxUser: CtxUser, req) => {
 
     const { generateSdkConfig } = getMainConfig()

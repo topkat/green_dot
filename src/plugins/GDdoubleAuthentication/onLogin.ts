@@ -6,7 +6,7 @@ import type { GDdoubleAuthentication } from './main.js'
 
 
 
-export function getOnLogin(gdDoubleAuth: GDdoubleAuthentication): GreenDotAppConfig['onLoginCallback'] {
+export function getOnLogin(gdDoubleAuth: GDdoubleAuthentication): GreenDotAppConfig['onBeforeLoginCallback'] {
   return async (ctxUser: CtxUser, req) => {
 
     const { user } = ctxUser
