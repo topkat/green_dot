@@ -37,7 +37,7 @@ function createErrorProxy(addCtxFnInParams: boolean) {
                 } else {
                     C.warning(false, `Trying to throw an unknown error "${p}". green_dot errors has not been correctly registered. Generic error thrown instead. Please see documentation on how to throw errors on green_dot or open a github issue.`)
                     message = 'serverError'
-                    options = params[0]
+                    options = params[0] || {}
                 }
 
                 if (typeof options.code === 'undefined') options.code = 422 // default

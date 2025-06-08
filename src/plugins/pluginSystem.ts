@@ -6,6 +6,8 @@ import GDdoubleAuthentication from './GDdoubleAuthentication/main.js'
 import GDapiKeyAuthentication from './GDapiKeyAuthentication/main.js'
 import { ServiceGeneric } from '../types/services.types.js'
 import { type NewPluginConfig } from './newPlugin.js'
+import { GoodCopNextDefinition } from '../lib/good-cop/definitionTypes.js'
+import { registerErrors } from '../error.js'
 
 export type PluginNames = typeof GDmanagedLogin.name | typeof GDdoubleAuthentication.name | typeof GDapiKeyAuthentication.name
 
@@ -21,10 +23,21 @@ export type InstanciatedPlugin = InstanceType<AllPluginConfig[PluginNames]['plug
 
 const registeredPlugins = [] as InstanciatedPlugin[]
 
+
+/** Register a plugin from appConfig to be used in app */
 export function registerPlugin(plugin: InstanciatedPlugin) {
   if (plugin.config.enable) registeredPlugins.push(plugin)
 }
 
+export function initPlugins() {
+  for (const p of registeredPlugins) {
+    if (p.errors) registerErrors(p.errors)
+  }
+}
+
+//  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
+//  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
+//  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 export function getPlugin<T extends PluginNames>(name: T) {
   return registeredPlugins.find(p => p.name === name) as InstanceType<(typeof allPluginConfigs)[T]['plugin']> | null
 }
@@ -46,8 +59,12 @@ export function getPluginHook(eventName: GDpluginHandlerEventNames) {
 }
 
 export function getPluginAdditionalUserFields() {
-  return registeredPlugins.reduce((obj, p) => ({ ...obj, ...(p?.addUserAdditionalFields?.() || {}) }), {})
+  return registeredPlugins.reduce((obj, p) => ({ ...obj, ...(p?.addUserAdditionalFields?.() || {}) }), {} as Record<string, GoodCopNextDefinition<any>>)
 }
+
+
+
+
 // type AllPlugins = (typeof allPlugins)
 // type OO = {
 //   [K in PluginNames]: InstanceType<AllPlugins[K]> extends { addUserAdditionalFields: any } ? InstanceType<AllPlugins[K]>['addUserAdditionalFields'] : never

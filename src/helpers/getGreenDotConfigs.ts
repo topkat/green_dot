@@ -8,7 +8,7 @@ import { greenDotConfigDefaults, GreenDotConfig, GreenDotConfigWithDefaults } fr
 import { error } from '../error.js'
 import { initProjectAndDaosCache } from './getProjectModelsAndDaos.js'
 import { parentProcessExitCodes } from '../constants.js'
-import { registerPlugin } from '../plugins/pluginSystem.js'
+import { initPlugins, registerPlugin } from '../plugins/pluginSystem.js'
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══
 //   ║  ║╚╗║  ║    ║
@@ -41,6 +41,8 @@ export async function initClientApp(conf: GreenDotConfig) {
   await initGreenDotConfigs()
 
   await initProjectAndDaosCache()
+
+  await initPlugins()
 }
 
 //  ╦╗╔╦ ╔══╗ ═╦═ ╦╗ ╔   ╔══╗ ╔══╗ ╦╗ ╔ ╔══╗ ═╦═ ╔══╗
