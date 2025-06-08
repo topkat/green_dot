@@ -1,4 +1,4 @@
-
+import { jest } from '@jest/globals'
 import { applyMaskIncludingOnPopulatedFieldsRecursive, applyMaskToPopulateConfig, combineMaskHooksAndReturnMaskOrSelectAddrArray, getMongoMaskForUser, getMaskFromSelect } from './maskService.js'
 import { models } from '../../../tests/models.js'
 import { appliableHooksForUser } from '../../0_hooks/appliableHookForUser.js'
@@ -8,13 +8,13 @@ import { getCtx, createUser, createOrg, orgId1 } from '../../../tests/jestHelper
 import { nbOccurenceInString, C } from 'topkat-utils'
 import { MainDbName } from '../../../cache/dbs/index.generated.js'
 
-jest.mock('../../../helpers/getGreenDotConfigs', () => ({
+jest.unstable_mockModule('../../../helpers/getGreenDotConfigs.js', () => ({
     getMainConfig: () => ({
         allPermissions: ['user', 'admin']
     })
 }))
 
-jest.mock('../../../helpers/getProjectModelsAndDaos', () => ({
+jest.unstable_mockModule('../../../helpers/getProjectModelsAndDaos.js', () => ({
     getProjectDatabaseModels: () => models.validation,
     getProjectDatabaseDaosForModel: (dbName, modelName) => models.daos[dbName][modelName],
 }))

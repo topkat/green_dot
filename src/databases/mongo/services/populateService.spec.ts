@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals'
 import { unPopulate, forEachPopulateFieldRecursive } from './populateService.js'
 import { createUser, createOrg, userId1, userId2, orgId1 } from '../../../tests/jestHelpers.js'
 import { models } from '../../../tests/models.js'
@@ -6,14 +7,14 @@ import { MainDbName } from '../../../cache/dbs/index.generated.js'
 import { C } from 'topkat-utils'
 
 
-jest.mock('../../../helpers/getGreenDotConfigs', () => ({
+jest.unstable_mockModule('../../../helpers/getGreenDotConfigs.js', () => ({
     getMainConfig: () => ({
         allPermissions: ['user', 'admin']
     })
 }))
 
 
-jest.mock('../../../helpers/getProjectModelsAndDaos', () => ({
+jest.unstable_mockModule('../../../helpers/getProjectModelsAndDaos.js', () => ({
     getProjectDatabaseModels: () => models.validation,
     getProjectDatabaseDaosForModel: (dbName, modelName) => models.daos[dbName][modelName],
 }))

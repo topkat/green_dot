@@ -1,7 +1,8 @@
-import { newPublicCtx } from '../ctx.js'
-import { models } from './models.js'
 
-jest.mock('../helpers/getGreenDotConfigs', () => ({
+import { jest } from '@jest/globals'
+import { newPublicCtx } from '../ctx.js'
+
+jest.unstable_mockModule('../helpers/getGreenDotConfigs.js', () => ({
     getMainConfig: () => ({
         allPermissions: ['user', 'admin']
     })

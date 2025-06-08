@@ -1,9 +1,40 @@
+### v0.0.53
+- Updated error handling in `decryptValidationTokens.ts`, `userAuthenticationTokenService.ts`, and `getNewTokenService.ts` to include function names and user IDs for better debugging.
+- Refactored `startDevServer.command.ts` to improve clarity in the control flow.
+- Rearranged imports in `index.generated.ts` for consistency and organization.
+- Cleaned up unnecessary whitespace in `onLogin.ts` for improved readability.
+- Ensured type definitions in `GDmanagedLogin.ts` are correctly typed as constants.
+
+- Rearranged import statements in `index.generated.ts` for better organization.
+- Updated type definitions in `ModelsWithDbNamesAndReadWrite` and `DbIds` to ensure consistency.
+- Modified file extension handling in `generateSdkFolderFromTemplates.ts` to use regex for improved accuracy.
+- Removed deprecated `api.service.template.d.ts` file to clean up the codebase.
+- Updated `package.json` to ensure proper formatting and compliance.
+- Rearranged import statements in `index.generated.ts` for better organization and clarity.
+- Modified CLI entry points to suppress warnings during execution.
+- Implemented `notImplementedWarning` in `cliGenerateApp.ts` and `cliGenerateDatabase.ts` to indicate incomplete functionality.
+- Adjusted SDK generation logic to correctly handle file extensions and improve output consistency.
+- Updated TypeScript compiler configurations to align with module resolution standards.
+- Revised template files to reflect changes in module exports and file extensions for better ESM compatibility.
+- Upgraded `good-cop` dependency from version 1.3.11 to 1.4.5 for improved functionality and bug fixes.
+- Refactored import statements across multiple files to utilize the new `index-backend.js` structure, enhancing code clarity and maintainability.
+- Removed deprecated files and cleaned up unused imports to streamline the codebase.
+- Updated type definitions and improved error handling in various modules to ensure better type safety and consistency.
+- Updated `index.js`, `index.ts`, and various other files to include `.js` extensions in export statements, ensuring compatibility with ECMAScript modules.
+- Enhanced type definitions in `core.types.ts` and `daoGeneric.types.ts` to improve clarity and maintainability.
+- Cleaned up imports across multiple files to align with the new module structure and improve overall code quality.
+- Added `"type": "module"` to `package.json` to enable ECMAScript module support.
+- Updated module settings in `tsconfig.json` to use `ESNext` and `bundler` for better compatibility with ESM.
+- Replaced `command-line-application` with `commander` for improved command handling in the CLI.
+- Modified CLI entry points to use `node --loader ts-node/esm` for ESM compatibility.
+- Updated various import statements to use `.js` extensions where necessary for ESM compliance.
+- Enhanced `greenDotCliIntro` calls to await asynchronous execution for better flow control.
+
 ### v0.0.51
 - Upgraded `send-teams-message` package from version 1.0.4 to 1.0.5 for improved functionality.
 - Updated `axios` dependency from version 1.7.4 to 1.9.0 to leverage new features and fixes.
 - Refined type definitions in `index.generated.ts` to improve type safety and clarity for database models.
 - Streamlined the structure of model types to ensure better maintainability and usability across the codebase.
-
 - Upgraded `send-teams-message` package from version 1.0.3 to 1.0.4 for enhanced functionality.
 - Refactored database service functions to consistently use `mainDb` instead of `main`, improving type safety and clarity in the codebase.
 - Updated related tests in `maskService.spec.ts` and `populateService.spec.ts` to reflect the new database naming conventions.
