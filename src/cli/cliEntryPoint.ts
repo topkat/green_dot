@@ -14,10 +14,15 @@ import { onFileChange } from './helpers/fileWatcher.js'
 import { parentProcessExitCodes } from '../constants.js'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
+import { readFileSync } from 'fs'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
+// Get version from package.json
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf-8'))
+const version = packageJson.version
 
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
@@ -74,6 +79,7 @@ async function start() {
     program
       .name('dot')
       .description('dot CLI from green_dot backend framework')
+      .version(version, '-v, --version')
 
     // Add all commands
     Object.entries(commands).forEach(([name, command]) => {
