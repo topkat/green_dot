@@ -1,10 +1,16 @@
+### v0.0.55
+- Added new dependencies: crypto-js and jsonwebtoken for improved security.
+- Updated userAdditionalFields to include dynamic configuration from mainConfig.
+- Refactored user authentication token service to utilize maxRefreshTokenPerRole from mainConfig.
+- Enhanced type definitions in mainConfig.types.ts to support new configuration options for user management.
+- Improved user model to incorporate additional fields for better data handling.
+
 ### v0.0.53
 - Updated error handling in `decryptValidationTokens.ts`, `userAuthenticationTokenService.ts`, and `getNewTokenService.ts` to include function names and user IDs for better debugging.
 - Refactored `startDevServer.command.ts` to improve clarity in the control flow.
 - Rearranged imports in `index.generated.ts` for consistency and organization.
 - Cleaned up unnecessary whitespace in `onLogin.ts` for improved readability.
 - Ensured type definitions in `GDmanagedLogin.ts` are correctly typed as constants.
-
 - Rearranged import statements in `index.generated.ts` for better organization.
 - Updated type definitions in `ModelsWithDbNamesAndReadWrite` and `DbIds` to ensure consistency.
 - Modified file extension handling in `generateSdkFolderFromTemplates.ts` to use regex for improved accuracy.
@@ -232,8 +238,3 @@
 - Refactored userAdditionalFields to separate read and write types for better clarity.
 - Modified index.ts to include new imports for user authentication and connection services.
 - Removed deprecated on-login-hook.ts file to streamline project structure.
-- Added new dependencies: crypto-js and jsonwebtoken for improved security.
-- Updated userAdditionalFields to include dynamic configuration from mainConfig.
-- Refactored user authentication token service to utilize maxRefreshTokenPerRole from mainConfig.
-- Enhanced type definitions in mainConfig.types.ts to support new configuration options for user management.
-- Improved user model to incorporate additional fields for better data handling.
