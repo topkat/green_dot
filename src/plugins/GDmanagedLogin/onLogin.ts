@@ -21,7 +21,6 @@ export function getOnLoginHandler(
   config: PluginUserConfig
 ): GreenDotAppConfig['onBeforeLoginCallback'] {
   return async (ctxUser: CtxUser, req) => {
-
     const { generateSdkConfig } = getMainConfig()
     const permissionPerPlatform = (objEntries(generateSdkConfig.sdkNameForRole as Record<string, string>).reduce((o, [k, v]) => ({ ...o, [v]: k }), {})) as Record<GD['platform'], GD['role']>
 

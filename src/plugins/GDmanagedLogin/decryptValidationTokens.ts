@@ -44,7 +44,7 @@ export async function decryptValidationToken(
 
       await credentialManagementMailing(ctx, user, userId, 'emailValidation', {}, pluginConfig)
     }
-    throw ctx.error.tokenExpired({ token, email: user.email, _id: userId })
+    throw ctx.error.tokenExpired({ fn: 'decryptValidationToken', token, email: user.email, userId })
   }
 
   if (!isForVerification) {

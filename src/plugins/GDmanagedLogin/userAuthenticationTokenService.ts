@@ -91,7 +91,7 @@ export async function parseToken(
 
     if (!data) throw ctx.error.wrongToken({ phase: 'checkTokenDataExists' })
     else if (!requiredTokenFields.every(reqFld => !!data[reqFld])) throw ctx.error.wrongToken({ phase: 'JWTrequiredFields' })
-    else if (checkExpiredToken && data.expirationDate !== 'never' && typeof data.expirationDate === 'number' && data.expirationDate < Date.now()) throw ctx.error.tokenExpired({ phase: 'expiredToken' })
+    else if (checkExpiredToken && data.expirationDate !== 'never' && typeof data.expirationDate === 'number' && data.expirationDate < Date.now()) throw ctx.error.tokenExpired({ fn: 'parseToken', phase: 'expiredToken', userId: data.userId })
 
     return data
 }

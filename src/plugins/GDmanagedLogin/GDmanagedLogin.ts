@@ -117,7 +117,7 @@ export class GDmanagedLogin extends GDplugin<Name> {
         validUntil: _.date(),
         creationDate: _.date(),
         value: _.string(),
-        type: _.enum([...(validationTokenTypes || []), ...gdManagedLoginEmailTypes]),
+        type: _.enum([...(validationTokenTypes || []), ...gdManagedLoginEmailTypes] as const),
       }),
       /** Those are used to request an access token. Access token changes every N minutes, while refresh tokens last for a session */
       refreshTokens: [_.string()],

@@ -10,6 +10,7 @@ import { _ } from '../../../validator.js'
 import { ensureUserIsNotLocked } from '../../../security/userAndConnexion/userLockService.js'
 import { parseToken, revokeToken, setConnexionTokens } from '../userAuthenticationTokenService.js'
 import { PluginUserConfig } from '../config.js'
+import { getId } from 'topkat-utils'
 
 
 export const getNewTokenService = (config: PluginUserConfig) => {
@@ -75,7 +76,7 @@ export const getNewTokenService = (config: PluginUserConfig) => {
                     if ((pinCode || biometricAuthToken) && doubleAuth) {
                         await doubleAuth.compareAndAddAttempt(ctx, pinCode ? 'pincode' : 'biometricAuthToken', pinCode || biometricAuthToken, user)
                     } else {
-                        throw ctx.error.tokenExpired({ phase: 'expiredToken' })
+                        throw ctx.error.tokenExpired({ fn: 'getNewTokenSvc', phase: 'expiredToken', userId: getId(user) })
                     }
                 }
 

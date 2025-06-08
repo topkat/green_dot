@@ -34,7 +34,7 @@ export async function startDevServerCommand() {
 
     clearCli()
     await greenDotCliIntro()
-  }
+  } else clearCli()
 
   process.stdin.setRawMode?.(true)
   process.stdin.resume()
