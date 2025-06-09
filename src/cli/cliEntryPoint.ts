@@ -6,13 +6,13 @@
 // because we don't want a 500MB node_modules tree
 // to be loaded just for a very simple process launcher
 import { Command } from 'commander'
-import { cliArgsToEnv, greenDotCliIntro } from './helpers/cli.js'
+import { clearCli, cliArgsToEnv, greenDotCliIntro } from './helpers/cli.js'
 import { startChildProcess } from './helpers/processManager.js'
 import { C } from 'topkat-utils'
 import { onFileChange } from './helpers/fileWatcher.js'
 import { parentProcessExitCodes } from '../constants.js'
 import { fileURLToPath } from 'url'
-import Path, { dirname, join, sep } from 'path'
+import { dirname, join, sep } from 'path'
 import { readFileSync } from 'fs'
 import { ensureDistFolderInFilePath } from './helpers/ensureDistFolderInFilePath.js'
 import { CliCommands } from './types/command.types.js'
@@ -74,7 +74,7 @@ const commands = {
 
 async function start() {
   try {
-    // clearCli()
+    clearCli()
 
     const program = new Command()
     program
