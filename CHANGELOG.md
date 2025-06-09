@@ -1,3 +1,13 @@
+### v0.0.61
+- Updated package.json to include new plugin export path.
+- Refactored index.ts to streamline user authentication and connection service imports.
+- Simplified type definitions in index.generated.ts for better maintainability.
+- Improved CLI test suite generation logic for better user experience.
+- Enhanced API endpoint role handling in getApiEndpointsPerRolesFromDao.ts.
+- Adjusted token generation logic in userAuthenticationTokenService to include cookie management.
+- Updated userAdditionalFields to support dynamic configuration and improved error handling in userPasswordService.
+- Removed deprecated secureAuth.ts file to clean up the codebase.
+
 ### v0.0.59
 - Updated index.ts to include imports for user management services.
 - Modified generateFilesForCachedDb.ts to improve user permission fields handling.
@@ -234,11 +244,3 @@
 - Updated managedLogin plugin to include new configuration options and validation logic.
 - Modified secureAuth plugin to export its default configuration.
 - Adjusted cookie service and token generation logic to utilize plugin configurations for improved flexibility.
-- Updated package.json to include new plugin export path.
-- Refactored index.ts to streamline user authentication and connection service imports.
-- Simplified type definitions in index.generated.ts for better maintainability.
-- Improved CLI test suite generation logic for better user experience.
-- Enhanced API endpoint role handling in getApiEndpointsPerRolesFromDao.ts.
-- Adjusted token generation logic in userAuthenticationTokenService to include cookie management.
-- Updated userAdditionalFields to support dynamic configuration and improved error handling in userPasswordService.
-- Removed deprecated secureAuth.ts file to clean up the codebase.
