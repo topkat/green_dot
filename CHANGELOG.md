@@ -1,3 +1,11 @@
+### v0.0.65
+- Added modulePathIgnorePatterns to jest configuration to exclude dist directory.
+- Updated package.json to support new plugin export structure for managedLogin.
+- Refactored getNewTokenService import path to align with new plugin structure.
+- Enhanced userAdditionalFields and user authentication services to utilize plugin configurations.
+- Removed deprecated getNewTokenService file to streamline codebase.
+- Improved type definitions in appConfig.types.ts and mainConfig.types.ts to support plugin instantiation.
+
 ### v0.0.63
 - Added default configuration handling for managedLogin and secureAuth plugins.
 - Refactored plugin system to return default configurations when plugins are not registered.
@@ -240,9 +248,3 @@
 - Updated tsconfig.json to use Node16 module resolution and exclude coverage directory.
 
 ### v0.0.42
-- Added modulePathIgnorePatterns to jest configuration to exclude dist directory.
-- Updated package.json to support new plugin export structure for managedLogin.
-- Refactored getNewTokenService import path to align with new plugin structure.
-- Enhanced userAdditionalFields and user authentication services to utilize plugin configurations.
-- Removed deprecated getNewTokenService file to streamline codebase.
-- Improved type definitions in appConfig.types.ts and mainConfig.types.ts to support plugin instantiation.
