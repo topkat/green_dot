@@ -1,6 +1,6 @@
 {
   "name": "green_dot",
-  "version": "0.0.67",
+  "version": "0.0.68",
   "main": ".",
   "type": "module",
   "types": "./index.ts",
