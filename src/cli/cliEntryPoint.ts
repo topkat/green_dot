@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 // --showConfig  --no-warnings --loader ts-node/esm
 
 
@@ -77,8 +77,8 @@ async function start() {
 
     const program = new Command()
     program
-      .name('dot')
-      .description('dot CLI from green_dot backend framework')
+      .name('green_dot')
+      .description('green_dot CLI from green_dot backend framework')
       .version(version, '-v, --version')
 
     // Add all commands
@@ -101,7 +101,7 @@ async function start() {
 
     // Parse arguments
     program.parse(process.argv)
-    const _command = program.args[0] as keyof typeof commands
+    const _command = (program.args[0] || 'generate') as keyof typeof commands
     const args = program.opts()
 
     await greenDotCliIntro({ subTitle: _command.toUpperCase() })

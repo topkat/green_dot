@@ -52,7 +52,7 @@
     "bump:patch": "yarn clean && tscp && tsc && yarn test:ci && bump --patch",
     "test:ci": "echo '🤯 TESTS ARE DISABLED SINCE ESM MIGRATION 🤯 jest --ci --runInBand --maxConcurrency=1 --silent'",
     "// This is copied to avoid a typescript problem of types ": "",
-    "postinstall": "cp -r ./node_modules/good-cop/src/* ./src/lib/good-cop/"
+    "postinstall": "if [ -d \"src\" ]; then cp -r ./node_modules/good-cop/src/* ./src/lib/good-cop/; fi"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.4.0",
@@ -108,10 +108,10 @@
     "typescript-generic-types": "1.0.15"
   },
   "bin": {
-    "dot": "dist/src/cli/cliEntryPoint.js",
-    "green_dot": "dist/src/cli/cliEntryPoint.js",
-    "gd": "dist/src/cli/cliEntryPoint.js",
-    "gdStartProd": "dist/src/cli/startProdSpecialEntryPoint.js"
+    "dot": "src/cli/cliEntryPoint.ts",
+    "green_dot": "src/cli/cliEntryPoint.ts",
+    "gd": "src/cli/cliEntryPoint.ts",
+    "gdStartProd": "src/cli/startProdSpecialEntryPoint.ts"
   },
   "typesVersions": {
     "*": {
