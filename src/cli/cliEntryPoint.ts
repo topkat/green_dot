@@ -107,7 +107,11 @@ async function start() {
 
     await greenDotCliIntro({ subTitle: _command.toUpperCase() })
 
-    const runFromDist = _command === 'start' // || _command === 'generate'
+    // HACK in case it's in a blank folder, it will use green_dot from temp folder
+    // location. This will mess with ESM and ts-node (global spaghetti shit metaverse hole here)
+    const runGenerateFromDist = __dirname.includes(sep + '_npx' + sep) && _command === 'generate'
+
+    const runFromDist = _command === 'start' || (_command === 'generate' && runGenerateFromDist)
 
     process.env.GREEN_DOT_INPUT_COMMAND = _command
     process.env.RUN_FROM_DIST = runFromDist.toString()
@@ -121,24 +125,19 @@ async function start() {
       next = await new Promise(resolve => {
         try {
           const tsNodePath2 = import.meta.resolve('ts-node/esm')
-          console.log(`tsNodePath2`, tsNodePath2)
           const classicImportEsm = 'ts-node/esm'
-          const useCalssic = false
-          const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--no-warnings', '--loader', useCalssic ? classicImportEsm : tsNodePath2]
-          console.log(`additionalTsNodeArgsFirstArgs`, additionalTsNodeArgsFirstArgs)
+          const useClassic = true
+
+          const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--no-warnings', '--loader', useClassic ? classicImportEsm : tsNodePath2]
+
           const baseDir = runFromDist
             ? ensureDistFolderInFilePath(__dirname)
             : __dirname.replace(`dist${sep}`, '')
 
           const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : `/childProcessEntryPoint.`) + (runFromDist ? 'js' : 'ts')
 
-          const tsNodePath = Path.resolve(__dirname, '../../../node_modules/ts-node')
-          console.log(`tsNodePath`, tsNodePath)
-          const nodePath = process.execPath
-          console.log(`nodePath`, nodePath)
-
           startChildProcess(
-            nodePath,
+            'node',
             [...additionalTsNodeArgsFirstArgs, command, _command],
             code => {
               if (!code || code === parentProcessExitCodes.exit) {
