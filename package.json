@@ -109,10 +109,10 @@
     "typescript-generic-types": "1.0.15"
   },
   "bin": {
-    "dot": "dist/src/cli/cliEntryPoint.js",
-    "green_dot": "dist/src/cli/cliEntryPoint.js",
-    "gd": "dist/src/cli/cliEntryPoint.js",
-    "gdStartProd": "src/cli/startProdSpecialEntryPoint.ts"
+    "dot": "node --loader ts-node/esm ./dist/src/cli/cliEntryPoint.js",
+    "green_dot": "node --loader ts-node/esm ./dist/src/cli/cliEntryPoint.js",
+    "gd": "node --loader ts-node/esm ./dist/src/cli/cliEntryPoint.js",
+    "gdStartProd": "node --loader ts-node/esm ./dist/src/cli/startProdSpecialEntryPoint.js"
   },
   "typesVersions": {
     "*": {

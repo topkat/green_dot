@@ -12,7 +12,7 @@ import { C } from 'topkat-utils'
 import { onFileChange } from './helpers/fileWatcher.js'
 import { parentProcessExitCodes } from '../constants.js'
 import { fileURLToPath } from 'url'
-import { dirname, join, sep } from 'path'
+import Path, { dirname, join, sep } from 'path'
 import { readFileSync } from 'fs'
 import { ensureDistFolderInFilePath } from './helpers/ensureDistFolderInFilePath.js'
 import { CliCommands } from './types/command.types.js'
@@ -128,9 +128,17 @@ async function start() {
 
           const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : `/childProcessEntryPoint.`) + (runFromDist ? 'js' : 'ts')
 
+          // Get the path to ts-node
+          const tsNodePath2 = require.resolve('ts-node')
+          console.log(`tsNodePath2`, tsNodePath2)
+          const tsNodePath = Path.resolve(__dirname, '../../../node_modules/ts-node')
+          console.log(`tsNodePath`, tsNodePath)
+          const nodePath = process.execPath
+          console.log(`nodePath`, nodePath)
+
           startChildProcess(
-            'node',
-            [...additionalTsNodeArgsFirstArgs, command, _command],
+            nodePath,
+            [...additionalTsNodeArgsFirstArgs, '--require', tsNodePath, command, _command],
             code => {
               if (!code || code === parentProcessExitCodes.exit) {
                 // SUCCESS EXIT
