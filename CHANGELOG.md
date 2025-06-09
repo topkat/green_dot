@@ -1,3 +1,10 @@
+### v0.0.59
+- Updated index.ts to include imports for user management services.
+- Modified generateFilesForCachedDb.ts to improve user permission fields handling.
+- Added UserAdditionalFields for better user data management in userAdditionalFields.ts.
+- Enhanced user lock service to utilize new user lock reasons and permissions.
+- Updated global types to incorporate default permissions and roles for better type safety.
+
 ### v0.0.57
 - Updated userPasswordService to improve password attempt handling and user locking logic.
 - Refactored userAdditionalFields to separate read and write types for better clarity.
@@ -235,8 +242,3 @@
 - Adjusted token generation logic in userAuthenticationTokenService to include cookie management.
 - Updated userAdditionalFields to support dynamic configuration and improved error handling in userPasswordService.
 - Removed deprecated secureAuth.ts file to clean up the codebase.
-- Updated index.ts to include imports for user management services.
-- Modified generateFilesForCachedDb.ts to improve user permission fields handling.
-- Added UserAdditionalFields for better user data management in userAdditionalFields.ts.
-- Enhanced user lock service to utilize new user lock reasons and permissions.
-- Updated global types to incorporate default permissions and roles for better type safety.
