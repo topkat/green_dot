@@ -1,3 +1,10 @@
+### v0.0.63
+- Added default configuration handling for managedLogin and secureAuth plugins.
+- Refactored plugin system to return default configurations when plugins are not registered.
+- Updated managedLogin plugin to include new configuration options and validation logic.
+- Modified secureAuth plugin to export its default configuration.
+- Adjusted cookie service and token generation logic to utilize plugin configurations for improved flexibility.
+
 ### v0.0.61
 - Updated package.json to include new plugin export path.
 - Refactored index.ts to streamline user authentication and connection service imports.
@@ -239,8 +246,3 @@
 - Enhanced userAdditionalFields and user authentication services to utilize plugin configurations.
 - Removed deprecated getNewTokenService file to streamline codebase.
 - Improved type definitions in appConfig.types.ts and mainConfig.types.ts to support plugin instantiation.
-- Added default configuration handling for managedLogin and secureAuth plugins.
-- Refactored plugin system to return default configurations when plugins are not registered.
-- Updated managedLogin plugin to include new configuration options and validation logic.
-- Modified secureAuth plugin to export its default configuration.
-- Adjusted cookie service and token generation logic to utilize plugin configurations for improved flexibility.
