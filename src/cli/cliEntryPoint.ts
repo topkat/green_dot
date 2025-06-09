@@ -7,7 +7,6 @@
 // to be loaded just for a very simple process launcher
 import { Command } from 'commander'
 import { cliArgsToEnv, greenDotCliIntro } from './helpers/cli.js'
-import type { ChildProcessCommands } from './childProcessEntryPoint.js' // is not imported at runtime
 import { startChildProcess } from './helpers/processManager.js'
 import { C } from 'topkat-utils'
 import { onFileChange } from './helpers/fileWatcher.js'
@@ -16,6 +15,7 @@ import { fileURLToPath } from 'url'
 import { dirname, join, sep } from 'path'
 import { readFileSync } from 'fs'
 import { ensureDistFolderInFilePath } from './helpers/ensureDistFolderInFilePath.js'
+import { CliCommands } from './types/command.types.js'
 //   TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE   \\
 
 const __filename = fileURLToPath(import.meta.url)
@@ -189,8 +189,7 @@ start()
 //  ╦  ╦ ╔══╗ ╦    ╔══╗ ╔══╗ ╔══╗ ╔═══
 //  ╠══╣ ╠═   ║    ╠══╝ ╠═   ╠═╦╝ ╚══╗
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
-
-type CommandPlus = Record<ChildProcessCommands | 'start' | 'upgrade', {
+type CommandPlus = Record<CliCommands | 'start' | 'upgrade', {
   description: string
   executeWith?: 'bun' | 'ts-node'
   options?: Array<{

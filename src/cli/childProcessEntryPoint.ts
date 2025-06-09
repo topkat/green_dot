@@ -6,6 +6,7 @@ import { cleanCommand } from './clean.command.js'
 import { generateCommand } from './generate.command.js'
 import { startDevServerCommand } from './startDevServer.command.js'
 import { testCommand } from './test.command.js'
+import { CliCommands } from './types/command.types.js'
 import { upgradeCommand } from './upgrade.command.js'
 
 
@@ -16,8 +17,6 @@ const [, , processCommand] = process.argv as [string, string, ChildProcessComman
 //  ╔══╗ ╔══╗ ╦╗╔╦ ╦╗╔╦ ╔══╗ ╦╗ ╔ ╔═╗  ╔═══
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
-
-type CommandPlus = Record<string, { execute: Array<Function>, exitAfter?: boolean }>
 
 const commands = {
   build: {
@@ -50,7 +49,7 @@ const commands = {
     execute: [upgradeCommand],
     exitAfter: true,
   },
-} satisfies CommandPlus
+} satisfies Record<CliCommands, { execute: Array<Function>, exitAfter?: boolean }>
 
 //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╦╗╔╦
 //  ╠══╝ ╠═╦╝ ║  ║ ║ ═╦ ╠═╦╝ ╠══╣ ║╚╝║
@@ -67,6 +66,7 @@ export async function startTask(command = processCommand) {
       const next = await execute.shift()
       await next()
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err)
       throw err
     }
