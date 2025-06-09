@@ -116,6 +116,8 @@ async function start() {
     process.env.GREEN_DOT_INPUT_COMMAND = _command
     process.env.RUN_FROM_DIST = runFromDist.toString()
 
+    process.env.TS_NODE_SKIP_IGNORE = 'true' // this one is a life saver days of work to find out
+
     cliArgsToEnv(args, false)
 
     let next: 'reload' | 'continue' = 'continue'
