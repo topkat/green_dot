@@ -1,3 +1,9 @@
+### v0.0.57
+- Updated userPasswordService to improve password attempt handling and user locking logic.
+- Refactored userAdditionalFields to separate read and write types for better clarity.
+- Modified index.ts to include new imports for user authentication and connection services.
+- Removed deprecated on-login-hook.ts file to streamline project structure.
+
 ### v0.0.55
 - Added new dependencies: crypto-js and jsonwebtoken for improved security.
 - Updated userAdditionalFields to include dynamic configuration from mainConfig.
@@ -234,7 +240,3 @@
 - Added UserAdditionalFields for better user data management in userAdditionalFields.ts.
 - Enhanced user lock service to utilize new user lock reasons and permissions.
 - Updated global types to incorporate default permissions and roles for better type safety.
-- Updated userPasswordService to improve password attempt handling and user locking logic.
-- Refactored userAdditionalFields to separate read and write types for better clarity.
-- Modified index.ts to include new imports for user authentication and connection services.
-- Removed deprecated on-login-hook.ts file to streamline project structure.

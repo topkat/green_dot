@@ -1,5 +1,5 @@
-#!/usr/bin/env node --no-warnings --loader ts-node/esm
-// --showConfig
+#!/usr/bin/env node
+// --showConfig  --no-warnings --loader ts-node/esm
 
 
 // /!\ TRY TO IMPORT THE LESS POSSIBLE IN THIS FILE /!\ \\
@@ -126,7 +126,7 @@ async function start() {
             : __dirname.replace(`dist${join('')}`, '')
 
           const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : `/childProcessEntryPoint.`) + (runFromDist ? 'js' : 'ts')
-
+          console.log(`command`, command)
           startChildProcess(
             'node',
             [...additionalTsNodeArgsFirstArgs, command, _command],

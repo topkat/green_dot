@@ -39,6 +39,6 @@ const plugin = newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
 export default plugin
 
 export type { JWTdata } from './userAuthenticationTokenService.js'
-export type { GDmanagedLogin } from './GDmanagedLogin.js'
+export { GDmanagedLogin } from './GDmanagedLogin.js'
 export type { GDmanagedLoginSendEmailFunction, GDmanagedLoginSendEmailUpdatedMailConfirmationFunction } from './config.js'
 export { gdManagedLoginEmailTypes, type GDmanagedLoginEmailTypes } from './constants.js'

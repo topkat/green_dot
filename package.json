@@ -108,9 +108,9 @@
     "typescript-generic-types": "1.0.15"
   },
   "bin": {
-    "dot": "src/cli/cliEntryPoint.ts",
-    "green_dot": "src/cli/cliEntryPoint.ts",
-    "gd": "src/cli/cliEntryPoint.ts",
+    "dot": "dist/src/cli/cliEntryPoint.js",
+    "green_dot": "dist/src/cli/cliEntryPoint.js",
+    "gd": "dist/src/cli/cliEntryPoint.js",
     "gdStartProd": "dist/src/cli/startProdSpecialEntryPoint.js"
   },
   "typesVersions": {

@@ -42,13 +42,12 @@ ${indexFile.imports}
 
 ${hardCodePermissionFields ? permType : ''}\
 
-export const defaultDbName = '${mainConfig.defaultDatabaseName}'
-
 export type ModelsWithDbNamesAndReadWrite = {
 ${indexFile.allModels}\
 }
 
 export type DbIds = {
+    default: 'default'
 ${indexFile.dbIds}\
 }
 

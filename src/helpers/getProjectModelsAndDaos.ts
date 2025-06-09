@@ -84,6 +84,8 @@ export async function initProjectAndDaosCache(resetCache = false) {
 
   if (!hasDefaultDatabase) throw error.serverError(`No default database found with name ${mainConfig.defaultDatabaseName}. Available names: ${dbConfigs.map(d => d.name)}`)
 
+  modelsCache.default = modelsCache[mainConfig.defaultDatabaseName]
+
 }
 
 

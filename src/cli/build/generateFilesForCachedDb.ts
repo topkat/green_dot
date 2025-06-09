@@ -73,6 +73,7 @@ export async function generateFilesForCachedDb(
     indexFile.imports += `import { AllModels as ${dbNameCapital}AllModels } from './${dbName}.modelTypes.generated.js'\n`
     if (dbName === mainConfig.defaultDatabaseName) {
       indexFile.allModels += `    ${dbName}: { [K in keyof ${dbNameCapital}AllModels]: K extends 'user' ? ${dbNameCapital}AllModels[K] & { Read: UserPermissionFields & UserAdditionalFieldsRead, Write: Partial<UserPermissionFields & UserAdditionalFieldsWrite> } : ${dbNameCapital}AllModels[K] }\n`
+      indexFile.allModels += `    default: { [K in keyof ${dbNameCapital}AllModels]: K extends 'user' ? ${dbNameCapital}AllModels[K] & { Read: UserPermissionFields & UserAdditionalFieldsRead, Write: Partial<UserPermissionFields & UserAdditionalFieldsWrite> } : ${dbNameCapital}AllModels[K] }\n`
     } else {
       indexFile.allModels += `    ${dbName}: ${dbNameCapital}AllModels\n`
     }
