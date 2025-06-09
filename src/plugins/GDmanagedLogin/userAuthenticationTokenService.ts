@@ -9,6 +9,7 @@ import { ModelTypes } from '../../cache/dbs/index.generated.js'
 import { setCsrfTokenCookie, setRefreshTokenCookie } from './cookieService.js'
 import { decryptToken, encryptToken } from '../../security/encryptAndDecryptSafe.js'
 import { PluginUserConfig } from './config.js'
+import { getPluginConfig } from '../pluginSystem.js'
 
 
 
@@ -40,8 +41,10 @@ type JWTdataObfuscated = JWTdataBase & { d: string } // d is used to store userI
 export async function createToken(
     ctx: Ctx,
     data: Omit<JWTdata, 'expirationDate'>,
-    config: PluginUserConfig
+    config?: PluginUserConfig
 ) {
+
+    if (!config) config = getPluginConfig('GDmanagedLogin')
 
     const { jwtRefreshExpirationMsMobile, jwtRefreshExpirationMsWeb, jwtSecret } = config
 
@@ -67,10 +70,12 @@ export async function createToken(
 export async function parseToken(
     ctx: Ctx,
     token: string,
-    config: PluginUserConfig,
-    checkExpiredToken = true
+    checkExpiredToken = true,
+    config?: PluginUserConfig,
 ) {
     let data: JWTdata | undefined
+
+    if (!config) config = getPluginConfig('GDmanagedLogin')
 
     const requiredTokenFields = ['type', 'userId', 'deviceId', 'expirationDate']
 
@@ -159,7 +164,7 @@ function getTokenListWithoutPrevious(
 
     return previousTokenList.reverse().filter(async tkn => {
         try {
-            const data = await parseToken(ctx, tkn, config)
+            const data = await parseToken(ctx, tkn, undefined, config)
             // FILTER OUT PREVIOUS TOKEN ASSOCIATED WITH THIS DEVICEID
             const isSameDeviceAndRole = data.deviceId === deviceId && data.role === role
             // OR TOKENS ABOVE MAX SESSIONS

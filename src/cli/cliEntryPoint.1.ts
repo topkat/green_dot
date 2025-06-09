@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 // --showConfig  --no-warnings --loader ts-node/esm
 
 
@@ -107,7 +107,7 @@ async function start() {
 
     await greenDotCliIntro({ subTitle: _command.toUpperCase() })
 
-    const runFromDist = _command === 'start' // || _command === 'generate'
+    const runFromDist = _command === 'start' || _command === 'generate'
 
     process.env.GREEN_DOT_INPUT_COMMAND = _command
     process.env.RUN_FROM_DIST = runFromDist.toString()

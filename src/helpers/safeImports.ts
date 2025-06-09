@@ -1,6 +1,7 @@
 import { C } from 'topkat-utils'
 import Path from 'path'
 import { getProjectPaths } from './getProjectPaths.js'
+import { ensureDistFolderInFilePath } from '../cli/helpers/ensureDistFolderInFilePath.js'
 
 export async function safeImport(path: string) {
 
@@ -12,7 +13,9 @@ export async function safeImport(path: string) {
 
   let pathRelative = Path.relative(mainConfig.folderPath, path)
 
-  if (process.env.RUN_FROM_DIST === 'false') {
+  if (process.env.RUN_FROM_DIST === 'true') {
+    path = ensureDistFolderInFilePath(path)
+  } else {
     pathRelative = pathRelative.replace(Path.sep + 'dist' + Path.sep, Path.sep)
   }
 

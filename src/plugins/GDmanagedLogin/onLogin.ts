@@ -44,7 +44,7 @@ export function getOnLoginHandler(
         if (csrfToken !== csrfTokenFromHeader && process.env.NODE_ENV !== 'development') throw error.wrongToken({ additionalInfos: `wrong CSRF token` })
 
         try {
-          const { role, userId, permissions } = await parseToken(ctx, authorization, config)
+          const { role, userId, permissions } = await parseToken(ctx, authorization, undefined, config)
           if (userId) {
             // TODO Handle Cache and userId difference
             user = await db.user.getById(ctx.GM, userId)

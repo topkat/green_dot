@@ -53,7 +53,7 @@ export const getNewTokenService = (config: PluginUserConfig) => {
 
                 if (!refreshToken) throw ctx.error.wrongToken({ additionalInfos: 'noCookieProvided' })
 
-                const tokenData = await parseToken(ctx, refreshToken, config, false)
+                const tokenData = await parseToken(ctx, refreshToken, false, config)
 
                 const isSameDevice = tokenData.deviceId === deviceId
 

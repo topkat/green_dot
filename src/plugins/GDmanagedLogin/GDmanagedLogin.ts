@@ -12,7 +12,7 @@ import { getLogoutService } from './apiServices/getLogoutService.js'
 import { getUpdateNewPasswordWithOldPassword } from './apiServices/getUpdateNewPasswordWithOldPassword.js'
 import { getCredentialManagementServices } from './apiServices/getCredentialManagementServices.js'
 import { RegisterErrorType } from '../../error.js'
-import { setConnexionTokens } from './userAuthenticationTokenService.js'
+import { createToken, parseToken, setConnexionTokens } from './userAuthenticationTokenService.js'
 import { getLoginServices } from './apiServices/getLoginServices.js'
 import { getUpdatePasswordService } from './apiServices/getUpdatePasswordService.js'
 import { getUpdateEmailService } from './apiServices/getUpdateEmailService.js'
@@ -81,6 +81,8 @@ export class GDmanagedLogin extends GDplugin<Name> {
     const user = typeof userOrId === 'string' ? await db.user.getById(ctx, userOrId, { triggerErrorIfNotSet: true }) : userOrId
     await credentialManagementMailing(ctx, user, getId(user), 'emailValidation', additionalParams, this.config)
   }
+  createToken = createToken
+  parseToken = parseToken
 
   //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔═══
   //  ╠═   ╠═╦╝ ╠═╦╝ ║  ║ ╠═╦╝ ╚══╗
