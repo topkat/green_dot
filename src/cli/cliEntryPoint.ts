@@ -123,7 +123,7 @@ async function start() {
           const tsNodePath2 = import.meta.resolve('ts-node/esm')
           console.log(`tsNodePath2`, tsNodePath2)
           const classicImportEsm = 'ts-node/esm'
-          const useCalssic = true
+          const useCalssic = false
           const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--no-warnings', '--loader', useCalssic ? classicImportEsm : tsNodePath2]
           console.log(`additionalTsNodeArgsFirstArgs`, additionalTsNodeArgsFirstArgs)
           const baseDir = runFromDist

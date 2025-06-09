@@ -1,4 +1,5 @@
-#!/usr/bin/env node --loader ts-node/esm --showConfig
+#!/usr/bin/env node --loader ts-node/esm
+//  --showConfig
 
 import '../types/global.types.js'
 import type { CliCommands } from './types/command.types.js'
