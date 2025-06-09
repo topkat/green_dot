@@ -120,17 +120,17 @@ async function start() {
     do {
       next = await new Promise(resolve => {
         try {
-          const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--no-warnings', '--loader', 'ts-node/esm']
-
+          const tsNodePath2 = import.meta.resolve('ts-node/esm')
+          console.log(`tsNodePath2`, tsNodePath2)
+          const classicImportEsm = 'ts-node/esm'
+          const additionalTsNodeArgsFirstArgs = runFromDist ? [] : ['--no-warnings', '--loader', tsNodePath2]
+          console.log(`additionalTsNodeArgsFirstArgs`, additionalTsNodeArgsFirstArgs)
           const baseDir = runFromDist
             ? ensureDistFolderInFilePath(__dirname)
             : __dirname.replace(`dist${sep}`, '')
 
           const command = baseDir + (_command === 'start' ? `/startProdSpecialEntryPoint.` : `/childProcessEntryPoint.`) + (runFromDist ? 'js' : 'ts')
 
-          // Get the path to ts-node
-          const tsNodePath2 = require.resolve('ts-node')
-          console.log(`tsNodePath2`, tsNodePath2)
           const tsNodePath = Path.resolve(__dirname, '../../../node_modules/ts-node')
           console.log(`tsNodePath`, tsNodePath)
           const nodePath = process.execPath
@@ -138,7 +138,7 @@ async function start() {
 
           startChildProcess(
             nodePath,
-            [...additionalTsNodeArgsFirstArgs, '--require', tsNodePath, command, _command],
+            [...additionalTsNodeArgsFirstArgs, command, _command],
             code => {
               if (!code || code === parentProcessExitCodes.exit) {
                 // SUCCESS EXIT
