@@ -1,16 +1,9 @@
 #!/usr/bin/env node --loader ts-node/esm --showConfig
 
 import '../types/global.types.js'
-import { buildCommand } from './build.command.js'
-import { cleanCommand } from './clean.command.js'
-import { generateCommand } from './generate.command.js'
-import { startDevServerCommand } from './startDevServer.command.js'
-import { testCommand } from './test.command.js'
-import { CliCommands } from './types/command.types.js'
-import { upgradeCommand } from './upgrade.command.js'
+import type { CliCommands } from './types/command.types.js'
 
-
-export type ChildProcessCommands = keyof typeof commands
+export type ChildProcessCommands = CliCommands
 
 const [, , processCommand] = process.argv as [string, string, ChildProcessCommands]
 
@@ -18,45 +11,73 @@ const [, , processCommand] = process.argv as [string, string, ChildProcessComman
 //  ║    ║  ║ ║╚╝║ ║╚╝║ ╠══╣ ║╚╗║ ║  ║ ╚══╗
 //  ╚══╝ ╚══╝ ╩  ╩ ╩  ╩ ╩  ╩ ╩ ╚╩ ╚══╝ ═══╝
 
+type CommandPlus = Record<string, { execute: Array<Function>, exitAfter?: boolean }>
+
 const commands = {
   build: {
-    execute: [() => buildCommand({ tsc: true })],
+    execute: [async () => {
+      const { buildCommand } = await import('./build.command.js')
+      return buildCommand({ tsc: true })
+    }],
     exitAfter: true,
   },
   clean: {
-    execute: [cleanCommand],
+    execute: [async () => {
+      const { cleanCommand } = await import('./clean.command.js')
+      return cleanCommand()
+    }],
     exitAfter: true,
   },
   /** Starts a server with hot reload */
   dev: {
-    execute: [() => buildCommand({ tsc: false }), startDevServerCommand],
+    execute: [
+      async () => {
+        const { buildCommand } = await import('./build.command.js')
+        return buildCommand({ tsc: false })
+      },
+      async () => {
+        const { startDevServerCommand } = await import('./startDevServer.command.js')
+        return startDevServerCommand()
+      }
+    ],
     exitAfter: true,
   },
   /** Generate project files from templates */
   generate: {
-    execute: [generateCommand],
+    execute: [async () => {
+      const { generateCommand } = await import('./generate.command.js')
+      return generateCommand()
+    }],
     exitAfter: true,
   },
   publishSdks: {
-    execute: [() => buildCommand({ publishSdks: true })],
+    execute: [async () => {
+      const { buildCommand } = await import('./build.command.js')
+      return buildCommand({ publishSdks: true })
+    }],
     exitAfter: true,
   },
   test: {
-    execute: [testCommand],
+    execute: [async () => {
+      const { testCommand } = await import('./test.command.js')
+      return testCommand()
+    }],
     exitAfter: true,
   },
   upgrade: {
-    execute: [upgradeCommand],
+    execute: [async () => {
+      const { upgradeCommand } = await import('./upgrade.command.js')
+      return upgradeCommand()
+    }],
     exitAfter: true,
   },
-} satisfies Record<CliCommands, { execute: Array<Function>, exitAfter?: boolean }>
+} satisfies CommandPlus
 
 //  ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╔══╗ ╦╗╔╦
 //  ╠══╝ ╠═╦╝ ║  ║ ║ ═╦ ╠═╦╝ ╠══╣ ║╚╝║
 //  ╩    ╩ ╚  ╚══╝ ╚══╝ ╩ ╚  ╩  ╩ ╩  ╩
 
 export async function startTask(command = processCommand) {
-
   if (!command || !Object.keys(commands).includes(command)) throw new Error('Command not found ' + command)
 
   const { execute, exitAfter } = commands[command]
@@ -73,7 +94,6 @@ export async function startTask(command = processCommand) {
   } while (execute.length)
 
   if (exitAfter) process.exit(0)
-
 }
 
 startTask()
