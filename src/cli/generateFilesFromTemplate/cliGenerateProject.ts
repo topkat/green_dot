@@ -1,16 +1,13 @@
 import { luigi } from '../helpers/luigi.bot.js'
 import { templater } from 'simple-file-templater'
-import Path, { dirname } from 'path'
+import Path from 'path'
 import { allPluginConfigs } from '../../plugins/pluginSystem.js'
 import { C, camelCaseToWords } from 'topkat-utils'
 import { NewPluginAddToVariableTemplateCtx, NewPluginConfig } from '../../plugins/newPlugin.js'
 import { execWaitForOutput } from 'topkat-utils/backend.js'
 import { clearCli, greenDotCliIntro } from '../helpers/cli.js'
-import { fileURLToPath } from 'url'
 import { getPackageJsonVersion } from '../helpers/getPackageJsonVersion.js'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+import { fromGreenDotFolderRoot } from '../helpers/fromGreenDotFolderRoot.js'
 
 
 
@@ -74,7 +71,7 @@ export async function cliGenerateProject() {
   luigi.info('Generating project files...')
 
   await templater(
-    Path.resolve(__dirname, '../../../templates/project'),
+    fromGreenDotFolderRoot('templates/project'),
     projectRoot,
     [
       ['$$projectNameHyphens', camelCaseToWords(projectName).join('-').trim()],
