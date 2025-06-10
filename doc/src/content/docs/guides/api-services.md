@@ -9,9 +9,7 @@ Create a new API service like so:
 npx green_dot generate
 ```
 
-Then select `> API service`
-
-## Creating API Services
+**Then select `> API service`**
 
 Basic example:
 
@@ -45,18 +43,59 @@ export const myService = svc({
         message: _.string(),
         user: _.model('myDb', 'user')
     }),
-    route: ['POST', '/users'], // HTTP method and route
-    rateLimiter: '5/min', // Rate limiting
     async main(ctx, { userId, data }) {
         // Your service logic here
         return {
             success: true,
             message: 'User updated successfully',
-            user: await db.user.getOne(ctx, { email }) // this db call will automatically apply mask and filter depending on user perm (see dao doc)
+            user: await ctx.db.user.getOne({ email }) // this db call will automatically apply mask and filter depending on user perm (see dao doc)
         }
     }
 })
 ```
+
+Extended options:
+
+```ts
+import { svc, _ } from 'green_dot'
+
+export const myService = svc({
+    ...
+    // You can customize the generated route, by default it's all POST and the 
+    // route name is based on the variable name (myService => '/my-service')
+    route: ['GET', '/users'],
+    // Rate limiting
+    rateLimiter: '5/min',
+    // you can set different configs for a certain env (here env === 'test')
+    rateLimiter: { default:'5/min', test: '100/min' },
+    ...
+})
+```
+
+
+## Using database
+
+```ts 
+// @noError
+...
+async main(ctx, { userId, data }) {
+    // get actual connected user with caching (no mask nor filters here so ⚠️)
+    const actualConnectedUser = await ctx.getUser()
+    // You can use ctx.db or db from green_dot import
+    // here the user may have fields masked or the call can
+    // return a 403 error if the user does not have the permission
+    const sanitizedUser = ctx.db.user.getOne()
+    sanitizedUser.password
+    // @log: undefined
+    // to get any model without applying security, please use ctx.GM (god mode)
+    const userAsAdmin = ctx.GM.db.user.getOne()
+    userAsAdmin.password
+    // @warn: 'Abcd1234!'
+}
+...
+```
+
+
 
 ## Service Configuration Options
 
