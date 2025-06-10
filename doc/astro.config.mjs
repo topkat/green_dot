@@ -1,0 +1,52 @@
+// @ts-check
+import { defineConfig } from 'astro/config'
+import starlight from '@astrojs/starlight'
+import react from '@astrojs/react'
+
+import tailwindcss from '@tailwindcss/vite'
+
+
+// https://astro.build/config
+export default defineConfig({
+	site: 'https://stargazers.club', // TODO replace when in prod
+	integrations: [
+		react(),
+		starlight({
+			title: 'green_dot documentation',
+			components: {
+				SiteTitle: './src/components/SiteTitle.astro',
+				Hero: './src/components/SiteHero.astro',
+			},
+			editLink: {
+				baseUrl: 'https://github.com/withastro/starlight/edit/main/docs/', // TODO
+			},
+			logo: { src: './src/assets/green_dot-logo.png' },
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			sidebar: [
+				{
+					label: 'Guides',
+					items: [
+						// Each item here is one entry in the navigation menu.
+						{ label: 'Example Guide', slug: 'guides/example' },
+					],
+				},
+				{
+					label: 'Reference',
+					autogenerate: { directory: 'reference' },
+				},
+			],
+			customCss: [
+				// Fontsource files for to regular and semi-bold font weights.
+				'@fontsource/dm-mono/300.css',
+				'@fontsource/dm-mono/400.css',
+				'@fontsource/dm-mono/500.css',
+				// Path to your Tailwind base styles:
+				'./src/global.css',
+			],
+		}),
+	],
+
+	vite: {
+		plugins: [tailwindcss()],
+	},
+})

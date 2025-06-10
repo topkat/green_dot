@@ -1,0 +1,185 @@
+---
+import TerminalDisplay from "../../components/TerminalDisplay.astro";
+import { Code } from "@astrojs/starlight/components";
+import { Check } from "lucide-astro";
+
+const steps = [
+	{
+		id: "apiService",
+		title: `Api Service`,
+		content: "",
+	},
+	{
+		id: "schedule",
+		title: `Scheduled Task`,
+		content: "", //(
+		// 			<Code
+		// 				title="Scheduled Task Example"
+		// 				lang="ts"
+		// 				code={`
+		// export const mySchedule = schedule({
+		//     schedule: {
+		//         frequency: '0 * * * *',
+		//         frequencyDev: 'never', // if you want to set a different interval for dev env
+		//     },
+		//     async main(ctx) {
+		//         // this script will execute at configured CRON interval
+		//     },
+		// })
+		// `}
+		// 			/>
+		// ),
+	},
+	{
+		id: "seed",
+		title: `Seed DB Service`,
+		content: "", //<span>Seed DB Service</span>,
+	},
+	{
+		id: "dbModel",
+		title: `Database Model`,
+		content: "", //<span>Database Model</span>,
+	},
+	{
+		id: "testSuite",
+		title: `Test Suite`,
+		content: "", //<span>Test Suite</span>,
+	},
+	{
+		id: "newDb",
+		title: `New Database`,
+		content: "", //<span>New Database</span>,
+	},
+	{
+		id: "newBackend",
+		title: `New Backend App`,
+		content: "", //<span>New Backend App</span>,
+	},
+	{
+		id: "newFront",
+		title: `New Frontend`,
+		content: "", //<span>New Frontend</span>,
+	},
+] as const;
+
+const steps2 = steps;
+
+type StepIds = (typeof steps)[number]["id"];
+---
+
+<div class="flex flex-col md:flex-row gap-8 mt-8">
+	<div class="w-full md:w-1/2 flex flex-col gap-4">
+		<TerminalDisplay>
+			<b>$ npx green_dot generate</b><br />
+			{
+				steps.map((step) => (
+					<div
+						class="steppers-step-title cursor-pointer hover:opacity-80 transition-opacity text-accent-200"
+						data-step={step.id}
+					>
+						&nbsp;&nbsp;&nbsp;&nbsp;{step.title}
+					</div>
+				))
+			}
+		</TerminalDisplay>
+	</div>
+
+	<div class="w-full md:w-1/2">
+		<div data-step={steps[0].id} class="steppers-step-content hidden">
+			<p>
+				When you generate an Api service:<br />
+				<Check /> Route is generated automatically from the name of your exported
+				constant<br />
+				<Check /> Your service is available in the generated SDK to use in frontend
+				depending on the permissions you set and fully typed<br />
+			</p>
+			<Code
+				title="myApiService.ts"
+				lang="ts"
+				code={`
+// route will be created automatically
+// => POST 'my-api-service'
+export const myApiService = schedule({
+		// access
+		for: [
+			'myCustomRole',
+			{ role: 'user', hasVerifiedPhoneNumber: true }
+		],
+		// input/output param validation and typing in frontend
+		input: {
+			firstName: _.string().required(),
+			company: _.model('myDb', 'company', 'write'),
+		},
+		output: _.string(),
+		// many other security options
+    rateLimiter: '10/min',
+		// main code to execute
+    async main(
+			ctx, // here you get all contextual informations
+			{ firstName, company } // fully typed
+		) {
+        console.log(firstName)
+				return 'ok' // typed
+    },
+})
+`}
+			/>
+		</div>
+		<div data-step={steps[1].id} class="steppers-step-content hidden">
+			<Code
+				title="myApiService.ts"
+				lang="ts"
+				code={`
+export const myService = schedule({
+    schedule: {
+        frequency: '0 * * * *',
+        frequencyDev: 'never',
+    },
+    async main(ctx) {
+        // will execute at configured CRON interval
+    },
+})
+`}
+			/>
+		</div>
+	</div>
+</div>
+
+<script define:vars={{ steps }}>
+	// Get all step elements
+	const stepElements = document.querySelectorAll(".steppers-step-title");
+	const contentElements = document.querySelectorAll(".steppers-step-content");
+
+	// Add click handlers
+	stepElements.forEach((step) => {
+		step.addEventListener("click", () => {
+			const stepId = step.getAttribute("data-step");
+			const stp = steps.find((s) => s.id === stepId);
+
+			// Update active state
+			stepElements.forEach((s) => {
+				const stepId = s.getAttribute("data-step");
+				const stp = steps.find((s) => s.id === stepId);
+
+				s.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;${stp.title}`;
+			});
+
+			step.innerHTML = `<b>&nbsp;&nbsp;❯ ${stp.title}</b>`;
+
+			// Show corresponding content
+			contentElements.forEach((content) => {
+				content.classList.add("hidden");
+				if (content.getAttribute("data-step") === stepId) {
+					content.classList.remove("hidden");
+				}
+			});
+		});
+	});
+
+	// Set initial state
+	const firstStep = stepElements[0];
+	firstStep.innerHTML = `<b>&nbsp;&nbsp;❯ ${firstStep.textContent.trim()}</b>`;
+
+	const firstContent = contentElements[0];
+	firstContent.classList.remove("hidden");
+</script>

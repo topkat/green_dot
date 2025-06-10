@@ -1,0 +1,47 @@
+---
+import config from "virtual:starlight/user-config";
+const { siteTitleHref } = Astro.locals.starlightRoute;
+---
+
+<a href={siteTitleHref} class="site-title sl-flex">
+	<span class:list={{ "sr-only": config.logo?.replacesTitle }} translate="no">
+		<div class="siteLogo"></div>
+		green_dot
+		<span style="opacity: .4;margin-left: -9px;text-shadow: none;"
+			>documentation</span
+		>
+	</span>
+</a>
+
+<style>
+	@layer starlight.core {
+		.siteLogo {
+			border-radius: 50%;
+			height: 22px;
+			width: 22px;
+			position: relative;
+			background: #9cdaac;
+			border: 2px solid #4b644b;
+			top: 5px;
+			left: 6px;
+			display: inline-block;
+		}
+		.site-title {
+			align-items: center;
+			gap: var(--sl-nav-gap);
+			font-size: var(--sl-text-h4);
+			text-decoration: none;
+			white-space: nowrap;
+			font-weight: 300;
+			color: var(--sl-color-text-accent);
+			text-shadow: 0 0 5px #9be7ae99;
+		}
+		img {
+			height: calc(var(--sl-nav-height) - 2 * var(--sl-nav-pad-y));
+			width: auto;
+			max-width: 100%;
+			object-fit: contain;
+			object-position: 0 50%;
+		}
+	}
+</style>

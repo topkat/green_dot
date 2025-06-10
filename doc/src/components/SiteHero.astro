@@ -1,0 +1,81 @@
+---
+import { LinkButton } from "@astrojs/starlight/components";
+import TerminalDisplay from "./TerminalDisplay.astro";
+import {
+  ArrowRight,
+  BookOpen,
+  Rocket,
+  Check,
+  Zap,
+  ShieldCheck,
+  Laptop,
+  Code,
+  Laptop2,
+} from "lucide-astro";
+---
+
+<div
+  class="w-full min-h-[60vh] flex flex-col md:flex-row items-center justify-center gap-8 px-4 py-12"
+>
+  <div class="w-full md:w-1/2 flex flex-col items-start justify-center gap-4">
+    <h1 class="site-title text-4xl md:text-6xl text-accent-100 font-light">
+      green_dot
+    </h1>
+    <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light">
+      A node.js framework that is:<br />
+      <Zap /> Fast<br />
+      <ShieldCheck /> Secure<br />
+      <Laptop /> DX Focused<br />
+    </p>
+    <div class="sl-flex actions gap-6">
+      <LinkButton href="./" icon="right-arrow"> Quick Start </LinkButton>
+      <LinkButton href="./" variant="minimal" icon="external">
+        Read the docs
+      </LinkButton>
+    </div>
+  </div>
+  <div class="w-full md:w-1/2 flex items-center justify-center">
+    <div
+      class="relative w-full max-w-lg aspect-[5/4.2] flex items-center justify-center"
+    >
+      <!-- BLUR BG  -->
+      <div class="overlay bg-accent-200/30 rounded-full blur-3xl"></div>
+      <TerminalDisplay>
+        <b>$ npx green_dot@latest generate</b><br /><br />
+        Installing dependencies...<br />
+        <Check class="w-4 h-4 inline-block mr-2" /> Project structure created<br
+        />
+        <Check class="w-4 h-4 inline-block mr-2" /> Dependencies installed<br />
+        <Check class="w-4 h-4 inline-block mr-2" /> Configuration generated<br
+        /><br />
+        <b>Ready to launch! <Rocket class="w-4 h-4 inline-block" /></b>
+      </TerminalDisplay>
+    </div>
+  </div>
+</div>
+
+<style>
+  @layer starlight.core {
+    .siteLogo {
+      border-radius: 50%;
+      height: 22px;
+      width: 22px;
+      position: relative;
+      background: #9cdaac;
+      border: 2px solid #4b644b;
+      top: 5px;
+      left: 6px;
+      display: inline-block;
+    }
+    .site-title {
+      align-items: center;
+      gap: var(--sl-nav-gap);
+      font-size: var(--sl-text-h4);
+      font-weight: 600;
+      color: var(--sl-color-text-accent);
+      text-decoration: none;
+      white-space: nowrap;
+      text-shadow: 0 0 5px #9be7ae;
+    }
+  }
+</style>

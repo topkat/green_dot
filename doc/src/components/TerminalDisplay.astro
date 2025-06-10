@@ -1,0 +1,68 @@
+<!-- CLI Content -->
+<div
+  class="relative term flex flex-col p-8 py-5 text-accent-100 overflow-hidden bg-black/80 rounded-lg shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] scanlines"
+>
+  <!-- Scanlines overlay -->
+  <div
+    class="overlay pointer-events-none"
+    style={{
+      background: `repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0, rgba(0, 0, 0, 0.1) 2px, transparent 2px, transparent 4px)`,
+      zIndex: 1,
+    }}
+  >
+  </div>
+  <div
+    class="overlay pointer-events-none"
+    style={{
+      background: `repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0, rgba(0, 0, 0, 0.3) 2px, transparent 2px, transparent 4px)`,
+    }}
+  >
+  </div>
+  <div class="text-accent-200/80 relative terminal-content p-0 m-0">
+    <slot />
+  </div>
+</div>
+
+<style>
+  @layer starlight.core {
+    .term {
+      background-color: black;
+      height: auto;
+      width: 100%;
+      max-width: 600px;
+    }
+    .terminal-content :global(b) {
+      font-weight: 400;
+      color: var(--color-accent-100);
+      text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+    }
+    .scanlines::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgb(0 0 0 / 3%) 30.5%,
+        transparent 1%
+      );
+      animation: scanline 30s linear infinite;
+      pointer-events: none;
+      z-index: 50;
+    }
+    @keyframes scan {
+      from {
+        transform: translateY(-100%);
+      }
+      to {
+        transform: translateY(100%);
+      }
+    }
+    .animate-scan {
+      animation: scan 8s linear infinite;
+    }
+  }
+</style>

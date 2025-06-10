@@ -1,0 +1,226 @@
+---
+title: green_dot
+description: The nodeJs Backend Framework
+template: splash
+hero:
+  tagline: Fast, Secure & DX Friendly...
+---
+
+import { Card, CardGrid, Code, FileTree, Steps, Tabs, TabItem, LinkCard, Aside} from '@astrojs/starlight/components';
+import CodeBlock from '../../components/CodeBlock.astro';
+import SiteHero from '../../components/SiteHero.astro'
+import { PackageManagers } from 'starlight-package-managers'
+import Steppers from '../../landingPage/Steppers.astro'
+
+<Steppers client:load />
+
+<Steps>
+
+1. Import the component into your MDX file:
+
+	<Tabs syncKey="js">
+		<TabItem label="test">
+		```js
+			import { Steps } from '@astrojs/starlight/components';
+		```
+		</TabItem>
+		<TabItem label={"Test3"} icon="star">
+		```js
+			const steps = require('@astrojs/starlight/components')
+		```
+		</TabItem>
+	</Tabs>
+
+2. Wrap `<Steps>` around your ordered list items.
+
+	just another test
+
+	<Tabs syncKey="js">
+		<TabItem label="test">
+		```js
+			import { Steps } from '@astrojs/starlight/components';
+		```
+		</TabItem>
+		<TabItem label={"Test3"}>
+		```js
+			const steps = require('@astrojs/starlight/components')
+		```
+		</TabItem>
+	</Tabs>
+
+</Steps>
+
+
+<PackageManagers type="create" pkg="green_dot@latest" args="--template starlight" />
+
+## Next steps
+
+<CardGrid stagger>
+	<Card title="Update content" icon="pencil">
+		Edit `src/content/docs/index.mdx` to see this page change.
+	</Card>
+	<Card title="Add new content" icon="add-document">
+		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	</Card>
+	<Card title="Configure your site" icon="setting">
+		Edit your `sidebar` and other config in `astro.config.mjs`.
+	</Card>
+	<Card title="Read the docs" icon="open-book">
+		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	</Card>
+</CardGrid>
+
+<LinkCard
+  title="Internationalization"
+  href="/guides/i18n/"
+  description="Configure Starlight to support multiple languages."
+/>
+
+<CardGrid>
+  <LinkCard title="Authoring Markdown" href="/guides/authoring-content/" />
+  <LinkCard title="Components" href="/components/using-components/" />
+</CardGrid>
+
+<FileTree>
+
+- astro.config.mjs
+- package.json
+- src
+  - components
+    - Header.astro commentaire 1
+    - Title.astro comentaire 2
+	- testFold/
+		- **page1**
+		- page2
+		- ...
+  - pages/
+
+</FileTree>
+
+## Code Examples
+
+### Using Custom CodeBlock Component
+
+
+<Code 
+  title="TypeScript Interface Example"
+  lang="ts"
+	twoslash
+	diff
+  code={`
+// @noErrors
+console.log((1 + 2 + 3 + 4).toF
+//      ^^^                   ^|
+
+interface User {
+-		id: string;
++ 	name: string;
+		email: string;
+		createdAt: Date;
+}
+
+/** @example console.log('rr') */
+const createUser = (data: Omit<User, 'id' | 'createdAt'>): User => {
+		return {
+				id: crypto.randomUUID(),
+				...data,
+				createdAt: new Date()
+		};
+};
+  `}
+/>
+
+<Aside type="tip" title='Le saviez vous ?'>
+
+Other content is also supported in asides.
+
+```js
+// A code snippet, for example.
+```
+
+</Aside>
+
+### Using Standard Markdown Code Blocks
+
+```ts title='COUCOU TITLE' frame="terminal" showLineNumbers twoslash diff
+// @noErrors
+console.log((1 + 2 + 3 + 4).toF
+//                            ^|
+
+interface User {
++ 	id: string;
+- 	name: string;
+		email: string;
+		createdAt: Date;
+}
+
+/** @example console.log('rr') */
+const createUser = (data: Omit<User, 'id' | 'createdAt'>): User => {
+		return {
+				id: crypto.randomUUID(),
+				...data,
+				createdAt: new Date()
+		};
+};
+
+```
+
+```ts twoslash
+// @errors: 2540
+
+console.log((1 + 2 + 3 + 4).toFixed(2))
+//                            ^|
+
+/** A Basic Todo interface*/
+interface Todo {
+  title: string;
+}
+
+const todo: Readonly<Todo> = {
+  title: 'Delete inactive users',
+//  ^?
+}
+
+todo.title = 'Hello'
+```
+
+
+### Bash Commands
+
+```bash 
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### Code Block with Title and Highlighting
+
+<CodeBlock 
+  title="Express Route Example"
+  lang="typescript"
+  code={`
+import express from 'express';
+import { UserController } from './controllers';
+
+const app = express();
+const router = express.Router();
+
+// Define routes
+router.get('/users', UserController.getAll);
+router.post('/users', UserController.create);
+router.get('/users/:id', UserController.getById);
+
+// Register routes
+app.use('/api', router);
+
+// Start server
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+  `}
+/>
