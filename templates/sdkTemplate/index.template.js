@@ -66,7 +66,7 @@ function prefetchQuery(route2, queryName, params, queryOptions = {}) {
         queryFn: () => apiCall(server, queryName, route, ...params),
         ...queryOptions
     })
-    else throw new Error('Please pass reactQuery "getQueryClient" when initializing backend')
+    else throw new Error('Please pass reactQuery "getQueryClient" when initializing SDK')
 }
 
 function defer(queryName, route2, ...params) {

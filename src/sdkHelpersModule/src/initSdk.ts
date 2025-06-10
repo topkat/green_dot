@@ -17,7 +17,7 @@ export type InitSdkConfig<ServerConfig> = {
   projectName: string
   onLogout?(): void | Promise<void>
   getDeviceId(): string | Promise<string>
-  onBackendInitialized?(): any | Promise<string>
+  onSdkInitialized?(): any | Promise<string>
   refreshTokenExpirationMinutes?: number
   refreshTokenErrorMessage?: string
   wrongTokenErrorMessage?: string
@@ -67,6 +67,6 @@ export function isSdkInitialized() {
   return isInitialized
 }
 
-export function getBackendConfig() {
+export function getSdkConfig() {
   return backendConfig
 }

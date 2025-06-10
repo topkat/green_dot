@@ -82,7 +82,7 @@ export class CtxClass {
     /** All valid authentication methods used by the user */
     authenticationMethod: Array<AuthenticationMethod | 'apiKey' | 'accessToken'> = []
     /** Used to define through witch platform the ctx is connected, to be overrided by app */
-    platform!: GD['platform']
+    platform!: string
     /** user stored in the cache */
     _user?: ModelTypes['user']
     /** The actual user permissions fields as given by the JWT token */

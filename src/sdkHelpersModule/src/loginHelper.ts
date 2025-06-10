@@ -1,5 +1,5 @@
 
-import { getBackendConfig, isSdkInitialized } from './initSdk.js'
+import { getSdkConfig, isSdkInitialized } from './initSdk.js'
 import { get$ } from './init.js'
 import { failSafe, timeout } from 'topkat-utils'
 import { handleError } from './errorHandler.js'
@@ -11,17 +11,17 @@ let isSessionInitialized = false
 export async function logout() {
   try {
     try {
-      getBackendConfig().localStorageRemove?.('isConnected')
+      getSdkConfig().localStorageRemove?.('isConnected')
       await get$().logout()
       // This will fire a storage event for other tabs to detect the user update
-      getBackendConfig().localStorageSet?.('authUpdate', Date.now().toString())
+      getSdkConfig().localStorageSet?.('authUpdate', Date.now().toString())
     } catch (err) {
       if (err.code !== 'ERR_NETWORK') err.isHandled = true
     }
     lastRefreshTokenDate = undefined
     get$().setAuthorization(null)
 
-    const queryClient = getBackendConfig().getQueryClient?.()
+    const queryClient = getSdkConfig().getQueryClient?.()
 
     queryClient?.clear()
     queryClient?.resetQueries()
@@ -30,7 +30,7 @@ export async function logout() {
     console.error(err)
     err.isHandled = true
   }
-  await getBackendConfig().onLogout?.()
+  await getSdkConfig().onLogout?.()
 }
 
 
@@ -40,8 +40,8 @@ export async function logout() {
 
 export function setAccessToken(accessToken?: string) {
   if (accessToken) {
-    getBackendConfig().localStorageSet?.('isConnected', 'true')
-    getBackendConfig().localStorageSet?.('accessToken', accessToken)
+    getSdkConfig().localStorageSet?.('isConnected', 'true')
+    getSdkConfig().localStorageSet?.('accessToken', accessToken)
   }
 }
 
@@ -61,16 +61,16 @@ export async function ensureAccessToken() {
     try {
       success = await getNewToken()
       if (success) {
-        getBackendConfig().localStorageSet?.('isConnected', 'true')
+        getSdkConfig().localStorageSet?.('isConnected', 'true')
       } else {
-        if (getBackendConfig().localStorageGet?.('accessToken')) failSafe(async () => await logout())
-        getBackendConfig().localStorageRemove?.('isConnected')
+        if (getSdkConfig().localStorageGet?.('accessToken')) failSafe(async () => await logout())
+        getSdkConfig().localStorageRemove?.('isConnected')
       }
     } catch (err) {
       success = false
       const logout = !window.location.pathname.includes('login') && !window.location.pathname.includes('register')
       handleError(err, 'errorWrongToken', {
-        msgToDisplayToUser: getBackendConfig().wrongTokenErrorMessage,
+        msgToDisplayToUser: getSdkConfig().wrongTokenErrorMessage,
         userActionChoice: 'contactSupport',
         logoutUser: logout,
       })
@@ -90,7 +90,7 @@ export async function ensureAccessToken() {
 let getNewTokenTo
 /** This will get a new token periodically */
 function getNewTokenInterval() {
-  const tokenExirationMinutes = getBackendConfig().refreshTokenExpirationMinutes || 15
+  const tokenExirationMinutes = getSdkConfig().refreshTokenExpirationMinutes || 15
   clearTimeout(getNewTokenTo)
   getNewTokenTo = setTimeout(async () => {
     if (isSdkInitialized()) getNewToken() // includes setRefreshToken that calls again refreshTokenInterval
@@ -119,10 +119,10 @@ async function getNewToken(): Promise<boolean> {
     isRefreshing = true
     try {
 
-      const deviceId = await getBackendConfig()?.getDeviceId()
+      const deviceId = await getSdkConfig()?.getDeviceId()
       if (!deviceId) throw new Error('noDeviceId')
 
-      const isConnectedStr = getBackendConfig().localStorageGet?.('isConnected')
+      const isConnectedStr = getSdkConfig().localStorageGet?.('isConnected')
       if (!isConnectedStr) return false
 
       const { accessToken } = await get$().getNewToken({ deviceId })
@@ -130,7 +130,7 @@ async function getNewToken(): Promise<boolean> {
       getNewTokenInterval()
 
       if (!isSessionInitialized) {
-        await getBackendConfig()?.onBackendInitialized?.()
+        await getSdkConfig()?.onSdkInitialized?.()
         isSessionInitialized = true
       }
       success = true
@@ -139,7 +139,7 @@ async function getNewToken(): Promise<boolean> {
     } catch (err) {
       handleError(err, 'refreshTokenError', {
         isUnexpectedError: false,
-        msgToDisplayToUser: getBackendConfig().refreshTokenErrorMessage,
+        msgToDisplayToUser: getSdkConfig().refreshTokenErrorMessage,
         logoutUser: false,
         userActionChoice: 'contactSupport',
       })

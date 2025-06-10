@@ -30,7 +30,7 @@ export const testConfig: GreenDotApiTestsConfig = {
     async onBeforeAllTests({ env, isReload }) {
 
         // ALLOW TO SEE WITH WICH TOKEN WE ARE CONNECTED
-        overrideBackendAuthorization(env)
+        overrideSdkAuthorization(env)
 
         // TODO INIT SDKs here
     },
@@ -48,7 +48,7 @@ export const testConfig: GreenDotApiTestsConfig = {
             }
         }
         // mySdk.setHeaders(headers)
-        // while setAuthorization is just an alias of setHeaders, it is called because it triggers overrideBackendAuthorization
+        // while setAuthorization is just an alias of setHeaders, it is called because it triggers overrideSdkAuthorization
         // mySdk.setAuthorization(headers.authorization)
     },
     onAfterTest() {
@@ -70,7 +70,7 @@ export type TestItem<EnvFromUser> = TestItemRaw<TestUserNames, ConnexionInfos, t
 // HELPERS
 //----------------------------------------
 /** Just a helper to log the userName/token we are connecting with */
-function overrideBackendAuthorization(env: TestEnv) {
+function overrideSdkAuthorization(env: TestEnv) {
     const callbck = (authToken: string) => {
 
         let userThatWeAreConnectingWith: string

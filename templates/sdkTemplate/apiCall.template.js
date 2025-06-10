@@ -53,8 +53,8 @@ function init({
     localStorageGet: localStorageGetRaw,
     localStorageSet: localStorageSetRaw,
 }) {
-    Object.keys(serverUrls).forEach(backendName => {
-        serverState.serverUrl[backendName] = serverUrls[backendName].replace(/(^\/|\/$)/g, '')
+    Object.keys(serverUrls).forEach(sdkName => {
+        serverState.serverUrl[sdkName] = serverUrls[sdkName].replace(/(^\/|\/$)/g, '')
     })
     if (onErrorCallback) onError = onErrorCallback
     if (headers?.platform) platform = headers.platform

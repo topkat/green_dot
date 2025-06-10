@@ -45,6 +45,7 @@
     "**/*"
   ],
   "exclude": [
+    "./doc/**/*",
     "./src/templates/**/*",
     "./src/sdkHelpersModule/**/*",
     "./templates/**/*",
