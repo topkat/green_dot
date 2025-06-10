@@ -5,10 +5,10 @@ import { ApiOutputTypes } from './types/core.types.js'
 import mongoose from 'mongoose'
 import { Request, Response } from 'express'
 import { env } from './helpers/getEnv.js'
+import { db, dbs, DbWithoutCtx, DbsWithoutCtx } from './db.js'
 
 import { getId } from 'topkat-utils'
-import { ThrowErrorTypeSafe, errorWithCtx } from './error.js'
-import { dbs } from './db.js'
+import { ThrowErrorTypeSafe, error, errorWithCtx } from './error.js'
 import { type ModelTypes } from './cache/dbs/index.generated.js'
 
 import { banUser, addUserWarning } from './security/userAndConnexion/banAndAddUserWarning.js'
@@ -21,6 +21,46 @@ import { banUser, addUserWarning } from './security/userAndConnexion/banAndAddUs
  * * That's why `ctx` is used everywhere as the first parameter of 99.9% backend functions
  * */
 export class CtxClass {
+    /** default database.
+        @example ```ctx.db.user.getById()```
+    */
+    db = new Proxy(
+        {} as DbWithoutCtx,
+        {
+            get(_, modelName: string) {
+                if (db[modelName]) {
+                    return new Proxy(_, {
+                        get(_, methodName) {
+                            return (...params) => db[modelName][methodName](this, ...params)
+                        }
+                    })
+                } else throw error.serverError('modelDoNotExist', { modelName, modelNames: Object.keys(db) })
+            }
+        }
+    )
+    /** Databases if you have multiple databases
+        @example ```ctx.dbs.myDb.user.getById()```
+    */
+    dbs = new Proxy(
+        {} as DbsWithoutCtx,
+        {
+            get(_, dbName: string) {
+                if (db[dbName]) {
+                    return new Proxy(_, {
+                        get(_, modelName: string) {
+                            if (db[dbName][modelName]) {
+                                return new Proxy(_, {
+                                    get(_, methodName) {
+                                        return (...params) => db[dbName][modelName][methodName](this, ...params)
+                                    }
+                                })
+                            } else throw error.serverError('modelDoNotExist', { modelName, modelNames: Object.keys(db[dbName]) })
+                        }
+                    })
+                } else throw error.serverError('modelDoNotExist', { dbName, dbNames: Object.keys(db) })
+            }
+        }
+    )
     /** TODO not actually working Number; 1 or 2 => verbosity */
     debugMode = false
     /** dev, prod, preprod... */

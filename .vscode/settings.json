@@ -10,9 +10,9 @@
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",
   "editor.linkedEditing": true,
-  "typescript.inlayHints.parameterNames.enabled": "all",
   // MDX specific settings
   "[mdx]": {
+    "editor.defaultFormatter": "unifiedjs.vscode-mdx",
     "editor.formatOnSave": true,
     "editor.quickSuggestions": {
       "other": true,

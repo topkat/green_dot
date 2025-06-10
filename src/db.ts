@@ -3,7 +3,7 @@
 import { type ModelsWithDbNamesAndReadWrite, type MainDbName, type AllDbIds, type DbIds } from './cache/dbs/index.generated.js'
 import { error } from './error.js'
 import { getDbConfigs, getMainConfig } from './helpers/getGreenDotConfigs.js'
-import { DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes.js'
+import { DaoMethodsBaseWithoutCtxMongo, DaoMethodsMongo } from './databases/mongo/types/mongoDaoTypes.js'
 import { ModelAdditionalFields, ModelsConfigCache, mongoInitDb } from './databases/mongo/initMongoDb.js'
 import { C, objEntries, timeout } from 'topkat-utils'
 import { getProjectDatabaseDaosForDbName, getProjectDatabaseModelsForDbName } from './helpers/getProjectModelsAndDaos.js'
@@ -47,6 +47,19 @@ export type Dbs = {
 
 export type Db = Dbs[MainDbName]
 
+export type DbsWithoutCtx = {
+  [K in keyof ModelsWithDbNamesAndReadWrite]: {
+    [L in keyof ModelsWithDbNamesAndReadWrite[K]]:
+    L extends 'GD_serverBlackList'
+    ? DaoMethodsBaseWithoutCtxMongo<InferTypeRW<typeof GD_serverBlacklistModel>> :
+    L extends 'GD_device'
+    ? DaoMethodsBaseWithoutCtxMongo<InferTypeRW<typeof GD_deviceModel>> :
+    ModelsWithDbNamesAndReadWrite[K][L] extends ModelReadWrite
+    ? DaoMethodsBaseWithoutCtxMongo<ModelsWithDbNamesAndReadWrite[K][L]> : never
+  } & ModelAdditionalFields
+}
+
+export type DbWithoutCtx = DbsWithoutCtx[MainDbName]
 
 //  ═╦═ ╦╗ ╔ ═╦═ ══╦══   ╔═╗  ╔═╗  ╔═══
 //   ║  ║╚╗║  ║    ║     ║  ║ ╠═╩╗ ╚══╗

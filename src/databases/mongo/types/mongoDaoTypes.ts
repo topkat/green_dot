@@ -167,6 +167,122 @@ export type DaoMethodsBaseMongo<ModelTypes extends ModelReadWrite> = {
 }
 
 
+
+
+export type DaoMethodsBaseWithoutCtxMongo<ModelTypes extends ModelReadWrite> = {
+    // $$$!! // DO NOT REMOVE USED FOR TEMPLATING
+    getById<Config extends RequestConfigGetOne<ModelTypes['Read']>>(
+        id: string,
+        config?: Config
+    ): Promise<Config['triggerErrorIfNotSet'] extends true ? ModelTypes['Read'] : ModelTypes['Read'] | undefined>
+    // *TMPLT
+    getOne<Config extends Omit<RequestConfigGetOne<ModelTypes['Read']>, 'filter'>>(
+        filter?: AsFilter<ModelTypes['Write']>, // WRITE HERE because it will ensure referenced fields are passed as their string counterpart
+        config?: Config
+    ): Promise<Config['triggerErrorIfNotSet'] extends true ? ModelTypes['Read'] : ModelTypes['Read'] | undefined>
+    // *TMPLT
+    // /!\ two getAll because that's the only way I have found for hours of trial error that when config is not set it doesn't return paginated data
+    getAll(
+        filter?: AsFilter<ModelTypes['Write']>,
+        config?: never
+    ): Promise<ModelTypes['Read'][]>
+    // *TMPLT
+    getAll<Config extends Omit<RequestConfigRead<ModelTypes['Read']>, 'filter'>>(
+        filter?: AsFilter<ModelTypes['Write']>,
+        config?: Config
+    ): Promise<MaybePaginated<ModelTypes['Read'][], Config>>
+    // *TMPLT
+    /** By default return the last element created in the database. Change the limit to return more elements */
+    getLastN(
+        limit?: number,
+        config?: never,
+    ): Promise<ModelTypes['Read'][]>
+    // *TMPLT
+    getLastN<Config extends RequestConfigRead<ModelTypes['Read']>>(
+        limit?: number,
+        config?: Config,
+    ): Promise<MaybePaginated<ModelTypes['Read'][], Config>>
+    // *TMPLT
+    /** By default return the first element created in the database. Change the limit to return more elements */
+    getFirstN(
+        limit?: number,
+        config?: never
+    ): Promise<ModelTypes['Read'][]>
+    // *TMPLT
+    getFirstN<Config extends RequestConfigRead<ModelTypes['Read']>>(
+        limit?: number,
+        config?: Config
+    ): Promise<MaybePaginated<ModelTypes['Read'][], Config>>
+    // *TMPLT
+    count(
+        filter?: AsFilter<ModelTypes['Write']>
+    ): Promise<number>
+    // *TMPLT
+    /** return the objectId of the created ressource by default. You can return the created object by setting `returnDoc: true` option */
+    create<
+        Config extends RequestConfigWrite<ModelTypes['Write']>,
+        Body extends MaybeArray<ModelTypes['Write']>
+    >(
+        body: Body,
+        config?: Config
+    ): Promise<
+        Config['returnDoc'] extends true ?
+        ModelTypes['Read'] :
+        string
+    >
+    // *TMPLT
+    /** return nothing by default. You can return the updated object by setting `returnDoc: true` option */
+    update<
+        Config extends RequestConfigWrite<ModelTypes['Write']>
+    >(
+        id: string,
+        body: Partial<AsMongooseBody<ModelTypes['Write']>>,
+        config?: Config
+    ): Promise<
+        Config['returnDoc'] extends true ? ModelTypes['Read'] : undefined
+    >
+    // *TMPLT
+    /** _id should be provided in each one of the fields array  */
+    updateMany<
+        Config extends RequestConfigWrite<ModelTypes['Write']>
+    >(
+        fields: Array<Partial<AsMongooseBody<ModelTypes['Write']>> & { _id: string }>, // id is provided in the body
+        config?: Config
+    ): Promise<
+        Config['returnDoc'] extends true ? ModelTypes['Read'][] : undefined
+    >
+    // *TMPLT
+    /** @returns document or id depending on config.returnDoc */
+    upsert<Config extends RequestConfigWrite<ModelTypes['Write']>>(
+        fields: ModelTypes['Write'] & { _id?: string },
+        config?: Config
+    ): Promise<Config['returnDoc'] extends true ? ModelTypes['Read'] : string>
+    // *TMPLT
+    updateWithFilter<Config extends RequestConfigWrite<ModelTypes['Write']>>(
+        filter: AsFilter<ModelTypes['Write']>,
+        fields: Partial<AsMongooseBody<ModelTypes['Write']>>,
+        config?: Config
+    ): Promise<
+        Config['returnDoc'] extends true ? ModelTypes['Read'][] : {
+            acknowledged: boolean
+            matchedCount: number
+            modifiedCount: number
+            upsertedCount: number
+            upsertedId: any
+        }
+    >
+    // *TMPLT
+    delete(
+        id: string
+    ): Promise<void>
+    // *TMPLT
+    deleteWithFilter(
+        filter: AsFilter<ModelTypes['Write']>
+    ): Promise<{ success: true, deletedCount: number, hardDeleted: boolean }>
+    // $$$!! // DO NOT REMOVE USED FOR TEMPLATING
+}
+
+
 export type DaoMethodsMongo<ModelTypes extends ModelReadWrite> = DaoMethodsBaseMongo<ModelTypes> & {
     simulateRequest: Omit<DaoMethodsBaseMongo<ModelTypes>, 'getById' | 'getOne' | 'getAll' | 'getLastN' | 'getFirstN' | 'count'>
 }

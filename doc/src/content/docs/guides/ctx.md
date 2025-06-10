@@ -1,9 +1,11 @@
 ---
-title: Example Guide
-description: A guide in my new Starlight docs site.
+title: Context (ctx) Guide
+description: Learn about the context object and how to use it in your Green Dot application.
 ---
 
+The context object (`ctx`) is a fundamental part of Green Dot that stores contextual information about a request. It's scoped to a request and is carried throughout the request's lifetime in the backend.
 
+## Basic Usage
 
 ```ts
 async main(ctx, input) {
@@ -14,16 +16,165 @@ async main(ctx, input) {
     
     // Database access
     ctx.db          // Database instance
-    ctx.dbs.myDb    // in case you have multiple databases
+    ctx.dbs.myDb    // Access specific database
     
     // Error handling
     ctx.error       // Error factory
-
+    
+    // Get full user object
     const user = await ctx.getUser()
     
+    // Throw errors with context
     if(!user.isAdmin) throw ctx.error.myCustomError({ userId: user._id })
     
     // API information
     ctx.api         // Request information
+}
+```
+
+## Context Properties
+
+### User Information
+- `_id`: User ID (or public/system ID for anonymous users)
+- `role`: User's role (e.g., 'admin', 'user', 'public')
+- `permissions`: User's permissions object
+- `authenticationMethod`: Array of authentication methods used
+- `isPublic`: Boolean indicating if user is not logged in
+- `isSystem`: Boolean indicating if context has system privileges
+- `platform`: Platform identifier (e.g., 'web', 'mobile')
+
+### Database Access
+- `db`: Default database instance
+- `dbs`: Object containing all database instances
+- `transactionSession`: MongoDB transaction session (if active)
+
+### API Information
+- `api.params`: Route parameters
+- `api.body`: Request body
+- `api.query`: Query parameters
+- `api.originalUrl`: Original request URL
+- `api.ipAdress`: Client IP address
+- `api.req`: Express request object
+- `api.res`: Express response object
+- `api.outputType`: Response output type configuration
+
+### Environment
+- `env`: Current environment (dev, prod, preprod)
+- `debugMode`: Debug mode flag
+
+## Context Methods
+
+### User Management
+```ts
+// Get full user object
+const user = await ctx.getUser({
+    refreshCache: false,  // Whether to bypass cache
+    errorIfNotSet: true   // Whether to throw error if user not found
+})
+
+// Get minimal user info
+const minimalUser = ctx.getUserMinimal()
+
+// Clear user cache
+ctx.clearUserCache()
+
+// Check if user is anonymous
+const isAnonymous = ctx.isAnonymousUser()
+```
+
+### Role Management
+```ts
+// Check if user has specific role
+const isAdmin = ctx.hasRole('admin')
+
+// Use different role
+ctx.useRole('admin', {
+    // Additional permissions
+    canManageUsers: true
+})
+
+// Create context from user
+ctx.fromUser('admin', userObject)
+```
+
+### System Access
+```ts
+// Get system context
+const systemCtx = ctx.system()
+
+// Use God Mode (GM) - system context with full privileges
+const gmCtx = ctx.GM
+```
+
+### Error Handling
+```ts
+// Throw errors with context
+throw ctx.error.notFound({ resource: 'user' })
+throw ctx.error.forbidden({ action: 'delete' })
+throw ctx.error.unauthorized({ reason: 'invalid_token' })
+```
+
+### Context Cloning
+```ts
+// Clone context with modifications
+const newCtx = ctx.clone({
+    role: 'admin',
+    permissions: { canManageUsers: true }
+})
+```
+
+## Security Features
+
+### User Banning
+```ts
+// Ban user
+await ctx.banUser()
+```
+
+### Authentication Methods
+```ts
+// Check authentication methods
+const methods = ctx.authenticationMethod // ['accessToken', '2FA', 'biometricAuthToken', 'pincode', 'apiKey']
+```
+
+## Best Practices
+
+1. Always pass `ctx` as the first parameter in service functions
+2. Use `ctx.GM` for system-level operations
+3. Use appropriate error handling with `ctx.error`
+4. Clear user cache when modifying user data
+5. Use role-based access control with `ctx.hasRole()`
+6. Handle anonymous users appropriately
+7. Use transactions when needed
+8. Follow security best practices for authentication
+
+## Example Use Cases
+
+### Role-Based Access Control
+```ts
+async function deleteUser(ctx, userId) {
+    if (!ctx.hasRole('admin')) {
+        throw ctx.error.forbidden({ action: 'delete_user' })
+    }
+    // Delete user logic
+}
+```
+
+### System Operations
+```ts
+async function systemTask(ctx) {
+    const systemCtx = ctx.GM
+    // Perform system-level operations
+}
+```
+
+### User Management
+```ts
+async function updateUserProfile(ctx, data) {
+    const user = await ctx.getUser()
+    if (user._id !== data.userId && !ctx.hasRole('admin')) {
+        throw ctx.error.forbidden({ action: 'update_other_user' })
+    }
+    // Update user logic
 }
 ```
