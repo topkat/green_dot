@@ -1,7 +1,7 @@
 
 
 
-import { GreenDotAppConfig, cliIntro, env, $$importsFromGreenDot } from 'green_dot'
+import { GreenDotAppConfig, env, $$importsFromGreenDot } from 'green_dot'
 import { ENV } from 'topkat-utils'
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
