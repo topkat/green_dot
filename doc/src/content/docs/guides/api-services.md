@@ -1,17 +1,14 @@
 ---
-title: API Services Guide
+title: green_dot API Services
 description: Learn how to create and use API services in your Green Dot application.
 ---
 
-Create a new API service like so:
+To create a new API Service:
+1. Run `npx green_dot generate`
+2. Select "API Service"
+3. Follow the prompts
 
-```bash
-npx green_dot generate
-```
-
-**Then select `> API service`**
-
-Basic example:
+## Basic example
 
 ```ts
 import { svc, _ } from 'green_dot'
@@ -54,7 +51,7 @@ export const myService = svc({
 })
 ```
 
-Extended options:
+## Extended options
 
 ```ts
 import { svc, _ } from 'green_dot'

@@ -46,6 +46,7 @@ export async function generateCommand() {
       { value: 'schedule', name: 'Scheduled Task', description: 'Generate a service that will run periodically based on a configured cron' },
       { value: 'seed', name: 'Seed Service', description: 'Generate a service that will run on server start' },
       { value: 'error', name: 'Error File', description: 'Generate a new Error Definition file, this is where you define all the errors available in the ctx (Eg:ctx.error.myError())' },
+      { value: 'hook', name: 'Hook Event Service', description: `Service that trigger when an action is done, like on: 'user.update' or on: 'server.start'` },
       luigi.separator(`-- DATABASE ----------`),
       { value: 'model', name: 'Database Model', description: 'Generate a new database model (Eg: "userModel", "companyModel"...)' },
       luigi.separator(`-- TESTS -------------`),

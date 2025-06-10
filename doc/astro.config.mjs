@@ -32,7 +32,10 @@ export default defineConfig({
 						{ label: 'API Services', slug: 'guides/api-services' },
 						{ label: 'Models And DAOs', slug: 'guides/models-and-dao' },
 						{ label: 'Context Object (ctx)', slug: 'guides/ctx' },
+						{ label: 'Error Handling', slug: 'guides/error-handling' },
 						{ label: 'Tips and Helpers', slug: 'guides/tips-and-helpers' },
+						{ label: 'Schedules', slug: 'guides/schedules' },
+						{ label: 'Hooks', slug: 'guides/hook-service' },
 					],
 				},
 				{
