@@ -1,11 +1,46 @@
 ---
-title: Example Guide
-description: A guide in my new Starlight docs site.
+title: Tips and Helpers
+description: Tips and Helpers for green_dot
 ---
 
-Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
-Writing a good guide requires thinking about what your users are trying to do.
+### Env
 
-## Further reading
+This is the best way to get env and also env.isProd or env.isTest
 
-- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+```ts twoslash
+import { env } from 'green_dot'
+
+env.isProd // boolean
+env.isTest // boolean
+env.env // 'production' | 'development' | 'test'
+```
+
+### Get Model Type
+
+Get model type safely like:
+
+```ts twoslash
+// @noErrors
+
+import { ModelTypes, MainDbName } from 'green_dot'
+
+type User = ModelTypes['user']
+type UserWrite =  ModelTypes['user']
+type MyModelWrite =  ModelTypes['myModel']
+
+// You also have a type for the default db name: MainDbName
+
+```
+
+
+### sendEmail
+
+Send an email with the configured smtp config
+
+```ts twoslash
+// @noErrors
+import { sendEmail } from 'green_dot'
+
+sendEmail()
+
+```

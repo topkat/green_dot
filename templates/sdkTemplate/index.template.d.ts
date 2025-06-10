@@ -3,7 +3,7 @@ import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, Reque
 import { SdkError, ServerUrls, SdkInitOptions, Breakpoints } from './apiCall.js'
 import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query'
 import { ModelNames } from './modelTypes.generated.js'
-import { InitBackendConfig } from './sdkHelpers/initBackend.js'
+import { InitSdkConfig } from './sdkHelpers/initSdk.js'
 
 export * from './sdkHelpers/index.js'
 export { ServerUrls } from './apiCall.js'
@@ -39,6 +39,6 @@ export const methodNames: { dbRead: Record<string, string>, dbWrite: Record<stri
 
 export default $
 
-export declare function initBackend(serverConfig: InitBackendConfig<ServerUrls>)
+export declare function initSdk(serverConfig: InitSdkConfig<ServerUrls>)
 
 /**%%export_all_ts*/

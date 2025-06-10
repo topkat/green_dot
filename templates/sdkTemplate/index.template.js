@@ -3,7 +3,7 @@
 import { apiCall, init, onError, getServerState, setHeaders, beforeApiCall, registerSideEffect, methodNames } from './apiCall.js'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { ensureAccessToken, getActualScreen, getHandleErrorTyped, initTrackerData, sendDataToServer, trackerEvent, handleError, initErrorHandler, log, initHelpers, logout, setAccessToken } from './sdkHelpers/index.js'
-import { initBackend, isBackendInitialized } from './sdkHelpers/initBackend.js'
+import { initSdk, isSdkInitialized } from './sdkHelpers/initSdk.js'
 
 /** Used to store the timeouts of deferred requests */
 const deferTimeout = {}
@@ -104,6 +104,6 @@ const setBreakpoint = breakpoint => actualBreakpoint = breakpoint
 '%%queriesToInvalidate%%'
 
 /** /!\ Do not export individually (commonJs compatible) */
-export { $, methodNames, getActualScreen, initTrackerData, sendDataToServer, trackerEvent, log, getHandleErrorTyped, handleError, initErrorHandler, ensureAccessToken, initBackend, logout, setAccessToken, isBackendInitialized }
+export { $, methodNames, getActualScreen, initTrackerData, sendDataToServer, trackerEvent, log, getHandleErrorTyped, handleError, initErrorHandler, ensureAccessToken, initSdk, logout, setAccessToken, isSdkInitialized }
 
 /**%%export_all*/

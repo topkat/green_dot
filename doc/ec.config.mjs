@@ -16,6 +16,15 @@ export default {
 			// shadowColor: '#124',
 		},
 	},
-	plugins: [ecTwoSlash({ explicitTrigger: true, includeJsDoc: true, languages: ['ts'] })],
+	plugins: [ecTwoSlash({
+		explicitTrigger: true,
+		includeJsDoc: true,
+		languages: ['ts'],
+		// twoslashOptions: {
+		// 	extraFiles: {
+		// 		'green_dot.ts': `declare const env: 'string'`,
+		// 	},
+		// }
+	})],
 
 }

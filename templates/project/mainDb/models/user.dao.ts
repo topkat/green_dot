@@ -31,20 +31,36 @@ Examples:
 ```
 */
 
-import { MongoDao, UserAdditionalFieldsRead } from 'green_dot'
+import { MongoDao } from 'green_dot'
 import { User } from './user.model.js'
 
 const dao = {
   type: 'mongo',
-  modelConfig: {},
   expose: [
     // type gd_dao:expose for snippet autocompletion
   ],
-  filter: [
-    // type gd_dao:filter to expand snippet
-  ],
-  mask: [
-    // type gd_dao:mask to expand snippet
+  filter: [{
+    for: 'ALL',
+    on: 'ALL',
+    filter: (ctx, filter) => {
+      // TODO this enforce that a user can only read or write it's own user
+      // update this rule to your needs using `for: ['myRole']` or if(ctx.role === 'myRole')
+      filter._id = ctx._id
+    }
+  }],
+  mask: [{
+    // masked in READ AND WRITE situation
+    mask: () => ({
+      // TODO this is just basic security, adapt to your needs
+      refreshTokens: true,
+      password: true,
+      validationTokens: true,
+      devices: true,
+      pinCode: true,
+      _2FAcode: true,
+      biometricAuthToken: true,
+    }),
+  }
   ],
   populate: [],
 } satisfies MongoDao<User>

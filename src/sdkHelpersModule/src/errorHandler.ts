@@ -5,7 +5,7 @@ import { removeCircularJSONstringify, generateObjectId, DescriptiveError } from 
 import { log } from './logger.js'
 import { trackerEvent } from './tracker.js'
 import { logout } from './loginHelper.js'
-import { isBackendInitialized } from './initBackend.js'
+import { isSdkInitialized } from './initSdk.js'
 import { get$ } from './init.js'
 import { Device } from './device.web.js'
 
@@ -99,7 +99,7 @@ export async function handleError(
     trackerEvent('error', { errorId, errMsg: msg })
     if (isUnexpectedError) sendErrorToBackend(error, msg, extraInfos, errorId) // not awaited because parallel
 
-    if (logoutUser && isBackendInitialized()) await logout()
+    if (logoutUser && isSdkInitialized()) await logout()
   } catch (err) {
     log.error('HANDLE ERROR ERROR: dude, if this happens, we are in the S**T')
     log.error(err)

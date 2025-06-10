@@ -13,7 +13,7 @@ let isInitialized = false
 //----------------------------------------
 // BASE CONFIG
 //----------------------------------------
-export type InitBackendConfig<ServerConfig> = {
+export type InitSdkConfig<ServerConfig> = {
   projectName: string
   onLogout?(): void | Promise<void>
   getDeviceId(): string | Promise<string>
@@ -33,7 +33,7 @@ const cacheLocalStorage = {
   remove: key => delete fakeLs[key],
 }
 
-const backendConfig: InitBackendConfig<any> = {
+const backendConfig: InitSdkConfig<any> = {
   serverUrls: { default: 'backend', backend: 'http://localhost:9086' },
   projectName: 'undefined',
   getDeviceId: () => notImplementedErrMsg('getDeviceId'),
@@ -49,7 +49,7 @@ const backendConfig: InitBackendConfig<any> = {
 //----------------------------------------
 // INITIALIZATION
 //----------------------------------------
-export function initBackend<ServerConfig>(config: InitBackendConfig<ServerConfig>) {
+export function initSdk<ServerConfig>(config: InitSdkConfig<ServerConfig>) {
 
   Object.assign(backendConfig, config)
 
@@ -63,7 +63,7 @@ export function initBackend<ServerConfig>(config: InitBackendConfig<ServerConfig
   isInitialized = true
 }
 
-export function isBackendInitialized() {
+export function isSdkInitialized() {
   return isInitialized
 }
 

@@ -1,13 +1,12 @@
 ---
-title: Models and DAOs
+title: green_dot Models and DAOs
 description: Learn how to define and secure your data models with Green Dot's type-safe model and DAO system.
 ---
 
-# Models and DAOs
 
 Green Dot provides a powerful type-safe system for defining data models and securing their access through Data Access Objects (DAOs). This guide will show you how to create and configure models and DAOs for your application.
 
-## Creating Models and DAOs
+
 
 To create a new model and DAO:
 1. Run `npx green_dot generate`
@@ -22,7 +21,7 @@ This will generate two files:
 
 Models are defined using the `_.mongoModel()` function, which provides type safety and validation.
 
-```ts
+```ts title='myModel.model.ts'
 import { _ } from 'green_dot'
 
 export const userModel = _.mongoModel(
@@ -45,7 +44,7 @@ export const userModel = _.mongoModel(
     },
     
     // Arrays
-    roles: _.array(_.string()),
+    roles: [_.string()], // OR _.array(_.string()).minLength(2) for example
     
     // Complex fields
     settings: _.object({
@@ -60,47 +59,41 @@ export type UserModel = InferType<typeof userModel>
 export type UserModelWrite = InferTypeWrite<typeof userModel>
 ```
 
-### Available Field Types
+### Available Field Types and modifiers
 
-- `_.string()`: String field
-- `_.number()`: Number field
-- `_.boolean()`: Boolean field
-- `_.date()`: Date field
-- `_.email()`: Email field with validation
-- `_.ref(modelName)`: Reference to another model
-- `_.array(type)`: Array of specified type
-- `_.object(schema)`: Nested object with schema
-- `_.enum(values)`: Enum field with specific values
+Please use intellisense to find out all the possibilities, the original lib for validation is [good-cop](https://github.com/topkat/good-cop)
 
-### Field Modifiers
-
-- `.required()`: Field is required
-- `.unique()`: Field must be unique
-- `.default(value)`: Default value if not provided
-- `.min(value)`: Minimum value/number of items
-- `.max(value)`: Maximum value/number of items
 
 ## DAO Configuration
 
 DAOs (Data Access Objects) define how your model can be accessed and what security rules apply.
 
-```ts
+```ts title='myModel.dao.ts'
 export const dao = {
   type: 'mongo',
   
-  // Expose methods to specific roles
-  expose: [{
-    for: ['user', 'admin'],
-    expose: ['getOne', 'update'],
-  }, {
-    for: 'admin',
-    expose: ['getAll', 'create', 'delete'],
-  }],
+  // Expose methods to specific roles via API and SDK
+  expose: [
+    { 
+      for: [{ role: 'user', hasEmailValidated: false }],
+      expose: [] // that user will take a permission error if reaching those services
+    },
+    {
+      for: ['user'],
+      expose: [
+        'getOne', // using the userAppSDK I can now use $.myModel.getOne() in frontend
+        'update' // as well as $.myModel.update()
+      ]
+    }, {
+      for: 'admin',
+      expose: ['ALL'], // the admin SDK will be generate with all user routes ($.userGetById, $.userDelete, $.userCreate...)
+    }
+  ],
   
   // Filter data based on user context
   filter: [{
     on: ['read', 'write'],
-    for: 'ALL',
+    for: 'ALL', // or can be perm specific
     filter: (ctx, filter) => {
       if (ctx.role === 'admin') return
       filter.userId = ctx._id
@@ -125,7 +118,7 @@ export const dao = {
   // Auto-populate references
   populate: [
     'company',
-    'createdBy'
+    { path: 'createdBy', populate: { path: 'company' } }, // you can use mongoose populate syntax here
   ]
 } satisfies MongoDao<UserModel>
 
@@ -134,7 +127,22 @@ export default dao
 
 ### DAO Configuration Options
 
-#### Expose
+#### Permission bricks
+
+Permission bricks have always `on`, `for`, `notOn` and `notFor`.
+
+- `on`: Operations to apply filter to (`read`, `write`, `create`, etc.)
+- `for`: Roles to apply filter to (`ALL` or specific roles)
+
+You can mix and match permissions bricks, at runtime, they will be merged so that the strictest will always apply.  
+So for example if two rules applies:
+* mask: `{ password: true }` and select `{ password: true }`
+  * Will mask all fields (`select` implies that not selected fields are masked)
+* mask: `{ password: true }` and mask `{ apiKey: true }`
+  * Will mask both `apiKey` and `password` fields
+
+#### Expose  
+
 Controls which operations are available to which roles:
 - `getOne`: Get a single document
 - `getAll`: Get multiple documents
@@ -142,22 +150,65 @@ Controls which operations are available to which roles:
 - `update`: Update existing documents
 - `delete`: Delete documents
 - `count`: Count documents
-- `aggregate`: Run aggregation pipelines
+- As well as `getLastN`, `getFirstN`, `updateMany`, `upsert`, `updateWithFilter`, `deleteWithFilter`
 
 #### Filter
-Adds security filters to queries based on user context:
-- `on`: Operations to apply filter to (`read`, `write`, `create`, etc.)
-- `for`: Roles to apply filter to (`ALL` or specific roles)
-- `filter`: Function that modifies the query filter
+
+> Tips: type `gd_dao:filter` to expand snippet template in your IDE
+
+Filter output data
+* Use a function to modify existing filter
+* OR use a filter object that is going to be merged with actual filter with precedence
+
+Eg: the user can only modify it's own user
+```ts title='myModel.dao.ts'
+...
+    filter: [{
+        on: 'ALL',
+        filter: (ctx, filter) => {
+            if (ctx.role === 'admin' && ctx.method === 'getAll') return
+            else filter._id = ctx._id
+        }
+    }]
+...
+```
 
 #### Mask
 Hides sensitive fields based on user role and operation:
-- `on`: Operations to apply mask to
-- `for`/`notFor`: Roles to apply/not apply mask to
-- `mask`: Function that returns fields to hide
+
+```ts title='myModel.dao.ts'
+mask: [
+    {
+      for: 'admin',
+      on: 'write',
+      select: ctx => ({
+        // SELECT so admin acn only write `adminFields` field
+        adminFields: true
+      }),
+    },
+    {
+      for: 'ALL',
+      on: 'ALL',
+      mask: () => ({
+        // this is masked for all in all situations
+        password: true
+      }),
+    },
+],
+```
+
+#### MongoDb Indexes (🚧 Coming Soon 🚧)
+
+It is possible to create mongoDb indexes directly from dao config
+
+```ts title='myModel.dao.ts'
+const dao = {
+  modelConfig: { indexes: ['myField'] },
+}
+```
 
 #### Populate
-Automatically populates referenced fields when fetching documents.
+Automatically populates referenced fields when fetching documents (see example above)
 
 ## Best Practices
 

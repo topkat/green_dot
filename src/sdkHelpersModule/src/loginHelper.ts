@@ -1,5 +1,5 @@
 
-import { getBackendConfig, isBackendInitialized } from './initBackend.js'
+import { getBackendConfig, isSdkInitialized } from './initSdk.js'
 import { get$ } from './init.js'
 import { failSafe, timeout } from 'topkat-utils'
 import { handleError } from './errorHandler.js'
@@ -93,7 +93,7 @@ function getNewTokenInterval() {
   const tokenExirationMinutes = getBackendConfig().refreshTokenExpirationMinutes || 15
   clearTimeout(getNewTokenTo)
   getNewTokenTo = setTimeout(async () => {
-    if (isBackendInitialized()) getNewToken() // includes setRefreshToken that calls again refreshTokenInterval
+    if (isSdkInitialized()) getNewToken() // includes setRefreshToken that calls again refreshTokenInterval
     else getNewTokenInterval()
   }, tokenExirationMinutes * 60 * 1000 * 0.75) // 0.75 is to refresh the token slightly before expiration
 }

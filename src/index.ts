@@ -61,7 +61,7 @@ export { assert, testRunner } from './restTest/rest-test.js'
 export type { GreenDotApiTestsConfig, TestSuite, TestItem } from './restTest/rest-test-types.js'
 
 export * from './sdkHelpersModule/src/types.js'
-export type { InitBackendConfig } from './sdkHelpersModule/src/initBackend.js'
+export type { InitSdkConfig } from './sdkHelpersModule/src/initSdk.js'
 
 export { parentProcessExitCodes } from './constants.js'
 

@@ -30,12 +30,13 @@ export default defineConfig({
 						{ label: 'Quick Start', slug: 'guides/quickstart' },
 						{ label: 'Overview', slug: 'guides/overview' },
 						{ label: 'API Services', slug: 'guides/api-services' },
-						{ label: 'Models And DAOs', slug: 'guides/models-and-dao' },
+						{ label: 'Models And DAOs', slug: 'guides/models-and-daos' },
 						{ label: 'Context Object (ctx)', slug: 'guides/ctx' },
 						{ label: 'Error Handling', slug: 'guides/error-handling' },
 						{ label: 'Tips and Helpers', slug: 'guides/tips-and-helpers' },
 						{ label: 'Schedules', slug: 'guides/schedules' },
 						{ label: 'Hooks', slug: 'guides/hook-service' },
+						{ label: 'Usage in Frontend', slug: 'guides/frontend-usage' },
 					],
 				},
 				{
@@ -45,6 +46,11 @@ export default defineConfig({
 				{
 					label: 'Plugins',
 					autogenerate: { directory: 'plugins' },
+					// items: [
+					// 	{ label: 'API Key Authentication', slug: 'plugins/api-key-authentication' },
+					// 	{ label: 'Double Authentication', slug: 'plugins/double-authentication' },
+					// 	{ label: 'Managed Authentication', slug: 'plugins/managed-authentication' },
+					// ],
 				},
 			],
 			customCss: [

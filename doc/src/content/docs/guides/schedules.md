@@ -3,13 +3,10 @@ title: Scheduled Tasks Guide
 description: Learn how to create and manage scheduled tasks in your Green Dot application.
 ---
 
-To create a new scheduled task, you can use the Green Dot CLI:
-
-```bash
-npx green_dot
-```
-
-Then select "Schedule" from the menu to generate a schedule file template.
+To create a new Schedule:
+1. Run `npx green_dot generate`
+2. Select "Schedule"
+3. Follow the prompts
 
 ## Creating Scheduled Tasks
 

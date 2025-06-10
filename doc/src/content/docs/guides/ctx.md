@@ -37,11 +37,14 @@ async main(ctx, input) {
 ### User Information
 - `_id`: User ID (or public/system ID for anonymous users)
 - `role`: User's role (e.g., 'admin', 'user', 'public')
-- `permissions`: User's permissions object
-- `authenticationMethod`: Array of authentication methods used
+- `permissions`: User's permissions object (`{ isAdmin, hasEmailValidated...}`)
+- `authenticationMethod`: Array of authentication methods used. Eg: one or multiple of `['accessToken', '2FA', 'biometricAuthToken', 'pincode', 'apiKey']`
 - `isPublic`: Boolean indicating if user is not logged in
 - `isSystem`: Boolean indicating if context has system privileges
 - `platform`: Platform identifier (e.g., 'web', 'mobile')
+
+### Access and permissions
+- `GM` (god mode) ctx.GM returns a system ctx with all privileges
 
 ### Database Access
 - `db`: Default database instance
@@ -66,19 +69,16 @@ async main(ctx, input) {
 
 ### User Management
 ```ts
-// Get full user object
+// Get full user object (cached)
 const user = await ctx.getUser({
     refreshCache: false,  // Whether to bypass cache
     errorIfNotSet: true   // Whether to throw error if user not found
 })
 
-// Get minimal user info
-const minimalUser = ctx.getUserMinimal()
-
 // Clear user cache
 ctx.clearUserCache()
 
-// Check if user is anonymous
+// Check if user is anonymous (login via apiKey for example or public)
 const isAnonymous = ctx.isAnonymousUser()
 ```
 
@@ -101,9 +101,8 @@ ctx.fromUser('admin', userObject)
 ```ts
 // Get system context
 const systemCtx = ctx.system()
-
-// Use God Mode (GM) - system context with full privileges
-const gmCtx = ctx.GM
+// OR Use God Mode (GM) - system context with full privileges
+const systemCtx = ctx.GM
 ```
 
 ### Error Handling
@@ -111,8 +110,12 @@ const gmCtx = ctx.GM
 // Throw errors with context
 throw ctx.error.notFound({ resource: 'user' })
 throw ctx.error.forbidden({ action: 'delete' })
-throw ctx.error.unauthorized({ reason: 'invalid_token' })
+throw ctx.error.myCustomError(anyHelpfulContextualInformations)
 ```
+
+[See error handling doc for how to create custom errors](./error-handling.md)
+
+**NOTE**: Be carreful when sending extra infos in errors because those information may leak in frontend
 
 ### Context Cloning
 ```ts
@@ -125,9 +128,13 @@ const newCtx = ctx.clone({
 
 ## Security Features
 
-### User Banning
+### User Banning and warning
 ```ts
-// Ban user
+// add user warning. At some configured number of warnings, 
+// user will automatcally be banned for a configured period of time
+// (gd.app.config.ts)
+await ctx.addWarning()
+// Ban user for a configured period of time (gd.app.config.ts)
 await ctx.banUser()
 ```
 
@@ -142,11 +149,8 @@ const methods = ctx.authenticationMethod // ['accessToken', '2FA', 'biometricAut
 1. Always pass `ctx` as the first parameter in service functions
 2. Use `ctx.GM` for system-level operations
 3. Use appropriate error handling with `ctx.error`
-4. Clear user cache when modifying user data
-5. Use role-based access control with `ctx.hasRole()`
-6. Handle anonymous users appropriately
-7. Use transactions when needed
-8. Follow security best practices for authentication
+4. Use role-based access control with `ctx.hasRole()`
+5. Follow security best practices for authentication
 
 ## Example Use Cases
 
@@ -157,14 +161,6 @@ async function deleteUser(ctx, userId) {
         throw ctx.error.forbidden({ action: 'delete_user' })
     }
     // Delete user logic
-}
-```
-
-### System Operations
-```ts
-async function systemTask(ctx) {
-    const systemCtx = ctx.GM
-    // Perform system-level operations
 }
 ```
 

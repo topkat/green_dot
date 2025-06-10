@@ -35,19 +35,20 @@ A powerful TypeScript nodeJs framework for building DX friendly, secure and fron
 
 ```bash
 📁 app/
-├── 📁 myDb1/                   
+├── 📁 myDb1/                    # Each DB as its own folder 
 │   ├── 📁 models/              
-│   │   ├── user.dao.ts         # Security config for the 'user' model
-│   │   └── user.model.ts       # Data model definition for 'user'
-│   └── ⚙️ gd.db.config.ts     # DB config file specific to this database
+│   │   ├── [modelName].dao.ts   # Security config for the model
+│   │   └── [modelName].model.ts # Model definition file
+│   └── ⚙️ gd.db.config.ts       # DB config file specific to this database
+├── 📁 myDb2/                    
 │
-├── 📁 myApp1/                  
-│   ├── 📁 _shared/             # Shared utilities and types across modules
-│   │   └── mySharedFile.ts
-│   ├── 📁 myModule/            # A custom module; structure is flexible
-│   │   └── myModule.svc.ts     # API route definition for the module
+├── 📁 myApp1/                   # Each APP as its own folder 
+│   ├── 📁 myModule1/            # A custom module; structure is flexible
+│   │   ├── myModule.testFlow.ts # api tests for your module
+│   │   └── myModule1.svc.ts     # API route definition for the module
 │   ├── ⚙️ gd.apiTests.config.ts # Config file for automated API tests (BETA)
 │   └── ⚙️ gd.app.config.ts      # App config file specific to this application
+├── 📁 myApp2/                   
 │
 └── ⚙️ gd.config.ts              # Global config (all roles, permissions, etc.)
 ```
