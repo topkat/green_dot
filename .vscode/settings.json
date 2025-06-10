@@ -9,5 +9,29 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",
-  "editor.linkedEditing": true
+  "editor.linkedEditing": true,
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  // MDX specific settings
+  "[mdx]": {
+    "editor.formatOnSave": true,
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": true,
+      "strings": true
+    }
+  },
+  // TypeScript/JavaScript settings
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  // File associations
+  "files.associations": {
+    "*.mdx": "mdx"
+  },
+  // IntelliSense settings
+  "typescript.suggest.completeFunctionCalls": true,
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.paths": true,
+  // Astro specific settings
+  "astro.enable": true,
+  "astro.typescript.tsdk": "node_modules/typescript/lib"
 }

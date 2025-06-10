@@ -1,4 +1,4 @@
-import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
+// import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 import ecTwoSlash from 'expressive-code-twoslash'
 
 /** @type {import('@astrojs/starlight/expressive-code').StarlightExpressiveCodeOptions} */
@@ -16,6 +16,6 @@ export default {
 			// shadowColor: '#124',
 		},
 	},
-	plugins: [pluginLineNumbers(), ecTwoSlash()],
+	plugins: [ecTwoSlash()],
 
 }

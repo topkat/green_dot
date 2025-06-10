@@ -1,5 +1,5 @@
 ---
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton, Code } from "@astrojs/starlight/components";
 import TerminalDisplay from "./TerminalDisplay.astro";
 import {
   ArrowRight,
@@ -9,7 +9,7 @@ import {
   Zap,
   ShieldCheck,
   Laptop,
-  Code,
+  Code as CodeIcon,
   Laptop2,
 } from "lucide-astro";
 ---
@@ -22,14 +22,13 @@ import {
       green_dot
     </h1>
     <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light">
-      A node.js framework that is:<br />
-      <Zap /> Fast<br />
-      <ShieldCheck /> Secure<br />
-      <Laptop /> DX Focused<br />
+      Security and DX focused NodeJs backend framework
     </p>
     <div class="sl-flex actions gap-6">
-      <LinkButton href="./" icon="right-arrow"> Quick Start </LinkButton>
-      <LinkButton href="./" variant="minimal" icon="external">
+      <LinkButton href="./guides/quickstart" icon="right-arrow">
+        Quick Start
+      </LinkButton>
+      <LinkButton href="./guides/quickstart" variant="minimal" icon="external">
         Read the docs
       </LinkButton>
     </div>
@@ -40,16 +39,8 @@ import {
     >
       <!-- BLUR BG  -->
       <div class="overlay bg-accent-200/30 rounded-full blur-3xl"></div>
-      <TerminalDisplay>
-        <b>$ npx green_dot@latest generate</b><br /><br />
-        Installing dependencies...<br />
-        <Check class="w-4 h-4 inline-block mr-2" /> Project structure created<br
-        />
-        <Check class="w-4 h-4 inline-block mr-2" /> Dependencies installed<br />
-        <Check class="w-4 h-4 inline-block mr-2" /> Configuration generated<br
-        /><br />
-        <b>Ready to launch! <Rocket class="w-4 h-4 inline-block" /></b>
-      </TerminalDisplay>
+      <!-- <Code lang="ts" code="npx green_dot@latest generate" /> -->
+      <TerminalDisplay code="npx green_dot@latest generate" />
     </div>
   </div>
 </div>

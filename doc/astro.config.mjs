@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://stargazers.club', // TODO replace when in prod
+	site: 'https://greendotjs.com', // TODO replace when in prod
 	integrations: [
 		react(),
 		starlight({
@@ -18,15 +18,17 @@ export default defineConfig({
 				Hero: './src/components/SiteHero.astro',
 			},
 			editLink: {
-				baseUrl: 'https://github.com/withastro/starlight/edit/main/docs/', // TODO
+				baseUrl: 'https://github.com/topkat/green_dot', // TODO
 			},
 			logo: { src: './src/assets/green_dot-logo.png' },
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/topkat/green_dot' }],
 			sidebar: [
 				{
 					label: 'Guides',
 					items: [
 						// Each item here is one entry in the navigation menu.
+						{ label: 'Quick Start', slug: 'guides/quickstart' },
+						{ label: 'Overview', slug: 'guides/overview' },
 						{ label: 'Example Guide', slug: 'guides/example' },
 					],
 				},
