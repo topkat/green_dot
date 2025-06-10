@@ -16,6 +16,6 @@ export default {
 			// shadowColor: '#124',
 		},
 	},
-	plugins: [ecTwoSlash()],
+	plugins: [ecTwoSlash({ explicitTrigger: true, includeJsDoc: true, languages: ['ts'] })],
 
 }

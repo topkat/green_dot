@@ -3,9 +3,10 @@ import { Code } from "@astrojs/starlight/components";
 
 interface Props {
   code: string;
+  forceCopyBtnToShow?: boolean;
 }
 
-const { code } = Astro.props;
+const { code, forceCopyBtnToShow = false } = Astro.props;
 ---
 
 <!-- CLI Content -->
@@ -28,7 +29,10 @@ const { code } = Astro.props;
     }}
   >
   </div>
-  <div class="text-accent-200/80 relative terminal-content p-0 m-0">
+  <div
+    class={"text-accent-200/80 relative terminal-content p-0 m-0" +
+      (forceCopyBtnToShow ? " copyBtnShow" : "")}
+  >
     <Code lang="ts" code={code} />
   </div>
 </div>
@@ -40,6 +44,9 @@ const { code } = Astro.props;
       height: auto;
       width: 100%;
       max-width: 600px;
+    }
+    .copyBtnShow :global(button[title="Copy to clipboard"]) {
+      opacity: 1 !important;
     }
     .term :global(code) {
       color: red !important;

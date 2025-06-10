@@ -29,12 +29,19 @@ export default defineConfig({
 						// Each item here is one entry in the navigation menu.
 						{ label: 'Quick Start', slug: 'guides/quickstart' },
 						{ label: 'Overview', slug: 'guides/overview' },
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: 'API Services', slug: 'guides/api-services' },
+						{ label: 'Models And DAOs', slug: 'guides/models-and-dao' },
+						{ label: 'Context Object (ctx)', slug: 'guides/ctx' },
+						{ label: 'Tips and Helpers', slug: 'guides/tips-and-helpers' },
 					],
 				},
 				{
 					label: 'Reference',
 					autogenerate: { directory: 'reference' },
+				},
+				{
+					label: 'Plugins',
+					autogenerate: { directory: 'plugins' },
 				},
 			],
 			customCss: [

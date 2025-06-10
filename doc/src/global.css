@@ -44,6 +44,10 @@
   /* Generated accent color palettes. */
   --color-accent-100: #C5E9CF;
   --color-accent-200: #9cdaac;
+  --color-accent-250: #5CDC99;
+  --color-accent-300: #2BCF78;
+  --color-accent-400: #2d7f53;
+  --color-accent-500: #206C43;
   --color-accent-600: #005729;
   --color-accent-900: #003e1b;
   --color-accent-950: #002d12;
@@ -81,4 +85,14 @@ svg.lucide {
 
 .sl-markdown-content :not(a, strong, em, del, span, input, code, br) + :not(a, strong, em, del, span, input, code, br, :where(.not-content *)) {
 margin-top:0;
+}
+
+
+ul, h2, h3, h4, .level-h2, .frame, p, .level-h3 , .level-h4 {
+padding-top: 20px;
+padding-bottom: 20px;
+}
+
+.frame {
+padding-bottom: 32px;
 }

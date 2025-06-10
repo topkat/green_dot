@@ -1,17 +1,6 @@
 ---
-import { LinkButton, Code } from "@astrojs/starlight/components";
+import { LinkButton } from "@astrojs/starlight/components";
 import TerminalDisplay from "./TerminalDisplay.astro";
-import {
-  ArrowRight,
-  BookOpen,
-  Rocket,
-  Check,
-  Zap,
-  ShieldCheck,
-  Laptop,
-  Code as CodeIcon,
-  Laptop2,
-} from "lucide-astro";
 ---
 
 <div
@@ -35,12 +24,14 @@ import {
   </div>
   <div class="w-full md:w-1/2 flex items-center justify-center">
     <div
-      class="relative w-full max-w-lg aspect-[5/4.2] flex items-center justify-center"
+      class="relative w-full max-w-lg aspect-[5/4.2] flex flex-col items-center justify-center"
     >
       <!-- BLUR BG  -->
       <div class="overlay bg-accent-200/30 rounded-full blur-3xl"></div>
-      <!-- <Code lang="ts" code="npx green_dot@latest generate" /> -->
-      <TerminalDisplay code="npx green_dot@latest generate" />
+      <TerminalDisplay
+        code="npx green_dot@latest generate"
+        forceCopyBtnToShow
+      />
     </div>
   </div>
 </div>
