@@ -47,9 +47,9 @@ Your generated project will follow this structure:
 
 ## IDE Integration
 
-1. Install the VSCode/Cursor extension from the [marketplace](https://marketplace.visualstudio.com/items?itemName=topkat.green-dot-vscode-module)
+1. Install the `green dot VSCode Extension` from the IDE or the [marketplace](https://marketplace.visualstudio.com/items?itemName=topkat.green-dot-vscode-module)
 2. Use `gd_` snippets in any TypeScript file for faster development
-3. Hover over any Green Dot property or function to see documentation
+3. Hover over any green_dot property or function to see documentation
 
 ## Available Plugins
 
@@ -58,6 +58,8 @@ When you first generate your project, you can install these plugins:
 - `GDmanagedLogin`: Managed JWT login with email/password updates
 - `GDapiKeyAuthentication`: API Key authentication
 - `GDdoubleAuthentication`: 2FA, Pin Code, or biometric authentication
+
+See [Plugins Documentation](../plugins/1_plugins)
 
 ## Need Help?
 

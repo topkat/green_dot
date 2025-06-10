@@ -40,10 +40,6 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
-				{
 					label: 'Plugins',
 					autogenerate: { directory: 'plugins' },
 					// items: [
