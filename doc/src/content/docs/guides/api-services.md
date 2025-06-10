@@ -64,10 +64,38 @@ export const myService = svc({
     // You can customize the generated route, by default it's all POST and the 
     // route name is based on the variable name (myService => '/my-service')
     route: ['GET', '/users'],
+    // alternative route
+    aliasRoute: '/users/alternative',
+  
     // Rate limiting
     rateLimiter: '5/min',
     // you can set different configs for a certain env (here env === 'test')
     rateLimiter: { default:'5/min', test: '100/min' },
+    
+    // Access control
+    for: ['admin', { role: 'appUser', hasEmailValidated: true }],
+    notFor: ['guest'],
+    
+    // Cache management, when using this, the frontend cache will invalidate for 
+    // the configured queries
+    invalidateCacheFor: ['user*', 'profile*'],
+    
+    // Environment control: this service will only be exposed in configured envs
+    forEnv: ['test'],
+    
+    // Input validation control. This can be useful if you want to avoid triggering an error if the body may be malformed or uncomplete
+    doNotValidate: false,
+
+    // allow only those IPs to access the service, all other requests will take a 403 permission error
+    ipWhitelist: ['127.9.9.1']
+
+    // will not be generated in SDK, you can still access the route via SDK (Eg: ($ as any).myService()) but it will appear nowhere in the SDK code
+    maskInSdk: true
+
+    // Plugin specific routes
+    // Require 2FA authentication (headers with `_2FA` field set) [needs doubleAuthentication plugin](./plugins/double-authentication)
+    needs2FA: true,
+    needsFingerprintOrPincode: true, // see above
     ...
 })
 ```
@@ -95,6 +123,9 @@ async main(ctx, { userId, data }) {
 ...
 ```
 
+## Service Context (ctx)
+
+See [ctx documentation](./ctx.md)
 
 
 ## Service Configuration Options
@@ -141,9 +172,6 @@ async main(ctx, { userId, data }) {
   - String: Single environment
   - Array: Multiple environments
 
-## Service Context (ctx)
-
-See [ctx documentation](./ctx.md)
 
 ## Best Practices
 
@@ -155,58 +183,3 @@ See [ctx documentation](./ctx.md)
 6. Follow RESTful conventions for routes
 7. Implement proper security measures
 8. Use cache invalidation when modifying data
-
-## Example Use Cases
-
-### User Management
-```ts
-export const createUser = svc({
-    doc: {
-        description: 'Create a new user account',
-        errors: [
-            [409, 'emailExists', 'Email already registered'],
-            [400, 'invalidInput', 'Invalid input data']
-        ]
-    },
-    for: ['admin'],
-    input: {
-        email: _.email().required(),
-        password: _.password().required(),
-        role: _.enum(['user', 'admin']).required()
-    },
-    output: _.object({
-        userId: _.string(),
-        email: _.email()
-    }),
-    route: ['POST', '/users'],
-    rateLimiter: '10/min',
-    async main(ctx, { email, password, role }) {
-        // Implementation
-    }
-})
-```
-
-### Data Retrieval
-```ts
-export const getUserProfile = svc({
-    doc: {
-        description: 'Get user profile information'
-    },
-    for: ['user', 'admin'],
-    input: {
-        userId: _.string().required()
-    },
-    output: _.object({
-        name: _.string(),
-        email: _.email(),
-        preferences: _.object({
-            theme: _.string(),
-            notifications: _.boolean()
-        })
-    }),
-    route: ['GET', '/users/:userId/profile'],
-    async main(ctx, { userId }) {
-        // Implementation
-    }
-})
-```
