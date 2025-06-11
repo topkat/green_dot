@@ -8,6 +8,7 @@ import { execWaitForOutput } from 'topkat-utils/backend.js'
 import { clearCli, greenDotCliIntro } from '../helpers/cli.js'
 import { getPackageJsonVersion } from '../helpers/getPackageJsonVersion.js'
 import { fromGreenDotFolderRoot } from '../helpers/fromGreenDotFolderRoot.js'
+import fs from 'fs-extra'
 
 
 
@@ -88,6 +89,11 @@ export async function cliGenerateProject() {
     [
       ['.template', ''],
     ]
+  )
+
+  await fs.copyFile(
+    fromGreenDotFolderRoot('templates/project/.gitignore'),
+    Path.join(projectRoot, '.gitignore')
   )
 
   clearCli()
