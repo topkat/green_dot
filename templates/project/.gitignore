@@ -79,7 +79,7 @@ apps/frontend/.env
 .project
 .classpath
 
-
 SDKs/**/fileSizes.json
 **/CHANGELOG.md
 apps/backend/.env
+SDKs
