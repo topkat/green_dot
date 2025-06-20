@@ -101,3 +101,8 @@ ul {
 padding-top: 16px;
 padding-bottom: 16px;
 }
+
+
+[title='Copy to clipboard'] {
+margin-top:24px
+}

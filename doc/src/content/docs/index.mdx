@@ -16,9 +16,9 @@ import { ToyBrick, Database, KeySquare, ScanFace, User, SquareCode, BookCheck, P
 //  ╚══╗ ╠═   ╠═╦╝ ╚╗ ║  ║  ║    ╠═   ╚══╗
 //  ═══╝ ╚══╝ ╩ ╚   ╚═╝ ═╩═ ╚══╝ ╚══╝ ═══╝
  */}
-<h2 class='flex flex-row mb-4'>
-<Icon name='seti:tsconfig' class='inline mr-3 mt-1 text-accent-400' style={{display: 'inline'}} />
-Back/Front Type-safe API
+<h2 class='flex flex-row items-center mb-4'>
+<Icon name='seti:tsconfig' class='inline mr-3 text-accent-400' style={{display: 'inline'}} />
+Back / Front Type-safe API
 </h2>
 
     Simply generate a new api route with `npx green_dot generate` and configure it:<br /><br />
@@ -177,7 +177,6 @@ And much more...
     </h4>
       * All your requests are automatically cached with `@tanstack/react-query` to use in frontend components without the need to `await` your requests
       * refresh cache or disable it on demand via simple configuration (in API service or SDK directly)
-      * Auto generates a swagger documentation
       * prefetch heavy requests via `$.prefetch.myHeavyRequest()` so that when you need them they'll load instantly
       * defer requests to make them async `$.defer.myHeavyRequest()`
     <LinkButton href="./reference/tanstack-query-and-caching" variant="minimal" icon="external">
@@ -191,13 +190,16 @@ And much more...
     </h4>
       * File Generation from template via `npx green_dot generate`
       * MongoDb integration (more database to come)
+      * Auto generates a swagger documentation
       * Open Source
+    <div class='flex flex-row justify-center'>
     <LinkButton href="./guides/quickstart" icon="right-arrow">
       Quick Start
     </LinkButton>
     <LinkButton href="./guides/quickstart" variant="minimal" icon="external">
       Read the docs
     </LinkButton>
+    </div>
 	</Card>
 </CardGrid>
 

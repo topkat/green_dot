@@ -1,6 +1,6 @@
 ---
-title: green_dot API Services
-description: Learn how to create and use API services in your Green Dot application.
+title: Using Database in GreenDot Framework
+description: Learn how to use a database Green Dot application
 ---
 
 To create a new API Service:

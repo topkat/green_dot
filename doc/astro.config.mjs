@@ -28,7 +28,7 @@ export default defineConfig({
 					items: [
 						// Each item here is one entry in the navigation menu.
 						{ label: 'Quick Start', slug: 'guides/quickstart' },
-						{ label: 'Main Concepts', slug: 'guides/main-concepts' },
+						{ label: 'Key Concepts', slug: 'guides/main-concepts' },
 						{ label: 'API Services', slug: 'guides/api-services' },
 						{ label: 'Models And DAOs', slug: 'guides/models-and-daos' },
 						{ label: 'Context Object (ctx)', slug: 'guides/ctx' },

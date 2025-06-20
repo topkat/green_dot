@@ -1,5 +1,5 @@
 ---
-title: Main Concepts
+title: Key Concepts
 description: Understanding the core concepts of Green Dot framework.
 ---
 
@@ -11,7 +11,7 @@ In Green Dot, roles are designed to match your application's frontend interfaces
 - For example, if you have an admin panel and a user-facing app, you would define two roles:
   - `admin` - for the admin panel interface
   - `appUser` - for the user-facing application
-- For the rest use permissions
+- All other rights / accesses are granted via permission system
 
 ### SDK Generation
 
