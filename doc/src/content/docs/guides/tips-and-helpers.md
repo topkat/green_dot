@@ -25,8 +25,8 @@ Get model type safely like:
 import { ModelTypes, MainDbName } from 'green_dot'
 
 type User = ModelTypes['user']
-type UserWrite =  ModelTypes['user']
-type MyModelWrite =  ModelTypes['myModel']
+type UserWrite =  ModelTypes['userWrite']
+type MyModelWrite =  ModelTypes['myModelWrite']
 
 // You also have a type for the default db name: MainDbName
 

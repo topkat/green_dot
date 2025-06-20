@@ -30,6 +30,7 @@ export default defineConfig({
 						{ label: 'Quick Start', slug: 'guides/quickstart' },
 						{ label: 'Key Concepts', slug: 'guides/main-concepts' },
 						{ label: 'API Services', slug: 'guides/api-services' },
+						{ label: 'Using Database', slug: 'guides/using-database' },
 						{ label: 'Models And DAOs', slug: 'guides/models-and-daos' },
 						{ label: 'Context Object (ctx)', slug: 'guides/ctx' },
 						{ label: 'Error Handling', slug: 'guides/error-handling' },

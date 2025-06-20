@@ -1,5 +1,5 @@
 ---
-title: Context (ctx) Guide
+title: green_dot Context (ctx)
 description: Learn about the context object and how to use it in your Green Dot application.
 ---
 
@@ -97,13 +97,6 @@ ctx.useRole('admin', {
 ctx.fromUser('admin', userObject)
 ```
 
-### System Access
-```ts
-// Get system context
-const systemCtx = ctx.system()
-// OR Use God Mode (GM) - system context with full privileges
-const systemCtx = ctx.GM
-```
 
 ### Error Handling
 ```ts
@@ -140,17 +133,9 @@ await ctx.banUser()
 
 ### Authentication Methods
 ```ts
-// Check authentication methods
+// This array will be filled with request authentication that have succeeded
 const methods = ctx.authenticationMethod // ['accessToken', '2FA', 'biometricAuthToken', 'pincode', 'apiKey']
 ```
-
-## Best Practices
-
-1. Always pass `ctx` as the first parameter in service functions
-2. Use `ctx.GM` for system-level operations
-3. Use appropriate error handling with `ctx.error`
-4. Use role-based access control with `ctx.hasRole()`
-5. Follow security best practices for authentication
 
 ## Example Use Cases
 

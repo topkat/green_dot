@@ -98,37 +98,6 @@ export const myService = svc({
 ```
 
 
-## Using database
-
-```ts twoslash
-// @noErrors
-const mySvc = {
-async main(ctx, { userId, data }) {
-    // get actual connected user with caching (no mask nor filters here so ⚠️)
-    const actualConnectedUser = await ctx.getUser()
-
-    // You can use ctx.db or `import { db } from 'green_dot'`
-    // here the user may have fields masked or the call can
-    // return a 403 error if the user does not have the permission
-    const sanitizedUser = ctx.db.user.getOne()
-    console.log(sanitizedUser.password)
-// @log: undefined
-
-    // to bypass all securities on a model, use ctx.GM (god mode)
-    // obvioulsy this shall never be returned to frontend
-    const userAsAdmin = ctx.GM.db.user.getOne()
-    console.log(userAsAdmin.password)
-// @warn: 'Abcd1234!'
-
-    // when using db., the default DB will be used
-    // here is how to deal with multiple databases
-    ctx.dbs.myOtherDb.user.getOne()
-    // or with `import { dbs } from 'green_dot'`
-    dbs.myOtherDb.user.getOne()
-}
-}
-```
-
 ## Service Context (ctx)
 
 See [ctx documentation](./ctx.md)
@@ -178,14 +147,3 @@ See [ctx documentation](./ctx.md)
   - String: Single environment
   - Array: Multiple environments
 
-
-## Best Practices
-
-1. Always provide clear documentation
-2. Use appropriate rate limiting
-3. Implement proper error handling
-4. Validate all inputs and outputs
-5. Use TypeScript for better type safety
-6. Follow RESTful conventions for routes
-7. Implement proper security measures
-8. Use cache invalidation when modifying data

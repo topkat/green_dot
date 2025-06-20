@@ -125,21 +125,22 @@ export const dao = {
 export default dao
 ```
 
-### DAO Configuration Options
-
 #### Permission bricks
 
-Permission bricks have always `on`, `for`, `notOn` and `notFor`.
+As you have seen above, permission bricks can be configured with `on`, `for`, `notOn` and `notFor`.
 
-- `on`: Operations to apply filter to (`read`, `write`, `create`, etc.)
-- `for`: Roles to apply filter to (`ALL` or specific roles)
+- `on`: CRUD operation to apply security rule to (Can be `'read'`, `'write'`, `'create'`, etc.)
+- `for`: Role and permission to apply rule to (Can be formatted like `'ALL'`, `'myRole'` or `{ role: 'user', hasEmailValidated: true }`)
 
-You can mix and match permissions bricks, at runtime, they will be merged so that the strictest will always apply.  
+You can mix and match permissions bricks. At runtime, they will be merged so that the strictest rule always apply.  
+
 So for example if two rules applies:
 * mask: `{ password: true }` and select `{ password: true }`
-  * Will mask all fields (`select` implies that not selected fields are masked)
+  * This will mask all fields (`select` implies that not selected fields are masked)
 * mask: `{ password: true }` and mask `{ apiKey: true }`
-  * Will mask both `apiKey` and `password` fields
+  * This will mask both `apiKey` and `password` fields
+
+### DAO Security Settings
 
 #### Expose  
 
@@ -208,118 +209,14 @@ const dao = {
 ```
 
 #### Populate
-Automatically populates referenced fields when fetching documents (see example above)
 
-## Best Practices
+Automatically populates referenced fields when fetching documents
 
-1. **Type Safety**
-   - Always export model types using `InferType` and `InferTypeWrite`
-   - Use type-safe field definitions
-   - Leverage TypeScript's type checking
-
-2. **Security**
-   - Always define appropriate filters for data access
-   - Mask sensitive fields appropriately
-   - Use role-based access control
-   - Validate input data
-
-3. **Performance**
-   - Use appropriate indexes for unique fields
-   - Be selective with field population
-   - Use efficient query patterns
-
-4. **Maintenance**
-   - Keep models focused and single-purpose
-   - Document complex field relationships
-   - Use clear, descriptive field names
-   - Add comments for complex validation rules
-
-## Example Use Cases
-
-### User Management
-```ts
-export const userModel = _.mongoModel(
-  ['creationDate', 'updateDate'],
-  {
-    email: _.email().required().unique(),
-    password: _.string().required(),
-    role: _.string().enum(['user', 'admin']).default('user'),
-    profile: {
-      name: _.string().required(),
-      avatar: _.string(),
-      preferences: _.object({
-        theme: _.string().enum(['light', 'dark']).default('light'),
-        notifications: _.boolean().default(true)
-      })
-    }
-  }
-)
+```ts title='myModel.dao.ts'
+const dao = {
+  populate: [
+    'company',
+    { path: 'createdBy', populate: { path: 'company' } }, // you can use mongoose populate syntax here
+  ]
+}
 ```
-
-### E-commerce Product
-```ts
-export const productModel = _.mongoModel(
-  ['creationDate', 'updateDate'],
-  {
-    name: _.string().required(),
-    sku: _.string().required().unique(),
-    price: _.number().required().min(0),
-    stock: _.number().required().min(0),
-    categories: _.array(_.ref('category')),
-    attributes: _.object({
-      color: _.string(),
-      size: _.string(),
-      weight: _.number()
-    })
-  }
-)
-```
-
-## Common Patterns
-
-### Soft Delete
-```ts
-export const softDeleteModel = _.mongoModel(
-  ['creationDate', 'updateDate'],
-  {
-    // ... other fields ...
-    isDeleted: _.boolean().default(false),
-    deletedAt: _.date()
-  }
-)
-```
-
-### Version Control
-```ts
-export const versionedModel = _.mongoModel(
-  ['creationDate', 'updateDate'],
-  {
-    // ... other fields ...
-    version: _.number().default(1),
-    previousVersions: _.array(_.object({
-      version: _.number(),
-      data: _.object({/* ... */}),
-      changedAt: _.date()
-    }))
-  }
-)
-```
-
-## Error Handling
-
-Models and DAOs handle errors in the following ways:
-
-1. **Validation Errors**
-   - Thrown when required fields are missing
-   - Thrown when field validation fails
-   - Include detailed error messages
-
-2. **Access Control Errors**
-   - Thrown when user lacks permission
-   - Thrown when filter conditions aren't met
-   - Include role and operation information
-
-3. **Database Errors**
-   - Thrown when unique constraints are violated
-   - Thrown when references are invalid
-   - Include database error details 
