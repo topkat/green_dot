@@ -20,16 +20,16 @@ export async function cliGenerateModelAndDao(fileName: string, filePathWithoutEx
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 
 const modelFileTemplate = modelName => `
-import { _ } from 'green_dot'
+import { _, InferType, InferTypeWrite } from 'green_dot'
 
 export const ${modelName}Model = _.mongoModel(['creationDate'], {
 
 })
 
 export default ${modelName}Model
-export type ${capitalize1st(modelName)} = InferType<typeof model>
+export type ${capitalize1st(modelName)} = InferType<typeof ${modelName}Model>
 // type may differ when writing (create / update) vs reading
-export type ${capitalize1st(modelName)}Write = InferTypeWrite<typeof model>
+export type ${capitalize1st(modelName)}Write = InferTypeWrite<typeof ${modelName}Model>
 `
 
 const daoFileTemplate = modelName => `
