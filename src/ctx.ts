@@ -31,7 +31,7 @@ export class CtxClass {
                 if (db[modelName]) {
                     return new Proxy(_, {
                         get: (_, methodName) => {
-                            return (...params) => db[modelName][methodName](this, ...params)
+                            return (...params) => db[modelName][methodName](withProxy(this), ...params)
                         }
                     })
                 } else throw error.serverError('modelDoNotExist', { modelName, modelNames: Object.keys(db) })
@@ -51,7 +51,7 @@ export class CtxClass {
                             if (db[dbName][modelName]) {
                                 return new Proxy(_, {
                                     get: (_, methodName) => {
-                                        return (...params) => db[dbName][modelName][methodName](this, ...params)
+                                        return (...params) => db[dbName][modelName][methodName](withProxy(this), ...params)
                                     }
                                 })
                             } else throw error.serverError('modelDoNotExist', { modelName, modelNames: Object.keys(db[dbName]) })
@@ -158,7 +158,7 @@ export class CtxClass {
                 if (typeof errorFn === 'function') {
                     return (...args) => { // arrow function here are the trick for keeping this in that context
                         return errorFn.apply(errorWithCtx, [
-                            this,
+                            withProxy(this),
                             ...args
                         ])
                     }
