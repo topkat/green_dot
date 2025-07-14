@@ -1,7 +1,7 @@
 import Path from 'path'
 import fs from 'fs-extra'
 import { cliPrompt } from 'simple-cli-prompt'
-import { C, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
+import { asArray, C, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
 import { execWaitForOutput } from 'topkat-utils/backend.js'
 import axios from 'axios'
 
@@ -137,7 +137,22 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
             }))
         }
 
-        const { npmPublishConfig, notifyOnTelegramPrompt } = generateSdkConfig
+        const { npmPublishConfig, notifyOnTelegramPrompt, copyFolderToLocationOnBuild } = generateSdkConfig
+
+        if (copyFolderToLocationOnBuild) {
+            const all = asArray(copyFolderToLocationOnBuild['all'])
+            for (const platform of platforms) {
+                const paths = asArray(copyFolderToLocationOnBuild[platform])
+                const allPaths = [...(paths || []), ...(all || [])]
+                for (const path of allPaths) {
+                    const absolutePath = Path.resolve(repoRoot, path)
+
+                    const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
+
+                    await fs.copy(Path.relative(repoRoot, sdkRootPath), absolutePath)
+                }
+            }
+        }
 
         if (!isProdEnv && publishSdk && npmPublishConfig && npmPublishConfig.enable) {
 
