@@ -1,5 +1,6 @@
 import Path from 'path'
 import fs from 'fs-extra'
+import fs2 from 'fs/promises'
 import { cliPrompt } from 'simple-cli-prompt'
 import { asArray, C, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
 import { execWaitForOutput } from 'topkat-utils/backend.js'
@@ -148,8 +149,7 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
                     const absolutePath = Path.resolve(repoRoot, path)
 
                     const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
-
-                    await fs.copy(Path.relative(repoRoot, sdkRootPath), absolutePath)
+                    await fs2.cp(sdkRootPath, absolutePath, { recursive: true }) // doesn't work with fs.copy
                 }
             }
         }
