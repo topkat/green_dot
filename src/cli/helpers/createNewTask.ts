@@ -3,7 +3,6 @@ import { C, perfTimer } from 'topkat-utils'
 import { cleanCommand } from '../clean.command.js'
 import { onFileChange } from '../helpers/fileWatcher.js'
 import { terminalCharSize } from '../helpers/cli.js'
-import util from 'util'
 
 
 /** This will start a task, measure performances as well as cut build into steps for easier debugging, performance tracking and better user logs
@@ -32,8 +31,6 @@ export function createNewTask() {
         if (!doNotDisplayTime) C.log(C.dim(`\nStep ${this._stepNb} took ${t2.end()}`))
         this._stepNb++
       } catch (err) {
-        let strErr = JSON.stringify(err, null, 2)
-        if (strErr === '{}') strErr = util.inspect(err, { showHidden: true, depth: null, colors: true })
         C.error(err)
         C.error(false, `Step ${this._stepNb} ERROR`)
         if (watch) {

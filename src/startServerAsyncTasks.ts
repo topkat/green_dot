@@ -11,7 +11,6 @@ import { greenDotCacheModuleFolder } from './helpers/getProjectPaths.js'
 import fs from 'fs'
 
 
-
 export async function startServerAsyncTasks(app: Express) {
   try {
     const mainConfig = getMainConfig()
