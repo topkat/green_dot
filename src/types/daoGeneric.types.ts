@@ -33,7 +33,7 @@ export type DaoSharedParsed = {
   expose: (Omit<DaoHookSharedParsed, 'on'> & { expose?: DaoGenericMethods[] })[]
 }
 
-export type ExposeDaoConfig = (Omit<DaoHookShared, 'on' | 'notOn'> & { expose?: MaybeArray<DaoMethodsWithReadWrite> })
+export type ExposeDaoConfig = (Omit<DaoHookShared, 'on' | 'notOn'> & { expose?: 'ALL' | MaybeArray<DaoMethodsWithReadWrite> })
 
 export type DaoShared = {
   /** Configure what is exposed to outside world via API and the permission that is allowed to read / write the model.
