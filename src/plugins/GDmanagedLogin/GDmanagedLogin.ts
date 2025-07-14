@@ -107,6 +107,12 @@ export class GDmanagedLogin extends GDplugin<Name> {
       /** this is when a request for updating the email is made */
       newEmail: _.email(),
 
+      phonePrefix: _.string().match(/^\+\d+$/, {}),
+      phoneWithPrefix: _.string().unique(),
+      // TODO we should be able to update phone
+      newPhonePrefix: _.string().match(/^\+\d+$/, {}),
+      newPhoneWithPrefix: _.string().unique(),
+
       /** default encrypted */
       password: _.password({
         minLength: passwordMinLength,

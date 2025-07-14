@@ -45,7 +45,7 @@ export function getValidateTokenAndLoginService(pluginConfig: PluginUserConfig) 
           await db.user.update(ctx.GM, result.userId, { isEmailVerified: true })
           return {
             wasEmailAlreadyValidated: false,
-            ...(await userLogin(ctx, role, deviceId, deviceType, pluginConfig, result.userId, undefined, additionalParamsIfSendValidationEmail))?.loginInfos,
+            ...((await userLogin(ctx, role, deviceId, deviceType, pluginConfig, 'email', result.userId, undefined, additionalParamsIfSendValidationEmail)) as any)?.loginInfos,
           }
         }
       },

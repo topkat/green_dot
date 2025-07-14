@@ -8,7 +8,8 @@ import { setConnexionTokens } from './userAuthenticationTokenService.js'
 
 
 export type GDmanagedLoginLoginConfig = {
-  emailLogin: boolean
+  emailLogin?: boolean
+  phoneLogin?: boolean
   loginOnValidateToken?: boolean
   /** Returning false will throw an accessDenied error with no other infos. If you want more control over error thrown, extraInfos, alerts..etc, use onLogin  */
   additionalLoginPermissionsChecks?(ctx: Ctx, user: ModelTypes['user'])
@@ -48,8 +49,10 @@ export type PluginUserConfig = {
   sendEmailUpdatedMailConfirmation?: GDmanagedLoginSendEmailUpdatedMailConfirmationFunction
   /** Default 30 minutes */
   emailTokenTimeValidMinutes?: number
-  /** Default: true */
+  /** Default: true when connecting with email method*/
   loginErrorIfEmailIsNotValidated?: boolean
+  /** Default: true when connection with phone method */
+  loginErrorIfPhoneIsNotValidated?: boolean
   /** Add types here if you want to add a type to validation tokens (like forgotPassord) */
   validationTokenTypes?: readonly string[] | string[]
   /** Configure the time before the refresh token gets expired. Default: 15 minutes */
@@ -90,4 +93,5 @@ export const defaultConfig = {
   passwordMinLength: 8,
   passwordMaxLength: 35,
   loginErrorIfEmailIsNotValidated: true,
+  loginErrorIfPhoneIsNotValidated: true,
 } satisfies Partial<PluginUserConfig>

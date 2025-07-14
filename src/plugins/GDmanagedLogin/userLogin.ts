@@ -18,18 +18,19 @@ import { getMainConfig } from '../../helpers/getGreenDotConfigs.js'
 export const userLoginReturnValidator = _.object(userLoginReturnValidatorRaw()).complete()
 export type UserLoginReturnValidator = typeof userLoginReturnValidator.tsTypeRead
 
-export async function userLogin(
+export async function userLogin<LoginType extends 'phone' | 'email'>(
   ctx: Ctx,
   role: GD['role'],
   deviceId: string,
   deviceType: 'mobile' | 'web',
   pluginConfig: PluginUserConfig,
+  loginType: LoginType,
   userOrId?: ModelTypes['user'] | string,
   password?: string,
   additionalParamsIfSendValidationEmail?: Record<string, any>
 ) {
 
-  const { loginErrorIfEmailIsNotValidated, loginConfigPerRole } = pluginConfig
+  const { loginErrorIfEmailIsNotValidated, loginConfigPerRole, loginErrorIfPhoneIsNotValidated } = pluginConfig
   const { defaultDatabaseName } = getMainConfig()
 
   const user = typeof userOrId === 'string' ? await db.user.getById(ctx.GM, userOrId) : userOrId
@@ -52,13 +53,22 @@ export async function userLogin(
   await loginConfigPerRole[role]?.onBeforeLogin?.(ctx, role, user)
 
   // EMAIL VERIFIED CHECK
-  if (!user.isEmailVerified && loginErrorIfEmailIsNotValidated === true) {
+  if (loginType === 'email' && !user.isEmailVerified && loginErrorIfEmailIsNotValidated === true) {
     await credentialManagementMailing(ctx, user, getId(user), 'emailValidation', additionalParamsIfSendValidationEmail, pluginConfig)
     return {
       isEmailVerified: false,
       userEmail: user.email,
       userId: getId(user),
-    }
+    } as any as (LoginType extends 'phone' ? { isPhoneVerified: false } : { isEmailVerified: false }) & { userEmail: string, userId: string }
+  }
+  // PHONE VERIFIED CHECKS
+  if (loginType === 'phone' && !user.isPhoneVerified && loginErrorIfPhoneIsNotValidated === true) {
+    // TODO should send a validation SMS or equivalent of await credentialManagementMailing(ctx, user, getId(user), 'emailValidation'...
+    return {
+      isPhoneVerified: false,
+      userEmail: user.email,
+      userId: getId(user),
+    } as any as (LoginType extends 'phone' ? { isPhoneVerified: false } : { isEmailVerified: false }) & { userEmail: string, userId: string }
   }
 
   // LOGIN
@@ -80,8 +90,12 @@ export async function userLogin(
 
   const { accessToken, csrfToken, biometricAuthToken, refreshToken } = tokens
 
+  const obj = (loginType === 'phone' ? { isPhoneVerified: true as const } : { isEmailVerified: true as const }) as LoginType extends 'phone' ? { isPhoneVerified: true } : { isEmailVerified: true }
+
   return {
-    isEmailVerified: true,
+    ...obj,
+    // isEmailVerified: true,
+    // isPhoneVerified: true,
     csrfToken,
     loginInfos: {
       accessToken,
