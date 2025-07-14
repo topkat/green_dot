@@ -27,10 +27,10 @@ export class CtxClass {
     db = new Proxy(
         {} as DbWithoutCtx,
         {
-            get(_, modelName: string) {
+            get: (_, modelName: string) => {
                 if (db[modelName]) {
                     return new Proxy(_, {
-                        get(_, methodName) {
+                        get: (_, methodName) => {
                             return (...params) => db[modelName][methodName](this, ...params)
                         }
                     })
@@ -44,13 +44,13 @@ export class CtxClass {
     dbs = new Proxy(
         {} as DbsWithoutCtx,
         {
-            get(_, dbName: string) {
+            get: (_, dbName: string) => {
                 if (db[dbName]) {
                     return new Proxy(_, {
-                        get(_, modelName: string) {
+                        get: (_, modelName: string) => {
                             if (db[dbName][modelName]) {
                                 return new Proxy(_, {
-                                    get(_, methodName) {
+                                    get: (_, methodName) => {
                                         return (...params) => db[dbName][modelName][methodName](this, ...params)
                                     }
                                 })
