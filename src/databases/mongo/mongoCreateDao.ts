@@ -113,7 +113,6 @@ export async function mongoCreateDao<ModelTypes extends ModelReadWrite>(
                 if (!isset(getId(fields))) throw ctx.error.serverError('_id field must be set when updating field', { fieldsOrArr: fieldsArr })
                 const originalId = getId(fields)
                 const localConfig = getLocalConfigForWrite('update', 'getAll', config, { _id: originalId }, fields)
-                delete fields._id
                 await mongoBeforeRequest(ctx, localConfig)
                 if (localConfig.filter?._id !== originalId) throw ctx.error[403]({ originalId, allowedId: localConfig.filter?._id })
                 if (!ctx.simulateRequest) {

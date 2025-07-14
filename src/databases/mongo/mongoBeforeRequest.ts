@@ -87,5 +87,7 @@ export async function mongoBeforeRequest(
         })
     }
 
-    if (method === 'update' && hasFields) delete localConfig.inputFields._id // this is here so in an event we can still rely on fields._id if needed, the best way is to use ctx.ressourceId
+    if (method === 'update' && hasFields) {
+        localConfig.inputFields = { ...localConfig.inputFields, _id: undefined } // this is here so in an event we can still rely on fields._id if needed, the best way is to use ctx.ressourceId
+    }
 }
