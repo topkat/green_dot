@@ -1,6 +1,5 @@
 import Path from 'path'
 import fs from 'fs-extra'
-import fs2 from 'fs/promises'
 import { cliPrompt } from 'simple-cli-prompt'
 import { asArray, C, pushIfNotExist, randomItemInArray, timeout } from 'topkat-utils'
 import { execWaitForOutput } from 'topkat-utils/backend.js'
@@ -146,10 +145,12 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
                 const paths = asArray(copyFolderToLocationOnBuild[platform])
                 const allPaths = [...(paths || []), ...(all || [])]
                 for (const path of allPaths) {
-                    const absolutePath = Path.resolve(repoRoot, path)
+                    const destination = Path.resolve(repoRoot, path)
 
                     const sdkRootPath = Path.join(allSdksRoot, `${platform}Sdk`)
-                    await fs2.cp(sdkRootPath, absolutePath, { recursive: true }) // doesn't work with fs.copy
+                    await fs.copy(sdkRootPath, destination, {
+                        filter: (src) => !src.includes('/node_modules'), // copiying node_modules fails because of symlinks in .bin folder
+                    })
                 }
             }
         }
@@ -259,7 +260,6 @@ export async function generateSdk(onlyDefaults = false, publishSdk = false) {
         C.success(`Generated SDK defaults`)
 
     } catch (err) {
-        console.error(err)
         C.error(err)
         C.error(false, 'Error while generating the SDK, please see above log')
         process.exit(1)
