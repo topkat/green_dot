@@ -18,7 +18,7 @@ const plugin = newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
       loginConfigPerRole: {${roles.map(r => `
         ${r}: {
           emailLogin: true,
-          loginOnValidateToken: true,
+          loginAutomaticallyAfterValidatingEmail: true,
         },`).join('')}
       },
       sendEmail(ctx, emailType, encodedToken, user, additionalParams, newEmail) {

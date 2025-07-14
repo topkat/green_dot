@@ -15,7 +15,7 @@ export function getValidateTokenAndLoginService(pluginConfig: PluginUserConfig) 
 
   const { loginConfigPerRole } = pluginConfig
 
-  const allEnabledRoles = objKeys(loginConfigPerRole).filter(k => loginConfigPerRole[k].loginOnValidateToken)
+  const allEnabledRoles = objKeys(loginConfigPerRole).filter(k => loginConfigPerRole[k].loginAutomaticallyAfterValidatingEmail)
 
   return {
     validateEmailAndLogin: svc({

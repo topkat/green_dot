@@ -10,7 +10,7 @@ import { setConnexionTokens } from './userAuthenticationTokenService.js'
 export type GDmanagedLoginLoginConfig = {
   emailLogin?: boolean
   phoneLogin?: boolean
-  loginOnValidateToken?: boolean
+  loginAutomaticallyAfterValidatingEmail?: boolean
   /** Returning false will throw an accessDenied error with no other infos. If you want more control over error thrown, extraInfos, alerts..etc, use onLogin  */
   additionalLoginPermissionsChecks?(ctx: Ctx, user: ModelTypes['user'])
   /** This will be triggered before all other checks */
