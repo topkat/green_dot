@@ -4,7 +4,7 @@
 import { removeCircularJSONstringify, generateObjectId, DescriptiveError } from 'topkat-utils'
 import { log } from './logger.js'
 import { trackerEvent } from './tracker.js'
-import { logout } from './loginHelper.js'
+import { logout } from './logout.js'
 import { isSdkInitialized } from './initSdk.js'
 import { get$ } from './init.js'
 import { DeviceType } from './types.js'

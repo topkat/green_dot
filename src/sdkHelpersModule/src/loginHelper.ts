@@ -3,38 +3,11 @@ import { getSdkConfig, isSdkInitialized } from './initSdk.js'
 import { get$ } from './init.js'
 import { failSafe, timeout } from 'topkat-utils'
 import { handleError } from './errorHandler.js'
+import { logout } from './logout.js'
 
 
 const isPageVisible = true
 let isSessionInitialized = false
-
-export async function logout() {
-  try {
-    try {
-      getSdkConfig().localStorageRemove?.('isConnected')
-      await get$().logout()
-      // This will fire a storage event for other tabs to detect the user update
-      getSdkConfig().localStorageSet?.('authUpdate', Date.now().toString())
-    } catch (err) {
-      if (err.code !== 'ERR_NETWORK') err.isHandled = true
-    }
-    lastRefreshTokenDate = undefined
-    get$().setAuthorization(null)
-
-    const queryClient = getSdkConfig().getQueryClient?.()
-
-    queryClient?.clear()
-    queryClient?.resetQueries()
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err)
-    err.isHandled = true
-  }
-  await getSdkConfig().onLogout?.()
-}
-
-
-
 
 
 
@@ -47,10 +20,9 @@ export function setAccessToken(accessToken?: string) {
 
 
 
-
-
-
 let lastRefreshTokenDate: number | undefined
+
+export const clearLastRefreshTokenDate = () => lastRefreshTokenDate = undefined
 
 /** This will try to connect without login if refresh token is still valid. If not, this will logout the user */
 export async function ensureAccessToken() {

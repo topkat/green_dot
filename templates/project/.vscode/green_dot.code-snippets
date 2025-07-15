@@ -90,7 +90,7 @@
     "body": [
       "{",
       "${1:    ${2|for,notFor|}: '${3:permNameOrType}',}",
-      "    expose: [${6|'ALL',['read'],['write'],['getAll'],['getOne'],['create'],['update']|}],",
+      "    expose: ${6|'ALL',['read'],['write'],['getAll'],['getOne'],['create'],['update']|},",
       "},",
     ]
   },
