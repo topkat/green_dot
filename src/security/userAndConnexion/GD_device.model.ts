@@ -9,5 +9,6 @@ export const GD_deviceModel = _.mongoModel([], {
   pixelHeight: _.number(),
   pixelWidth: _.number(),
   language: _.string(),
+  isWeb: _.boolean(),
   deviceInfos: _.object(),
 })

@@ -3,13 +3,14 @@ export type SdkInitOptions<ServerConfig = ServerUrls> = {
   onErrorCallback?: (errObject: SdkError | Record<string, any>) => void
   headers?: Record<string, any>
   getQueryClient?(): {
-    getQueriesData: any
-    setQueryData: any
-    setQueriesData: any
-    getQueryState: any
-    removeQueries: any
-    resetQueries: any
-    cancelQueries: any
+    getQueriesData: Function
+    setQueryData: Function
+    setQueriesData: Function
+    getQueryState: Function
+    removeQueries: Function
+    resetQueries: Function
+    cancelQueries: Function
+    clear: Function
   }
   /** Get item from local storage */
   localStorageGet?(key: string): any
@@ -25,4 +26,18 @@ export type SdkError = {
   msg: string
   code: number
   [key: string]: any
+}
+
+export type DeviceType = {
+  'user'?: string
+  'deviceName': string
+  'deviceType': 'desktop' | 'mobile' | 'tablet' | 'unknown'
+  'os'?: 'ios' | 'macos' | 'linux' | 'windows' | 'android' | 'other'
+  'browser'?: 'firefox' | 'chrome' | 'safari' | 'other' | 'opera' | 'edge' | 'internetExplorer'
+  'pixelHeight'?: number
+  'pixelWidth'?: number
+  'language'?: string
+  'isWeb'?: boolean
+  'deviceInfos'?: {}
+  '_id': string
 }

@@ -7,7 +7,7 @@ import { trackerEvent } from './tracker.js'
 import { logout } from './loginHelper.js'
 import { isSdkInitialized } from './initSdk.js'
 import { get$ } from './init.js'
-import { Device } from './device.web.js'
+import { DeviceType } from './types.js'
 
 
 //----------------------------------------
@@ -21,7 +21,7 @@ const handleErrBaseConfig: HandleErrorBaseConfig = { genericErrorMessage: 'An er
 
 export type HandleErrorBaseConfig<ErrorConfig = {}> = {
   getUserId?(): string | Promise<string>
-  getDeviceInfos?(): Device
+  getDeviceInfos?(): DeviceType
   getActualScreen?(): string
   onError?(errorDescriptionObject: ErrorDescriptionObject & ErrorConfig): any | Promise<any>
   genericErrorMessage: string,

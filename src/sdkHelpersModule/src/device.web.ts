@@ -2,20 +2,8 @@
 
 import { generateObjectId } from 'topkat-utils'
 import { get$ } from './init.js'
+import { DeviceType } from './types.js'
 
-
-export type Device = {
-  'user'?: string
-  'deviceName': string
-  'deviceType': 'desktop' | 'mobile' | 'tablet' | 'unknown'
-  'os'?: 'ios' | 'macos' | 'linux' | 'windows' | 'android' | 'other'
-  'browser'?: 'firefox' | 'chrome' | 'safari' | 'other' | 'opera' | 'edge' | 'internetExplorer'
-  'pixelHeight'?: number
-  'pixelWidth'?: number
-  'language'?: string
-  'deviceInfos'?: {}
-  '_id': string
-}
 
 let deviceId = generateObjectId()
 let retryTimeout
@@ -36,7 +24,7 @@ registerDeviceAsyncAndRetry()
 
 const infosFromNavigator = ['appCodeName', 'oscpu', 'language', 'languages', 'product', 'vendor', 'productSub'] as const
 
-export function getDeviceInfos(): Device {
+export function getDeviceInfos(): DeviceType {
   const infoFromNavigator = {}
   for (const key of infosFromNavigator) {
     infoFromNavigator[key] = navigator[key]
@@ -66,7 +54,7 @@ function detectDeviceType() {
   } else return 'desktop'
 }
 
-function detectBrowser(): Device['browser'] {
+function detectBrowser(): DeviceType['browser'] {
   const userAgent = navigator.userAgent.toLowerCase()
 
   if (userAgent.indexOf('chrome') > -1) {
@@ -81,7 +69,7 @@ function detectBrowser(): Device['browser'] {
   } else return 'other'
 }
 
-function detectOS(): Device['os'] {
+function detectOS(): DeviceType['os'] {
   const userAgent = navigator.userAgent.toLowerCase()
 
   if (userAgent.indexOf('win') > -1) {

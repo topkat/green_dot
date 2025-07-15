@@ -15,13 +15,14 @@ export type SdkInitOptions = {
   onErrorCallback?: (errObject: SdkError | Record<string, any>) => void
   headers?: Record<string, any>
   getQueryClient?(): {
-    getQueriesData: any
-    setQueryData: any
-    setQueriesData: any
-    getQueryState: any
-    removeQueries: any
-    resetQueries: any
-    cancelQueries: any
+    getQueriesData: Function
+    setQueryData: Function
+    setQueriesData: Function
+    getQueryState: Function
+    removeQueries: Function
+    resetQueries: Function
+    cancelQueries: Function
+    clear: Function
   }
   /** Get item from local storage */
   localStorageGet?(key: string): any
@@ -47,13 +48,14 @@ type ServerState = {
   serverUrl: ServerUrls
   headers: Record<string, any>
   getQueryClient: () => null | {
-    getQueriesData: any
-    setQueryData: any
-    setQueriesData: any
-    getQueryState: any
-    removeQueries: any
-    resetQueries: any
-    cancelQueries: any
+    getQueriesData: Function
+    setQueryData: Function
+    setQueriesData: Function
+    getQueryState: Function
+    removeQueries: Function
+    resetQueries: Function
+    cancelQueries: Function
+    clear: Function
   }
 }
 export declare function getServerState(): ServerState
