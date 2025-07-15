@@ -1,12 +1,16 @@
-import { QueryClient } from '@tanstack/react-query'
-
-
-
 export type SdkInitOptions<ServerConfig = ServerUrls> = {
   serverUrls: ServerConfig
   onErrorCallback?: (errObject: SdkError | Record<string, any>) => void
   headers?: Record<string, any>
-  getQueryClient?(): QueryClient
+  getQueryClient?(): {
+    getQueriesData: any
+    setQueryData: any
+    setQueriesData: any
+    getQueryState: any
+    removeQueries: any
+    resetQueries: any
+    cancelQueries: any
+  }
   /** Get item from local storage */
   localStorageGet?(key: string): any
   /** Set item from local storage */

@@ -1,6 +1,5 @@
 
 import 'typescript-generic-types'
-import { QueryClient } from '@tanstack/react-query'
 
 
 export type SdkError = {
@@ -15,7 +14,15 @@ export type SdkInitOptions = {
   serverUrls: ServerUrls
   onErrorCallback?: (errObject: SdkError | Record<string, any>) => void
   headers?: Record<string, any>
-  getQueryClient?(): QueryClient
+  getQueryClient?(): {
+    getQueriesData: any
+    setQueryData: any
+    setQueriesData: any
+    getQueryState: any
+    removeQueries: any
+    resetQueries: any
+    cancelQueries: any
+  }
   /** Get item from local storage */
   localStorageGet?(key: string): any
   /** Set item from local storage */
@@ -39,7 +46,15 @@ type ServerState = {
   hasBeenInitialised: boolean
   serverUrl: ServerUrls
   headers: Record<string, any>
-  getQueryClient: () => null | QueryClient
+  getQueryClient: () => null | {
+    getQueriesData: any
+    setQueryData: any
+    setQueriesData: any
+    getQueryState: any
+    removeQueries: any
+    resetQueries: any
+    cancelQueries: any
+  }
 }
 export declare function getServerState(): ServerState
 

@@ -54,7 +54,7 @@ const functionMapping = {
             queryKey: [k, ...params],
             queryFn: () => apiCall(server, k, route, ...params),
             ...queryOptions
-        })
+        }, getServerState().getQueryClient())
         return [data, otherFields]
     },
 }
