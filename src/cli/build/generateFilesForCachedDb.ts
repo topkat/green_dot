@@ -58,7 +58,7 @@ export async function generateFilesForCachedDb(
       modelTypeFileContent += `export interface ${modelNameCapital}Models {\n    Write: ${modelNameCapital}Write\n    Read: ${modelNameCapital}\n}\n\n`
     }
 
-    modelTypeFileContent += `export type AllModels = {\n${modelNames.map(modelName => `    ${modelName}: ${capitalize1st(modelName + 'Models')}`).join(`\n`)}\n}\n\n`
+    modelTypeFileContent += `export type AllModels = {\n${modelNames.map(modelName => `    ${modelName}: ${capitalize1st(modelName + 'Models')}`).join(`\n`)}\n}\n\ntype ModelsWithReadWrite = AllModels\n\n`
 
     modelTypeFileContent += `export type ModelNames = keyof AllModels\n\n`
 

@@ -134,7 +134,7 @@ export async function createDaoRouteConfigPerPlatformForSdk() {
             const { modelName, daoMethod, dbType, dbId } = routeConfig
             const tsTypeStrArr = await getTsTypingsFromDaoTypeTemplate(dbType, daoMethod)
             const tsType = tsTypeStrArr.map(str => (
-                str.replace(/ModelTypes/g, `modelTypes.${capitalize1st(modelName)}Models`)
+                str.replace(/ModelTypes/g, `ModelsWithReadWrite['${modelName}']`) //`modelTypes.${capitalize1st(modelName)}Models`)
             ))
 
             const { doc, paramsValidator, method, output } = daoValidators[daoMethod]

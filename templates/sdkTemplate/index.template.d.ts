@@ -2,7 +2,7 @@
 import { AsFilter, AsMongooseBody, RequestConfigRead, RequestConfigGetOne, RequestConfigWrite, MaybePaginated } from './mongodbBaseTypes.generated.js'
 import { SdkError, ServerUrls, SdkInitOptions, Breakpoints } from './apiCall.js'
 import { useSuspenseQuery, QueryClient, FetchQueryOptions } from '@tanstack/react-query'
-import { ModelNames } from './modelTypes.generated.js'
+import { ModelNames, ModelsWithReadWrite } from './modelTypes.generated.js'
 import { InitSdkConfig } from './sdkHelpers/initSdk.js'
 
 export * from './sdkHelpers/index.js'
@@ -36,8 +36,6 @@ export type ApiType = {
 export declare const $: ApiType
 
 export const methodNames: { dbRead: Record<string, string>, dbWrite: Record<string, string>, service: Record<string, string> }
-
-export default $
 
 export declare function initSdk(serverConfig: InitSdkConfig<ServerUrls>)
 
