@@ -1,6 +1,7 @@
 import { get$ } from './init.js'
 import { getSdkConfig } from './initSdk.js'
-import { clearLastRefreshTokenDate } from './loginHelper.js'
+import { setLastRefreshTokenDate } from './lastRefreshTokenDate.js'
+
 
 
 
@@ -14,7 +15,7 @@ export async function logout() {
     } catch (err) {
       if (err.code !== 'ERR_NETWORK') err.isHandled = true
     }
-    clearLastRefreshTokenDate()
+    setLastRefreshTokenDate(undefined)
     get$().setAuthorization(null)
 
     const queryClient = getSdkConfig().getQueryClient?.()

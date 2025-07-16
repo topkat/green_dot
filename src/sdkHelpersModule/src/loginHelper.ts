@@ -3,6 +3,7 @@ import { getSdkConfig, isSdkInitialized } from './initSdk.js'
 import { get$ } from './init.js'
 import { failSafe, timeout } from 'topkat-utils'
 import { handleError } from './errorHandler.js'
+import { getLastRefreshTokenDate, setLastRefreshTokenDate } from './lastRefreshTokenDate.js'
 import { logout } from './logout.js'
 
 
@@ -20,13 +21,13 @@ export function setAccessToken(accessToken?: string) {
 
 
 
-let lastRefreshTokenDate: number | undefined
 
-export const clearLastRefreshTokenDate = () => lastRefreshTokenDate = undefined
+
+export const clearLastRefreshTokenDate = () => setLastRefreshTokenDate(undefined)
 
 /** This will try to connect without login if refresh token is still valid. If not, this will logout the user */
 export async function ensureAccessToken() {
-  let success = typeof lastRefreshTokenDate === 'number' // in case it's called 2 times
+  let success = typeof getLastRefreshTokenDate() === 'number' // in case it's called 2 times
   if (!success) {
     clearTimeout(getNewTokenTo)
     getNewTokenInterval()
@@ -40,11 +41,10 @@ export async function ensureAccessToken() {
       }
     } catch (err) {
       success = false
-      const logout = !window.location.pathname.includes('login') && !window.location.pathname.includes('register')
       handleError(err, 'errorWrongToken', {
         msgToDisplayToUser: getSdkConfig().wrongTokenErrorMessage,
         userActionChoice: 'contactSupport',
-        logoutUser: logout,
+        logoutUser: true,
       })
     }
   }
@@ -106,7 +106,7 @@ async function getNewToken(): Promise<boolean> {
         isSessionInitialized = true
       }
       success = true
-      lastRefreshTokenDate = Date.now()
+      setLastRefreshTokenDate(Date.now())
 
     } catch (err) {
       handleError(err, 'refreshTokenError', {

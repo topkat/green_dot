@@ -14,7 +14,7 @@ if (cookieVal) deviceId = cookieVal
 const cookieConfig = {
   secure: process.env.NODE_ENV === 'production' ? 'Secure; ' : '',
   sameSite: process.env.NODE_ENV === 'production' ? 'SameSite=None;' : '',
-  domain: process.env.NODE_ENV === 'production' ? 'domain=.bangk.app; ' : '',
+  domain: process.env.NODE_ENV === 'production' ? `domain=.${window.location.host}; ` : '',
   path: 'Path=/'
 }
 
