@@ -134,7 +134,7 @@ async function apiCall(
 
                 if (isWrite && serverState.getQueryClient) {
                     // invalidate cache for read queries
-                    // route    => api/bangkDb/testCard/getOne
+                    // route    => api/myDb/testCard/getOne
                     // queryKey => testCardGetOne
                     const [, modelName] = route.split('/').reverse()
                     readMethodsCapitalized.forEach(rm => {

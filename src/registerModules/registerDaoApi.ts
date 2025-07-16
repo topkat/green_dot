@@ -84,7 +84,7 @@ export async function registerDaoApi(
                 //----------------------------------------
                 // IS EXPOSED TO PERM
                 //----------------------------------------
-                if (dao.expose) await hookInterpreterExpose(ctx, dbId, 'bangk', method, modelName)
+                if (dao.expose) await hookInterpreterExpose(ctx, dbId, dbName, method, modelName)
 
                 //----------------------------------------
                 // VALIDATE FUNCTION PARAMS
