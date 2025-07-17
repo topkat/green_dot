@@ -26,7 +26,7 @@ export function setAccessToken(accessToken?: string) {
 export const clearLastRefreshTokenDate = () => setLastRefreshTokenDate(undefined)
 
 /** This will try to connect without login if refresh token is still valid. If not, this will logout the user */
-export async function ensureAccessToken() {
+export async function ensureAccessToken(silent = false) {
   let success = typeof getLastRefreshTokenDate() === 'number' // in case it's called 2 times
   if (!success) {
     clearTimeout(getNewTokenTo)
@@ -40,12 +40,14 @@ export async function ensureAccessToken() {
         getSdkConfig().localStorageRemove?.('isConnected')
       }
     } catch (err) {
-      success = false
-      handleError(err, 'errorWrongToken', {
-        msgToDisplayToUser: getSdkConfig().wrongTokenErrorMessage,
-        userActionChoice: 'contactSupport',
-        logoutUser: true,
-      })
+      if (!silent) {
+        success = false
+        handleError(err, 'errorWrongToken', {
+          msgToDisplayToUser: getSdkConfig().wrongTokenErrorMessage,
+          userActionChoice: 'contactSupport',
+          logoutUser: true,
+        })
+      }
     }
   }
   return { success }
