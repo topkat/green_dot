@@ -182,7 +182,7 @@ const dao = {
 ```
 
 
-## Contributing
+## Contributing to green_dot repo
 
 Contributions are welcome! 
 - For bug reports and feature requests, please open an issue at [GitHub Issues](https://github.com/topkat/green_dot/issues)
