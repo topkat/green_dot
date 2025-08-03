@@ -4,16 +4,19 @@ A powerful TypeScript nodeJs framework for building DX friendly, secure and fron
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/topkat/green_dot)
 
+[Official Documentation](https://www.greendotjs.com/)
+[QuickStart Guide](https://www.greendotjs.com/guides/quickstart/)
+
 ## Features
 
 🧭 Back/Front Type-safe API route declarations, shared models  
 📐 Secure model definitions with validation and routes exposed automatically via configuration  
-🪪 Built-in DX friendly security and access control  
+🪪 Built-in DX friendly unified security and access control  
 🔌 Powerful plugin system with Managed Login, ApiKey Login, and Secure Authentication (2FA, biometric authentication and pinCode) (BETA)
 🪄 File generation from templates to generate project, database, app, model...so you get up and running in no time
 🗃️ MongoDB integration with type safety (others database drivers to come)  
 👨‍💻 DX and intellisense friendly  
-🏗️ Generate it's own SDK to use in frontend (Eg: `$.myApiRoute()`)  
+🏗️ Generate it's own SDK to use in frontend, get your backend data without await or useEffect: (Eg: `const result = $.useQuery.myApiRoute()`)  
 ⚡  Fully cached in frontend via TanStack Query  
 📦 [VSCode / Cursor Plugin](https://marketplace.visualstudio.com/items?itemName=topkat.green-dot-vscode-module)
 

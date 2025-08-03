@@ -14,8 +14,9 @@ import { initGreenDotConfigs } from '../helpers/getGreenDotConfigs.js'
 import { cliGenerateDatabase } from './generateFilesFromTemplate/cliGenerateDatabase.js'
 import { cliGenerateApp } from './generateFilesFromTemplate/cliGenerateApp.js'
 import { cliGenerateProject } from './generateFilesFromTemplate/cliGenerateProject.js'
+import { getServerConfigFromEnv } from './helpers/cli.js'
 
-
+const { type } = getServerConfigFromEnv<{ type?: 'model' | 'svc' | 'service' }>()
 
 export async function generateCommand() {
 
@@ -37,26 +38,13 @@ export async function generateCommand() {
 
     const { appConfigs, dbConfigs, activeApp, activeDb } = await getProjectPaths()
 
-    const selection = await luigi.askSelection([
-      `Hi boss! What should we generate today?`,
-      `Blip...bloup...choose an entry to generate:`,
-    ], [
-      luigi.separator(`-- APP --------------`),
-      { value: 'svc', name: 'Api Service', description: 'Generate a new service that will be exposed via API and in the generated SDKs. The service can also be called internally like a classic function' },
-      { value: 'schedule', name: 'Scheduled Task', description: 'Generate a service that will run periodically based on a configured cron' },
-      { value: 'seed', name: 'Seed Service', description: 'Generate a service that will run on server start' },
-      { value: 'error', name: 'Error File', description: 'Generate a new Error Definition file, this is where you define all the errors available in the ctx (Eg:ctx.error.myError())' },
-      { value: 'hook', name: 'Hook Event Service', description: `Service that trigger when an action is done, like on: 'user.update' or on: 'server.start'` },
-      luigi.separator(`-- DATABASE ----------`),
-      { value: 'model', name: 'Database Model', description: 'Generate a new database model (Eg: "userModel", "companyModel"...)' },
-      luigi.separator(`-- TESTS -------------`),
-      { value: 'testSuite', name: 'Test Suite', description: 'Generate an api test suite' },
-      luigi.separator(`-- PROJECT -----------`),
-      { value: 'db', name: 'New Database', description: 'Generate a new database' },
-      { value: 'app', name: 'New Backend App', description: 'Generate a new backend app' },
-      { value: 'frontend', name: 'New Frontend', description: 'TODO ??' },
-    ] as const)
+    let selection: Awaited<ReturnType<typeof askGenerateType>>
 
+    if (type) {
+      selection = type === 'svc' || type === 'service' ? 'svc' : type
+    } else {
+      selection = await askGenerateType()
+    }
 
     if (selection === 'app') {
 
@@ -184,4 +172,28 @@ async function getFolders(basePath: string): Promise<{ name: string, value: stri
   return entries
     .filter(entry => entry.isDirectory())
     .map(entry => ({ name: entry.name, value: Path.resolve(basePath, entry.name) }))
+}
+
+
+
+async function askGenerateType() {
+  return await luigi.askSelection([
+    `Hi boss! What should we generate today?`,
+    `Choose an entry to generate:`,
+  ], [
+    luigi.separator(`-- APP --------------`),
+    { value: 'svc', name: 'Api Service', description: 'Generate a new service that will be exposed via API and in the generated SDKs. The service can also be called internally like a classic function' },
+    { value: 'schedule', name: 'Scheduled Task', description: 'Generate a service that will run periodically based on a configured cron' },
+    { value: 'seed', name: 'Seed Service', description: 'Generate a service that will run on server start' },
+    { value: 'error', name: 'Error File', description: 'Generate a new Error Definition file, this is where you define all the errors available in the ctx (Eg:ctx.error.myError())' },
+    { value: 'hook', name: 'Hook Event Service', description: `Service that trigger when an action is done, like on: 'user.update' or on: 'server.start'` },
+    luigi.separator(`-- DATABASE ----------`),
+    { value: 'model', name: 'Database Model', description: 'Generate a new database model (Eg: "userModel", "companyModel"...)' },
+    luigi.separator(`-- TESTS -------------`),
+    { value: 'testSuite', name: 'Test Suite', description: 'Generate an api test suite' },
+    luigi.separator(`-- PROJECT -----------`),
+    { value: 'db', name: 'New Database', description: 'Generate a new database' },
+    { value: 'app', name: 'New Backend App', description: 'Generate a new backend app' },
+    { value: 'frontend', name: 'New Frontend', description: 'TODO ??' },
+  ] as const)
 }

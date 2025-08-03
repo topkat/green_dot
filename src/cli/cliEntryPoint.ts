@@ -47,7 +47,10 @@ const commands = {
   },
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
-    executeWith: 'bun',
+    arguments: [{
+      name: 'type',
+      description: `The type of thing to generate ('model' | 'svc' | 'service')`,
+    }],
   },
   test: {
     description: 'Launch tests',
@@ -98,12 +101,30 @@ async function start() {
           }
         })
       }
+
+      // Add arguments if they exist (like generate model === generate <argument>)
+      if ('arguments' in command && command.arguments) {
+        command.arguments.forEach(arg => {
+          cmd.argument(arg.name, arg?.description)
+        })
+      }
     })
 
     // Parse arguments
     program.parse(process.argv)
+
     const _command = (program.args[0] || 'generate') as keyof typeof commands
+
     const args = program.opts()
+
+    const command = commands[_command] || {}
+
+    if (program.args.length && 'arguments' in command) {
+      program.args.forEach((arg, i) => {
+        if (i === 0) return
+        args[command.arguments[i - 1].name] = arg
+      })
+    }
 
     await greenDotCliIntro({ subTitle: _command.toUpperCase() })
 
@@ -201,10 +222,13 @@ start()
 //  ╩  ╩ ╚══╝ ╚══╝ ╩    ╚══╝ ╩ ╚  ═══╝
 type CommandPlus = Record<CliCommands | 'start' | 'upgrade', {
   description: string
-  executeWith?: 'bun' | 'ts-node'
   options?: Array<{
     name: string
-    description: string
+    description?: string
     type: any
+  }>,
+  arguments?: Array<{
+    name: string
+    description?: string
   }>
 }>

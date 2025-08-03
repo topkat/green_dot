@@ -79,6 +79,7 @@ const commands = {
 //  ╩    ╩ ╚  ╚══╝ ╚══╝ ╩ ╚  ╩  ╩ ╩  ╩
 
 export async function startTask(command = processCommand) {
+
   if (!command || !Object.keys(commands).includes(command)) throw new Error('Command not found ' + command)
 
   const { execute, exitAfter } = commands[command]
