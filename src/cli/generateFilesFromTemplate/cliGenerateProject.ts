@@ -8,7 +8,6 @@ import { execWaitForOutput } from 'topkat-utils/backend.js'
 import { clearCli, greenDotCliIntro } from '../helpers/cli.js'
 import { getPackageJsonVersion } from '../helpers/getPackageJsonVersion.js'
 import { fromGreenDotFolderRoot } from '../helpers/fromGreenDotFolderRoot.js'
-import fs from 'fs-extra'
 
 
 
@@ -19,7 +18,7 @@ export async function cliGenerateProject() {
   //  ╦╗ ╔ ╔══╗ ╦╗╔╦ ╔══╗   ╔══╗ ╦╗ ╔ ╔═╗    ╔══╗ ╔══╗ ╦    ╔═╗  ╔══╗ ╔══╗
   //  ║╚╗║ ╠══╣ ║╚╝║ ╠═     ╠══╣ ║╚╗║ ║  ║   ╠═   ║  ║ ║    ║  ║ ╠═   ╠═╦╝
   //  ╩ ╚╩ ╩  ╩ ╩  ╩ ╚══╝   ╩  ╩ ╩ ╚╩ ╚══╝   ╩    ╚══╝ ╚══╝ ╚══╝ ╚══╝ ╩ ╚
-  let projectName = await luigi.askUserInput(`Greetings, carbon-based entity 🖖\nWhat is the name of the project you want to create:`)
+  let projectName = await luigi.askUserInput(`What is the name of the project you want to create:`)
 
   projectName = projectName.replace(/\s/g, '')
 
@@ -89,11 +88,6 @@ export async function cliGenerateProject() {
     [
       ['.template', ''],
     ]
-  )
-
-  await fs.copyFile(
-    fromGreenDotFolderRoot('templates/project/.gitignore'),
-    Path.join(projectRoot, '.gitignore')
   )
 
   clearCli()
