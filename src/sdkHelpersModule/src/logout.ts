@@ -18,7 +18,7 @@ export async function logout() {
     setLastRefreshTokenDate(undefined)
     get$().setAuthorization(null)
 
-    const queryClient = getSdkConfig().getQueryClient?.()
+    const queryClient = getSdkConfig()?.getQueryClient?.()
 
     queryClient?.clear()
     queryClient?.resetQueries()
