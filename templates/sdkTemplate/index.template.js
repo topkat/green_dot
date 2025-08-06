@@ -29,6 +29,11 @@ const $ = new Proxy({
     },
 }, {
     get(obj, key) {
+        if (!isSdkInitialized()) {
+            // eslint-disable-next-line no-console
+            console.warn(`Warning! The green_dot SDK has not been initialized. Please use 'initSdk({...})' function at the start of your app.\n\nUsing default config...`)
+            initSdk({})
+        }
         if (obj[key]) {
             return obj[key] // Base Object method
         } else if (functionMapping[key]) {

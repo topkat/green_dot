@@ -33,7 +33,7 @@ const cacheLocalStorage = {
   remove: key => delete fakeLs[key],
 }
 
-const backendConfig: InitSdkConfig<any> = {
+const backendConfigDefault: InitSdkConfig<any> = {
   serverUrls: { default: 'backend', backend: 'http://localhost:9086' },
   projectName: 'undefined',
   getDeviceId: () => notImplementedErrMsg('getDeviceId'),
@@ -51,14 +51,14 @@ const backendConfig: InitSdkConfig<any> = {
 //----------------------------------------
 export function initSdk<ServerConfig>(config: InitSdkConfig<ServerConfig>) {
 
-  Object.assign(backendConfig, config)
+  Object.assign(backendConfigDefault, config)
 
-  const apiUrl = backendConfig?.serverUrls[backendConfig.serverUrls?.default]
+  const apiUrl = backendConfigDefault?.serverUrls[backendConfigDefault.serverUrls?.default]
 
-  if (!apiUrl) C.error(false, 'API URL NOT SET FOR BACKEND', JSON.stringify(backendConfig, null, 2))
+  if (!apiUrl) C.error(false, 'API URL NOT SET FOR BACKEND', JSON.stringify(backendConfigDefault, null, 2))
 
   C.log(`ⓘ apiUrl ` + JSON.stringify(apiUrl))
-  get$().init(backendConfig)
+  get$().init(backendConfigDefault)
 
   isInitialized = true
 }
@@ -68,5 +68,5 @@ export function isSdkInitialized() {
 }
 
 export function getSdkConfig() {
-  return backendConfig
+  return backendConfigDefault
 }
