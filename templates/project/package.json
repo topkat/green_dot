@@ -25,10 +25,10 @@
     "start:backend-ci": "concurrently -k --success=first --kill-others-on-fail \"NODE_ENV=test green_dot start\" \"sh -c 'sleep 5 && green_dot test --ci'\"",
     "coverage": "bun ./coverage.ts",
     "==--->     CLEAN     <---==": "",
-    "clean": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} \\; && find . -type d -name node_modules -prune -exec rm -rf {} \\;",
+    "clean": "(find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} \\; || true) && (find . -type d -name node_modules -prune -exec rm -rf {} \\; || true)",
     "==--->     DEBUG     <---==": "",
     "// Replaces a node_modules green_dot version with local one. Please change the path accordingly)": "",
-    "symlink": "cd ./node_modules/ && rm -rf ./green_dot && ln -s ../../modules/green_dot ./green_dot && cd ./.bin && rm -f ./dot && ln -s ../../../modules/green_dot/src/cli/cliEntryPoint.ts ./dot || echo 'IF IT HAS PERMISSION ERROR PLEASE RUN chmod +x $(realpath ./node_modules/.bin/dot)' && rm -f ./gdStartProd && ln -s ../../../modules/green_dot/dist/src/cli/startProdSpecialEntryPoint.js ./gdStartProd",
+    "symlink": "cd ./node_modules/ && rm -rf ./green_dot && ln -s ../../modules/green_dot ./green_dot && cd ./.bin && rm -f ./green_dot && ln -s ../../../modules/green_dot/src/cli/cliEntryPoint.ts ./green_dot || echo 'IF IT HAS PERMISSION ERROR PLEASE RUN chmod +x $(realpath ./node_modules/.bin/dot)' && rm -f ./gdStartProd && ln -s ../../../modules/green_dot/dist/src/cli/startProdSpecialEntryPoint.js ./gdStartProd",
     "rmGdFolder": "cd ./node_modules/ && rm -rf ./green_dot"
   },
   "dependencies": {
