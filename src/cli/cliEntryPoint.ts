@@ -48,7 +48,7 @@ const commands = {
   generate: {
     description: 'Helps with generating new services (api routes, scheduled jobs...), new database models, new tests...',
     arguments: [{
-      name: 'type',
+      name: '[type]', // [] means optional
       description: `The type of thing to generate ('model' | 'svc' | 'service')`,
     }],
   },
