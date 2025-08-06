@@ -119,7 +119,7 @@ export async function cliGenerateProject() {
   await luigi.info(`Wow! Such a work 🥵! It's your turn now:
 1) Check open config files to adapt as you need
 2) Relaunch \`npx green_dot generate\` or simply \`yarn generate\` equivalent to generate a service, a model, a database or even an app
-3) Read the doc quick start: TODO link
+3) Read the doc quick start: https://www.greendotjs.com/guides/quickstart
 4) Hover with your cursor nearly any green_dot thing to have the documentation to be displayed in your IDE`)
 }
 
