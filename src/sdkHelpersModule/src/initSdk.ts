@@ -15,8 +15,8 @@ let isInitialized = false
 //----------------------------------------
 export type InitSdkConfig<ServerConfig> = {
   projectName: string
-  onLogout?(): void | Promise<void>
   getDeviceId(): string | Promise<string>
+  onLogout?(): void | Promise<void>
   onSdkInitialized?(): any | Promise<string>
   refreshTokenExpirationMinutes?: number
   refreshTokenErrorMessage?: string

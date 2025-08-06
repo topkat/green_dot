@@ -11,7 +11,7 @@ const deferTimeout = {}
 const allMethods = { ...methodNames.dbRead, ...methodNames.dbWrite, ...methodNames.service }
 const allMethodNames = Object.keys(allMethods)
 
-let initializedDefault = false
+const initializedDefault = false
 
 const $ = new Proxy({
     init: (props) => {
@@ -31,12 +31,6 @@ const $ = new Proxy({
     },
 }, {
     get(obj, key) {
-        if (!isSdkInitialized() && !initializedDefault) {
-            initializedDefault = true
-            // eslint-disable-next-line no-console
-            console.warn(`Warning! The green_dot SDK has not been initialized. Please use 'initSdk({...})' function at the start of your app.\n\nUsing default config...`)
-            initSdk({})
-        }
         if (obj[key]) {
             return obj[key] // Base Object method
         } else if (functionMapping[key]) {
@@ -57,6 +51,9 @@ const functionMapping = {
     prefetch: k => (queryOptions, ...params) => prefetchQuery(allMethods[k], k, params, queryOptions),
     addQueriesToInvalidate: k => queriesToInvalidate => registerSideEffect(k, queriesToInvalidate),
     useQuery: k => (queryOptions = {}, ...params) => {
+        if (typeof getServerState().getQueryClient !== 'function') {
+            console.error(`Error! You can't use $.useQuery or caching without providing react-query queryClient in the initSdk() function.`)
+        }
         const { server, route } = getServerAndRoute(allMethods[k])
         const { data, ...otherFields } = useSuspenseQuery({
             queryKey: [k, ...params],

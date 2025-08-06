@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import axios from 'axios'
 import { capitalize1st, removeCircularJSONstringify, C, generateToken } from 'topkat-utils'
-import { QueryClient } from '@tanstack/react-query'
 
 const methodNames = '%%AllReadMethodsAndService%%'
 
@@ -69,9 +68,6 @@ function init({
     serverState.headers = headers
     if (getQueryClient) {
         serverState.getQueryClient = getQueryClient
-    } else {
-        const queryClientDefault = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: 0, } } })
-        serverState.getQueryClient = () => queryClientDefault
     }
     serverState.hasBeenInitialised = true
 }
