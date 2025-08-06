@@ -54,6 +54,7 @@ export async function compileTypeScriptProject(options: CompileOptions): Promise
 
   // Merge custom options if provided
   const compilerOptions: ts.CompilerOptions = {
+    esModuleInterop: true,
     ...parsedConfig.options,
     ...customOptions,
     outDir: outputPath || parsedConfig.options.outDir
@@ -105,6 +106,7 @@ export const commonJsTsConfig = JSON.stringify({
     'module': 'CommonJS',
     'target': 'ES2020',
     'moduleResolution': 'node',
+    'esModuleInterop': true,
     ...toMergeTsConfig
   },
   'include': ['.']
@@ -115,6 +117,7 @@ export const esmModuleTsConfig = JSON.stringify({
     'module': 'nodenext',
     'target': 'ES2022',
     'moduleResolution': 'nodenext',
+    'esModuleInterop': true,
     ...toMergeTsConfig,
   },
   'include': ['.']

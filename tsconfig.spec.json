@@ -3,6 +3,7 @@
   "compilerOptions": {
     "isolatedModules": true,
     "module": "ES2022",
+    "esModuleInterop": true,
     "moduleResolution": "NodeNext"
   },
   "include": [

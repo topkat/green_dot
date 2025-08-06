@@ -25,12 +25,12 @@ const plugin = newPlugin<Name, PluginUserConfig, typeof GDmanagedLogin>({
         // TODO manage sending credential emails here
       },
       async sendPasswordUpdatedMailConfirmation(ctx, user) {
-        // TODO ma,age sending updated mail here
+        // TODO manage sending updated mail here
       },
       async sendEmailUpdatedMailConfirmation(ctx, { oldEmail }) {
-        // TODO ma,age sending updated mail here
+        // TODO manage sending updated mail here
       }
-}`,
+    }`,
   },
   plugin: GDmanagedLogin,
 })
