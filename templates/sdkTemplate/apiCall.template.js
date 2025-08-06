@@ -67,10 +67,12 @@ function init({
     if (localStorageSetRaw) setCsrf = csrf => localStorageSet('csrfToken', csrf)
 
     serverState.headers = headers
-    if (getQueryClient) serverState.getQueryClient = getQueryClient
-    else serverState.getQueryClient = new QueryClient({
-        defaultOptions: { queries: { staleTime: Infinity, retry: 0, } }
-    })
+    if (getQueryClient) {
+        serverState.getQueryClient = getQueryClient
+    } else {
+        const queryClientDefault = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: 0, } } })
+        serverState.getQueryClient = () => queryClientDefault
+    }
     serverState.hasBeenInitialised = true
 }
 
