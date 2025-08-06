@@ -11,6 +11,8 @@ const deferTimeout = {}
 const allMethods = { ...methodNames.dbRead, ...methodNames.dbWrite, ...methodNames.service }
 const allMethodNames = Object.keys(allMethods)
 
+let initializedDefault = false
+
 const $ = new Proxy({
     init: (props) => {
         const { apiKey, ...otherProps } = props
@@ -29,7 +31,8 @@ const $ = new Proxy({
     },
 }, {
     get(obj, key) {
-        if (!isSdkInitialized()) {
+        if (!isSdkInitialized() && !initializedDefault) {
+            initializedDefault = true
             // eslint-disable-next-line no-console
             console.warn(`Warning! The green_dot SDK has not been initialized. Please use 'initSdk({...})' function at the start of your app.\n\nUsing default config...`)
             initSdk({})
