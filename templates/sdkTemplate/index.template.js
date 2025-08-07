@@ -11,8 +11,6 @@ const deferTimeout = {}
 const allMethods = { ...methodNames.dbRead, ...methodNames.dbWrite, ...methodNames.service }
 const allMethodNames = Object.keys(allMethods)
 
-const initializedDefault = false
-
 const $ = new Proxy({
     init: (props) => {
         const { apiKey, ...otherProps } = props

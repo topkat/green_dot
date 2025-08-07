@@ -21,7 +21,7 @@ export async function hookInterpreterExpose(
     for (const { expose: exposedMethods } of exposeHooks) authorizedMethods.push(...exposedMethods)
 
     if (!authorizedMethods.includes(method)) throw ctx.error.userDoNotHaveThePermission({
-        addintionalInfos: 'Wrong Method',
+        additionalInfos: 'Wrong Method',
         modelName,
         userRole: ctx.role,
         userId: ctx._id,
